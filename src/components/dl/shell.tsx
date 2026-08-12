@@ -1,0 +1,62 @@
+import type { ReactNode } from "react";
+import { Sidebar } from "./sidebar";
+import { DAYS_TO_FINAL, LAST_UPDATED, type MeetStatus } from "@/lib/dl-data";
+
+export const dotClass: Record<MeetStatus, string> = {
+  done: "bg-muted-foreground/40",
+  next: "bg-terracotta",
+  upcoming: "bg-border",
+  final: "bg-gold",
+};
+
+export const badgeClass: Record<MeetStatus, string> = {
+  done: "bg-secondary text-muted-foreground",
+  next: "bg-terracotta/10 text-terracotta",
+  upcoming: "bg-secondary text-foreground/70",
+  final: "bg-gold/15 text-gold",
+};
+
+export function Shell({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="min-h-screen bg-background">
+      <Sidebar />
+      <div className="pl-[200px]">
+        <header className="fixed inset-x-0 left-[200px] top-0 z-10 flex h-[72px] items-center justify-between border-b border-border bg-background px-8">
+          <div>
+            <h1 className="text-[19px] font-semibold tracking-tight text-foreground">{title}</h1>
+            <p className="nums mt-0.5 text-[12px] text-muted-foreground">
+              Last updated {LAST_UPDATED} · {DAYS_TO_FINAL} days to the Brussels final
+            </p>
+          </div>
+          <span className="label-caps flex items-center gap-1.5 rounded-md bg-terracotta px-2.5 py-1.5 text-primary-foreground">
+            <span className="size-1.5 rounded-full bg-primary-foreground" />
+            Live season
+          </span>
+        </header>
+        <main className="px-8 pb-14 pt-[96px]">{children}</main>
+      </div>
+    </div>
+  );
+}
+
+export function Panel({
+  title,
+  action,
+  children,
+  className = "",
+}: {
+  title: string;
+  action?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={`rounded-lg border border-border bg-card ${className}`}>
+      <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
+        <h2 className="label-caps text-muted-foreground">{title}</h2>
+        {action}
+      </div>
+      <div className="p-5">{children}</div>
+    </section>
+  );
+}
