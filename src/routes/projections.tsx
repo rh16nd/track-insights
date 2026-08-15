@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { Shell, Panel } from "@/components/dl/shell";
-import { formatMark, storylines, trajectoryDomain, trajectoryFor } from "@/lib/dl-data";
+import { formatMark, trajectoryDomain, trajectoryFor } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 
 export const Route = createFileRoute("/projections")({
@@ -38,6 +38,24 @@ function ProjectionsPage() {
   const active =
     (activeId ? allDisciplines.find((d) => d.id === activeId) : null) ?? allDisciplines[0];
   if (!active) return null;
+  const storylines = [
+    {
+      label: "Model updated",
+      text: "Predictions refresh automatically every time run.py runs — pulling live standings and top lists from World Athletics.",
+    },
+    {
+      label: "Trajectory model",
+      text: "Each athlete's projected mark at the final is calculated from their historical peak timing fingerprint across 2021–2023 seasons.",
+    },
+    {
+      label: "DL qualification",
+      text: "Only athletes in the live Diamond League standings are shown. Top 8 for sprints, top 10 for distance, top 6 for field events.",
+    },
+    {
+      label: "Model accuracy",
+      text: `${Math.round(state.data.modelAccuracy)}% top-3 accuracy on 2023 backtesting, up from 44% after adding competition-level weighting, wind adjustment, and head-to-head win rates.`,
+    },
+  ];
   const leader = active.athletes[0];
   const points = trajectoryFor(active);
   const domain = trajectoryDomain(points);

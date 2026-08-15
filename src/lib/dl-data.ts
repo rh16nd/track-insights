@@ -26,6 +26,7 @@ export type Discipline = { id: string; label: string; athletes: Athlete[] };
 export type ApiData = {
   lastUpdated: string;
   daysToFinal: number;
+  modelAccuracy: number;
   meets: Meet[];
   trackDisciplines: Discipline[];
   fieldDisciplines: Discipline[];
@@ -126,22 +127,3 @@ export const trajectoryDomain = (points: TrajectoryPoint[]): [number, number] =>
   const pad = (max - min) * 0.25 || 0.1;
   return [Number((min - pad).toFixed(2)), Number((max + pad).toFixed(2))];
 };
-
-export const storylines = [
-  {
-    label: "Model updated",
-    text: "Predictions refresh automatically every time run.py runs — pulling live standings and top lists from World Athletics.",
-  },
-  {
-    label: "Trajectory model",
-    text: "Each athlete's projected mark at the final is calculated from their historical peak timing fingerprint across 2021–2023 seasons.",
-  },
-  {
-    label: "DL qualification",
-    text: "Only athletes in the live Diamond League standings are shown. Athletes marked Q have confirmed their spot in Brussels.",
-  },
-  {
-    label: "Model accuracy",
-    text: "Currently 44% top-3 accuracy on 2023 backtesting. Head-to-head win rate feature in development to push this higher.",
-  },
-];
