@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowUpRight } from "lucide-react";
 
 const nav = [
   {
@@ -66,15 +65,6 @@ export function Sidebar() {
             </div>
           ))}
         </nav>
-
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="flex w-full items-center justify-between rounded-md border border-white/25 px-2.5 py-2 text-[12px] font-medium text-white/85 transition-colors hover:bg-white/10"
-        >
-          Refresh predictions
-          <ArrowUpRight className="size-3.5" />
-        </button>
       </div>
     </aside>
   );
