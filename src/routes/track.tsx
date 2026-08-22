@@ -24,7 +24,11 @@ function TrackPage() {
       </Shell>
     );
   return (
-    <Shell title="Track events" lastUpdated={state.data.lastUpdated} daysToFinal={state.data.daysToFinal}>
+    <Shell
+      title="Track events"
+      lastUpdated={state.data.lastUpdated}
+      daysToFinal={state.data.daysToFinal}
+    >
       <DisciplineTable disciplines={state.data.trackDisciplines} />
     </Shell>
   );

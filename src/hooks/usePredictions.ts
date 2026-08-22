@@ -3,9 +3,7 @@ import type { ApiData } from "@/lib/dl-data";
 import { API_URL } from "@/lib/dl-data";
 
 type State =
-  | { status: "loading" }
-  | { status: "error"; message: string }
-  | { status: "ok"; data: ApiData };
+  { status: "loading" } | { status: "error"; message: string } | { status: "ok"; data: ApiData };
 
 export function usePredictions(): State {
   const [state, setState] = useState<State>({ status: "loading" });

@@ -60,7 +60,11 @@ function ProjectionsPage() {
   const points = trajectoryFor(active);
   const domain = trajectoryDomain(points);
   return (
-    <Shell title="Projections" lastUpdated={state.data.lastUpdated} daysToFinal={state.data.daysToFinal}>
+    <Shell
+      title="Projections"
+      lastUpdated={state.data.lastUpdated}
+      daysToFinal={state.data.daysToFinal}
+    >
       <div className="flex flex-wrap gap-2">
         {allDisciplines.map((d) => (
           <button
@@ -178,10 +182,7 @@ function ProjectionsPage() {
               </span>
               <span className="nums w-10 text-[12px] text-muted-foreground">{a.nat}</span>
               <div className="h-2 flex-1 rounded-full bg-secondary">
-                <div
-                  className="h-2 rounded-full bg-terracotta"
-                  style={{ width: `${Math.min(100, a.prob * 1.4)}%` }}
-                />
+                <div className="h-2 rounded-full bg-terracotta" style={{ width: `${a.prob}%` }} />
               </div>
               <span className="nums w-20 text-right text-[12.5px] font-medium text-foreground">
                 {a.mark}

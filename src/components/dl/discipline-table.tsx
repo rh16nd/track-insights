@@ -4,7 +4,9 @@ import { Panel } from "./shell";
 
 export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) {
   const [active, setActive] = useState(disciplines[0]?.id ?? "");
-  const current = disciplines.find((d) => d.id === active) ?? disciplines[0]!;
+  const current = disciplines.find((d) => d.id === active) ?? disciplines[0];
+
+  if (!current) return null;
 
   return (
     <>
@@ -67,7 +69,7 @@ export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) 
                     <div className="h-1.5 w-28 rounded-full bg-secondary">
                       <div
                         className="h-1.5 rounded-full bg-terracotta"
-                        style={{ width: `${Math.min(100, a.prob * 1.4)}%` }}
+                        style={{ width: `${a.prob}%` }}
                       />
                     </div>
                     <span className="nums w-9 text-right text-[12.5px] font-semibold text-foreground">
