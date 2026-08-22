@@ -24,7 +24,7 @@ function FieldPage() {
       </Shell>
     );
   return (
-    <Shell title="Field events">
+    <Shell title="Field events" lastUpdated={state.data.lastUpdated} daysToFinal={state.data.daysToFinal}>
       <DisciplineTable disciplines={state.data.fieldDisciplines} />
     </Shell>
   );

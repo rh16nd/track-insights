@@ -24,7 +24,7 @@ function SchedulePage() {
       </Shell>
     );
   return (
-    <Shell title="Schedule">
+    <Shell title="Schedule" lastUpdated={state.data.lastUpdated} daysToFinal={state.data.daysToFinal}>
       <Panel title="2026 Diamond League calendar">
         <ul className="divide-y divide-border">
           {state.data.meets.map((m) => (

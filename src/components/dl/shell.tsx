@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Sidebar } from "./sidebar";
-import { DAYS_TO_FINAL, LAST_UPDATED, type MeetStatus } from "@/lib/dl-data";
+import type { MeetStatus } from "@/lib/dl-data";
 
 export const dotClass: Record<MeetStatus, string> = {
   done: "bg-muted-foreground/40",
@@ -16,7 +16,17 @@ export const badgeClass: Record<MeetStatus, string> = {
   final: "bg-gold/15 text-gold",
 };
 
-export function Shell({ title, children }: { title: string; children: ReactNode }) {
+export function Shell({
+  title,
+  children,
+  lastUpdated,
+  daysToFinal,
+}: {
+  title: string;
+  children: ReactNode;
+  lastUpdated?: string;
+  daysToFinal?: number;
+}) {
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />
@@ -25,7 +35,9 @@ export function Shell({ title, children }: { title: string; children: ReactNode 
           <div>
             <h1 className="text-[19px] font-semibold tracking-tight text-foreground">{title}</h1>
             <p className="nums mt-0.5 text-[12px] text-muted-foreground">
-              Last updated {LAST_UPDATED} · {DAYS_TO_FINAL} days to the Brussels final
+              {lastUpdated
+                ? `Last updated ${lastUpdated} · ${daysToFinal} days to the Brussels final`
+                : "Loading live data…"}
             </p>
           </div>
           <span className="label-caps flex items-center gap-1.5 rounded-md bg-terracotta px-2.5 py-1.5 text-primary-foreground">

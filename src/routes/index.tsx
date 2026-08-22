@@ -51,11 +51,7 @@ function Dashboard() {
   ];
 
   return (
-    <Shell title="Dashboard">
-      <div className="text-[11px] text-muted-foreground mb-4">
-        Updated {data.lastUpdated} · {data.daysToFinal} days to Brussels final
-      </div>
-
+    <Shell title="Dashboard" lastUpdated={data.lastUpdated} daysToFinal={data.daysToFinal}>
       <div className="grid grid-cols-4 gap-4">
         {stats.map((s) => (
           <div key={s.label} className="rounded-lg border border-border bg-card p-5">

@@ -1,7 +1,5 @@
 // dl-data.ts — all data fetched live from Flask API at localhost:5000
 // Run `python api.py` in your athletics-predictor folder first
-export const DAYS_TO_FINAL = 23;
-export const LAST_UPDATED = "12 Aug 2026";
 export type MeetStatus = "done" | "next" | "upcoming" | "final";
 
 export type Meet = {

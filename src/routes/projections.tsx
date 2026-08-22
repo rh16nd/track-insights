@@ -44,8 +44,8 @@ function ProjectionsPage() {
       text: "Predictions refresh automatically every time run.py runs — pulling live standings and top lists from World Athletics.",
     },
     {
-      label: "Trajectory model",
-      text: "Each athlete's projected mark at the final is calculated from their historical peak timing fingerprint across 2021–2023 seasons.",
+      label: "Trajectory chart",
+      text: "The curve is an illustrative model, not a per-meet results log — it doesn't reflect which meets an athlete actually competed in. Only the final point (Brussels) comes from the prediction model; everything before it is a smoothed illustrative path toward that projection.",
     },
     {
       label: "DL qualification",
@@ -60,7 +60,7 @@ function ProjectionsPage() {
   const points = trajectoryFor(active);
   const domain = trajectoryDomain(points);
   return (
-    <Shell title="Projections">
+    <Shell title="Projections" lastUpdated={state.data.lastUpdated} daysToFinal={state.data.daysToFinal}>
       <div className="flex flex-wrap gap-2">
         {allDisciplines.map((d) => (
           <button
@@ -79,10 +79,13 @@ function ProjectionsPage() {
         ))}
       </div>
       <div className="mt-4 grid grid-cols-2 gap-4">
-        <Panel title={`Season trajectory — ${active.label}`}>
+        <Panel title={`Modeled trajectory — ${active.label}`}>
           <div className="text-[14px] font-semibold text-foreground">{leader?.name}</div>
           <div className="nums text-[12px] text-muted-foreground">
             {leader?.nat} · projected {leader?.mark} · {leader?.prob}% win probability
+          </div>
+          <div className="mt-0.5 text-[11px] text-muted-foreground/70">
+            Illustrative curve toward the model's projection — not a per-meet results log
           </div>
           <div className="mt-3 h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -117,7 +120,7 @@ function ProjectionsPage() {
                 <Line
                   type="monotone"
                   dataKey="actual"
-                  name="Season best"
+                  name="Illustrative trend"
                   stroke="var(--terracotta)"
                   strokeWidth={2}
                   dot={{ r: 2.5 }}
