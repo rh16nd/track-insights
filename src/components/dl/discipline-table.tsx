@@ -52,6 +52,14 @@ export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) 
                   >
                     {a.name}
                   </a>
+                  {a.injuryWatch && (
+                    <span
+                      title="Recent injury or DNF mention — flagged for review"
+                      className="label-caps ml-2 rounded-sm bg-destructive/10 px-1.5 py-1 text-destructive"
+                    >
+                      Watch
+                    </span>
+                  )}
                 </td>
                 <td className="nums py-3 text-[12px] text-muted-foreground">{a.nat}</td>
                 <td className="py-3">

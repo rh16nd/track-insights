@@ -17,6 +17,7 @@ export type Athlete = {
   mark: string;
   prob: number;
   waUrl: string;
+  injuryWatch: boolean;
 };
 
 export type Discipline = { id: string; label: string; athletes: Athlete[] };
@@ -35,6 +36,7 @@ export type ApiData = {
     mark: string;
     prob: number;
     waUrl: string;
+    injuryWatch: boolean;
   }[];
   confidence: { disc: string; value: number }[];
 };

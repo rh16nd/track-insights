@@ -71,14 +71,24 @@ function Dashboard() {
               <li key={w.name} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                 <span className="text-base">{w.medal}</span>
                 <div className="min-w-0 flex-1">
-                  <a
-                    href={w.waUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="truncate text-[13.5px] font-medium text-foreground hover:text-terracotta hover:underline transition-colors block"
-                  >
-                    {w.name}
-                  </a>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={w.waUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="truncate text-[13.5px] font-medium text-foreground hover:text-terracotta hover:underline transition-colors"
+                    >
+                      {w.name}
+                    </a>
+                    {w.injuryWatch && (
+                      <span
+                        title="Recent injury or DNF mention — flagged for review"
+                        className="label-caps shrink-0 rounded-sm bg-destructive/10 px-1.5 py-1 text-destructive"
+                      >
+                        Watch
+                      </span>
+                    )}
+                  </div>
                   <div className="text-[11.5px] text-muted-foreground">{w.disc}</div>
                 </div>
                 <div className="nums w-20 text-right text-[13px] font-medium text-foreground">
