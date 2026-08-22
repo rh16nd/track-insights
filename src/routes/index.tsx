@@ -47,7 +47,7 @@ function Dashboard() {
       value: String(data.trackDisciplines.length + data.fieldDisciplines.length),
       sub: "tracked",
     },
-    { label: "Model accuracy", value: `${Math.round(data.modelAccuracy)}%`, sub: "2023 backtest" },
+    { label: "Model accuracy", value: `${Math.round(data.modelAccuracy)}%`, sub: "walk-forward '23-'25" },
   ];
 
   return (

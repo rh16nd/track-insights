@@ -53,7 +53,7 @@ function ProjectionsPage() {
     },
     {
       label: "Model accuracy",
-      text: `${Math.round(state.data.modelAccuracy)}% top-3 accuracy on 2023 backtesting, up from 44% after adding competition-level weighting, wind adjustment, and head-to-head win rates.`,
+      text: `${Math.round(state.data.modelAccuracy)}% top-3 accuracy, walk-forward validated across three independent seasons (2023, 2024, 2025) against real Diamond League Final results.`,
     },
   ];
   const leader = active.athletes[0];
