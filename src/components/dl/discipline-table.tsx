@@ -43,7 +43,7 @@ export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) 
                 <td className="nums py-3 text-[13px] text-muted-foreground">{a.rank}</td>
                 <td className="py-3 text-[13.5px] font-medium text-foreground">
                   <a
-                    href={`https://worldathletics.org/search?q=${encodeURIComponent(a.name)}`}
+                    href={a.waUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-terracotta hover:underline transition-colors"
