@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Shell, Panel, dotClass, badgeClass } from "@/components/dl/shell";
+import { Shell, Panel, WatchBadge, dotClass, badgeClass } from "@/components/dl/shell";
 import { statusLabel } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 
@@ -64,6 +64,31 @@ function Dashboard() {
         ))}
       </div>
 
+      {data.removedAthletes.length > 0 && (
+        <Panel title="Removed from predictions — injury/withdrawal" className="mt-4">
+          <ul className="divide-y divide-border">
+            {data.removedAthletes.map((r) => (
+              <li key={r.name} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
+                <div className="min-w-0">
+                  <div className="text-[13.5px] font-medium text-foreground">{r.name}</div>
+                  <div className="text-[11.5px] text-muted-foreground">{r.disciplines.join(", ")}</div>
+                </div>
+                {r.reason && (
+                  <a
+                    href={r.url ?? undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 truncate text-[12px] text-destructive hover:underline max-w-[45%]"
+                  >
+                    {r.reason}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      )}
+
       <div className="mt-4 grid grid-cols-[1.35fr_1fr] gap-4">
         <Panel title="Top predicted winners">
           <ul className="divide-y divide-border">
@@ -81,12 +106,7 @@ function Dashboard() {
                       {w.name}
                     </a>
                     {w.injuryWatch && (
-                      <span
-                        title="Recent injury or DNF mention — flagged for review"
-                        className="label-caps shrink-0 rounded-sm bg-destructive/10 px-1.5 py-1 text-destructive"
-                      >
-                        Watch
-                      </span>
+                      <WatchBadge reason={w.injuryReason} url={w.injuryUrl} />
                     )}
                   </div>
                   <div className="text-[11.5px] text-muted-foreground">{w.disc}</div>

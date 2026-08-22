@@ -51,6 +51,38 @@ export function Shell({
   );
 }
 
+export function WatchBadge({
+  reason,
+  url,
+  className = "",
+}: {
+  reason: string | null;
+  url: string | null;
+  className?: string;
+}) {
+  const title = reason ?? "Recent injury or DNF mention — flagged for review";
+  const badgeClassName = `label-caps shrink-0 rounded-sm bg-destructive/10 px-1.5 py-1 text-destructive ${className}`;
+
+  if (url) {
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={title}
+        className={`${badgeClassName} hover:bg-destructive/20 transition-colors`}
+      >
+        Watch
+      </a>
+    );
+  }
+  return (
+    <span title={title} className={badgeClassName}>
+      Watch
+    </span>
+  );
+}
+
 export function Panel({
   title,
   action,

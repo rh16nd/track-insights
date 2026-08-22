@@ -18,9 +18,18 @@ export type Athlete = {
   prob: number;
   waUrl: string;
   injuryWatch: boolean;
+  injuryReason: string | null;
+  injuryUrl: string | null;
 };
 
 export type Discipline = { id: string; label: string; athletes: Athlete[] };
+
+export type RemovedAthlete = {
+  name: string;
+  disciplines: string[];
+  reason: string | null;
+  url: string | null;
+};
 
 export type ApiData = {
   lastUpdated: string;
@@ -29,6 +38,7 @@ export type ApiData = {
   meets: Meet[];
   trackDisciplines: Discipline[];
   fieldDisciplines: Discipline[];
+  removedAthletes: RemovedAthlete[];
   topWinners: {
     medal: string;
     name: string;
@@ -37,6 +47,8 @@ export type ApiData = {
     prob: number;
     waUrl: string;
     injuryWatch: boolean;
+    injuryReason: string | null;
+    injuryUrl: string | null;
   }[];
   confidence: { disc: string; value: number }[];
 };
