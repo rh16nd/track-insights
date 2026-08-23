@@ -1,11 +1,22 @@
-﻿import { useState, type CSSProperties } from "react";
+﻿import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Discipline } from "@/lib/dl-data";
 import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
 
-export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) {
-  const [active, setActive] = useState(disciplines[0]?.id ?? "");
-  const current = disciplines.find((d) => d.id === active) ?? disciplines[0];
+/** The active discipline tab is controlled by the caller (track.tsx/
+ * field.tsx put it in the URL's search params, not local state) so that
+ * clicking into an athlete and hitting "back" restores the exact tab the
+ * user was browsing, not just the page with its default tab reset. */
+export function DisciplineTable({
+  disciplines,
+  activeId,
+  onActiveChange,
+}: {
+  disciplines: Discipline[];
+  activeId: string;
+  onActiveChange: (id: string) => void;
+}) {
+  const current = disciplines.find((d) => d.id === activeId) ?? disciplines[0];
 
   if (!current) return null;
 
@@ -16,14 +27,14 @@ export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) 
           <button
             key={d.id}
             type="button"
-            onClick={() => setActive(d.id)}
+            onClick={() => onActiveChange(d.id)}
             className={`rounded-full border px-3.5 py-1.5 text-[12.5px] font-medium transition-[transform,background-color,color,border-color] duration-150 ease-out active:scale-[0.97] ${
-              d.id === active
+              d.id === current?.id
                 ? "border-transparent text-primary-foreground shadow-sm"
                 : "border-border bg-card text-muted-foreground hover:border-terracotta/40 hover:text-foreground"
             }`}
             style={
-              d.id === active
+              d.id === current?.id
                 ? {
                     backgroundImage:
                       "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",

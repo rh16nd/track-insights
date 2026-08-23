@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useCanGoBack, useRouter } from "@tanstack/react-router";
 import { Shell, Panel, WatchBadge } from "@/components/dl/shell";
 import { useAthleteProfile } from "@/hooks/useAthleteProfile";
 import { SeasonTrendChart } from "@/components/dl/season-trend-chart";
@@ -72,6 +72,8 @@ function StatBlock({
 function AthleteProfilePage() {
   const { discKey, name } = Route.useParams();
   const state = useAthleteProfile(discKey, decodeURIComponent(name));
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
 
   if (state.status === "loading") {
     return (
@@ -134,7 +136,7 @@ function AthleteProfilePage() {
         <>
           <div className="absolute inset-0 bg-background/25" />
           {/* Bottom scrim protects the name/subtitle/meter; top scrim
-              protects the "Back to dashboard" link -- both fade to nothing
+              protects the back link -- both fade to nothing
               well before the vertical middle, so the actual subject of the
               photo (not just its edges) stays clearly visible. */}
           <div
@@ -158,12 +160,22 @@ function AthleteProfilePage() {
         className="relative flex h-full flex-col justify-between px-6 pb-6 pt-7 sm:px-8 sm:pt-8"
         style={a.photoUrl ? { textShadow: "0 1px 4px rgba(0,0,0,0.45)" } : undefined}
       >
-        <Link
-          to="/dashboard"
-          className={`label-caps transition-colors hover:text-white ${a.photoUrl ? "text-white/75" : "text-white/60"}`}
-        >
-          ← Back to dashboard
-        </Link>
+        {canGoBack ? (
+          <button
+            type="button"
+            onClick={() => router.history.back()}
+            className={`label-caps transition-colors hover:text-white ${a.photoUrl ? "text-white/75" : "text-white/60"}`}
+          >
+            ← Back
+          </button>
+        ) : (
+          <Link
+            to="/dashboard"
+            className={`label-caps transition-colors hover:text-white ${a.photoUrl ? "text-white/75" : "text-white/60"}`}
+          >
+            ← Back to dashboard
+          </Link>
+        )}
         <div className="mt-4 flex flex-wrap items-end justify-between gap-6">
           <div>
             <div className="flex flex-wrap items-center gap-2">
