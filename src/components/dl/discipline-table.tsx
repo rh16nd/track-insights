@@ -49,15 +49,15 @@ export function DisciplineTable({
 
       <Panel title={`Projected top 8 — ${current.label}`} className="mt-4">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[560px]">
+          <table className="w-full min-w-[680px]">
             <thead>
               <tr className="label-caps text-muted-foreground">
                 <th className="w-10 pb-3 text-left font-semibold">#</th>
-                <th className="pb-3 text-left font-semibold">Athlete</th>
-                <th className="w-16 pb-3 text-left font-semibold">Nat</th>
-                <th className="w-14 pb-3 text-left font-semibold">Q</th>
-                <th className="w-28 pb-3 text-right font-semibold">Projected</th>
-                <th className="w-52 pb-3 text-right font-semibold">Win probability</th>
+                <th className="pb-3 pl-3 text-left font-semibold">Athlete</th>
+                <th className="w-16 pb-3 pl-4 text-left font-semibold">Nat</th>
+                <th className="w-14 pb-3 pl-4 text-left font-semibold">Q</th>
+                <th className="w-28 pb-3 pl-6 text-right font-semibold">Projected</th>
+                <th className="w-56 pb-3 pl-8 text-right font-semibold">Win probability</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -70,7 +70,7 @@ export function DisciplineTable({
                   <td className="py-3 pr-2">
                     <RankBadge rank={a.rank} className="size-6" />
                   </td>
-                  <td className="py-3 text-[13.5px] font-medium text-foreground">
+                  <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
                     <Link
                       to="/athlete/$discKey/$name"
                       params={{ discKey: current.id, name: a.name }}
@@ -82,18 +82,21 @@ export function DisciplineTable({
                       <WatchBadge reason={a.injuryReason} url={a.injuryUrl} className="ml-2" />
                     )}
                   </td>
-                  <td className="nums py-3 text-[12px] text-muted-foreground">{a.nat}</td>
-                  <td className="py-3">
+                  <td className="nums py-3 pl-4 text-[12px] text-muted-foreground">{a.nat}</td>
+                  <td className="py-3 pl-4">
                     {a.qualified && (
-                      <span className="label-caps rounded-sm bg-terracotta/10 px-1.5 py-1 text-terracotta-strong">
+                      <span
+                        title="Confirmed in World Athletics' own 2026 Diamond League standings for this discipline"
+                        className="label-caps rounded-sm bg-terracotta/10 px-1.5 py-1 text-terracotta-strong"
+                      >
                         Q
                       </span>
                     )}
                   </td>
-                  <td className="nums py-3 text-right text-[13.5px] font-medium text-foreground">
+                  <td className="nums py-3 pl-6 text-right text-[13.5px] font-medium text-foreground">
                     {a.mark}
                   </td>
-                  <td className="py-3">
+                  <td className="py-3 pl-8">
                     <div className="flex items-center justify-end gap-3">
                       <ProbabilityBar value={a.prob} className="w-28" trackHeight="h-1.5" />
                       <span className="nums w-9 text-right text-[12.5px] font-semibold text-foreground">
