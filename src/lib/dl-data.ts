@@ -105,15 +105,28 @@ export const statusLabel: Record<MeetStatus, string> = {
   final: "Final",
 };
 
-// ── Trajectory helpers (kept client-side, derived from live data) ──
+// Real per-discipline detail for the Projections page, from
+// /api/projections/<discKey> -- replaces the old client-side fabricated
+// trajectory (see git history: parseMark/trajectoryFor/trajectoryDomain/
+// TRAJECTORY_MEETS, a smoothed curve toward the model's projection that
+// didn't reflect which meets an athlete actually competed in).
+export type Trajectory = {
+  name: string;
+  rank: number;
+  prob: number;
+  historyYear: number | null;
+  history: MeetMark[];
+};
 
-export const parseMark = (mark: string): number => {
-  if (mark.endsWith("m")) return parseFloat(mark);
-  if (mark.includes(":")) {
-    const [m, s] = mark.split(":");
-    return Number(m) * 60 + Number(s);
-  }
-  return Number(mark);
+export type Storyline = {
+  type: string;
+  title: string;
+  text: string;
+};
+
+export type ProjectionsDetail = {
+  trajectories: Trajectory[];
+  storylines: Storyline[];
 };
 
 export const formatMark = (value: number, sample: string): string => {
@@ -126,59 +139,3 @@ export const formatMark = (value: number, sample: string): string => {
   return value.toFixed(2);
 };
 
-const TRAJECTORY_MEETS = [
-  "Doha",
-  "Shanghai",
-  "Xiamen",
-  "Rabat",
-  "Rome",
-  "Stockholm",
-  "Oslo",
-  "Paris",
-  "Eugene",
-  "Monaco",
-  "London",
-  "Lausanne",
-  "Silesia",
-  "Zürich",
-  "Brussels",
-];
-
-export type TrajectoryPoint = {
-  meet: string;
-  actual: number | null;
-  projected: number | null;
-};
-
-export const trajectoryFor = (d: Discipline): TrajectoryPoint[] => {
-  const leader = d.athletes[0];
-  if (!leader) return [];
-  const target = parseMark(leader.mark);
-  const isField = leader.mark.endsWith("m");
-  const spread = target * (isField ? 0.022 : 0.02);
-  const start = isField ? target - spread : target + spread;
-  const n = TRAJECTORY_MEETS.length;
-
-  return TRAJECTORY_MEETS.map((meet, i) => {
-    const t = i / (n - 1);
-    const eased = Math.pow(t, 0.7);
-    const wobble = (i % 3 === 1 ? 1 : i % 3 === 2 ? -1 : 0) * spread * 0.06;
-    const value = Number((start + (target - start) * eased + wobble).toFixed(3));
-    const isPast = i <= 10;
-    return {
-      meet,
-      actual: isPast ? value : null,
-      projected: i >= 10 ? value : null,
-    };
-  });
-};
-
-export const trajectoryDomain = (points: TrajectoryPoint[]): [number, number] => {
-  const values = points
-    .flatMap((p) => [p.actual, p.projected])
-    .filter((v): v is number => v !== null);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const pad = (max - min) * 0.25 || 0.1;
-  return [Number((min - pad).toFixed(2)), Number((max + pad).toFixed(2))];
-};
