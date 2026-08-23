@@ -104,7 +104,7 @@ function AthleteProfilePage() {
           ? {
               backgroundImage: `url(${a.photoUrl})`,
               backgroundSize: "cover",
-              backgroundPosition: "center 30%",
+              backgroundPosition: "center 15%",
             }
           : undefined
       }

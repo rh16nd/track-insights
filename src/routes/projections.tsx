@@ -1,5 +1,5 @@
 ﻿import { useState, type CSSProperties } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   CartesianGrid,
   Line,
@@ -103,7 +103,19 @@ function ProjectionsPage() {
       </div>
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Panel title={`Modeled trajectory — ${active.label}`}>
-          <div className="text-[14px] font-semibold text-foreground">{leader?.name}</div>
+          <div className="text-[14px] font-semibold text-foreground">
+            {leader ? (
+              <Link
+                to="/athlete/$discKey/$name"
+                params={{ discKey: active.id, name: leader.name }}
+                className="hover:text-terracotta-strong hover:underline transition-colors"
+              >
+                {leader.name}
+              </Link>
+            ) : (
+              "—"
+            )}
+          </div>
           <div className="nums text-[12px] text-muted-foreground">
             {leader?.nat} · projected {leader?.mark} · {leader?.prob}% win probability
           </div>
@@ -205,9 +217,13 @@ function ProjectionsPage() {
               style={{ "--stagger-i": i } as CSSProperties}
             >
               <RankBadge rank={a.rank} className="size-5 text-[10px]" />
-              <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-foreground sm:w-48 sm:flex-none">
+              <Link
+                to="/athlete/$discKey/$name"
+                params={{ discKey: active.id, name: a.name }}
+                className="min-w-0 flex-1 truncate text-[13px] font-medium text-foreground hover:text-terracotta-strong hover:underline transition-colors sm:w-48 sm:flex-none"
+              >
                 {a.name}
-              </span>
+              </Link>
               <span className="nums w-10 shrink-0 text-[12px] text-muted-foreground">{a.nat}</span>
               <div className="order-last flex w-full items-center gap-3 pl-8 sm:order-none sm:w-auto sm:flex-1 sm:pl-0">
                 <ProbabilityBar value={a.prob} className="min-w-[40px] flex-1" trackHeight="h-2" />
