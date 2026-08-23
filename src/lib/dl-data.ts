@@ -75,6 +75,7 @@ export type AthleteProfile = {
   prob: number;
   waUrl: string;
   photoUrl: string | null;
+  photoFocus: { x: number; y: number } | null;
   injuryWatch: boolean;
   injuryReason: string | null;
   injuryUrl: string | null;

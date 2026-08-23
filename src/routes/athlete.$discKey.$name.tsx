@@ -104,7 +104,9 @@ function AthleteProfilePage() {
           ? {
               backgroundImage: `url(${a.photoUrl})`,
               backgroundSize: "cover",
-              backgroundPosition: "center 15%",
+              backgroundPosition: a.photoFocus
+                ? `${a.photoFocus.x}% ${a.photoFocus.y}%`
+                : "center 15%",
             }
           : undefined
       }
@@ -113,14 +115,21 @@ function AthleteProfilePage() {
           load_athlete_photo) as a full banner -- never a stock photo or
           generic avatar; falls back to the app's own track-surface texture
           when no real photo exists, same honesty principle as everywhere
-          else in this project. A single flat tint strong enough to
-          guarantee text contrast (measured worst-case against a
-          near-white photo patch) muddied the photo too much to actually
-          see it -- split into two layers instead: a light, uniform brand
-          tint for warmth/consistency with the rest of the app (barely
-          dims the photo), plus a black scrim that's only strong at the
-          bottom, where the name/meter/subtitle actually sit, fading to
-          nothing by mid-height so the upper photo stays genuinely clear. */}
+          else in this project. The crop position comes from api.py's real
+          face detection (photoFocus, get_photo_focus) run on the actual
+          downloaded photo -- these are wide action shots, not pre-cropped
+          headshots, so a fixed crop reliably cut faces out of frame on wide
+          desktop banners (verified: it cropped Noah Lyles' own face out
+          entirely). Falls back to a fixed top-biased "15%" position (still
+          better than the original "30%") only when detection found no face.
+          A single flat tint strong enough to guarantee text contrast
+          (measured worst-case against a near-white photo patch) muddied the
+          photo too much to actually see it -- split into two layers
+          instead: a light, uniform brand tint for warmth/consistency with
+          the rest of the app (barely dims the photo), plus a black scrim
+          that's only strong at the bottom, where the name/meter/subtitle
+          actually sit, fading to nothing by mid-height so the upper photo
+          stays genuinely clear. */}
       {a.photoUrl ? (
         <>
           <div className="absolute inset-0 bg-background/25" />
