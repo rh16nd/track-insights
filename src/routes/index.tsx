@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { usePredictions } from "@/hooks/usePredictions";
 import { PodiumCallMark } from "@/components/dl/logo";
 import { RankBadge } from "@/components/dl/shell";
+import { TrackCircuit } from "@/components/dl/track-circuit";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -150,6 +151,7 @@ function Landing() {
       {/* ── Hero (track-surface reused as the backdrop, darkened) ──── */}
       <section className="track-surface relative overflow-hidden pt-16">
         <div className="absolute inset-0 bg-[var(--landing-bg)]/88" />
+        <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] w-full max-w-none -translate-y-1/2 opacity-90 sm:h-[120%]" />
         <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
           <span className="label-caps inline-flex items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-3.5 py-2 text-[var(--landing-muted)]">
             <span className="size-1.5 rounded-full bg-terracotta" />
@@ -172,9 +174,10 @@ function Landing() {
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               to="/dashboard"
-              className="label-caps rounded-full px-6 py-3.5 text-[var(--landing-bg)] shadow-[0_10px_40px_-12px_oklch(0.545_0.164_38.5/0.6)] transition-transform hover:scale-[1.02]"
+              className="label-caps rounded-full px-6 py-3.5 text-[var(--landing-fg)] shadow-[0_10px_40px_-12px_oklch(0.545_0.164_38.5/0.6)] transition-transform hover:scale-[1.02]"
               style={{
-                backgroundImage: "linear-gradient(100deg, var(--terracotta) 0%, var(--gold) 100%)",
+                backgroundImage:
+                  "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
               }}
             >
               View live predictions
@@ -355,10 +358,10 @@ function Landing() {
               className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] p-6"
             >
               <span
-                className="nums inline-flex size-9 items-center justify-center rounded-full text-[13px] font-semibold text-[var(--landing-bg)]"
+                className="nums inline-flex size-9 items-center justify-center rounded-full text-[13px] font-semibold text-[var(--landing-fg)]"
                 style={{
                   backgroundImage:
-                    "linear-gradient(100deg, var(--terracotta) 0%, var(--gold) 100%)",
+                    "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
                 }}
               >
                 {step.n}
@@ -425,7 +428,10 @@ function Landing() {
                 </p>
               )}
               {preview.map((w) => (
-                <div key={w.name} className="flex items-center gap-4 py-3.5 first:pt-0 last:pb-0">
+                <div
+                  key={w.name}
+                  className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3.5 first:pt-0 last:pb-0"
+                >
                   <RankBadge rank={w.rank} />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-[13.5px] font-medium text-[var(--landing-fg)]">
@@ -433,11 +439,13 @@ function Landing() {
                     </div>
                     <div className="text-[11.5px] text-[var(--landing-muted)]">{w.disc}</div>
                   </div>
-                  <div className="nums w-16 text-right text-[13px] text-[var(--landing-muted)]">
-                    {w.mark}
-                  </div>
-                  <div className="nums w-12 text-right text-[13px] font-semibold text-[var(--landing-accent-text)]">
-                    {w.prob}%
+                  <div className="flex w-full items-center justify-between gap-4 pl-9 sm:w-auto sm:justify-end sm:pl-0">
+                    <div className="nums text-[13px] text-[var(--landing-muted)] sm:w-16 sm:text-right">
+                      {w.mark}
+                    </div>
+                    <div className="nums w-12 text-right text-[13px] font-semibold text-[var(--landing-accent-text)]">
+                      {w.prob}%
+                    </div>
                   </div>
                 </div>
               ))}

@@ -30,70 +30,148 @@
   --color-brick: var(--brick);
   --color-terracotta: var(--terracotta);
   --color-gold: var(--gold);
+  --color-gold-strong: var(--gold-strong);
+  --color-gold-light: var(--gold-light);
+  --color-terracotta-light: var(--terracotta-light);
   --color-ink: var(--foreground);
   --color-sand: var(--sand);
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 }
 
+/* 2026-08-23, theme flip: the app (dashboard/track/field/schedule/
+   projections) used to be a separate light "track" theme while only the
+   landing page went dark -- per the user, that split read as two different
+   products stitched together, and they explicitly preferred the landing
+   page's look. So the dark palette (previously scoped to .landing only,
+   see below) is now the base theme everywhere.
+
+   2026-08-23, same day, warmed up: the first pass reused near-black,
+   barely-saturated values (L 0.16, C 0.025) -- correct on paper, but it
+   read as generic dark-mode-SaaS-black rather than a track. Raised
+   lightness and roughly 2.5x'd the chroma across every surface token.
+
+   2026-08-23, third pass, "in-between": the warmed-up dark palette was
+   still "too dark" per the user, who shared reference dashboards (a light
+   pastel SaaS panel, a map-app with glass cards over real terrain, a dark
+   dashboard with one bold accent) and asked for a blend -- vibrant, neither
+   very dark nor very light, with more off-white surfaces. Landed on: a
+   genuinely medium, saturated terracotta CANVAS (not a surface text sits
+   on) with off-white CARDS floating on it, dark text on the cards. This
+   is a structural change, not just new numbers -- a background this light
+   (L 0.44) can't host readable text directly (measured 2.3:1 for dark text,
+   and existing accent hues measured under 2:1 as non-text elements too,
+   since the background is now the *same hue family* as the accents). Every
+   page had to move its text onto an explicit card/popover surface; see
+   shell.tsx's Shell (added a card wrapper around the plain title) and
+   topnav.tsx (nav bar itself is now a light glass surface, not dark). */
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.964 0.011 76.5);
-  --foreground: oklch(0.219 0.026 55);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.219 0.026 55);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.219 0.026 55);
+  --background: oklch(0.44 0.09 40);
+  --foreground: oklch(0.19 0.03 40);
+  --card: oklch(0.97 0.012 75);
+  --card-foreground: oklch(0.19 0.03 40);
+  --popover: oklch(0.985 0.008 75);
+  --popover-foreground: oklch(0.19 0.03 40);
   --primary: oklch(0.545 0.164 38.5);
   --primary-foreground: oklch(0.99 0.005 80);
-  --secondary: oklch(0.941 0.014 76);
-  --secondary-foreground: oklch(0.219 0.026 55);
-  --muted: oklch(0.941 0.014 76);
-  --muted-foreground: oklch(0.62 0.031 50);
+  --secondary: oklch(0.91 0.02 60);
+  --secondary-foreground: oklch(0.19 0.03 40);
+  --muted: oklch(0.91 0.02 60);
+  /* Needs to read on --card (near-white) now, the opposite direction from
+     the previous two passes' dark-background-safe value. 7.88:1 measured
+     against the new --card. */
+  --muted-foreground: oklch(0.42 0.045 45);
   --accent: oklch(0.545 0.164 38.5);
   --accent-foreground: oklch(0.99 0.005 80);
+  /* Back to close to the original pre-any-dark-theme-work value -- a
+     mid-lightness red reads fine as text on the new near-white card again.
+     4.92:1 measured against --card. */
   --destructive: oklch(0.55 0.2 27);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.898 0.021 74);
-  --input: oklch(0.898 0.021 74);
+  /* Solid now, not translucent -- a translucent-white edge was for a dark
+     card; on a near-white card it needs to be an actual visible line. */
+  --border: oklch(0.85 0.035 55);
+  --input: oklch(0.85 0.035 55);
   --ring: oklch(0.545 0.164 38.5);
   --brick: oklch(0.406 0.121 40);
   --terracotta: oklch(0.545 0.164 38.5);
   --gold: oklch(0.593 0.128 68);
+  /* Gold as text/badge-bg under white text. Darkened slightly further this
+     pass (0.52 -> 0.49): fine at 5.19:1 on plain --card, but the "Final"
+     meet-status badge tints its background with bg-gold/15 first, and
+     against THAT lighter tinted surface the old value measured 4.36:1 --
+     just under the 4.5:1 floor. 0.49 clears both contexts (4.96 tinted,
+     5.85 plain) with real margin. */
+  --gold-strong: oklch(0.49 0.128 68);
+  /* New this pass: terracotta needed the same treatment gold already had.
+     Base --terracotta only measures 4.89:1 on the new --card (passes, but
+     thin margin for small label-caps text) -- darkened slightly for real
+     headroom, 7.34:1. */
+  --terracotta-strong: oklch(0.45 0.164 38.5);
+  /* Gold/terracotta lightened for TEXT sitting on a dark or textured
+     surface -- no longer needed for general card content (card is light
+     now), but still correct for the Dashboard/landing hero banners, whose
+     track-surface-textured background is still dark enough to need them
+     (icons only -- verified >3:1 non-text there; full-strength label text
+     in those heroes uses white/translucent-white instead, see
+     dashboard.tsx). Kept, not deleted, since both heroes still use them. */
+  --gold-light: oklch(0.8 0.11 68);
+  --terracotta-light: oklch(0.74 0.15 38.5);
   --sand: oklch(0.941 0.014 76);
 }
 
-/* Scoped to the "/" landing page only -- a deliberately dark, bold front door
+/* Scoped to the "/" landing page -- a deliberately bold front door
    (structure inspired by personaai.live: dark bg, gradient CTA, glass-bordered
    cards, bold stat callouts) while staying on-brand by reusing --terracotta/
-   --gold instead of introducing a new accent color. Kept as page-scoped tokens
-   rather than swapping :root's theme, since every other route stays the
-   existing light "track" look. */
+   --gold instead of introducing a new accent color.
+
+   2026-08-23, unified with the app: after the app's canvas became a medium
+   saturated terracotta (see the ":root ... in-between" note above), the
+   user flagged the landing-to-dashboard jump as still jarring -- going from
+   a near-black landing page straight into a medium-warm app read as two
+   different products, a complaint that had come up multiple times before
+   this session's dark-theme work even started. Rather than patch this
+   again, --landing-bg now matches :root's --background exactly (same
+   value, kept as a separate token only because the landing page composites
+   things -- the hero's texture+overlay, glass cards -- that most app pages
+   don't). Every landing-specific text token tuned for the OLD near-black
+   background had to be re-verified and mostly re-lightened for the new,
+   much lighter background: --landing-fg (white) still clears comfortably
+   (7.4:1) since it was already tuned for maximum contrast, but
+   --landing-muted/--landing-accent-text/--landing-accent-text-gold all
+   measured under 4.5:1 against the new bg and needed lightening further
+   (computed live before committing, same as every token change this
+   session). Second pass on this same change: the first attempt lightened
+   --landing-card's tint to a bright white at 10% opacity for definition
+   against the new colorful bg, but most of this text actually sits ON
+   that tinted glass card, not on flat --landing-bg -- and the tint itself
+   was lightening the effective background enough to fail contrast again
+   (measured live: 4.0:1, 3.65:1). Backed the card tint down to 3% (still
+   enough for a visible edge together with --landing-border) rather than
+   keep chasing the text lighter and lighter, which was starting to wash
+   the accent colors out toward plain white. */
 .landing {
-  --landing-bg: oklch(0.16 0.025 40);
-  --landing-bg-2: oklch(0.12 0.02 40);
+  --landing-bg: oklch(0.44 0.09 40);
+  --landing-bg-2: oklch(0.38 0.08 40);
   --landing-fg: oklch(0.97 0.01 80);
-  --landing-muted: oklch(0.72 0.03 60);
-  --landing-border: oklch(1 0 0 / 0.1);
-  --landing-card: oklch(1 0 0 / 0.05);
-  /* On-dark-safe variants of --terracotta/--gold for TEXT use specifically.
-     The base tokens (oklch L 0.545 / 0.593) render ~3.65:1 / ~4.66:1 against
-     --landing-bg -- the terracotta figure fails WCAG AA (4.5:1) for normal
-     text outright, and gold clears it with no real margin. Lightened here
-     (same hue, similar chroma) the way --landing-muted already does at
-     L 0.72 (~7.8:1 measured) -- same fix, applied to the accent hues. Only
-     for text; the base --terracotta/--gold stay unchanged for gradients and
-     the focus ring, where the lower non-text contrast threshold (3:1) is fine. */
-  --landing-accent-text: oklch(0.74 0.15 38.5);
-  --landing-accent-text-gold: oklch(0.8 0.11 68);
+  --landing-muted: oklch(0.85 0.03 60);
+  --landing-border: oklch(0.97 0.01 80 / 0.18);
+  --landing-card: oklch(0.97 0.01 80 / 0.03);
+  /* Light-on-medium-bg-safe variants of --terracotta/--gold for TEXT use,
+     re-verified against the actual glass-card composite (not just flat
+     --landing-bg, since most of this text sits on the tinted card):
+     4.71:1 / 5.24:1 at the final --landing-card opacity above. */
+  --landing-accent-text: oklch(0.9 0.13 38.5);
+  --landing-accent-text-gold: oklch(0.9 0.11 68);
 }
 
 /* No :focus-visible rule existed anywhere in this project -- keyboard users
-   fell back to the browser default outline, easy to lose against the
-   landing page's near-black background. One on-brand ring, applied broadly
-   rather than per-component. */
-.landing a:focus-visible,
-.landing button:focus-visible {
+   fell back to the browser default outline, easy to lose against a
+   near-black background. One on-brand ring, applied app-wide now that the
+   whole app (not just the landing page) uses the dark theme. */
+a:focus-visible,
+button:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
   border-radius: inherit;
@@ -109,6 +187,13 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+}
+
+/* Every light card (Panel, Shell's plain title, loading placeholders) needs
+   the same "floating on a colored canvas" drop shadow -- one utility
+   instead of repeating the same arbitrary shadow value everywhere. */
+@utility card-shadow {
+  box-shadow: 0 8px 24px -12px oklch(0.19 0.03 40 / 0.35);
 }
 
 @utility label-caps {
@@ -142,10 +227,120 @@
   mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
 }
 
+/* Top nav's link strip overflows and requires horizontal scroll on narrow
+   viewports (measured: 438px of pills in a 198px window at 375px) with no
+   cue that Schedule/Projections sit off-screen -- reuses the same fade mask
+   built for the landing ticker so the edge signals "more content" instead
+   of clipping abruptly. */
+.nav-scroll-mask {
+  mask-image: linear-gradient(90deg, transparent, black 12px, black calc(100% - 12px), transparent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
     animation: none;
   }
+}
+
+/* WatchBadge's popover: starts from a visible (not zero) scale + fades in,
+   anchored to its own top-left corner since it's positioned relative to the
+   badge that triggered it, not centered like a modal. */
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[popover-in_140ms_ease-out\] {
+    animation: none;
+  }
+}
+
+/* TrackCircuit's lap marker: continuously travels the outer lane of the
+   hero's background track graphic via `offset-path` (set inline per-instance
+   in track-circuit.tsx) + this `offset-distance` keyframe. `offset-rotate: 0`
+   keeps the dot upright rather than banking into the curves -- it reads as a
+   tracked position/ping, not a vehicle. */
+@keyframes track-circuit-run {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+.track-circuit-marker {
+  offset-rotate: 0deg;
+  animation: track-circuit-run 14s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track-circuit-marker {
+    animation: none;
+    offset-distance: 0%;
+  }
+}
+
+/* Shared list-row entrance: fades/lifts each row in on mount, staggered via
+   each row's own inline `--stagger-i` custom property (see `.stagger-item`
+   usages -- discipline-table rows, dashboard's top winners, projections'
+   contenders/confidence lists). Short duration and short per-item delay
+   per the project's motion guidance (keep UI animation under ~300ms per
+   element, 30-80ms between items, ease-out since these are entering). */
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-item {
+  animation: stagger-in 320ms cubic-bezier(0.23, 1, 0.32, 1) backwards;
+  animation-delay: calc(var(--stagger-i, 0) * 40ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger-item {
+    animation: none;
+  }
+}
+
+/* Ambient depth layer for the app shell (not the landing page, which
+   already has the track-surface hero + card system doing this job): fixed,
+   pointer-events-none, applies to the whole viewport once per page rather
+   than per-scrolling-element -- per the project's performance guidance,
+   grain/glow effects belong on a fixed layer, never something that repaints
+   on scroll. Dialed back for the "in-between" pass: --background is now
+   itself a saturated, visible terracotta canvas (not a near-black surface
+   needing help to not look flat), so the same glow opacities that used to
+   be "just enough color" now read as muddy patches on top of an
+   already-colorful base. Kept a much subtler pair of glows for gentle
+   depth variation, and eased the grain back slightly. */
+@utility ambient-glow {
+  background-image:
+    radial-gradient(ellipse 1100px 550px at 20% -10%, oklch(0.97 0.01 80 / 0.07), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 100% 10%, oklch(0.19 0.03 40 / 0.08), transparent 55%);
+}
+
+/* Bumped up again per the user ("the dashboard background feels stale/
+   bland... a little grain, like the track's breaky rainy feel"): 0.06 was
+   too subtle to actually read as texture once it wasn't backed by the
+   glow layer anymore. Coarser grain too (baseFrequency 0.9 -> 0.7) --
+   finer noise reads as digital static, coarser reads more like a real
+   worn surface. */
+@utility ambient-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
 }
 
 /* Athletics track surface for the sidebar */

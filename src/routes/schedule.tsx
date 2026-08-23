@@ -12,7 +12,7 @@ function SchedulePage() {
   if (state.status === "loading")
     return (
       <Shell title="Schedule">
-        <div className="flex items-center justify-center h-64 text-muted-foreground">
+        <div className="card-shadow flex h-64 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground">
           Loading...
         </div>
       </Shell>
@@ -20,7 +20,9 @@ function SchedulePage() {
   if (state.status === "error")
     return (
       <Shell title="Schedule">
-        <div className="p-6 text-red-700">{state.message}</div>
+        <div className="card-shadow rounded-xl border border-border bg-card p-6 text-destructive">
+          {state.message}
+        </div>
       </Shell>
     );
   return (
@@ -42,7 +44,7 @@ function SchedulePage() {
                 className={[
                   "flex-1 text-[14px]",
                   m.status === "done" ? "text-muted-foreground" : "",
-                  m.status === "final" ? "font-semibold text-gold" : "",
+                  m.status === "final" ? "font-semibold text-gold-strong" : "",
                   m.status === "next" ? "font-semibold text-foreground" : "",
                   m.status === "upcoming" ? "text-foreground" : "",
                 ].join(" ")}

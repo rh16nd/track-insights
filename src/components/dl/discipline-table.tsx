@@ -1,6 +1,6 @@
-﻿import { useState } from "react";
+﻿import { useState, type CSSProperties } from "react";
 import type { Discipline } from "@/lib/dl-data";
-import { Panel, WatchBadge } from "./shell";
+import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
 
 export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) {
   const [active, setActive] = useState(disciplines[0]?.id ?? "");
@@ -16,11 +16,19 @@ export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) 
             key={d.id}
             type="button"
             onClick={() => setActive(d.id)}
-            className={`rounded-full border px-3.5 py-1.5 text-[12.5px] font-medium transition-colors ${
+            className={`rounded-full border px-3.5 py-1.5 text-[12.5px] font-medium transition-[transform,background-color,color,border-color] duration-150 ease-out active:scale-[0.97] ${
               d.id === active
-                ? "border-terracotta bg-terracotta text-primary-foreground"
-                : "border-border bg-card text-muted-foreground hover:text-foreground"
+                ? "border-transparent text-primary-foreground shadow-sm"
+                : "border-border bg-card text-muted-foreground hover:border-terracotta/40 hover:text-foreground"
             }`}
+            style={
+              d.id === active
+                ? {
+                    backgroundImage:
+                      "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
+                  }
+                : undefined
+            }
           >
             {d.label}
           </button>
@@ -41,15 +49,21 @@ export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) 
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {current.athletes.map((a) => (
-                <tr key={a.name}>
-                  <td className="nums py-3 text-[13px] text-muted-foreground">{a.rank}</td>
+              {current.athletes.map((a, i) => (
+                <tr
+                  key={a.name}
+                  className="stagger-item transition-colors hover:bg-secondary/40"
+                  style={{ "--stagger-i": i } as CSSProperties}
+                >
+                  <td className="py-3 pr-2">
+                    <RankBadge rank={a.rank} className="size-6" />
+                  </td>
                   <td className="py-3 text-[13.5px] font-medium text-foreground">
                     <a
                       href={a.waUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-terracotta hover:underline transition-colors"
+                      className="hover:text-terracotta-strong hover:underline transition-colors"
                     >
                       {a.name}
                     </a>
@@ -60,7 +74,7 @@ export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) 
                   <td className="nums py-3 text-[12px] text-muted-foreground">{a.nat}</td>
                   <td className="py-3">
                     {a.qualified && (
-                      <span className="label-caps rounded-sm bg-terracotta/10 px-1.5 py-1 text-terracotta">
+                      <span className="label-caps rounded-sm bg-terracotta/10 px-1.5 py-1 text-terracotta-strong">
                         Q
                       </span>
                     )}
@@ -70,12 +84,7 @@ export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) 
                   </td>
                   <td className="py-3">
                     <div className="flex items-center justify-end gap-3">
-                      <div className="h-1.5 w-28 rounded-full bg-secondary">
-                        <div
-                          className="h-1.5 rounded-full bg-terracotta"
-                          style={{ width: `${a.prob}%` }}
-                        />
-                      </div>
+                      <ProbabilityBar value={a.prob} className="w-28" trackHeight="h-1.5" />
                       <span className="nums w-9 text-right text-[12.5px] font-semibold text-foreground">
                         {a.prob}%
                       </span>

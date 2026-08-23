@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+﻿import { useState, type CSSProperties } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   CartesianGrid,
@@ -9,7 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Shell, Panel } from "@/components/dl/shell";
+import { Shell, Panel, ProbabilityBar, RankBadge } from "@/components/dl/shell";
 import { formatMark, trajectoryDomain, trajectoryFor } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 
@@ -23,7 +23,7 @@ function ProjectionsPage() {
   if (state.status === "loading")
     return (
       <Shell title="Projections">
-        <div className="flex items-center justify-center h-64 text-muted-foreground">
+        <div className="card-shadow flex h-64 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground">
           Loading...
         </div>
       </Shell>
@@ -31,12 +31,18 @@ function ProjectionsPage() {
   if (state.status === "error")
     return (
       <Shell title="Projections">
-        <div className="p-6 text-red-700">{state.message}</div>
+        <div className="card-shadow rounded-xl border border-border bg-card p-6 text-destructive">
+          {state.message}
+        </div>
       </Shell>
     );
   const allDisciplines = [...state.data.trackDisciplines, ...state.data.fieldDisciplines];
   const active =
     (activeId ? allDisciplines.find((d) => d.id === activeId) : null) ?? allDisciplines[0];
+  const pickerGroups = [
+    { label: "Track", disciplines: state.data.trackDisciplines },
+    { label: "Field", disciplines: state.data.fieldDisciplines },
+  ];
   if (!active) return null;
   const storylines = [
     {
@@ -65,21 +71,34 @@ function ProjectionsPage() {
       lastUpdated={state.data.lastUpdated}
       daysToFinal={state.data.daysToFinal}
     >
-      <div className="flex flex-wrap gap-2">
-        {allDisciplines.map((d) => (
-          <button
-            key={d.id}
-            type="button"
-            onClick={() => setActiveId(d.id)}
-            className={[
-              "rounded-full border px-3.5 py-1.5 text-[12.5px] font-medium transition-colors",
-              d.id === active.id
-                ? "border-terracotta bg-terracotta text-primary-foreground"
-                : "border-border bg-card text-muted-foreground hover:text-foreground",
-            ].join(" ")}
-          >
-            {d.label}
-          </button>
+      <div className="card-shadow space-y-2.5 rounded-xl border border-border bg-card p-4">
+        {pickerGroups.map((group) => (
+          <div key={group.label} className="flex flex-wrap items-center gap-2">
+            <span className="label-caps w-14 shrink-0 text-muted-foreground">{group.label}</span>
+            {group.disciplines.map((d) => (
+              <button
+                key={d.id}
+                type="button"
+                onClick={() => setActiveId(d.id)}
+                className={[
+                  "rounded-full border px-3.5 py-1.5 text-[12.5px] font-medium transition-[transform,background-color,color,border-color] duration-150 ease-out active:scale-[0.97]",
+                  d.id === active.id
+                    ? "border-transparent text-primary-foreground shadow-sm"
+                    : "border-border bg-card text-muted-foreground hover:border-terracotta/40 hover:text-foreground",
+                ].join(" ")}
+                style={
+                  d.id === active.id
+                    ? {
+                        backgroundImage:
+                          "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
+                      }
+                    : undefined
+                }
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
         ))}
       </div>
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -88,7 +107,7 @@ function ProjectionsPage() {
           <div className="nums text-[12px] text-muted-foreground">
             {leader?.nat} · projected {leader?.mark} · {leader?.prob}% win probability
           </div>
-          <div className="mt-0.5 text-[11px] text-muted-foreground/70">
+          <div className="mt-0.5 text-[11px] text-muted-foreground/85">
             Illustrative curve toward the model's projection — not a per-meet results log
           </div>
           <div className="mt-3 h-[300px] w-full">
@@ -118,8 +137,12 @@ function ProjectionsPage() {
                   contentStyle={{
                     borderRadius: 6,
                     border: "1px solid var(--border)",
+                    backgroundColor: "var(--popover)",
+                    color: "var(--popover-foreground)",
                     fontSize: 12,
                   }}
+                  labelStyle={{ color: "var(--popover-foreground)" }}
+                  itemStyle={{ color: "var(--popover-foreground)" }}
                 />
                 <Line
                   type="monotone"
@@ -148,22 +171,23 @@ function ProjectionsPage() {
         </Panel>
         <Panel title="Confidence by discipline">
           <ul className="space-y-3">
-            {state.data.confidence.map((c) => (
-              <li key={c.disc} className="flex items-center gap-3">
+            {state.data.confidence.map((c, i) => (
+              <li
+                key={c.disc}
+                className="stagger-item flex items-center gap-3"
+                style={{ "--stagger-i": Math.min(i, 10) } as CSSProperties}
+              >
                 <span
                   className={[
                     "w-28 shrink-0 text-[12.5px]",
-                    c.disc === active.label ? "font-semibold text-terracotta" : "text-foreground",
+                    c.disc === active.label
+                      ? "font-semibold text-terracotta-strong"
+                      : "text-foreground",
                   ].join(" ")}
                 >
                   {c.disc}
                 </span>
-                <div className="h-2 flex-1 rounded-full bg-secondary">
-                  <div
-                    className={`h-2 rounded-full ${c.disc === active.label ? "bg-gold" : "bg-terracotta"}`}
-                    style={{ width: `${c.value}%` }}
-                  />
-                </div>
+                <ProbabilityBar value={c.value} className="flex-1" trackHeight="h-2" />
                 <span className="nums w-9 text-right text-[12px] font-semibold text-muted-foreground">
                   {c.value}%
                 </span>
@@ -174,30 +198,34 @@ function ProjectionsPage() {
       </div>
       <Panel title={`Contenders — ${active.label}`} className="mt-4">
         <ul className="space-y-3">
-          {active.athletes.slice(0, 5).map((a) => (
-            <li key={a.name} className="flex items-center gap-3">
-              <span className="nums w-5 text-[12px] text-muted-foreground">{a.rank}</span>
-              <span className="w-48 shrink-0 text-[13px] font-medium text-foreground">
+          {active.athletes.slice(0, 5).map((a, i) => (
+            <li
+              key={a.name}
+              className="stagger-item flex flex-wrap items-center gap-x-3 gap-y-1.5"
+              style={{ "--stagger-i": i } as CSSProperties}
+            >
+              <RankBadge rank={a.rank} className="size-5 text-[10px]" />
+              <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-foreground sm:w-48 sm:flex-none">
                 {a.name}
               </span>
-              <span className="nums w-10 text-[12px] text-muted-foreground">{a.nat}</span>
-              <div className="h-2 flex-1 rounded-full bg-secondary">
-                <div className="h-2 rounded-full bg-terracotta" style={{ width: `${a.prob}%` }} />
+              <span className="nums w-10 shrink-0 text-[12px] text-muted-foreground">{a.nat}</span>
+              <div className="order-last flex w-full items-center gap-3 pl-8 sm:order-none sm:w-auto sm:flex-1 sm:pl-0">
+                <ProbabilityBar value={a.prob} className="min-w-[40px] flex-1" trackHeight="h-2" />
+                <span className="nums w-20 shrink-0 text-right text-[12.5px] font-medium text-foreground">
+                  {a.mark}
+                </span>
+                <span className="nums w-9 shrink-0 text-right text-[12px] font-semibold text-muted-foreground">
+                  {a.prob}%
+                </span>
               </div>
-              <span className="nums w-20 text-right text-[12.5px] font-medium text-foreground">
-                {a.mark}
-              </span>
-              <span className="nums w-9 text-right text-[12px] font-semibold text-muted-foreground">
-                {a.prob}%
-              </span>
             </li>
           ))}
         </ul>
       </Panel>
-      <div className="mt-4 grid grid-cols-1 gap-x-8 gap-y-5 rounded-xl bg-card p-5 sm:grid-cols-2">
+      <div className="card-shadow mt-4 grid grid-cols-1 gap-x-8 gap-y-5 rounded-xl border border-border bg-card p-5 sm:grid-cols-2">
         {storylines.map((s) => (
           <div key={s.label}>
-            <div className="label-caps text-terracotta">{s.label}</div>
+            <div className="label-caps text-terracotta-strong">{s.label}</div>
             <p className="mt-2.5 text-[13.5px] leading-relaxed text-muted-foreground">{s.text}</p>
           </div>
         ))}
