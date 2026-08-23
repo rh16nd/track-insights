@@ -15,6 +15,7 @@ const PAD_BOTTOM = 32;
  * already-plotted points; nothing is invented between them. */
 export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year: number | null }) {
   const [hover, setHover] = useState<number | null>(null);
+  const [tableView, setTableView] = useState(false);
 
   const first = history[0];
   if (!first) return null;
@@ -47,12 +48,61 @@ export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year:
 
   return (
     <div>
-      <div className="flex items-baseline justify-between">
+      <div className="flex items-baseline justify-between gap-3">
         <div className="label-caps text-muted-foreground">{year ?? "Last"} season form</div>
-        <div className="text-[11px] text-muted-foreground">
-          {isField ? "Higher is farther" : "Lower is faster"}
+        <div className="flex items-center gap-3">
+          <div className="text-[11px] text-muted-foreground">
+            {isField ? "Higher is farther" : "Lower is faster"}
+          </div>
+          <button
+            type="button"
+            aria-pressed={tableView}
+            onClick={() => setTableView((v) => !v)}
+            className="label-caps shrink-0 rounded-sm border border-border px-1.5 py-0.5 text-muted-foreground transition-colors hover:text-terracotta-strong"
+          >
+            {tableView ? "Chart view" : "Table view"}
+          </button>
         </div>
       </div>
+      {tableView ? (
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full text-left text-[12.5px]">
+            <caption className="sr-only">
+              {year ?? "Last"} season marks for this athlete, one row per meet
+            </caption>
+            <thead>
+              <tr className="label-caps text-muted-foreground">
+                <th scope="col" className="py-1 pr-3 font-medium">
+                  Date
+                </th>
+                <th scope="col" className="py-1 pr-3 font-medium">
+                  Mark
+                </th>
+                <th scope="col" className="py-1 pr-3 font-medium">
+                  Venue
+                </th>
+                <th scope="col" className="py-1 font-medium">
+                  Score
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map((h, i) => (
+                <tr key={i} className="border-t border-border/60">
+                  <td className="py-1.5 pr-3 text-muted-foreground">{h.date}</td>
+                  <td className={`nums py-1.5 pr-3 ${i === bestIndex ? "font-semibold text-terracotta-strong" : "text-foreground"}`}>
+                    {h.mark}
+                  </td>
+                  <td className="py-1.5 pr-3 text-foreground">{h.venue}</td>
+                  <td className="nums py-1.5 text-foreground">
+                    {h.resultsScore != null ? h.resultsScore : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
       <div className="relative mt-2">
         <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full" style={{ height: "auto" }}>
           <line
@@ -124,6 +174,7 @@ export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year:
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }
