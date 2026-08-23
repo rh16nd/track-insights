@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { Storyline } from "@/lib/dl-data";
 
 const ICONS: Record<string, string[]> = {
@@ -25,7 +26,7 @@ function StorylineIcon({ type }: { type: string }) {
       strokeWidth={1.6}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="size-[18px]"
+      className="size-[14px]"
       aria-hidden
     >
       {paths.map((d, i) => (
@@ -35,12 +36,38 @@ function StorylineIcon({ type }: { type: string }) {
   );
 }
 
+function AthleteLinks({ discKey, names }: { discKey: string; names: string[] }) {
+  return (
+    <>
+      {names.map((n, i) => (
+        <span key={n}>
+          {i > 0 && <span className="text-muted-foreground"> vs. </span>}
+          <Link
+            to="/athlete/$discKey/$name"
+            params={{ discKey, name: n }}
+            className="text-foreground underline decoration-border underline-offset-2 transition-colors hover:text-terracotta-strong hover:decoration-terracotta-strong"
+          >
+            {n}
+          </Link>
+        </span>
+      ))}
+    </>
+  );
+}
+
 /** Real, computed narrative angles for the selected discipline (see api.py's
- * build_storylines) -- a discipline with a thin real storyline crop (e.g.
- * no debutants, no close probability gap) simply renders fewer cards
- * rather than a filler one, so every card here is backed by a real,
- * checkable number, never generic copy. */
-export function StorylineCards({ storylines }: { storylines: Storyline[] }) {
+ * build_storylines). Each one's real `stat` value is the visual anchor --
+ * not an icon-plus-paragraph card, which is the generic template a real
+ * number should never hide behind. The first (strongest) storyline gets a
+ * featured treatment; the rest read as a plain divided list, not a grid of
+ * same-size boxes -- rhythm comes from scale and spacing, not a border. */
+export function StorylineCards({
+  storylines,
+  discKey,
+}: {
+  storylines: Storyline[];
+  discKey: string;
+}) {
   if (storylines.length === 0) {
     return (
       <div className="text-[12.5px] text-muted-foreground">
@@ -49,21 +76,55 @@ export function StorylineCards({ storylines }: { storylines: Storyline[] }) {
       </div>
     );
   }
+  const [featured, ...rest] = storylines;
+  if (!featured) return null;
+
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-      {storylines.map((s, i) => (
-        <div
-          key={i}
-          className="stagger-item rounded-lg border border-border bg-secondary/30 p-3.5"
-          style={{ "--stagger-i": i } as React.CSSProperties}
-        >
-          <div className="flex items-center gap-2 text-terracotta-strong">
-            <StorylineIcon type={s.type} />
-            <span className="label-caps text-foreground">{s.title}</span>
+    <div>
+      <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 border-b border-border pb-5">
+        <span className="nums shrink-0 text-[40px] font-semibold leading-none text-terracotta-strong sm:text-[48px]">
+          {featured.stat}
+        </span>
+        <div className="min-w-[220px] flex-1">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <StorylineIcon type={featured.type} />
+            <span className="label-caps">{featured.title}</span>
           </div>
-          <p className="mt-2 text-[12.5px] leading-relaxed text-muted-foreground">{s.text}</p>
+          <p className="mt-1 max-w-lg text-[13.5px] leading-relaxed text-foreground">
+            <AthleteLinks discKey={discKey} names={featured.athletes} />
+            {" — "}
+            {featured.text}
+          </p>
         </div>
-      ))}
+      </div>
+
+      {rest.length > 0 && (
+        <ul className="divide-y divide-border">
+          {rest.map((s, i) => (
+            <li
+              key={i}
+              className="stagger-item flex items-center gap-4 py-3.5"
+              style={{ "--stagger-i": i + 1 } as React.CSSProperties}
+            >
+              <span className="nums w-20 shrink-0 text-[19px] font-semibold text-foreground">
+                {s.stat}
+              </span>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                  <StorylineIcon type={s.type} />
+                  <span className="label-caps">{s.title}</span>
+                </div>
+                <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
+                  <span className="text-foreground">
+                    <AthleteLinks discKey={discKey} names={s.athletes} />
+                  </span>{" "}
+                  — {s.text}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

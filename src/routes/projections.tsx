@@ -1,8 +1,10 @@
-import { useState, type CSSProperties } from "react";
+import { type CSSProperties } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Shell, Panel, ProbabilityBar, RankBadge } from "@/components/dl/shell";
+import { RadialMeter } from "@/components/dl/radial-meter";
 import { TrajectoryOverlayChart } from "@/components/dl/trajectory-overlay-chart";
 import { StorylineCards } from "@/components/dl/storyline-cards";
+import type { Discipline } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useProjectionsDetail } from "@/hooks/useProjectionsDetail";
 
@@ -12,6 +14,73 @@ export const Route = createFileRoute("/projections")({
   }),
   component: ProjectionsPage,
 });
+
+/** Real hero moment for the selected discipline -- the page previously had
+ * no hero at all (unlike Dashboard's track-surface banner), which is
+ * exactly why it read as flat next to the rest of the app: reuses the
+ * system's own strongest existing device (track-surface texture + dark
+ * overlay + RadialMeter, verbatim what Dashboard/the athlete profile page
+ * already do) rather than inventing a new visual language, per an explicit
+ * user-supplied reference. Every number here is real and already loaded in
+ * the bulk predictions payload -- no extra fetch, so the hero never waits
+ * on the lazy per-discipline detail request below it. */
+function ProjectionsHero({ active, daysToFinal }: { active: Discipline; daysToFinal: number }) {
+  const leader = active.athletes[0];
+  return (
+    <div className="track-surface relative overflow-hidden rounded-2xl">
+      <div className="absolute inset-0 bg-background/85" />
+      <div className="relative flex flex-wrap items-center justify-between gap-6 px-6 pb-6 pt-7 sm:px-8 sm:pt-8">
+        <div className="min-w-[220px]">
+          <h1
+            className="text-[24px] font-semibold tracking-tight text-white sm:text-[28px]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {active.label}
+          </h1>
+          <p className="mt-1.5 text-[13.5px] text-white/75">Model projection for Brussels</p>
+          {leader && (
+            <div className="mt-6">
+              <div className="label-caps text-terracotta-light">Projected leader</div>
+              <Link
+                to="/athlete/$discKey/$name"
+                params={{ discKey: active.id, name: leader.name }}
+                className="mt-1 block text-[19px] font-semibold text-white transition-colors hover:text-gold-light"
+              >
+                {leader.name}
+              </Link>
+              <div className="nums text-[13px] text-white/75">
+                {leader.nat} · {leader.mark}
+              </div>
+            </div>
+          )}
+          <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-6">
+            <div>
+              <div className="label-caps text-gold-light">Qualified</div>
+              <div
+                className="nums mt-1.5 text-[24px] font-semibold leading-none text-white"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {active.athletes.length}
+              </div>
+              <div className="nums mt-1 text-[11.5px] text-white/70">real DL standings field</div>
+            </div>
+            <div>
+              <div className="label-caps text-gold-light">Days to Final</div>
+              <div
+                className="nums mt-1.5 text-[24px] font-semibold leading-none text-white"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {daysToFinal}
+              </div>
+              <div className="nums mt-1 text-[11.5px] text-white/70">Brussels, 04 Sep</div>
+            </div>
+          </div>
+        </div>
+        {leader && <RadialMeter value={leader.prob} label="Win probability" dark size={132} strokeWidth={11} />}
+      </div>
+    </div>
+  );
+}
 
 function ProjectionsPage() {
   const state = usePredictions();
@@ -46,6 +115,7 @@ function ProjectionsPage() {
       title="Projections"
       lastUpdated={state.data.lastUpdated}
       daysToFinal={state.data.daysToFinal}
+      hero={<ProjectionsHero active={active} daysToFinal={state.data.daysToFinal} />}
     >
       <div className="card-shadow space-y-2.5 rounded-xl border border-border bg-card p-4">
         {pickerGroups.map((group) => (
@@ -173,7 +243,7 @@ function DisciplineDetail({ discKey, discLabel }: { discKey: string; discLabel: 
       </Panel>
       <Panel title={`Storylines — ${discLabel}`} className="mt-4">
         {detail.status === "ok" ? (
-          <StorylineCards storylines={detail.data.storylines} />
+          <StorylineCards storylines={detail.data.storylines} discKey={discKey} />
         ) : (
           <div className="h-16" />
         )}

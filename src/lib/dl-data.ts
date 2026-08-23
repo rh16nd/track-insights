@@ -121,7 +121,9 @@ export type Trajectory = {
 export type Storyline = {
   type: string;
   title: string;
+  stat: string;
   text: string;
+  athletes: string[];
 };
 
 export type ProjectionsDetail = {
