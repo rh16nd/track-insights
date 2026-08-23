@@ -33,6 +33,7 @@
   --color-ink: var(--foreground);
   --color-sand: var(--sand);
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
@@ -62,6 +63,42 @@
   --sand: oklch(0.941 0.014 76);
 }
 
+/* Scoped to the "/" landing page only -- a deliberately dark, bold front door
+   (structure inspired by personaai.live: dark bg, gradient CTA, glass-bordered
+   cards, bold stat callouts) while staying on-brand by reusing --terracotta/
+   --gold instead of introducing a new accent color. Kept as page-scoped tokens
+   rather than swapping :root's theme, since every other route stays the
+   existing light "track" look. */
+.landing {
+  --landing-bg: oklch(0.16 0.025 40);
+  --landing-bg-2: oklch(0.12 0.02 40);
+  --landing-fg: oklch(0.97 0.01 80);
+  --landing-muted: oklch(0.72 0.03 60);
+  --landing-border: oklch(1 0 0 / 0.1);
+  --landing-card: oklch(1 0 0 / 0.05);
+  /* On-dark-safe variants of --terracotta/--gold for TEXT use specifically.
+     The base tokens (oklch L 0.545 / 0.593) render ~3.65:1 / ~4.66:1 against
+     --landing-bg -- the terracotta figure fails WCAG AA (4.5:1) for normal
+     text outright, and gold clears it with no real margin. Lightened here
+     (same hue, similar chroma) the way --landing-muted already does at
+     L 0.72 (~7.8:1 measured) -- same fix, applied to the accent hues. Only
+     for text; the base --terracotta/--gold stay unchanged for gradients and
+     the focus ring, where the lower non-text contrast threshold (3:1) is fine. */
+  --landing-accent-text: oklch(0.74 0.15 38.5);
+  --landing-accent-text-gold: oklch(0.8 0.11 68);
+}
+
+/* No :focus-visible rule existed anywhere in this project -- keyboard users
+   fell back to the browser default outline, easy to lose against the
+   landing page's near-black background. One on-brand ring, applied broadly
+   rather than per-component. */
+.landing a:focus-visible,
+.landing button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: inherit;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -83,6 +120,32 @@
 
 @utility nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* Landing page's live-confidence ticker: seamless infinite scroll -- the
+   track's content is duplicated once in index.tsx so translating exactly
+   -50% loops cleanly. Static (no motion) for users who ask for it. */
+@keyframes landing-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: landing-marquee 32s linear infinite;
+}
+
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
 }
 
 /* Athletics track surface for the sidebar */

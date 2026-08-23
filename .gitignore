@@ -6,3 +6,7 @@ dist/
 .env
 .env.local
 .claude/
+.agents/
+.codex/
+.impeccable/
+skills-lock.json

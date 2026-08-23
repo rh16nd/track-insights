@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as FieldRouteImport } from './routes/field'
 import { Route as ProjectionsRouteImport } from './routes/projections'
 import { Route as ScheduleRouteImport } from './routes/schedule'
@@ -18,6 +19,11 @@ import { Route as TrackRouteImport } from './routes/track'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FieldRoute = FieldRouteImport.update({
@@ -43,6 +49,7 @@ const TrackRoute = TrackRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/field': typeof FieldRoute
   '/projections': typeof ProjectionsRoute
   '/schedule': typeof ScheduleRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/field': typeof FieldRoute
   '/projections': typeof ProjectionsRoute
   '/schedule': typeof ScheduleRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/field': typeof FieldRoute
   '/projections': typeof ProjectionsRoute
   '/schedule': typeof ScheduleRoute
@@ -65,14 +74,23 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/field' | '/projections' | '/schedule' | '/track'
+  fullPaths:
+    '/' | '/dashboard' | '/field' | '/projections' | '/schedule' | '/track'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/field' | '/projections' | '/schedule' | '/track'
-  id: '__root__' | '/' | '/field' | '/projections' | '/schedule' | '/track'
+  to: '/' | '/dashboard' | '/field' | '/projections' | '/schedule' | '/track'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/field'
+    | '/projections'
+    | '/schedule'
+    | '/track'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRoute: typeof DashboardRoute
   FieldRoute: typeof FieldRoute
   ProjectionsRoute: typeof ProjectionsRoute
   ScheduleRoute: typeof ScheduleRoute
@@ -86,6 +104,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/field': {
@@ -121,6 +146,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRoute,
   FieldRoute: FieldRoute,
   ProjectionsRoute: ProjectionsRoute,
   ScheduleRoute: ScheduleRoute,

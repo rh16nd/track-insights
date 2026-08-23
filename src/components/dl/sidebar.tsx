@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
+import { PodiumCallMark } from "./logo";
 
 const nav = [
   {
     section: "Overview",
     items: [
-      { to: "/", label: "Dashboard" },
+      { to: "/dashboard", label: "Dashboard" },
       { to: "/schedule", label: "Schedule" },
     ],
   },
@@ -36,10 +37,9 @@ export function Sidebar() {
       <div className="relative flex h-full flex-col px-4 pb-4 pt-11">
         <div>
           <div className="label-caps text-white/50">Wanda Diamond League</div>
-          <div className="mt-1 text-[17px] font-semibold leading-tight text-white">
-            2026 DL
-            <br />
-            Predictor
+          <div className="mt-1.5 flex items-center gap-2">
+            <PodiumCallMark className="size-6" variant="light" />
+            <span className="text-[17px] font-semibold leading-tight text-white">PodiumCall</span>
           </div>
         </div>
 
@@ -52,7 +52,7 @@ export function Sidebar() {
                   <Link
                     key={item.to}
                     to={item.to}
-                    activeOptions={{ exact: item.to === "/" }}
+                    activeOptions={{ exact: item.to === "/dashboard" }}
                     className="block rounded-sm px-2 py-[7px] text-[13px] text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                     activeProps={{
                       className: "bg-white/15 !text-white font-medium",
