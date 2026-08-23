@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
 import {
   Shell,
@@ -232,35 +232,36 @@ function Dashboard() {
             {data.topWinners.map((w, i) => (
               <li
                 key={w.name}
-                className="stagger-item flex flex-wrap items-center gap-x-3 gap-y-1.5 py-3 first:pt-0 last:pb-0 transition-colors hover:bg-secondary/30"
+                className="stagger-item py-3 first:pt-0 last:pb-0"
                 style={{ "--stagger-i": i } as CSSProperties}
               >
-                <RankBadge rank={w.rank} />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={w.waUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="truncate text-[13.5px] font-medium text-foreground hover:text-terracotta-strong hover:underline transition-colors"
-                    >
-                      {w.name}
-                    </a>
-                    {w.injuryWatch && <WatchBadge reason={w.injuryReason} url={w.injuryUrl} />}
-                  </div>
-                  <div className="text-[11.5px] text-muted-foreground">{w.disc}</div>
-                </div>
-                <div className="flex w-full items-center justify-between gap-3 pl-9 sm:w-auto sm:justify-end sm:pl-0">
-                  <div className="nums text-[13px] font-medium text-foreground sm:w-20 sm:text-right">
-                    {w.mark}
-                  </div>
-                  <div className="w-24">
-                    <div className="nums text-right text-[12px] font-semibold text-terracotta-strong">
-                      {w.prob}%
+                <Link
+                  to="/athlete/$discKey/$name"
+                  params={{ discKey: w.discKey, name: w.name }}
+                  className="flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 rounded-md transition-colors hover:bg-secondary/30"
+                >
+                  <RankBadge rank={w.rank} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="truncate text-[13.5px] font-medium text-foreground">
+                        {w.name}
+                      </span>
+                      {w.injuryWatch && <WatchBadge reason={w.injuryReason} url={w.injuryUrl} />}
                     </div>
-                    <ProbabilityBar value={w.prob} className="mt-1.5" trackHeight="h-1.5" />
+                    <div className="text-[11.5px] text-muted-foreground">{w.disc}</div>
                   </div>
-                </div>
+                  <div className="flex w-full items-center justify-between gap-3 pl-9 sm:w-auto sm:justify-end sm:pl-0">
+                    <div className="nums text-[13px] font-medium text-foreground sm:w-20 sm:text-right">
+                      {w.mark}
+                    </div>
+                    <div className="w-24">
+                      <div className="nums text-right text-[12px] font-semibold text-terracotta-strong">
+                        {w.prob}%
+                      </div>
+                      <ProbabilityBar value={w.prob} className="mt-1.5" trackHeight="h-1.5" />
+                    </div>
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>

@@ -31,6 +31,58 @@ export type RemovedAthlete = {
   url: string | null;
 };
 
+export type MeetMark = {
+  date: string;
+  mark: string;
+  markValue: number | null;
+  venue: string;
+  resultsScore: number | null;
+};
+
+export type H2hMatchup = {
+  opponent: string;
+  wins: number;
+  losses: number;
+  meetings: number;
+};
+
+export type TopWinner = {
+  rank: number;
+  name: string;
+  disc: string;
+  discKey: string;
+  mark: string;
+  prob: number;
+  waUrl: string;
+  injuryWatch: boolean;
+  injuryReason: string | null;
+  injuryUrl: string | null;
+};
+
+// Full detail for one athlete's profile page, from /api/athlete/<discKey>/<name>.
+export type AthleteProfile = {
+  name: string;
+  discKey: string;
+  disc: string;
+  nat: string;
+  rank: number;
+  mark: string;
+  careerBest: string | null;
+  pbGap: number | null;
+  age: number | null;
+  meetsCount: number | null;
+  daysSinceLast: number | null;
+  prob: number;
+  waUrl: string;
+  photoUrl: string | null;
+  injuryWatch: boolean;
+  injuryReason: string | null;
+  injuryUrl: string | null;
+  history: MeetMark[];
+  historyYear: number | null;
+  h2h: H2hMatchup[];
+};
+
 export type ApiData = {
   lastUpdated: string;
   daysToFinal: number;
@@ -39,17 +91,7 @@ export type ApiData = {
   trackDisciplines: Discipline[];
   fieldDisciplines: Discipline[];
   removedAthletes: RemovedAthlete[];
-  topWinners: {
-    rank: number;
-    name: string;
-    disc: string;
-    mark: string;
-    prob: number;
-    waUrl: string;
-    injuryWatch: boolean;
-    injuryReason: string | null;
-    injuryUrl: string | null;
-  }[];
+  topWinners: TopWinner[];
   confidence: { disc: string; value: number }[];
 };
 

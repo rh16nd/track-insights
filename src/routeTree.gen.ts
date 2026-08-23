@@ -15,6 +15,7 @@ import { Route as FieldRouteImport } from './routes/field'
 import { Route as ProjectionsRouteImport } from './routes/projections'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as TrackRouteImport } from './routes/track'
+import { Route as AthleteDiscKeyNameRouteImport } from './routes/athlete.$discKey.$name'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const TrackRoute = TrackRouteImport.update({
   path: '/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AthleteDiscKeyNameRoute = AthleteDiscKeyNameRouteImport.update({
+  id: '/athlete/$discKey/$name',
+  path: '/athlete/$discKey/$name',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/projections': typeof ProjectionsRoute
   '/schedule': typeof ScheduleRoute
   '/track': typeof TrackRoute
+  '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/projections': typeof ProjectionsRoute
   '/schedule': typeof ScheduleRoute
   '/track': typeof TrackRoute
+  '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,13 +79,27 @@ export interface FileRoutesById {
   '/projections': typeof ProjectionsRoute
   '/schedule': typeof ScheduleRoute
   '/track': typeof TrackRoute
+  '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/dashboard' | '/field' | '/projections' | '/schedule' | '/track'
+    | '/'
+    | '/dashboard'
+    | '/field'
+    | '/projections'
+    | '/schedule'
+    | '/track'
+    | '/athlete/$discKey/$name'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/field' | '/projections' | '/schedule' | '/track'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/field'
+    | '/projections'
+    | '/schedule'
+    | '/track'
+    | '/athlete/$discKey/$name'
   id:
     | '__root__'
     | '/'
@@ -86,6 +108,7 @@ export interface FileRouteTypes {
     | '/projections'
     | '/schedule'
     | '/track'
+    | '/athlete/$discKey/$name'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -95,6 +118,7 @@ export interface RootRouteChildren {
   ProjectionsRoute: typeof ProjectionsRoute
   ScheduleRoute: typeof ScheduleRoute
   TrackRoute: typeof TrackRoute
+  AthleteDiscKeyNameRoute: typeof AthleteDiscKeyNameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -141,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/athlete/$discKey/$name': {
+      id: '/athlete/$discKey/$name'
+      path: '/athlete/$discKey/$name'
+      fullPath: '/athlete/$discKey/$name'
+      preLoaderRoute: typeof AthleteDiscKeyNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -151,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectionsRoute: ProjectionsRoute,
   ScheduleRoute: ScheduleRoute,
   TrackRoute: TrackRoute,
+  AthleteDiscKeyNameRoute: AthleteDiscKeyNameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

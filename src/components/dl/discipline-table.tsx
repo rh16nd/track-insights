@@ -1,4 +1,5 @@
 ﻿import { useState, type CSSProperties } from "react";
+import { Link } from "@tanstack/react-router";
 import type { Discipline } from "@/lib/dl-data";
 import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
 
@@ -59,14 +60,13 @@ export function DisciplineTable({ disciplines }: { disciplines: Discipline[] }) 
                     <RankBadge rank={a.rank} className="size-6" />
                   </td>
                   <td className="py-3 text-[13.5px] font-medium text-foreground">
-                    <a
-                      href={a.waUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link
+                      to="/athlete/$discKey/$name"
+                      params={{ discKey: current.id, name: a.name }}
                       className="hover:text-terracotta-strong hover:underline transition-colors"
                     >
                       {a.name}
-                    </a>
+                    </Link>
                     {a.injuryWatch && (
                       <WatchBadge reason={a.injuryReason} url={a.injuryUrl} className="ml-2" />
                     )}
