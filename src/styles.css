@@ -177,6 +177,48 @@ button:focus-visible {
   border-radius: inherit;
 }
 
+/* Themed text selection -- otherwise falls back to the browser's default
+   blue, which clashes with the terracotta/gold palette. */
+::selection {
+  background-color: var(--terracotta);
+  color: var(--primary-foreground);
+}
+
+/* Themed scrollbar -- otherwise the OS/browser default thumb (usually
+   neutral gray) is the one surface in the app that never picked up the
+   terracotta/gold palette. Firefox via scrollbar-color, WebKit/Chromium
+   via the pseudo-elements; both read off the same tokens. */
+html {
+  scrollbar-color: var(--terracotta) var(--background);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--terracotta);
+  border-radius: 999px;
+  border: 3px solid var(--background);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--gold-strong);
+}
+
+/* Smooth in-page jumps (e.g. the hero's "How it works" anchor) -- respects
+   prefers-reduced-motion since scroll-behavior is itself a motion effect. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -313,6 +355,30 @@ button:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .stagger-item {
     animation: none;
+  }
+}
+
+/* Landing page's "raw signal -> ranked prediction" demo: the probability
+   fill grows in once the section scrolls into view (see useInView.ts),
+   demonstrating the transformation rather than just stating it. `scaleX`
+   from a `transform-origin: left` base instead of animating `width` --
+   width triggers layout on every frame, transform doesn't. Explanatory/
+   marketing motion, not a UI control, so it's allowed the longer duration
+   the project's animation guidance reserves for that case. */
+.prob-fill {
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 700ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.prob-fill.prob-fill-in {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prob-fill {
+    transition: none;
+    transform: scaleX(1);
   }
 }
 

@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import type { CSSProperties } from "react";
 import { usePredictions } from "@/hooks/usePredictions";
+import { useInView } from "@/hooks/useInView";
 import { PodiumCallMark } from "@/components/dl/logo";
 import { RankBadge } from "@/components/dl/shell";
 import { TrackCircuit } from "@/components/dl/track-circuit";
@@ -128,9 +130,22 @@ function Landing() {
   const preview = state.status === "ok" ? state.data.topWinners.slice(0, 5) : [];
   const topPick = preview[0];
   const ticker = state.status === "ok" ? state.data.confidence.slice(0, 10) : [];
+  const demoInView = useInView<HTMLElement>();
 
   return (
-    <div className="landing min-h-screen bg-[var(--landing-bg)] text-[var(--landing-fg)]">
+    <div className="landing relative min-h-screen bg-[var(--landing-bg)] text-[var(--landing-fg)]">
+      {/* Off-white ambient glow -- the hero has the track-surface texture to
+          break up the flat terracotta, but everything below it (feature
+          grid, steps, preview) sat directly on solid canvas color with no
+          variation. Same fixed, once-per-page layer the rest of the app
+          already uses (see shell.tsx), so the landing page picks up a touch
+          of the same off-white lift instead of reading flatter than the
+          app it leads into. */}
+      <div
+        className="ambient-glow ambient-grain pointer-events-none fixed inset-0 z-0"
+        aria-hidden="true"
+      />
+      <div className="relative z-10">
       {/* ── Nav ───────────────────────────────────────────────────── */}
       <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between border-b border-[var(--landing-border)] bg-[var(--landing-bg)]/80 px-6 backdrop-blur-md sm:px-10">
         <div className="flex items-center gap-2.5">
@@ -211,11 +226,28 @@ function Landing() {
             Live from the model
           </div>
           {ticker.length > 0 ? (
-            <div className="marquee-mask overflow-hidden">
+            <div
+              className="marquee-mask overflow-hidden"
+              role="list"
+              aria-label="Live model confidence by discipline"
+            >
               <div className="marquee-track flex w-max gap-3">
-                {[...ticker, ...ticker].map((t, i) => (
+                {ticker.map((t) => (
                   <span
-                    key={`${t.disc}-${i}`}
+                    key={t.disc}
+                    role="listitem"
+                    className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
+                  >
+                    <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
+                      {t.value}%
+                    </span>
+                    {t.disc}
+                  </span>
+                ))}
+                {ticker.map((t) => (
+                  <span
+                    key={`${t.disc}-dup`}
+                    aria-hidden="true"
                     className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
                   >
                     <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
@@ -235,23 +267,30 @@ function Landing() {
       </section>
 
       {/* ── Raw signal → ranked prediction demo ──────────────────── */}
-      <section className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
-        <div className="label-caps text-[var(--landing-muted)]">See the transformation</div>
+      <section
+        ref={demoInView.ref}
+        className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28"
+      >
         <h2
-          className="mt-3 max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
+          className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
           style={{ fontFamily: "var(--font-display)" }}
         >
           Real results in. A ranked prediction out.
         </h2>
 
         <div className="mt-10 grid grid-cols-1 items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
-          <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] p-6">
+          <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6">
             <div className="label-caps text-[var(--landing-muted)]">Raw signal</div>
             <ul className="mt-4 space-y-3">
-              {FEED.map((m) => (
+              {FEED.map((m, i) => (
                 <li
                   key={m}
-                  className="flex items-center gap-2.5 text-[13.5px] text-[var(--landing-fg)]"
+                  className={
+                    demoInView.inView
+                      ? "stagger-item flex items-center gap-2.5 text-[13.5px] text-[var(--landing-fg)]"
+                      : "flex items-center gap-2.5 text-[13.5px] text-[var(--landing-fg)] opacity-0"
+                  }
+                  style={demoInView.inView ? ({ "--stagger-i": i } as CSSProperties) : undefined}
                 >
                   <span className="size-1.5 shrink-0 rounded-full bg-terracotta" />
                   <span className="truncate">{m}</span>
@@ -271,7 +310,7 @@ function Landing() {
           </div>
 
           {topPick ? (
-            <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] p-6">
+            <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6">
               <div className="label-caps text-[var(--landing-muted)]">Ranked prediction</div>
               <div className="mt-4 flex items-center gap-3">
                 <RankBadge rank={topPick.rank} className="size-8 text-[13px]" />
@@ -290,7 +329,7 @@ function Landing() {
               </div>
               <div className="mt-2 h-1.5 w-full rounded-full bg-[var(--landing-border)]">
                 <div
-                  className="h-1.5 rounded-full"
+                  className={`prob-fill h-1.5 rounded-full${demoInView.inView ? " prob-fill-in" : ""}`}
                   style={{
                     width: `${topPick.prob}%`,
                     backgroundImage:
@@ -300,7 +339,7 @@ function Landing() {
               </div>
             </div>
           ) : (
-            <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] p-6 text-[13.5px] text-[var(--landing-muted)]">
+            <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6 text-[13.5px] text-[var(--landing-muted)]">
               Ranked predictions load once the live model is running.
             </div>
           )}
@@ -309,9 +348,8 @@ function Landing() {
 
       {/* ── Feature grid ──────────────────────────────────────────── */}
       <section className="mx-auto max-w-5xl px-6 pb-20 sm:px-10 sm:pb-28">
-        <div className="label-caps text-[var(--landing-muted)]">Built for honest predictions</div>
         <h2
-          className="mt-3 max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
+          className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
           style={{ fontFamily: "var(--font-display)" }}
         >
           No fabricated data, anywhere in the pipeline.
@@ -321,7 +359,7 @@ function Landing() {
           {FEATURES.map((f) => (
             <div
               key={f.title}
-              className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] p-6"
+              className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6"
             >
               <span
                 className="inline-flex size-10 items-center justify-center rounded-full text-[var(--landing-bg)]"
@@ -343,9 +381,8 @@ function Landing() {
 
       {/* ── How it works ─────────────────────────────────────────── */}
       <section id="how-it-works" className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
-        <div className="label-caps text-[var(--landing-muted)]">How it works</div>
         <h2
-          className="mt-3 max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
+          className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
           style={{ fontFamily: "var(--font-display)" }}
         >
           Real data in. Honest predictions out.
@@ -355,7 +392,7 @@ function Landing() {
           {STEPS.map((step) => (
             <div
               key={step.n}
-              className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] p-6"
+              className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6"
             >
               <span
                 className="nums inline-flex size-9 items-center justify-center rounded-full text-[13px] font-semibold text-[var(--landing-fg)]"
@@ -379,15 +416,14 @@ function Landing() {
 
       {/* ── Live app preview (browser-chrome framed) ─────────────── */}
       <section className="mx-auto max-w-5xl px-6 pb-24 sm:px-10 sm:pb-32">
-        <div className="label-caps text-[var(--landing-muted)]">Straight from the dashboard</div>
         <h2
-          className="mt-3 max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
+          className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
           style={{ fontFamily: "var(--font-display)" }}
         >
           A live look at the model's current picks.
         </h2>
 
-        <div className="mt-10 overflow-hidden rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)]">
+        <div className="mt-10 overflow-hidden rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow">
           <div className="flex items-center gap-2 border-b border-[var(--landing-border)] px-4 py-3">
             <span aria-hidden="true" className="flex gap-1.5">
               <span className="size-2.5 rounded-full bg-[var(--landing-border)]" />
@@ -468,6 +504,7 @@ function Landing() {
           </Link>
         </div>
       </footer>
+      </div>
     </div>
   );
 }
