@@ -40,7 +40,7 @@ export type ApiData = {
   fieldDisciplines: Discipline[];
   removedAthletes: RemovedAthlete[];
   topWinners: {
-    medal: string;
+    rank: number;
     name: string;
     disc: string;
     mark: string;

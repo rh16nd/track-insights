@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { usePredictions } from "@/hooks/usePredictions";
 import { PodiumCallMark } from "@/components/dl/logo";
+import { RankBadge } from "@/components/dl/shell";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -270,7 +271,7 @@ function Landing() {
             <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] p-6">
               <div className="label-caps text-[var(--landing-muted)]">Ranked prediction</div>
               <div className="mt-4 flex items-center gap-3">
-                <span className="text-2xl">{topPick.medal}</span>
+                <RankBadge rank={topPick.rank} className="size-8 text-[13px]" />
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-[15px] font-semibold text-[var(--landing-fg)]">
                     {topPick.name}
@@ -425,7 +426,7 @@ function Landing() {
               )}
               {preview.map((w) => (
                 <div key={w.name} className="flex items-center gap-4 py-3.5 first:pt-0 last:pb-0">
-                  <span className="text-base">{w.medal}</span>
+                  <RankBadge rank={w.rank} />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-[13.5px] font-medium text-[var(--landing-fg)]">
                       {w.name}

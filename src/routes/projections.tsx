@@ -72,7 +72,7 @@ function ProjectionsPage() {
             type="button"
             onClick={() => setActiveId(d.id)}
             className={[
-              "rounded-md border px-3 py-1.5 text-[12.5px] font-medium transition-colors",
+              "rounded-full border px-3.5 py-1.5 text-[12.5px] font-medium transition-colors",
               d.id === active.id
                 ? "border-terracotta bg-terracotta text-primary-foreground"
                 : "border-border bg-card text-muted-foreground hover:text-foreground",
@@ -82,7 +82,7 @@ function ProjectionsPage() {
           </button>
         ))}
       </div>
-      <div className="mt-4 grid grid-cols-2 gap-4">
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Panel title={`Modeled trajectory — ${active.label}`}>
           <div className="text-[14px] font-semibold text-foreground">{leader?.name}</div>
           <div className="nums text-[12px] text-muted-foreground">
@@ -194,9 +194,9 @@ function ProjectionsPage() {
           ))}
         </ul>
       </Panel>
-      <div className="mt-4 grid grid-cols-2 gap-4">
+      <div className="mt-4 grid grid-cols-1 gap-x-8 gap-y-5 rounded-xl bg-card p-5 sm:grid-cols-2">
         {storylines.map((s) => (
-          <div key={s.label} className="rounded-lg border border-border bg-card p-5">
+          <div key={s.label}>
             <div className="label-caps text-terracotta">{s.label}</div>
             <p className="mt-2.5 text-[13.5px] leading-relaxed text-muted-foreground">{s.text}</p>
           </div>

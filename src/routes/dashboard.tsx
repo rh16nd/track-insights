@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Shell, Panel, WatchBadge, dotClass, badgeClass } from "@/components/dl/shell";
+import { Shell, Panel, RankBadge, WatchBadge, dotClass, badgeClass } from "@/components/dl/shell";
 import { statusLabel } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 
@@ -56,9 +56,9 @@ function Dashboard() {
 
   return (
     <Shell title="Dashboard" lastUpdated={data.lastUpdated} daysToFinal={data.daysToFinal}>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 divide-y divide-border rounded-xl bg-card sm:grid-cols-4 sm:divide-x sm:divide-y-0">
         {stats.map((s) => (
-          <div key={s.label} className="rounded-lg border border-border bg-card p-5">
+          <div key={s.label} className="p-5">
             <div className="label-caps text-muted-foreground">{s.label}</div>
             <div className="nums mt-3 text-[32px] font-semibold leading-none tracking-tight text-foreground">
               {s.value}
@@ -98,12 +98,12 @@ function Dashboard() {
         </Panel>
       )}
 
-      <div className="mt-4 grid grid-cols-[1.35fr_1fr] gap-4">
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1.35fr_1fr]">
         <Panel title="Top predicted winners">
           <ul className="divide-y divide-border">
             {data.topWinners.map((w) => (
               <li key={w.name} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
-                <span className="text-base">{w.medal}</span>
+                <RankBadge rank={w.rank} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <a

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Sidebar } from "./sidebar";
+import { TopNav } from "./topnav";
 import type { MeetStatus } from "@/lib/dl-data";
 
 export const dotClass: Record<MeetStatus, string> = {
@@ -29,25 +29,36 @@ export function Shell({
 }) {
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar />
-      <div className="pl-[200px]">
-        <header className="fixed inset-x-0 left-[200px] top-0 z-10 flex h-[72px] items-center justify-between border-b border-border bg-background px-8">
-          <div>
-            <h1 className="text-[19px] font-semibold tracking-tight text-foreground">{title}</h1>
-            <p className="nums mt-0.5 text-[12px] text-muted-foreground">
-              {lastUpdated
-                ? `Last updated ${lastUpdated} · ${daysToFinal} days to the Brussels final`
-                : "Loading live data…"}
-            </p>
-          </div>
-          <span className="label-caps flex items-center gap-1.5 rounded-md bg-terracotta px-2.5 py-1.5 text-primary-foreground">
-            <span className="size-1.5 rounded-full bg-primary-foreground" />
-            Live season
-          </span>
-        </header>
-        <main className="px-8 pb-14 pt-[96px]">{children}</main>
-      </div>
+      <TopNav lastUpdated={lastUpdated} daysToFinal={daysToFinal} />
+      <main className="mx-auto max-w-6xl px-6 pb-14 pt-8 sm:px-8">
+        <h1 className="text-[20px] font-semibold tracking-tight text-foreground">{title}</h1>
+        <div className="mt-6">{children}</div>
+      </main>
     </div>
+  );
+}
+
+/** Replaces the old 🥇🥈🥉🏅 emoji rank markers -- same podium palette as the
+ * logo mark (gold = 1st, terracotta = 2nd, brick = 3rd), a real UI element
+ * instead of a font-dependent emoji glyph. The rank>3 tier deliberately uses
+ * a fixed neutral (not --secondary/--muted-foreground) since this component
+ * renders on both the light dashboard and the dark landing page, and those
+ * tokens carry different, theme-specific values on each. */
+export function RankBadge({ rank, className = "" }: { rank: number; className?: string }) {
+  const tier =
+    rank === 1
+      ? "bg-gold text-primary-foreground"
+      : rank === 2
+        ? "bg-terracotta text-primary-foreground"
+        : rank === 3
+          ? "bg-brick text-primary-foreground"
+          : "bg-[oklch(0.55_0_0)] text-white";
+  return (
+    <span
+      className={`nums flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${tier} ${className}`}
+    >
+      {rank}
+    </span>
   );
 }
 
@@ -95,8 +106,8 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <section className={`rounded-lg border border-border bg-card ${className}`}>
-      <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
+    <section className={`rounded-xl bg-card ${className}`}>
+      <div className="flex items-center justify-between px-5 pt-4">
         <h2 className="label-caps text-muted-foreground">{title}</h2>
         {action}
       </div>
