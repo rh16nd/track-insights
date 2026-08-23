@@ -210,14 +210,14 @@ function AthleteProfilePage() {
               sub="vs. career best"
               icon="ruler"
             />
-            <StatBlock label="Age" value={a.age != null ? a.age.toFixed(1) : "—"} icon="calendar" />
+            <StatBlock label="Age" value={a.age != null ? String(Math.round(a.age)) : "—"} icon="calendar" />
             <StatBlock
               label="Meets this season"
               value={a.meetsCount != null ? String(a.meetsCount) : "—"}
               icon="grid"
             />
             <StatBlock
-              label="Last raced"
+              label="Last competed"
               value={a.daysSinceLast != null ? `${a.daysSinceLast}d ago` : "—"}
               icon="clock"
             />
