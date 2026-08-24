@@ -24,6 +24,13 @@ const SERIES_COLORS = [
   "oklch(0.5 0.13 155)",
 ];
 
+// Series were previously separated by hue alone, which fails for colour-blind
+// readers and in greyscale print: two of the four accents sit at a matching
+// lightness/chroma band by design, so they converge without colour. Each
+// series now also carries its own dash signature, and the same signature is
+// mirrored in the table view's legend swatch so the two views agree.
+const SERIES_DASH = ["", "7 4", "2 3", "10 3 2 3"];
+
 function parseDate(d: string): number {
   // "23 AUG 2026" -> real timestamp, so multiple athletes' actual meet
   // dates position correctly relative to each other on one shared timeline
@@ -108,7 +115,12 @@ export function TrajectoryOverlayChart({
       x: xFor(parseDate(h.date)),
       y: yFor(h.markValue ?? minV),
     }));
-    return { trajectory: t, color: SERIES_COLORS[i % SERIES_COLORS.length], pts };
+    return {
+      trajectory: t,
+      color: SERIES_COLORS[i % SERIES_COLORS.length],
+      dash: SERIES_DASH[i % SERIES_DASH.length],
+      pts,
+    };
   });
 
   // A handful of evenly-spaced real date ticks along the shared timeline.
@@ -245,7 +257,8 @@ export function TrajectoryOverlayChart({
                     stroke={s.color}
                     strokeWidth={2}
                     strokeLinejoin="round"
-                    strokeLinecap="round"
+                    strokeLinecap={s.dash ? "butt" : "round"}
+                    strokeDasharray={s.dash || undefined}
                   />
                   {s.pts.map((p, pi) => (
                     <circle
@@ -313,10 +326,20 @@ export function TrajectoryOverlayChart({
             params={{ discKey, name: s.trajectory.name }}
             className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground transition-colors hover:text-terracotta-strong"
           >
-            <span
-              className="inline-block size-2 rounded-full"
-              style={{ backgroundColor: s.color }}
-            />
+            {/* Swatch shows the series' dash signature, not just its hue, so
+                the legend still identifies each line without colour. */}
+            <svg width="18" height="8" viewBox="0 0 18 8" aria-hidden="true" className="shrink-0">
+              <line
+                x1="0"
+                y1="4"
+                x2="18"
+                y2="4"
+                stroke={s.color}
+                strokeWidth={2.5}
+                strokeDasharray={s.dash || undefined}
+                strokeLinecap={s.dash ? "butt" : "round"}
+              />
+            </svg>
             {s.trajectory.name}
           </Link>
         ))}

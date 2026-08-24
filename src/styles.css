@@ -211,11 +211,27 @@
    <a> nor a <button> tag, so they fell back to the unstyled native ring
    even though every other interactive element on the page got the real
    one -- caught by the impeccable critique skill's live focus-state check. */
+/* 2026-08-24: the gold ring alone measured 3.83:1 on a card but only 1.27:1
+   against the terracotta canvas -- so every focusable element sitting
+   directly on the canvas (the Track/Field/Projections discipline pills, the
+   on-canvas header links) had an effectively invisible focus indicator.
+   Because `outline-offset` puts a gap of canvas between the control and the
+   ring, the ring's adjacent colour IS the canvas, not the control.
+   Fixed with a two-tone indicator: the gold ring keeps the brand, and a dark
+   halo immediately outside it guarantees the ring is distinguishable on any
+   surface (WCAG 2.2 non-text contrast is measured against adjacent colours,
+   and gold-vs-halo clears 3:1 everywhere). */
 a:focus-visible,
 button:focus-visible,
-[role="button"]:focus-visible {
+[role="button"]:focus-visible,
+select:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
+  /* Opaque, not translucent: a translucent halo composites differently on
+     each surface (measured 2.69:1 on canvas, 1.05:1 on a card), so the
+     guarantee has to come from a fixed colour. */
+  box-shadow: 0 0 0 5px oklch(0.19 0.03 40);
   border-radius: inherit;
 }
 
