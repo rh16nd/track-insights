@@ -1,7 +1,109 @@
-﻿import type { CSSProperties } from "react";
+﻿import { useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
-import type { Discipline } from "@/lib/dl-data";
+import type { Athlete, Discipline } from "@/lib/dl-data";
 import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
+
+/** Which column the table is ordered by. "rank" is the API's own ordering
+ * (season-best mark, ascending = fastest/furthest first); "prob" is the
+ * model's win probability. The two genuinely disagree -- Men's 100m has
+ * #1 Lyles 9.79 at 16% sitting above #2 Seville 9.82 at 27% -- so instead of
+ * the page picking one ordering and asserting it as *the* ranking, the
+ * reader switches. Season best stays the default because it's a directly
+ * verifiable fact; probability is the model's separate call.
+ *
+ * The `#` badge always means rank-by-season-best, so it deliberately reads
+ * out of sequence once sorted by probability: it is an athlete's attribute,
+ * not a row counter. */
+type SortKey = "rank" | "prob";
+type SortDir = "asc" | "desc";
+type Sort = { key: SortKey; dir: SortDir };
+
+const DEFAULT_SORT: Sort = { key: "rank", dir: "asc" };
+
+/** Direction a column takes on its FIRST click -- whichever end of it is the
+ * "good" one. Marks read best-first ascending (rank 1, 9.79s); probabilities
+ * read best-first descending (27% before 16%). Clicking again reverses. */
+const FIRST_DIR: Record<SortKey, SortDir> = { rank: "asc", prob: "desc" };
+
+const SUBTITLE: Record<SortKey, string> = {
+  rank: "Ranked by season best. Win probability is the model's separate call and can disagree.",
+  prob: "Sorted by the model's win probability. The # column still ranks by season best, so it reads out of sequence.",
+};
+
+function sortAthletes(athletes: Athlete[], { key, dir }: Sort): Athlete[] {
+  const sign = dir === "asc" ? 1 : -1;
+  return [...athletes].sort((a, b) => {
+    const diff = key === "rank" ? a.rank - b.rank : a.prob - b.prob;
+    if (diff !== 0) return diff * sign;
+    // Probabilities are whole percents, so ties are common and real. Break
+    // them on season-best rank -- unsigned, so a tied group keeps the same
+    // internal order in both directions instead of silently flipping.
+    return a.rank - b.rank;
+  });
+}
+
+function SortArrow({ dir, active }: { dir: SortDir; active: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 10 10"
+      aria-hidden
+      // An inactive arrow is dimmed but never hidden: hover-only affordances
+      // don't exist on touch, and this table is horizontally scrolled on
+      // small screens, so "you can sort this" has to be visible at rest.
+      className={`size-[9px] shrink-0 transition-opacity duration-150 ${
+        active ? "opacity-100" : "opacity-25 group-hover:opacity-60 group-focus-visible:opacity-60"
+      } ${dir === "asc" ? "" : "rotate-180"}`}
+    >
+      <path d="M5 1.5 8.5 7h-7L5 1.5Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** A right-aligned column header that doubles as the sort control. `aria-sort`
+ * lives on the `th`, where assistive tech looks for it; the `button` carries
+ * the click target and picks up the site-wide focus ring for free. */
+function SortHeader({
+  label,
+  columnKey,
+  sort,
+  onSort,
+  className,
+}: {
+  label: string;
+  columnKey: SortKey;
+  sort: Sort;
+  onSort: (key: SortKey) => void;
+  className: string;
+}) {
+  const active = sort.key === columnKey;
+  const dir = active ? sort.dir : FIRST_DIR[columnKey];
+  return (
+    <th
+      scope="col"
+      aria-sort={active ? (dir === "asc" ? "ascending" : "descending") : "none"}
+      className={className}
+    >
+      <button
+        type="button"
+        onClick={() => onSort(columnKey)}
+        // The label alone is a 17px-tall hit target. `py-2 -my-2` grows it
+        // past the 24px WCAG 2.2 minimum without moving the header text or
+        // changing the row's height -- the extra area reaches into padding
+        // that was already empty.
+        className={`group -my-2 ml-auto flex items-center gap-1.5 py-2 font-semibold transition-colors ${
+          active ? "text-foreground" : "hover:text-foreground"
+        }`}
+      >
+        <span>{label}</span>
+        <SortArrow dir={dir} active={active} />
+        <span className="sr-only">
+          {active ? " — sorted, activate to reverse" : " — activate to sort by this column"}
+        </span>
+      </button>
+    </th>
+  );
+}
 
 /** The active discipline tab is controlled by the caller (track.tsx/
  * field.tsx put it in the URL's search params, not local state) so that
@@ -17,8 +119,21 @@ export function DisciplineTable({
   onActiveChange: (id: string) => void;
 }) {
   const current = disciplines.find((d) => d.id === activeId) ?? disciplines[0];
+  // Sort is a view preference, so it deliberately survives a discipline
+  // switch -- unlike `activeId`, which lives in the URL precisely so Back
+  // restores the tab you were browsing (see the note above).
+  const [sort, setSort] = useState<Sort>(DEFAULT_SORT);
+  const rows = useMemo(
+    () => (current ? sortAthletes(current.athletes, sort) : []),
+    [current, sort],
+  );
 
   if (!current) return null;
+
+  const onSort = (key: SortKey) =>
+    setSort((s) =>
+      s.key === key ? { key, dir: s.dir === "asc" ? "desc" : "asc" } : { key, dir: FIRST_DIR[key] },
+    );
 
   return (
     <>
@@ -76,27 +191,48 @@ export function DisciplineTable({
 
       {/* The "#" column ranks by season-best mark, which is NOT the same
           ordering as win probability (e.g. Men's 100m: #1 Lyles 9.79 at 16%
-          sits above #2 Seville 9.82 at 27%). Stating that outright, since
-          the two columns otherwise look like they should agree and don't. */}
+          sits above #2 Seville 9.82 at 27%). The subtitle says which of the
+          two the table is currently ordered by, because the columns
+          otherwise look like they should agree and don't. */}
       <Panel
         title={`Projected top 8 — ${current.label}`}
-        subtitle="Ranked by season best. Win probability is the model's separate call and can disagree."
+        subtitle={SUBTITLE[sort.key]}
         className="mt-4"
       >
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px]">
             <thead>
               <tr className="label-caps text-muted-foreground">
-                <th className="w-10 pb-3 text-left font-semibold">#</th>
-                <th className="pb-3 pl-3 text-left font-semibold">Athlete</th>
-                <th className="w-16 pb-3 pl-4 text-left font-semibold">Nat</th>
-                <th className="w-20 pb-3 pl-4 text-left font-semibold">Qualified</th>
-                <th className="w-28 pb-3 pl-6 text-right font-semibold">Projected</th>
-                <th className="w-56 pb-3 pl-8 text-right font-semibold">Win probability</th>
+                <th scope="col" className="w-10 pb-3 text-left font-semibold">
+                  #<span className="sr-only"> — rank by season best</span>
+                </th>
+                <th scope="col" className="pb-3 pl-3 text-left font-semibold">
+                  Athlete
+                </th>
+                <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
+                  Nat
+                </th>
+                <th scope="col" className="w-20 pb-3 pl-4 text-left font-semibold">
+                  Qualified
+                </th>
+                <SortHeader
+                  label="Projected"
+                  columnKey="rank"
+                  sort={sort}
+                  onSort={onSort}
+                  className="w-28 pb-3 pl-6 text-right"
+                />
+                <SortHeader
+                  label="Win probability"
+                  columnKey="prob"
+                  sort={sort}
+                  onSort={onSort}
+                  className="w-56 pb-3 pl-8 text-right"
+                />
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {current.athletes.map((a, i) => (
+              {rows.map((a, i) => (
                 <tr
                   key={a.name}
                   className="stagger-item transition-colors hover:bg-secondary/40"
