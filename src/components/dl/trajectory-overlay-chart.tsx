@@ -5,7 +5,7 @@ import { formatMark } from "@/lib/dl-data";
 
 const WIDTH = 640;
 const HEIGHT = 240;
-const PAD_X = 16;
+const PAD_X = 48; // room for the y-axis mark labels
 const PAD_TOP = 20;
 const PAD_BOTTOM = 32;
 const PAD_RIGHT = 108; // room for end-of-line direct labels
@@ -73,10 +73,34 @@ export function TrajectoryOverlayChart({
   const spanD = maxD - minD || 1;
 
   const xFor = (ts: number) => PAD_X + ((ts - minD) / spanD) * (WIDTH - PAD_RIGHT - PAD_X);
-  const yFor = (v: number) =>
-    HEIGHT -
-    PAD_BOTTOM -
-    ((v - domainMin) / (domainMax - domainMin)) * (HEIGHT - PAD_TOP - PAD_BOTTOM);
+
+  // "Better" always points UP. For field events that's the raw value (a
+  // longer throw is a bigger number), but for track events a FASTER run is a
+  // SMALLER number -- plotting raw seconds made an improving sprinter's line
+  // descend, so a genuine improvement read visually as decline. The axis is
+  // flipped for time events so the shape of the line matches the story the
+  // numbers tell; the y-axis labels below still show the real marks, so
+  // nothing is hidden by the flip.
+  const yFor = (v: number) => {
+    const t = (v - domainMin) / (domainMax - domainMin);
+    const up = isField ? t : 1 - t;
+    return HEIGHT - PAD_BOTTOM - up * (HEIGHT - PAD_TOP - PAD_BOTTOM);
+  };
+
+  // Real mark values along the y-axis, formatted the way the sport writes
+  // them: distances as metres, sprints as seconds, and anything the API
+  // returns as m:ss.xx converted back from raw seconds rather than printed
+  // as a bare "477.25".
+  const usesClockFormat = comparable.some((t) => t.history.some((h) => h.mark.includes(":")));
+  const formatValue = (v: number) => {
+    if (usesClockFormat) {
+      const mins = Math.floor(v / 60);
+      const secs = v - mins * 60;
+      return `${mins}:${secs < 10 ? "0" : ""}${secs.toFixed(2)}`;
+    }
+    return isField ? `${v.toFixed(2)}m` : v.toFixed(2);
+  };
+  const valueTicks = Array.from({ length: 4 }, (_, i) => minV + ((maxV - minV) * i) / 3);
 
   const series = comparable.map((t, i) => {
     const pts = t.history.map((h) => ({
@@ -102,7 +126,7 @@ export function TrajectoryOverlayChart({
         </div>
         <div className="flex items-center gap-3">
           <div className="text-[11px] text-muted-foreground">
-            {isField ? "Higher is farther" : "Lower is faster"}
+            {isField ? "Higher is farther" : "Higher is faster"}
           </div>
           <button
             type="button"
@@ -164,6 +188,32 @@ export function TrajectoryOverlayChart({
       ) : (
         <div className="relative mt-2">
           <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full" style={{ height: "auto" }}>
+            {/* Horizontal gridlines at real mark values. Without these the
+                chart showed shape but not magnitude -- you could see a line
+                rising without knowing whether that meant a hundredth or half
+                a second. */}
+            {valueTicks.map((v, i) => (
+              <g key={`grid-${i}`}>
+                <line
+                  x1={PAD_X}
+                  y1={yFor(v)}
+                  x2={WIDTH - PAD_RIGHT}
+                  y2={yFor(v)}
+                  stroke="var(--border)"
+                  strokeWidth={1}
+                  opacity={0.6}
+                />
+                <text
+                  x={PAD_X - 8}
+                  y={yFor(v) + 3.5}
+                  textAnchor="end"
+                  fontSize={9.5}
+                  fill="var(--muted-foreground)"
+                >
+                  {formatValue(v)}
+                </text>
+              </g>
+            ))}
             <line
               x1={PAD_X}
               y1={HEIGHT - PAD_BOTTOM}

@@ -30,10 +30,15 @@ export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year:
 
   const n = history.length;
   const xFor = (i: number) => (n === 1 ? WIDTH / 2 : PAD_X + (i / (n - 1)) * (WIDTH - PAD_X * 2));
-  const yFor = (v: number) =>
-    HEIGHT -
-    PAD_BOTTOM -
-    ((v - domainMin) / (domainMax - domainMin)) * (HEIGHT - PAD_TOP - PAD_BOTTOM);
+  // "Better" points UP on both of this app's line charts. Field marks are
+  // already bigger-is-better; time marks are not, so they're flipped -- see
+  // the same fix in trajectory-overlay-chart.tsx. Without it an athlete
+  // running progressively faster had a line that visibly fell.
+  const yFor = (v: number) => {
+    const t = (v - domainMin) / (domainMax - domainMin);
+    const up = isField ? t : 1 - t;
+    return HEIGHT - PAD_BOTTOM - up * (HEIGHT - PAD_TOP - PAD_BOTTOM);
+  };
 
   const points = history.map((h, i) => ({ ...h, x: xFor(i), y: yFor(h.markValue ?? min) }));
   const path = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
@@ -52,7 +57,7 @@ export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year:
         <div className="label-caps text-muted-foreground">{year ?? "Last"} season form</div>
         <div className="flex items-center gap-3">
           <div className="text-[11px] text-muted-foreground">
-            {isField ? "Higher is farther" : "Lower is faster"}
+            {isField ? "Higher is farther" : "Higher is faster"}
           </div>
           <button
             type="button"
