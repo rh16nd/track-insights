@@ -214,9 +214,16 @@ function AthleteProfilePage() {
               icon="ruler"
             />
             <StatBlock label="Age" value={a.age != null ? String(Math.round(a.age)) : "—"} icon="calendar" />
+            {/* Scoped to THIS discipline, and saying so matters now that the
+                Mile no longer counts as a 1500m (2026-08-24 scraper fix):
+                Josh Kerr's whole 2026 Diamond League 1500m season was Miles,
+                so this legitimately reads 0 next to a "last competed" figure
+                that came from his toplist mark. Same situation for anyone who
+                switches events mid-season. */}
             <StatBlock
               label="Meets this season"
               value={a.meetsCount != null ? String(a.meetsCount) : "—"}
+              sub="in this discipline"
               icon="grid"
             />
             <StatBlock
