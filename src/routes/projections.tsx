@@ -1,6 +1,13 @@
 import { useState, type CSSProperties } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Shell, Panel, ProbabilityBar, RankBadge } from "@/components/dl/shell";
+import {
+  Shell,
+  Panel,
+  PanelSkeleton,
+  ErrorPanel,
+  ProbabilityBar,
+  RankBadge,
+} from "@/components/dl/shell";
 import { RadialMeter } from "@/components/dl/radial-meter";
 import { TrajectoryOverlayChart } from "@/components/dl/trajectory-overlay-chart";
 import { StorylineCards } from "@/components/dl/storyline-cards";
@@ -286,20 +293,28 @@ function ProjectionsPage() {
   const state = usePredictions();
   const { disc } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
+  // Loading/error keep the page's own header instead of falling back to the
+  // bare Shell, which reverted to the old bordered title card mid-load.
+  // Projections' real header lives in its hero (which needs data), so these
+  // states use the on-canvas header treatment as a stand-in.
   if (state.status === "loading")
     return (
-      <Shell title="Projections">
-        <div className="card-shadow flex h-64 items-center justify-center card-surface rounded-[18px] bg-card text-muted-foreground">
-          Loading...
-        </div>
+      <Shell
+        title="Projections"
+        eyebrow="Race dossier"
+        description="How the model reads each event — the call, the season's real form curves, and the storylines behind the numbers."
+      >
+        <PanelSkeleton title="Contenders" rows={6} />
       </Shell>
     );
   if (state.status === "error")
     return (
-      <Shell title="Projections">
-        <div className="card-shadow card-surface rounded-[18px] bg-card p-6 text-destructive">
-          {state.message}
-        </div>
+      <Shell
+        title="Projections"
+        eyebrow="Race dossier"
+        description="How the model reads each event — the call, the season's real form curves, and the storylines behind the numbers."
+      >
+        <ErrorPanel message={state.message} />
       </Shell>
     );
   const allDisciplines = [...state.data.trackDisciplines, ...state.data.fieldDisciplines];

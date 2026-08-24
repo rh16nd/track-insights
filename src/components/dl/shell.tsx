@@ -119,6 +119,78 @@ export function RankBadge({ rank, className = "" }: { rank: number; className?: 
   );
 }
 
+/** Loading placeholder shaped like the panel it replaces, so the page keeps
+ * its real layout instead of collapsing to a centered "Loading..." box and
+ * then jumping when data lands. Reuses `skeleton-pulse` (opacity-only, so it
+ * works on any surface) over the dark foreground at low alpha, which reads as
+ * a soft gray on the cream card. Deliberately shows NO numbers -- nothing
+ * true is known yet. */
+export function PanelSkeleton({
+  title,
+  rows = 5,
+  className = "",
+}: {
+  title?: string;
+  rows?: number;
+  className?: string;
+}) {
+  return (
+    <section
+      className={`card-shadow card-surface rounded-[18px] bg-card ${className}`}
+      aria-busy="true"
+      aria-live="polite"
+    >
+      <div className="px-6 pt-5">
+        {title ? (
+          <h2 className="label-caps text-muted-foreground">{title}</h2>
+        ) : (
+          <span className="skeleton-pulse block h-2.5 w-32 rounded-full bg-foreground" />
+        )}
+        <span className="sr-only">Loading…</span>
+      </div>
+      <div className="space-y-4 px-6 pb-6 pt-5">
+        {Array.from({ length: rows }).map((_, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <span className="skeleton-pulse size-6 shrink-0 rounded-full bg-foreground" />
+            <span
+              className="skeleton-pulse h-3 rounded-full bg-foreground"
+              style={{ width: `${38 + ((i * 13) % 26)}%` }}
+            />
+            <span className="skeleton-pulse ml-auto h-3 w-16 shrink-0 rounded-full bg-foreground" />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** Error state that keeps the page's own shell/header rather than replacing
+ * the whole page with a red box. */
+export function ErrorPanel({
+  message,
+  hint,
+  title = "Could not load predictions",
+}: {
+  message: string;
+  hint?: ReactNode;
+  title?: string;
+}) {
+  return (
+    <section className="card-shadow card-surface rounded-[18px] bg-card p-6">
+      <div className="text-[14px] font-semibold text-destructive">{title}</div>
+      <p className="mt-1 text-[13.5px] text-foreground">{message}</p>
+      <p className="mt-2 text-[12.5px] text-muted-foreground">
+        {hint ?? (
+          <>
+            Make sure <code className="nums">python api.py</code> is running in your
+            athletics-predictor folder.
+          </>
+        )}
+      </p>
+    </section>
+  );
+}
+
 /** Athlete initials in a brand-gradient disc. Exists because RankBadge was
  * being used in places where its numbering was actively misleading: the
  * Dashboard's "Top predicted winners" list holds ONE athlete per discipline,

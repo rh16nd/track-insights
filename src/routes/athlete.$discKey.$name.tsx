@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useCanGoBack, useRouter } from "@tanstack/react-router";
-import { Shell, Panel, WatchBadge } from "@/components/dl/shell";
+import { Shell, Panel, PanelSkeleton, ErrorPanel, WatchBadge } from "@/components/dl/shell";
 import { useAthleteProfile } from "@/hooks/useAthleteProfile";
 import { SeasonTrendChart } from "@/components/dl/season-trend-chart";
 import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
@@ -75,23 +75,26 @@ function AthleteProfilePage() {
   const router = useRouter();
   const canGoBack = useCanGoBack();
 
+  // The athlete's real name is already in the route params, so the header
+  // can show who is loading rather than a generic "Athlete" title card.
+  const pendingName = decodeURIComponent(name);
+
   if (state.status === "loading") {
     return (
-      <Shell title="Athlete">
-        <div className="card-shadow flex h-64 items-center justify-center card-surface rounded-[18px] bg-card text-muted-foreground">
-          Loading athlete profile…
-        </div>
+      <Shell title={pendingName} eyebrow="Athlete profile" description="Loading real season form, head-to-head record and season stats…">
+        <PanelSkeleton rows={6} />
       </Shell>
     );
   }
 
   if (state.status === "error") {
     return (
-      <Shell title="Athlete">
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive">
-          <div className="mb-1 font-semibold">Could not load athlete profile</div>
-          <div>{state.message}</div>
-        </div>
+      <Shell title={pendingName} eyebrow="Athlete profile" description="This athlete's profile could not be loaded.">
+        <ErrorPanel
+          title="Could not load athlete profile"
+          message={state.message}
+          hint="This athlete may not be in the current predictions file — withdrawn athletes are filtered out before profiles are built."
+        />
       </Shell>
     );
   }

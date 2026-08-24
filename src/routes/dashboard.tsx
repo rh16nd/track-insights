@@ -3,6 +3,8 @@ import { useEffect, useState, type CSSProperties } from "react";
 import {
   Shell,
   Panel,
+  PanelSkeleton,
+  ErrorPanel,
   ProbabilityBar,
   AthleteAvatar,
   WatchBadge,
@@ -234,20 +236,13 @@ function Dashboard() {
   return (
     <Shell title="Dashboard" hero={hero} lastUpdated={data?.lastUpdated} daysToFinal={data?.daysToFinal}>
       {state.status === "loading" && (
-        <div className="card-shadow card-surface rounded-[18px] bg-card px-5 py-4 text-[13.5px] text-muted-foreground">
-          Loading live predictions…
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.35fr_1fr]">
+          <PanelSkeleton title="Top predicted winners" rows={6} />
+          <PanelSkeleton title="Season progress" rows={3} />
         </div>
       )}
 
-      {state.status === "error" && (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive">
-          <div className="font-semibold mb-1">Could not load predictions</div>
-          <div>{state.message}</div>
-          <div className="mt-2 text-xs">
-            Make sure <code>python api.py</code> is running in your athletics-predictor folder.
-          </div>
-        </div>
-      )}
+      {state.status === "error" && <ErrorPanel message={state.message} />}
 
       {data && data.removedAthletes.length > 0 && (
         <Panel title="Removed from predictions — injury/withdrawal" className="mt-4">

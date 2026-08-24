@@ -1,5 +1,5 @@
-﻿import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Shell } from "@/components/dl/shell";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Shell, PanelSkeleton, ErrorPanel } from "@/components/dl/shell";
 import { DisciplineTable } from "@/components/dl/discipline-table";
 import { usePredictions } from "@/hooks/usePredictions";
 
@@ -10,39 +10,39 @@ export const Route = createFileRoute("/track")({
   component: TrackPage,
 });
 
+const DESCRIPTION =
+  "Sprints through distance — every track discipline contested at the Final. Pick an event to see the model's win probability for each qualified athlete.";
+
 function TrackPage() {
   const state = usePredictions();
   const { disc } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
-  if (state.status === "loading")
-    return (
-      <Shell title="Track events">
-        <div className="card-shadow flex h-64 items-center justify-center card-surface rounded-[18px] bg-card text-muted-foreground">
-          Loading...
-        </div>
-      </Shell>
-    );
-  if (state.status === "error")
-    return (
-      <Shell title="Track events">
-        <div className="card-shadow card-surface rounded-[18px] bg-card p-6 text-destructive">
-          {state.message}
-        </div>
-      </Shell>
-    );
+  const data = state.status === "ok" ? state.data : undefined;
+
+  // The page header stays on screen through loading and error rather than
+  // the route early-returning a bare Shell -- that fallback dropped the
+  // eyebrow/description entirely and reverted to the old bordered title
+  // card, so the page visibly changed identity while data was in flight.
+  // The discipline count is only shown once it's actually known.
   return (
     <Shell
       title="Track events"
-      eyebrow={`${state.data.trackDisciplines.length} track disciplines · 2026 Final`}
-      description="Sprints through distance — every track discipline contested at the Final. Pick an event to see the model's win probability for each qualified athlete."
-      lastUpdated={state.data.lastUpdated}
-      daysToFinal={state.data.daysToFinal}
+      eyebrow={
+        data ? `${data.trackDisciplines.length} track disciplines · 2026 Final` : "2026 Final"
+      }
+      description={DESCRIPTION}
+      lastUpdated={data?.lastUpdated}
+      daysToFinal={data?.daysToFinal}
     >
-      <DisciplineTable
-        disciplines={state.data.trackDisciplines}
-        activeId={disc ?? state.data.trackDisciplines[0]?.id ?? ""}
-        onActiveChange={(id) => navigate({ search: { disc: id }, replace: true })}
-      />
+      {state.status === "loading" && <PanelSkeleton title="Projected top 8" rows={8} />}
+      {state.status === "error" && <ErrorPanel message={state.message} />}
+      {data && (
+        <DisciplineTable
+          disciplines={data.trackDisciplines}
+          activeId={disc ?? data.trackDisciplines[0]?.id ?? ""}
+          onActiveChange={(id) => navigate({ search: { disc: id }, replace: true })}
+        />
+      )}
     </Shell>
   );
 }
