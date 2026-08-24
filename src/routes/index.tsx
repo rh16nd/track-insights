@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useInView } from "@/hooks/useInView";
 import { PodiumCallMark } from "@/components/dl/logo";
-import { RankBadge } from "@/components/dl/shell";
+import { AthleteAvatar, ProbabilityBar, RankBadge, WatchBadge } from "@/components/dl/shell";
 import { TrackCircuit } from "@/components/dl/track-circuit";
 
 export const Route = createFileRoute("/")({
@@ -127,7 +127,10 @@ function Landing() {
     state.status === "ok"
       ? String(state.data.trackDisciplines.length + state.data.fieldDisciplines.length)
       : "32";
-  const preview = state.status === "ok" ? state.data.topWinners.slice(0, 5) : [];
+  // All six, same as the dashboard panel -- the old slice(0, 5) quietly
+  // dropped one real discipline from a list whose whole job is to preview
+  // what the dashboard shows.
+  const preview = state.status === "ok" ? state.data.topWinners : [];
   const topPick = preview[0];
   const ticker = state.status === "ok" ? state.data.confidence.slice(0, 10) : [];
   const demoInView = useInView<HTMLElement>();
@@ -146,364 +149,390 @@ function Landing() {
         aria-hidden="true"
       />
       <div className="relative z-10">
-      {/* ── Nav ───────────────────────────────────────────────────── */}
-      <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between border-b border-[var(--landing-border)] bg-[var(--landing-bg)]/80 px-6 backdrop-blur-md sm:px-10">
-        <div className="flex items-center gap-2.5">
-          <PodiumCallMark className="size-6" />
-          <div className="label-caps text-[var(--landing-muted)]">
-            <span className="font-semibold text-[var(--landing-fg)]">PodiumCall</span>
-            <span className="ml-2">2026 Diamond League Predictor</span>
+        {/* ── Nav ───────────────────────────────────────────────────── */}
+        <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between border-b border-[var(--landing-border)] bg-[var(--landing-bg)]/80 px-6 backdrop-blur-md sm:px-10">
+          <div className="flex items-center gap-2.5">
+            <PodiumCallMark className="size-6" />
+            <div className="label-caps text-[var(--landing-muted)]">
+              <span className="font-semibold text-[var(--landing-fg)]">PodiumCall</span>
+              <span className="ml-2">2026 Diamond League Predictor</span>
+            </div>
           </div>
-        </div>
-        <Link
-          to="/dashboard"
-          className="label-caps rounded-full bg-[var(--landing-fg)] px-4 py-2.5 text-[var(--landing-bg)] transition-opacity hover:opacity-90"
-        >
-          View live predictions
-        </Link>
-      </header>
-
-      {/* ── Hero (track-surface reused as the backdrop, darkened) ──── */}
-      <section className="track-surface relative overflow-hidden pt-16">
-        <div className="absolute inset-0 bg-[var(--landing-bg)]/88" />
-        <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] w-full max-w-none -translate-y-1/2 opacity-90 sm:h-[120%]" />
-        <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
-          <span className="label-caps inline-flex items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-3.5 py-2 text-[var(--landing-muted)]">
-            <span className="size-1.5 rounded-full bg-terracotta" />
-            Brussels Final — Sep 4–5, 2026
-          </span>
-
-          <h1
-            className="mx-auto mt-6 max-w-3xl text-[40px] font-semibold leading-[1.1] tracking-tight sm:text-[56px]"
-            style={{ fontFamily: "var(--font-display)" }}
+          <Link
+            to="/dashboard"
+            className="label-caps rounded-full bg-[var(--landing-fg)] px-4 py-2.5 text-[var(--landing-bg)] transition-opacity hover:opacity-90"
           >
-            A model trained on real results, not gut feeling.
-          </h1>
+            View live predictions
+          </Link>
+        </header>
 
-          <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-[var(--landing-muted)] sm:text-base">
-            Every Diamond League meeting, the Olympics, World Championships and more — scraped
-            straight from World Athletics, turned into predictions for all 32 disciplines at the
-            2026 Final.
-          </p>
+        {/* ── Hero (track-surface reused as the backdrop, darkened) ──── */}
+        <section className="track-surface relative overflow-hidden pt-16">
+          <div className="absolute inset-0 bg-[var(--landing-bg)]/88" />
+          <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] w-full max-w-none -translate-y-1/2 opacity-90 sm:h-[120%]" />
+          <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
+            <span className="label-caps inline-flex items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-3.5 py-2 text-[var(--landing-muted)]">
+              <span className="size-1.5 rounded-full bg-terracotta" />
+              Brussels Final — Sep 4–5, 2026
+            </span>
 
-          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              to="/dashboard"
-              className="label-caps rounded-full px-6 py-3.5 text-[var(--landing-fg)] shadow-[0_10px_40px_-12px_oklch(0.545_0.164_38.5/0.6)] transition-transform hover:scale-[1.02]"
-              style={{
-                backgroundImage:
-                  "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
-              }}
+            <h1
+              className="mx-auto mt-6 max-w-3xl text-[40px] font-semibold leading-[1.1] tracking-tight sm:text-[56px]"
+              style={{ fontFamily: "var(--font-display)" }}
             >
-              View live predictions
-            </Link>
-            <a
-              href="#how-it-works"
-              className="label-caps rounded-full border border-[var(--landing-border)] px-6 py-3.5 text-[var(--landing-fg)] transition-colors hover:bg-[var(--landing-card)]"
-            >
-              How it works
-            </a>
-          </div>
+              A model trained on real results, not gut feeling.
+            </h1>
 
-          <div className="mt-16 flex flex-wrap items-start justify-center gap-x-12 gap-y-8">
-            <Stat value={accuracy} label="Backtest accuracy" />
-            <Stat value={daysToFinal} label="Days to Brussels" />
-            <Stat value={disciplineCount} label="Disciplines tracked" />
-            <Stat value="7" label="Seasons of real data" />
-          </div>
-          {state.status !== "ok" && (
-            <p className="mt-4 text-[12.5px] text-[var(--landing-muted)]">
-              {state.status === "loading"
-                ? "Loading live stats…"
-                : "Live stats aren't reachable right now — the numbers above will fill in once the model is running."}
+            <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-[var(--landing-muted)] sm:text-base">
+              Every Diamond League meeting, the Olympics, World Championships and more — scraped
+              straight from World Athletics, turned into predictions for all 32 disciplines at the
+              2026 Final.
             </p>
-          )}
-        </div>
 
-        {/* ── Live confidence ticker ─────────────────────────────── */}
-        <div className="relative mt-14 border-y border-[var(--landing-border)] bg-[var(--landing-bg-2)] py-4">
-          <div className="label-caps mb-3 px-6 text-[var(--landing-muted)] sm:px-10">
-            Live from the model
-          </div>
-          {ticker.length > 0 ? (
-            <div
-              className="marquee-mask overflow-hidden"
-              role="list"
-              aria-label="Live model confidence by discipline"
-            >
-              <div className="marquee-track flex w-max gap-3">
-                {ticker.map((t) => (
-                  <span
-                    key={t.disc}
-                    role="listitem"
-                    className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
-                  >
-                    <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
-                      {t.value}%
-                    </span>
-                    {t.disc}
-                  </span>
-                ))}
-                {ticker.map((t) => (
-                  <span
-                    key={`${t.disc}-dup`}
-                    aria-hidden="true"
-                    className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
-                  >
-                    <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
-                      {t.value}%
-                    </span>
-                    {t.disc}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <p className="px-6 text-[13px] text-[var(--landing-muted)] sm:px-10">
-              Confidence feed loads once the live model is running.
-            </p>
-          )}
-        </div>
-      </section>
-
-      {/* ── Raw signal → ranked prediction demo ──────────────────── */}
-      <section
-        ref={demoInView.ref}
-        className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28"
-      >
-        <h2
-          className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Real results in. A ranked prediction out.
-        </h2>
-
-        <div className="mt-10 grid grid-cols-1 items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
-          <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6">
-            <div className="label-caps text-[var(--landing-muted)]">Raw signal</div>
-            <ul className="mt-4 space-y-3">
-              {FEED.map((m, i) => (
-                <li
-                  key={m}
-                  className={
-                    demoInView.inView
-                      ? "stagger-item flex items-center gap-2.5 text-[13.5px] text-[var(--landing-fg)]"
-                      : "flex items-center gap-2.5 text-[13.5px] text-[var(--landing-fg)] opacity-0"
-                  }
-                  style={demoInView.inView ? ({ "--stagger-i": i } as CSSProperties) : undefined}
-                >
-                  <span className="size-1.5 shrink-0 rounded-full bg-terracotta" />
-                  <span className="truncate">{m}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-4 text-[12px] text-[var(--landing-muted)]">
-              + dozens more meetings, 7 seasons, scraped directly from World Athletics.
-            </div>
-          </div>
-
-          <div
-            aria-hidden="true"
-            className="hidden justify-self-center text-[var(--landing-muted)] lg:block"
-          >
-            <Icon path="M4 12h15m0 0-5-5m5 5-5 5" className="size-6" />
-          </div>
-
-          {topPick ? (
-            <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6">
-              <div className="label-caps text-[var(--landing-muted)]">Ranked prediction</div>
-              <div className="mt-4 flex items-center gap-3">
-                <RankBadge rank={topPick.rank} className="size-8 text-[13px]" />
-                <div className="min-w-0 flex-1">
-                  <div className="truncate text-[15px] font-semibold text-[var(--landing-fg)]">
-                    {topPick.name}
-                  </div>
-                  <div className="text-[12px] text-[var(--landing-muted)]">{topPick.disc}</div>
-                </div>
-              </div>
-              <div className="mt-4 flex items-baseline justify-between">
-                <span className="nums text-[13px] text-[var(--landing-muted)]">{topPick.mark}</span>
-                <span className="nums text-[18px] font-semibold text-[var(--landing-accent-text)]">
-                  {topPick.prob}%
-                </span>
-              </div>
-              <div className="mt-2 h-1.5 w-full rounded-full bg-[var(--landing-border)]">
-                <div
-                  className={`prob-fill h-1.5 rounded-full${demoInView.inView ? " prob-fill-in" : ""}`}
-                  style={{
-                    width: `${topPick.prob}%`,
-                    backgroundImage:
-                      "linear-gradient(100deg, var(--terracotta) 0%, var(--gold) 100%)",
-                  }}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6 text-[13.5px] text-[var(--landing-muted)]">
-              Ranked predictions load once the live model is running.
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ── Feature grid ──────────────────────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-6 pb-20 sm:px-10 sm:pb-28">
-        <h2
-          className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          No fabricated data, anywhere in the pipeline.
-        </h2>
-
-        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f) => (
-            <div
-              key={f.title}
-              className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6"
-            >
-              <span
-                className="inline-flex size-10 items-center justify-center rounded-full text-[var(--landing-bg)]"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(100deg, var(--terracotta) 0%, var(--gold) 100%)",
-                }}
-              >
-                <Icon path={f.icon} />
-              </span>
-              <h3 className="mt-4 text-[15px] font-semibold text-[var(--landing-fg)]">{f.title}</h3>
-              <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--landing-muted)]">
-                {f.body}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── How it works ─────────────────────────────────────────── */}
-      <section id="how-it-works" className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
-        <h2
-          className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Real data in. Honest predictions out.
-        </h2>
-
-        <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {STEPS.map((step) => (
-            <div
-              key={step.n}
-              className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6"
-            >
-              <span
-                className="nums inline-flex size-9 items-center justify-center rounded-full text-[13px] font-semibold text-[var(--landing-fg)]"
+            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link
+                to="/dashboard"
+                className="label-caps rounded-full px-6 py-3.5 text-[var(--landing-fg)] shadow-[0_10px_40px_-12px_oklch(0.545_0.164_38.5/0.6)] transition-transform hover:scale-[1.02]"
                 style={{
                   backgroundImage:
                     "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
                 }}
               >
-                {step.n}
-              </span>
-              <h3 className="mt-4 text-[15px] font-semibold text-[var(--landing-fg)]">
-                {step.title}
-              </h3>
-              <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--landing-muted)]">
-                {step.body}
-              </p>
+                View live predictions
+              </Link>
+              <a
+                href="#how-it-works"
+                className="label-caps rounded-full border border-[var(--landing-border)] px-6 py-3.5 text-[var(--landing-fg)] transition-colors hover:bg-[var(--landing-card)]"
+              >
+                How it works
+              </a>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* ── Live app preview (browser-chrome framed) ─────────────── */}
-      <section className="mx-auto max-w-5xl px-6 pb-24 sm:px-10 sm:pb-32">
-        <h2
-          className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          A live look at the model's current picks.
-        </h2>
-
-        <div className="mt-10 overflow-hidden rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow">
-          <div className="flex items-center gap-2 border-b border-[var(--landing-border)] px-4 py-3">
-            <span aria-hidden="true" className="flex gap-1.5">
-              <span className="size-2.5 rounded-full bg-[var(--landing-border)]" />
-              <span className="size-2.5 rounded-full bg-[var(--landing-border)]" />
-              <span className="size-2.5 rounded-full bg-[var(--landing-border)]" />
-            </span>
-            <span className="label-caps ml-2 rounded-md bg-[var(--landing-bg)] px-2.5 py-1 text-[var(--landing-muted)]">
-              PodiumCall / Dashboard
-            </span>
+            <div className="mt-16 flex flex-wrap items-start justify-center gap-x-12 gap-y-8">
+              <Stat value={accuracy} label="Backtest accuracy" />
+              <Stat value={daysToFinal} label="Days to Brussels" />
+              <Stat value={disciplineCount} label="Disciplines tracked" />
+              <Stat value="7" label="Seasons of real data" />
+            </div>
+            {state.status !== "ok" && (
+              <p className="mt-4 text-[12.5px] text-[var(--landing-muted)]">
+                {state.status === "loading"
+                  ? "Loading live stats…"
+                  : "Live stats aren't reachable right now — the numbers above will fill in once the model is running."}
+              </p>
+            )}
           </div>
 
-          <div className="p-6 sm:p-8">
-            <div className="flex items-center justify-between">
-              <h3
-                className="text-[17px] font-semibold text-[var(--landing-fg)]"
-                style={{ fontFamily: "var(--font-display)" }}
+          {/* ── Live confidence ticker ─────────────────────────────── */}
+          <div className="relative mt-14 border-y border-[var(--landing-border)] bg-[var(--landing-bg-2)] py-4">
+            <div className="label-caps mb-3 px-6 text-[var(--landing-muted)] sm:px-10">
+              Live from the model
+            </div>
+            {ticker.length > 0 ? (
+              <div
+                className="marquee-mask overflow-hidden"
+                role="list"
+                aria-label="Live model confidence by discipline"
               >
-                Current top predicted winners
-              </h3>
-              <Link
-                to="/dashboard"
-                className="label-caps hidden shrink-0 text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)] sm:block"
-              >
-                See all 32 disciplines →
-              </Link>
+                <div className="marquee-track flex w-max gap-3">
+                  {ticker.map((t) => (
+                    <span
+                      key={t.disc}
+                      role="listitem"
+                      className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
+                    >
+                      <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
+                        {t.value}%
+                      </span>
+                      {t.disc}
+                    </span>
+                  ))}
+                  {ticker.map((t) => (
+                    <span
+                      key={`${t.disc}-dup`}
+                      aria-hidden="true"
+                      className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
+                    >
+                      <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
+                        {t.value}%
+                      </span>
+                      {t.disc}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p className="px-6 text-[13px] text-[var(--landing-muted)] sm:px-10">
+                Confidence feed loads once the live model is running.
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* ── Raw signal → ranked prediction demo ──────────────────── */}
+        <section ref={demoInView.ref} className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
+          <h2
+            className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Real results in. A ranked prediction out.
+          </h2>
+
+          <div className="mt-10 grid grid-cols-1 items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
+            <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6">
+              <div className="label-caps text-[var(--landing-muted)]">Raw signal</div>
+              <ul className="mt-4 space-y-3">
+                {FEED.map((m, i) => (
+                  <li
+                    key={m}
+                    className={
+                      demoInView.inView
+                        ? "stagger-item flex items-center gap-2.5 text-[13.5px] text-[var(--landing-fg)]"
+                        : "flex items-center gap-2.5 text-[13.5px] text-[var(--landing-fg)] opacity-0"
+                    }
+                    style={demoInView.inView ? ({ "--stagger-i": i } as CSSProperties) : undefined}
+                  >
+                    <span className="size-1.5 shrink-0 rounded-full bg-terracotta" />
+                    <span className="truncate">{m}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4 text-[12px] text-[var(--landing-muted)]">
+                + dozens more meetings, 7 seasons, scraped directly from World Athletics.
+              </div>
             </div>
 
-            <div className="mt-6 divide-y divide-[var(--landing-border)]">
-              {state.status === "loading" && (
-                <p className="py-6 text-[13.5px] text-[var(--landing-muted)]">
-                  Loading live predictions…
-                </p>
-              )}
-              {state.status === "error" && (
-                <p className="py-6 text-[13.5px] text-[var(--landing-muted)]">
-                  Live predictions aren't reachable right now. This preview and the full dashboard
-                  both show the same data once the model is running.
-                </p>
-              )}
-              {preview.map((w) => (
-                <div
-                  key={w.name}
-                  className="flex flex-wrap items-center gap-x-4 gap-y-1 py-3.5 first:pt-0 last:pb-0"
-                >
-                  <RankBadge rank={w.rank} />
+            <div
+              aria-hidden="true"
+              className="hidden justify-self-center text-[var(--landing-muted)] lg:block"
+            >
+              <Icon path="M4 12h15m0 0-5-5m5 5-5 5" className="size-6" />
+            </div>
+
+            {topPick ? (
+              <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6">
+                <div className="label-caps text-[var(--landing-muted)]">Ranked prediction</div>
+                <div className="mt-4 flex items-center gap-3">
+                  <RankBadge rank={topPick.rank} className="size-8 text-[13px]" />
                   <div className="min-w-0 flex-1">
-                    <div className="truncate text-[13.5px] font-medium text-[var(--landing-fg)]">
-                      {w.name}
+                    <div className="truncate text-[15px] font-semibold text-[var(--landing-fg)]">
+                      {topPick.name}
                     </div>
-                    <div className="text-[11.5px] text-[var(--landing-muted)]">{w.disc}</div>
-                  </div>
-                  <div className="flex w-full items-center justify-between gap-4 pl-9 sm:w-auto sm:justify-end sm:pl-0">
-                    <div className="nums text-[13px] text-[var(--landing-muted)] sm:w-16 sm:text-right">
-                      {w.mark}
-                    </div>
-                    <div className="nums w-12 text-right text-[13px] font-semibold text-[var(--landing-accent-text)]">
-                      {w.prob}%
-                    </div>
+                    <div className="text-[12px] text-[var(--landing-muted)]">{topPick.disc}</div>
                   </div>
                 </div>
-              ))}
+                <div className="mt-4 flex items-baseline justify-between">
+                  <span className="nums text-[13px] text-[var(--landing-muted)]">
+                    {topPick.mark}
+                  </span>
+                  <span className="nums text-[18px] font-semibold text-[var(--landing-accent-text)]">
+                    {topPick.prob}%
+                  </span>
+                </div>
+                <div className="mt-2 h-1.5 w-full rounded-full bg-[var(--landing-border)]">
+                  <div
+                    className={`prob-fill h-1.5 rounded-full${demoInView.inView ? " prob-fill-in" : ""}`}
+                    style={{
+                      width: `${topPick.prob}%`,
+                      backgroundImage:
+                        "linear-gradient(100deg, var(--terracotta) 0%, var(--gold) 100%)",
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6 text-[13.5px] text-[var(--landing-muted)]">
+                Ranked predictions load once the live model is running.
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ── Feature grid ──────────────────────────────────────────── */}
+        <section className="mx-auto max-w-5xl px-6 pb-20 sm:px-10 sm:pb-28">
+          <h2
+            className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            No fabricated data, anywhere in the pipeline.
+          </h2>
+
+          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((f) => (
+              <div
+                key={f.title}
+                className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6"
+              >
+                <span
+                  className="inline-flex size-10 items-center justify-center rounded-full text-[var(--landing-bg)]"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(100deg, var(--terracotta) 0%, var(--gold) 100%)",
+                  }}
+                >
+                  <Icon path={f.icon} />
+                </span>
+                <h3 className="mt-4 text-[15px] font-semibold text-[var(--landing-fg)]">
+                  {f.title}
+                </h3>
+                <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--landing-muted)]">
+                  {f.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── How it works ─────────────────────────────────────────── */}
+        <section id="how-it-works" className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
+          <h2
+            className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Real data in. Honest predictions out.
+          </h2>
+
+          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {STEPS.map((step) => (
+              <div
+                key={step.n}
+                className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6"
+              >
+                <span
+                  className="nums inline-flex size-9 items-center justify-center rounded-full text-[13px] font-semibold text-[var(--landing-fg)]"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
+                  }}
+                >
+                  {step.n}
+                </span>
+                <h3 className="mt-4 text-[15px] font-semibold text-[var(--landing-fg)]">
+                  {step.title}
+                </h3>
+                <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--landing-muted)]">
+                  {step.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Live app preview (browser-chrome framed) ─────────────── */}
+        <section className="mx-auto max-w-5xl px-6 pb-24 sm:px-10 sm:pb-32">
+          <h2
+            className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            A live look at the model's current picks.
+          </h2>
+
+          <div className="mt-10 overflow-hidden rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow">
+            <div className="flex items-center gap-2 border-b border-[var(--landing-border)] px-4 py-3">
+              <span aria-hidden="true" className="flex gap-1.5">
+                <span className="size-2.5 rounded-full bg-[var(--landing-border)]" />
+                <span className="size-2.5 rounded-full bg-[var(--landing-border)]" />
+                <span className="size-2.5 rounded-full bg-[var(--landing-border)]" />
+              </span>
+              <span className="label-caps ml-2 rounded-md bg-[var(--landing-bg)] px-2.5 py-1 text-[var(--landing-muted)]">
+                PodiumCall / Dashboard
+              </span>
+            </div>
+
+            <div className="p-6 sm:p-8">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <h3
+                    className="text-[17px] font-semibold text-[var(--landing-fg)]"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    Current top predicted winners
+                  </h3>
+                  {/* The same clarifying line the dashboard panel carries. It is
+                    load-bearing, not decoration: these six athletes are each
+                    the top pick in a DIFFERENT discipline, and without saying
+                    so the list reads as one ranking of six rivals. */}
+                  <p className="mt-1 text-[12px] leading-snug text-[var(--landing-muted)]">
+                    The model&apos;s #1 pick in each discipline, sorted by confidence
+                  </p>
+                </div>
+                <Link
+                  to="/dashboard"
+                  className="label-caps hidden shrink-0 text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)] sm:block"
+                >
+                  See all 32 disciplines →
+                </Link>
+              </div>
+
+              <div className="mt-6 divide-y divide-[var(--landing-border)]">
+                {state.status === "loading" && (
+                  <p className="py-6 text-[13.5px] text-[var(--landing-muted)]">
+                    Loading live predictions…
+                  </p>
+                )}
+                {state.status === "error" && (
+                  <p className="py-6 text-[13.5px] text-[var(--landing-muted)]">
+                    Live predictions aren't reachable right now. This preview and the full dashboard
+                    both show the same data once the model is running.
+                  </p>
+                )}
+                {preview.map((w, i) => (
+                  <div key={w.name} className="py-3.5 first:pt-0 last:pb-0">
+                    <Link
+                      to="/athlete/$discKey/$name"
+                      params={{ discKey: w.discKey, name: w.name }}
+                      className="flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 rounded-md transition-[background-color,transform] duration-150 hover:bg-[var(--landing-fg)]/8 active:scale-[0.99]"
+                    >
+                      <AthleteAvatar name={w.name} highlight={i === 0} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="truncate text-[13.5px] font-medium text-[var(--landing-fg)]">
+                            {w.name}
+                          </span>
+                          {w.injuryWatch && (
+                            <WatchBadge reason={w.injuryReason} url={w.injuryUrl} tone="dark" />
+                          )}
+                        </div>
+                        <div className="text-[11.5px] text-[var(--landing-muted)]">{w.disc}</div>
+                      </div>
+                      <div className="flex w-full items-center justify-between gap-3 pl-9 sm:w-auto sm:justify-end sm:pl-0">
+                        <div className="nums text-[13px] text-[var(--landing-muted)] sm:w-20 sm:text-right">
+                          {w.mark}
+                        </div>
+                        <div className="w-24">
+                          <div className="nums text-right text-[12px] font-semibold text-[var(--landing-accent-text)]">
+                            {w.prob}%
+                          </div>
+                          <ProbabilityBar
+                            value={w.prob}
+                            className="mt-1.5"
+                            trackHeight="h-1.5"
+                            trackClass="bg-[var(--landing-border)]"
+                          />
+                        </div>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Footer ───────────────────────────────────────────────── */}
-      <footer className="border-t border-[var(--landing-border)] px-6 py-8 sm:px-10">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 sm:flex-row">
-          <p className="text-[12px] text-[var(--landing-muted)]">
-            Not affiliated with World Athletics or the Wanda Diamond League.
-          </p>
-          <Link
-            to="/dashboard"
-            className="label-caps text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)]"
-          >
-            View live predictions →
-          </Link>
-        </div>
-      </footer>
+        {/* ── Footer ───────────────────────────────────────────────── */}
+        <footer className="border-t border-[var(--landing-border)] px-6 py-8 sm:px-10">
+          <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 sm:flex-row">
+            <p className="text-[12px] text-[var(--landing-muted)]">
+              Not affiliated with World Athletics or the Wanda Diamond League.
+            </p>
+            <Link
+              to="/dashboard"
+              className="label-caps text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)]"
+            >
+              View live predictions →
+            </Link>
+          </div>
+        </footer>
       </div>
     </div>
   );

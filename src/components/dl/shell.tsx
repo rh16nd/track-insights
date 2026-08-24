@@ -244,14 +244,22 @@ export function ProbabilityBar({
   value,
   className = "",
   trackHeight = "h-2",
+  trackClass = "bg-secondary",
 }: {
   value: number;
   className?: string;
   trackHeight?: string;
+  /** Track colour. Defaults to the app's light `--secondary`, which is right
+   * on the cream card surfaces. The landing page passes its own translucent
+   * white token instead -- `--secondary` is a light cream slab that would
+   * glare against that dark tinted-glass card. A prop rather than an appended
+   * class because two Tailwind `bg-*` utilities have equal specificity, so
+   * which one wins depends on stylesheet order, not attribute order. */
+  trackClass?: string;
 }) {
   return (
     <div
-      className={`w-full min-w-[32px] overflow-hidden rounded-full bg-secondary ${trackHeight} ${className}`}
+      className={`w-full min-w-[32px] overflow-hidden rounded-full ${trackClass} ${trackHeight} ${className}`}
     >
       {/* transform: scaleX, not width -- animating width triggers layout on
           every frame (flagged live across all 7 bars on this page by the
@@ -277,16 +285,30 @@ export function WatchBadge({
   reason,
   url,
   className = "",
+  tone = "light",
 }: {
   reason: string | null;
   url: string | null;
   className?: string;
+  /** "light" is the app's cream card surface. "dark" is the landing page's
+   * tinted-glass card, where the standard `--destructive` (oklch L=0.55) sits
+   * almost on top of the surface's own lightness: measured 1.38:1 against the
+   * real composited card, i.e. effectively invisible. Both tones below were
+   * measured on that actual surface via canvas rather than eyeballed -- the
+   * first dark attempt (L=0.88 text on a 0.22 fill) still only reached
+   * 3.84:1. These values give 4.7:1, clearing the 4.5 floor for this small
+   * bold label with a little margin. */
+  tone?: "light" | "dark";
 }) {
   const [open, setOpen] = useState(false);
   const detail = reason
     ? `Flagged from: ${reason}`
     : "Recent injury or DNF mention — flagged for review";
-  const badgeClassName = `label-caps shrink-0 rounded-sm bg-destructive/10 px-1.5 py-1 text-destructive ${className}`;
+  const toneClass =
+    tone === "dark"
+      ? "bg-[oklch(0.7_0.19_27_/_0.16)] text-[oklch(0.93_0.09_27)]"
+      : "bg-destructive/10 text-destructive";
+  const badgeClassName = `label-caps shrink-0 rounded-sm px-1.5 py-1 ${toneClass} ${className}`;
   const popoverId = useId();
   const wrapperRef = useRef<HTMLSpanElement>(null);
 
