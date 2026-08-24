@@ -29,10 +29,10 @@ export function DisciplineTable({
        * 18 disciplines at the old 32.75px pill height). This is shared by
        * both Track and Field, so one fix covers both pages. */}
       <div className="sm:hidden">
-        <label
-          className="label-caps mb-1.5 block text-muted-foreground"
-          htmlFor="discipline-select"
-        >
+        {/* --muted-foreground is tuned for the light CARD surface, but this
+            label sits directly on the colored canvas, where it measured
+            1.62:1. On-canvas text has to be light, not dark. */}
+        <label className="label-caps mb-1.5 block text-white/90" htmlFor="discipline-select">
           Discipline
         </label>
         <select
@@ -74,7 +74,15 @@ export function DisciplineTable({
         ))}
       </div>
 
-      <Panel title={`Projected top 8 — ${current.label}`} className="mt-4">
+      {/* The "#" column ranks by season-best mark, which is NOT the same
+          ordering as win probability (e.g. Men's 100m: #1 Lyles 9.79 at 16%
+          sits above #2 Seville 9.82 at 27%). Stating that outright, since
+          the two columns otherwise look like they should agree and don't. */}
+      <Panel
+        title={`Projected top 8 — ${current.label}`}
+        subtitle="Ranked by season best. Win probability is the model's separate call and can disagree."
+        className="mt-4"
+      >
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px]">
             <thead>
@@ -82,7 +90,7 @@ export function DisciplineTable({
                 <th className="w-10 pb-3 text-left font-semibold">#</th>
                 <th className="pb-3 pl-3 text-left font-semibold">Athlete</th>
                 <th className="w-16 pb-3 pl-4 text-left font-semibold">Nat</th>
-                <th className="w-14 pb-3 pl-4 text-left font-semibold">Q</th>
+                <th className="w-20 pb-3 pl-4 text-left font-semibold">Qualified</th>
                 <th className="w-28 pb-3 pl-6 text-right font-semibold">Projected</th>
                 <th className="w-56 pb-3 pl-8 text-right font-semibold">Win probability</th>
               </tr>
@@ -111,12 +119,24 @@ export function DisciplineTable({
                   </td>
                   <td className="nums py-3 pl-4 text-[12px] text-muted-foreground">{a.nat}</td>
                   <td className="py-3 pl-4">
+                    {/* "Q" per the user's preference over a check glyph. It
+                        previously rendered at 10px with heavy label-caps
+                        tracking, where it was easy to misread as a zero — so
+                        it's set larger, at normal tracking, in the display
+                        face (whose Q has a distinct tail). The column header
+                        spells out "Qualified" and the sr-only text carries
+                        the full definition. */}
                     {a.qualified && (
                       <span
                         title="Confirmed in World Athletics' own 2026 Diamond League standings for this discipline"
-                        className="label-caps rounded-sm bg-terracotta/10 px-1.5 py-1 text-terracotta-strong"
+                        className="inline-flex size-6 items-center justify-center rounded-md bg-terracotta/12 text-[13px] font-semibold leading-none text-terracotta-strong"
+                        style={{ fontFamily: "var(--font-display)" }}
                       >
                         Q
+                        <span className="sr-only">
+                          ualified — confirmed in World Athletics&apos; 2026 Diamond League
+                          standings
+                        </span>
                       </span>
                     )}
                   </td>

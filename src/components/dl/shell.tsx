@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { TopNav } from "./topnav";
 import { TrackCurveDecoration } from "./track-curve";
 import type { MeetStatus } from "@/lib/dl-data";
@@ -23,16 +23,28 @@ export function Shell({
   lastUpdated,
   daysToFinal,
   hero,
+  eyebrow,
+  description,
 }: {
   title: string;
   children: ReactNode;
-  lastUpdated?: string;
-  daysToFinal?: number;
+  lastUpdated?: string | undefined;
+  daysToFinal?: number | undefined;
   /** Replaces the plain title with a custom banner (currently just
    * Dashboard's track-surface hero) -- `title` is still passed for the
    * document/route title, it just isn't rendered as the visible `<h1>`. */
   hero?: ReactNode;
+  /** Small caps line above the page title, on the canvas. */
+  eyebrow?: string | undefined;
+  /** One-line explanation under the page title. Supplying this (or
+   * `eyebrow`) switches the header from the old bordered title card to the
+   * on-canvas treatment: the Dashboard earns a full banner because it IS an
+   * overview, but on a browsing page a tall filled box just repeats a shape
+   * and pushes the actual content down. Text sits directly on the canvas
+   * (white measures 5.29:1 there, verified). */
+  description?: string | undefined;
 }) {
+  const hasPageHeader = Boolean(eyebrow || description);
   return (
     <div className="relative min-h-screen bg-background">
       <div
@@ -43,12 +55,37 @@ export function Shell({
       <div className="relative z-10">
         <TopNav lastUpdated={lastUpdated} daysToFinal={daysToFinal} />
         <main className="mx-auto max-w-[1600px] px-6 pb-14 pt-8 sm:px-8 lg:px-12">
-          {hero ?? (
-            <div className="card-shadow rounded-xl border border-border bg-card px-5 py-4">
-              <h1 className="text-[20px] font-semibold tracking-tight text-foreground">{title}</h1>
-            </div>
-          )}
-          <div className="mt-6">{children}</div>
+          {hero ??
+            (hasPageHeader ? (
+              <div className="pb-1 pt-1">
+                {eyebrow && (
+                  <div className="flex items-center gap-2">
+                    <span className="size-[7px] shrink-0 rounded-full bg-gold-light" />
+                    {/* /75 measured 3.75:1 on the canvas — under the 4.5
+                        floor for 11px text. /92 clears it. */}
+                    <span className="label-caps text-white/92">{eyebrow}</span>
+                  </div>
+                )}
+                <h1
+                  className="mt-2 text-[30px] font-bold tracking-tight text-white sm:text-[38px]"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  {title}
+                </h1>
+                {description && (
+                  <p className="mt-2 max-w-2xl text-[14.5px] leading-relaxed text-white/90">
+                    {description}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="card-shadow card-surface rounded-[18px] bg-card px-5 py-4">
+                <h1 className="text-[20px] font-semibold tracking-tight text-foreground">
+                  {title}
+                </h1>
+              </div>
+            ))}
+          <div className={hasPageHeader ? "mt-5" : "mt-6"}>{children}</div>
         </main>
       </div>
     </div>
@@ -69,12 +106,57 @@ export function RankBadge({ rank, className = "" }: { rank: number; className?: 
         ? "bg-terracotta text-primary-foreground"
         : rank === 3
           ? "bg-brick text-primary-foreground"
-          : "bg-[oklch(0.55_0_0)] text-white";
+          : // Darkened from oklch(0.55 0 0) (measured ~2.9:1 against white text,
+            // failing the 4.5:1 floor for this bold-but-not-"large" 11px badge
+            // number, 2026-08-24 critique) -- 0.4 clears it with margin.
+            "bg-[oklch(0.4_0_0)] text-white";
   return (
     <span
       className={`nums flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${tier} ${className}`}
     >
       {rank}
+    </span>
+  );
+}
+
+/** Athlete initials in a brand-gradient disc. Exists because RankBadge was
+ * being used in places where its numbering was actively misleading: the
+ * Dashboard's "Top predicted winners" list holds ONE athlete per discipline,
+ * so a podium-coloured 1/2/3 implied those six were racing each other for a
+ * podium they aren't. Position in the list already conveys the ordering, so
+ * the marker only needs to identify the athlete. Reported by the user, not
+ * inferred. */
+export function AthleteAvatar({
+  name,
+  size = "sm",
+  highlight = false,
+  className = "",
+}: {
+  name: string;
+  size?: "sm" | "lg";
+  highlight?: boolean;
+  className?: string;
+}) {
+  const words = name.split(" ").filter(Boolean);
+  const initials =
+    words.length === 1
+      ? words[0]!.slice(0, 2).toUpperCase()
+      : (words[0]![0]! + words[words.length - 1]![0]!).toUpperCase();
+  const box = size === "lg" ? "size-10 text-[13px]" : "size-6 text-[9.5px]";
+  // The highlight (top pick) disc stays in the light-gold range and carries
+  // DARK initials. White-on-gold was measured at 1.9:1 against the light end
+  // of the gradient — a real AA failure — and darkening the gold enough to
+  // rescue white text would have made it indistinguishable from the standard
+  // terracotta disc. Dark-on-gold measures ~8:1 and reads like a medal.
+  const tone = highlight
+    ? "bg-[linear-gradient(135deg,var(--gold-light),oklch(0.72_0.13_66))] text-foreground"
+    : "bg-[linear-gradient(135deg,var(--terracotta),var(--brick))] text-white";
+  return (
+    <span
+      aria-hidden="true"
+      className={`nums flex shrink-0 items-center justify-center rounded-full font-semibold ${box} ${tone} ${className}`}
+    >
+      {initials}
     </span>
   );
 }
@@ -99,10 +181,14 @@ export function ProbabilityBar({
     <div
       className={`w-full min-w-[32px] overflow-hidden rounded-full bg-secondary ${trackHeight} ${className}`}
     >
+      {/* transform: scaleX, not width -- animating width triggers layout on
+          every frame (flagged live across all 7 bars on this page by the
+          2026-08-24 critique's detector pass); scaleX is compositor-only,
+          same fix already used by the landing page's .prob-fill. */}
       <div
-        className="h-full rounded-full transition-[width] duration-500 ease-out"
+        className="h-full origin-left rounded-full transition-transform duration-500 ease-out"
         style={{
-          width: `${Math.max(0, Math.min(100, value))}%`,
+          transform: `scaleX(${Math.max(0, Math.min(100, value)) / 100})`,
           backgroundImage: "linear-gradient(90deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
         }}
       />
@@ -129,22 +215,54 @@ export function WatchBadge({
     ? `Flagged from: ${reason}`
     : "Recent injury or DNF mention — flagged for review";
   const badgeClassName = `label-caps shrink-0 rounded-sm bg-destructive/10 px-1.5 py-1 text-destructive ${className}`;
+  const popoverId = useId();
+  const wrapperRef = useRef<HTMLSpanElement>(null);
+
+  // Real bug caught by the 2026-08-24 critique: an unconditional onBlur
+  // closed the popover the instant focus left the trigger button -- including
+  // a Tab press toward the "View source" link *inside* the popover, or a
+  // mousedown on it -- so keyboard/screen-reader users (exactly who this
+  // evidence link matters most to) could never actually reach it. Closes on
+  // outside click/focus and Escape instead, which lets focus move into the
+  // popover itself.
+  useEffect(() => {
+    if (!open) return;
+    function handlePointer(e: PointerEvent) {
+      if (!wrapperRef.current?.contains(e.target as Node)) setOpen(false);
+    }
+    function handleFocus(e: FocusEvent) {
+      if (!wrapperRef.current?.contains(e.target as Node)) setOpen(false);
+    }
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("pointerdown", handlePointer);
+    document.addEventListener("focusin", handleFocus);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointer);
+      document.removeEventListener("focusin", handleFocus);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [open]);
 
   return (
-    <span className="relative inline-flex">
+    <span ref={wrapperRef} className="relative inline-flex">
       <button
         type="button"
         title={detail}
         aria-expanded={open}
+        aria-controls={open ? popoverId : undefined}
         onClick={() => setOpen((v) => !v)}
-        onBlur={() => setOpen(false)}
-        className={`${badgeClassName} hover:bg-destructive/20 transition-colors`}
+        className={`${badgeClassName} transition-[background-color,transform] duration-150 hover:bg-destructive/20 active:scale-90`}
       >
         Watch
       </button>
       {open && (
         <span
-          role="status"
+          id={popoverId}
+          role="group"
+          aria-label="Injury watch evidence"
           className="nums absolute left-0 top-full z-30 mt-1.5 w-64 max-w-[80vw] origin-top-left animate-[popover-in_140ms_ease-out] rounded-md border border-border bg-popover p-2.5 text-[12px] font-normal leading-snug text-popover-foreground shadow-lg"
         >
           {detail}
@@ -175,22 +293,33 @@ export function WatchBadge({
  * one). Shadow is tinted toward --foreground's hue, not pure black. */
 export function Panel({
   title,
+  subtitle,
   action,
   children,
   className = "",
 }: {
   title: string;
+  /** Optional clarifying line under the title -- added so panels whose
+   * meaning isn't self-evident from a 3-word heading (e.g. what a list is
+   * actually sorted by) can say so, rather than leaving the reader to
+   * infer it from the data. */
+  subtitle?: string;
   action?: ReactNode;
   children: ReactNode;
   className?: string;
 }) {
   return (
-    <section className={`card-shadow rounded-xl border border-border bg-card ${className}`}>
-      <div className="flex items-center justify-between px-5 pt-4">
-        <h2 className="label-caps text-muted-foreground">{title}</h2>
+    <section className={`card-shadow card-surface rounded-[18px] bg-card ${className}`}>
+      <div className="flex items-center justify-between px-6 pt-5">
+        <div className="min-w-0">
+          <h2 className="label-caps text-muted-foreground">{title}</h2>
+          {subtitle && (
+            <p className="mt-1 text-[12px] leading-snug text-muted-foreground">{subtitle}</p>
+          )}
+        </div>
         {action}
       </div>
-      <div className="p-5">{children}</div>
+      <div className="px-6 pb-6 pt-4">{children}</div>
     </section>
   );
 }

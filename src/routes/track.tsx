@@ -33,6 +33,8 @@ function TrackPage() {
   return (
     <Shell
       title="Track events"
+      eyebrow={`${state.data.trackDisciplines.length} track disciplines · 2026 Final`}
+      description="Sprints through distance — every track discipline contested at the Final. Pick an event to see the model's win probability for each qualified athlete."
       lastUpdated={state.data.lastUpdated}
       daysToFinal={state.data.daysToFinal}
     >

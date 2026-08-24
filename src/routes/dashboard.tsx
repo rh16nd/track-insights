@@ -1,17 +1,57 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import type { CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import {
   Shell,
   Panel,
   ProbabilityBar,
-  RankBadge,
+  AthleteAvatar,
   WatchBadge,
   dotClass,
   badgeClass,
 } from "@/components/dl/shell";
-import { statusLabel } from "@/lib/dl-data";
+import { statusLabel, type TopWinner } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useCountUp } from "@/hooks/useCountUp";
+
+const LAST_PROBS_KEY = "podiumcall:lastProbs";
+
+/** Real, honest trend signal for a repeat visitor: compares today's
+ * probabilities against whatever this browser last saw (localStorage, not
+ * a fabricated number or a backend history endpoint that doesn't exist
+ * yet). First-ever visit shows no deltas -- there's nothing true to compare
+ * against -- and only genuinely-changed athletes get a chip. Added per the
+ * 2026-08-24 critique: the product's whole premise is live, updating
+ * predictions, but nothing on the page ever showed what moved. */
+function useProbabilityDeltas(topWinners: TopWinner[] | undefined) {
+  const [deltas, setDeltas] = useState<Record<string, number>>({});
+  useEffect(() => {
+    if (!topWinners) return;
+    let previous: Record<string, number> = {};
+    try {
+      previous = JSON.parse(localStorage.getItem(LAST_PROBS_KEY) ?? "{}");
+    } catch {
+      previous = {};
+    }
+    const computed: Record<string, number> = {};
+    const next: Record<string, number> = {};
+    for (const w of topWinners) {
+      next[w.name] = w.prob;
+      const prior = previous[w.name];
+      if (typeof prior === "number" && prior !== w.prob) {
+        computed[w.name] = w.prob - prior;
+      }
+    }
+    setDeltas(computed);
+    try {
+      localStorage.setItem(LAST_PROBS_KEY, JSON.stringify(next));
+    } catch {
+      // localStorage unavailable (private browsing, quota) -- delta signal
+      // just won't persist to the next visit; not worth surfacing an error
+      // for.
+    }
+  }, [topWinners]);
+  return deltas;
+}
 
 export const Route = createFileRoute("/dashboard")({
   component: Dashboard,
@@ -103,70 +143,72 @@ function StatTile({
   );
 }
 
+/** Same footprint as a real StatTile (icon + label row, big number, sub
+ * line) so the hero doesn't jump/reflow once real data arrives -- filled
+ * with themed pulses instead of a fabricated number, since nothing true is
+ * known yet. */
+function StatTileSkeleton({ index }: { index: number }) {
+  return (
+    <div className="stagger-item" style={{ "--stagger-i": index } as CSSProperties}>
+      <div className="flex items-center gap-1.5">
+        <span className="skeleton-pulse size-[18px] rounded bg-white" />
+        <span className="skeleton-pulse h-2.5 w-16 rounded-full bg-white" />
+      </div>
+      <span className="skeleton-pulse mt-2.5 block h-[26px] w-12 rounded-md bg-white" />
+      <span className="skeleton-pulse mt-2 block h-2.5 w-20 rounded-full bg-white" />
+    </div>
+  );
+}
+
 function Dashboard() {
   const state = usePredictions();
+  const data = state.status === "ok" ? state.data : undefined;
+  const deltas = useProbabilityDeltas(data?.topWinners);
 
-  if (state.status === "loading") {
-    return (
-      <Shell title="Dashboard">
-        <div className="card-shadow flex h-64 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground">
-          Loading live predictions...
-        </div>
-      </Shell>
-    );
-  }
+  const doneCount = data ? data.meets.filter((m) => m.status === "done").length : 0;
+  const totalCount = data ? data.meets.length : 0;
+  const progressPct = data && totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
 
-  if (state.status === "error") {
-    return (
-      <Shell title="Dashboard">
-        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive">
-          <div className="font-semibold mb-1">Could not load predictions</div>
-          <div>{state.message}</div>
-          <div className="mt-2 text-xs">
-            Make sure <code>python api.py</code> is running in your athletics-predictor folder.
-          </div>
-        </div>
-      </Shell>
-    );
-  }
+  const stats = data
+    ? [
+        {
+          label: "Meets done",
+          value: doneCount,
+          sub: `of ${totalCount}`,
+          icon: "flag" as const,
+          accent: "text-terracotta-light",
+        },
+        {
+          label: "Days to final",
+          value: data.daysToFinal,
+          sub: "Brussels, 04 Sep",
+          icon: "calendar" as const,
+          accent: "text-gold-light",
+        },
+        {
+          label: "Disciplines",
+          value: data.trackDisciplines.length + data.fieldDisciplines.length,
+          sub: "tracked",
+          icon: "grid" as const,
+          accent: "text-gold-light",
+        },
+        {
+          label: "Model accuracy",
+          value: Math.round(data.modelAccuracy),
+          suffix: "%",
+          sub: "walk-forward '23-'25",
+          icon: "target" as const,
+          accent: "text-terracotta-light",
+        },
+      ]
+    : null;
 
-  const { data } = state;
-  const doneCount = data.meets.filter((m) => m.status === "done").length;
-  const totalCount = data.meets.length;
-  const progressPct = Math.round((doneCount / totalCount) * 100);
-
-  const stats = [
-    {
-      label: "Meets done",
-      value: doneCount,
-      sub: `of ${totalCount}`,
-      icon: "flag" as const,
-      accent: "text-terracotta-light",
-    },
-    {
-      label: "Days to final",
-      value: data.daysToFinal,
-      sub: "Brussels, 04 Sep",
-      icon: "calendar" as const,
-      accent: "text-gold-light",
-    },
-    {
-      label: "Disciplines",
-      value: data.trackDisciplines.length + data.fieldDisciplines.length,
-      sub: "tracked",
-      icon: "grid" as const,
-      accent: "text-gold-light",
-    },
-    {
-      label: "Model accuracy",
-      value: Math.round(data.modelAccuracy),
-      suffix: "%",
-      sub: "walk-forward '23-'25",
-      icon: "target" as const,
-      accent: "text-terracotta-light",
-    },
-  ];
-
+  // The branded track-surface hero now stays on screen through every state
+  // (loading, error, success) instead of dropping to a generic gray box --
+  // the 2026-08-24 critique found that exact swap happened at the worst
+  // possible moment: a first-time visitor's or anxious daily-checker's
+  // first paint. Stat tiles become themed skeleton pulses rather than
+  // showing a fabricated number while real data is still in flight.
   const hero = (
     <div className="track-surface relative overflow-hidden rounded-2xl">
       <div className="absolute inset-0 bg-background/85" />
@@ -181,22 +223,33 @@ function Dashboard() {
           Live predictions for the 2026 Diamond League Final, updated straight from the model.
         </p>
         <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
-          {stats.map((s, i) => (
-            <StatTile key={s.label} index={i} {...s} />
-          ))}
+          {stats
+            ? stats.map((s, i) => <StatTile key={s.label} index={i} {...s} />)
+            : [0, 1, 2, 3].map((i) => <StatTileSkeleton key={i} index={i} />)}
         </div>
       </div>
     </div>
   );
 
   return (
-    <Shell
-      title="Dashboard"
-      hero={hero}
-      lastUpdated={data.lastUpdated}
-      daysToFinal={data.daysToFinal}
-    >
-      {data.removedAthletes.length > 0 && (
+    <Shell title="Dashboard" hero={hero} lastUpdated={data?.lastUpdated} daysToFinal={data?.daysToFinal}>
+      {state.status === "loading" && (
+        <div className="card-shadow rounded-xl border border-border bg-card px-5 py-4 text-[13.5px] text-muted-foreground">
+          Loading live predictions…
+        </div>
+      )}
+
+      {state.status === "error" && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive">
+          <div className="font-semibold mb-1">Could not load predictions</div>
+          <div>{state.message}</div>
+          <div className="mt-2 text-xs">
+            Make sure <code>python api.py</code> is running in your athletics-predictor folder.
+          </div>
+        </div>
+      )}
+
+      {data && data.removedAthletes.length > 0 && (
         <Panel title="Removed from predictions — injury/withdrawal" className="mt-4">
           <ul className="divide-y divide-border">
             {data.removedAthletes.map((r) => (
@@ -226,85 +279,116 @@ function Dashboard() {
         </Panel>
       )}
 
-      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1.35fr_1fr]">
-        <Panel title="Top predicted winners">
-          <ul className="divide-y divide-border">
-            {data.topWinners.map((w, i) => (
-              <li
-                key={w.name}
-                className="stagger-item py-3 first:pt-0 last:pb-0"
-                style={{ "--stagger-i": i } as CSSProperties}
-              >
-                <Link
-                  to="/athlete/$discKey/$name"
-                  params={{ discKey: w.discKey, name: w.name }}
-                  className="flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 rounded-md transition-colors hover:bg-secondary/30"
-                >
-                  <RankBadge rank={w.rank} />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="truncate text-[13.5px] font-medium text-foreground">
-                        {w.name}
-                      </span>
-                      {w.injuryWatch && <WatchBadge reason={w.injuryReason} url={w.injuryUrl} />}
-                    </div>
-                    <div className="text-[11.5px] text-muted-foreground">{w.disc}</div>
-                  </div>
-                  <div className="flex w-full items-center justify-between gap-3 pl-9 sm:w-auto sm:justify-end sm:pl-0">
-                    <div className="nums text-[13px] font-medium text-foreground sm:w-20 sm:text-right">
-                      {w.mark}
-                    </div>
-                    <div className="w-24">
-                      <div className="nums text-right text-[12px] font-semibold text-terracotta-strong">
-                        {w.prob}%
-                      </div>
-                      <ProbabilityBar value={w.prob} className="mt-1.5" trackHeight="h-1.5" />
-                    </div>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Panel>
-
-        <div className="space-y-4">
-          <Panel title="Season progress">
-            <div className="flex items-baseline justify-between">
-              <span className="nums text-[28px] font-semibold leading-none text-foreground">
-                {progressPct}%
-              </span>
-              <span className="nums text-[12px] text-muted-foreground">
-                {doneCount} of {totalCount} meets scored
-              </span>
-            </div>
-            <ProbabilityBar value={progressPct} className="mt-4" trackHeight="h-2" />
-          </Panel>
-
-          <Panel title="Upcoming calendar">
-            <ul className="space-y-2.5">
-              {data.meets.slice(-5).map((m) => (
-                <li key={m.n} className="flex items-center gap-3">
-                  <span className={`size-1.5 shrink-0 rounded-full ${dotClass[m.status]}`} />
-                  <span className="nums w-14 text-[12px] text-muted-foreground">{m.date}</span>
-                  <span
-                    className={[
-                      "flex-1 truncate text-[13px]",
-                      m.status === "done" ? "text-muted-foreground" : "text-foreground",
-                      m.status === "next" ? "font-semibold" : "",
-                      m.status === "final" ? "font-semibold text-gold-strong" : "",
-                    ].join(" ")}
+      {data && (
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1.35fr_1fr]">
+          <Panel
+            title="Top predicted winners"
+            subtitle="The model's #1 pick in each discipline, sorted by confidence"
+          >
+            <ul className="divide-y divide-border">
+              {data.topWinners.map((w, i) => {
+                const delta = deltas[w.name];
+                return (
+                  <li
+                    key={w.name}
+                    className="stagger-item py-3 first:pt-0 last:pb-0"
+                    style={{ "--stagger-i": i } as CSSProperties}
                   >
-                    {m.city}
-                  </span>
-                  <span className={`label-caps rounded-sm px-1.5 py-1 ${badgeClass[m.status]}`}>
-                    {statusLabel[m.status]}
-                  </span>
-                </li>
-              ))}
+                    <Link
+                      to="/athlete/$discKey/$name"
+                      params={{ discKey: w.discKey, name: w.name }}
+                      className="flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 rounded-md transition-[background-color,transform] duration-150 hover:bg-secondary/30 active:scale-[0.99]"
+                    >
+                      <AthleteAvatar name={w.name} highlight={i === 0} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="truncate text-[13.5px] font-medium text-foreground">
+                            {w.name}
+                          </span>
+                          {w.injuryWatch && (
+                            <WatchBadge reason={w.injuryReason} url={w.injuryUrl} />
+                          )}
+                        </div>
+                        <div className="text-[11.5px] text-muted-foreground">{w.disc}</div>
+                      </div>
+                      <div className="flex w-full items-center justify-between gap-3 pl-9 sm:w-auto sm:justify-end sm:pl-0">
+                        <div className="nums text-[13px] font-medium text-foreground sm:w-20 sm:text-right">
+                          {w.mark}
+                        </div>
+                        <div className="w-24">
+                          <div className="flex items-center justify-end gap-1.5">
+                            {typeof delta === "number" && (
+                              <span
+                                className={`delta-chip nums text-[10.5px] font-semibold ${delta > 0 ? "text-gold-strong" : "text-muted-foreground"}`}
+                                title={`${delta > 0 ? "Up" : "Down"} ${Math.abs(delta)} pt${Math.abs(delta) === 1 ? "" : "s"} since your last visit`}
+                              >
+                                {delta > 0 ? "▲" : "▼"}
+                                {Math.abs(delta)}
+                              </span>
+                            )}
+                            <span className="nums text-right text-[12px] font-semibold text-terracotta-strong">
+                              {w.prob}%
+                            </span>
+                          </div>
+                          <ProbabilityBar value={w.prob} className="mt-1.5" trackHeight="h-1.5" />
+                        </div>
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </Panel>
+
+          <div className="space-y-4">
+            <Panel title="Season progress">
+              <div className="flex items-baseline justify-between">
+                <span className="nums text-[28px] font-semibold leading-none text-foreground">
+                  {progressPct}%
+                </span>
+                <span className="nums text-[12px] text-muted-foreground">
+                  {doneCount} of {totalCount} meets scored
+                </span>
+              </div>
+              <ProbabilityBar value={progressPct} className="mt-4" trackHeight="h-2" />
+            </Panel>
+
+            <Panel
+              title="Upcoming calendar"
+              action={
+                <Link
+                  to="/schedule"
+                  className="label-caps text-terracotta-strong hover:underline"
+                >
+                  View full schedule →
+                </Link>
+              }
+            >
+              <ul className="space-y-2.5">
+                {data.meets.slice(-5).map((m) => (
+                  <li key={m.n} className="flex items-center gap-3">
+                    <span className={`size-1.5 shrink-0 rounded-full ${dotClass[m.status]}`} />
+                    <span className="nums w-14 text-[12px] text-muted-foreground">{m.date}</span>
+                    <span
+                      className={[
+                        "flex-1 truncate text-[13px]",
+                        m.status === "done" ? "text-muted-foreground" : "text-foreground",
+                        m.status === "next" ? "font-semibold" : "",
+                        m.status === "final" ? "font-semibold text-gold-strong" : "",
+                      ].join(" ")}
+                    >
+                      {m.city}
+                    </span>
+                    <span className={`label-caps rounded-sm px-1.5 py-1 ${badgeClass[m.status]}`}>
+                      {statusLabel[m.status]}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </Panel>
+          </div>
         </div>
-      </div>
+      )}
     </Shell>
   );
 }

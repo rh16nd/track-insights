@@ -50,7 +50,14 @@ export function TopNav({
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-card/90 backdrop-blur-md">
       <div className="grid h-16 grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-2 px-6 sm:px-8">
-        <Link to="/" className="flex shrink-0 items-center gap-2 justify-self-start">
+        {/* -m-2 p-2 expands the real hit area to 44x44 without growing the
+            mark visually -- the 2026-08-24 critique measured this link at a
+            bare 24x24px on mobile, the single element every visitor taps to
+            get home. */}
+        <Link
+          to="/"
+          className="-m-2.5 flex shrink-0 items-center gap-2 justify-self-start p-2.5 transition-transform duration-150 active:scale-90"
+        >
           <PodiumCallMark className="size-6" />
           <span className="hidden text-[15px] font-semibold text-foreground sm:block">
             PodiumCall
@@ -65,7 +72,9 @@ export function TopNav({
                 key={item.to}
                 to={item.to}
                 ref={isActive ? activeRef : undefined}
-                className="label-caps whitespace-nowrap rounded-full px-3.5 py-3.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:py-2"
+                // min-h-11 (44px) -- measured at 43px before (py-3.5 alone
+                // was 1px short of the touch-target floor on mobile).
+                className="label-caps flex min-h-11 items-center whitespace-nowrap rounded-full px-3.5 py-3.5 text-muted-foreground transition-[color,background-color,transform] duration-150 hover:bg-secondary hover:text-foreground active:scale-95 sm:min-h-0 sm:py-2"
                 activeProps={{ className: "!bg-secondary !text-foreground" }}
               >
                 {item.label}
@@ -81,7 +90,10 @@ export function TopNav({
             </span>
           )}
           <span className="label-caps flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1.5 text-foreground">
-            <span className="size-1.5 rounded-full bg-gold" />
+            <span className="relative flex size-1.5" aria-hidden="true">
+              <span className="live-ping-ring absolute inset-0 rounded-full bg-gold" />
+              <span className="relative size-1.5 rounded-full bg-gold" />
+            </span>
             Live
           </span>
         </div>

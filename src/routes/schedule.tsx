@@ -28,6 +28,10 @@ function SchedulePage() {
   return (
     <Shell
       title="Schedule"
+      eyebrow={`2026 season · ${state.data.meets.length} meetings`}
+      description={`The full Wanda Diamond League season, from the opener to the Final in Brussels. ${
+        state.data.meets.filter((m) => m.status === "done").length
+      } of ${state.data.meets.length} meetings are scored.`}
       lastUpdated={state.data.lastUpdated}
       daysToFinal={state.data.daysToFinal}
     >

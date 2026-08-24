@@ -74,12 +74,28 @@ function ProjectionsHero({
           >
             {active.label}
           </h1>
-          <p className="nums mt-1.5 text-[13px] text-white/70">
+          <p className="nums mt-1.5 text-[13px] text-white/80">
             {daysToFinal}d to Brussels Final · {active.athletes.length} qualified
           </p>
 
+          {/* Editorial framing ported from the Figma redesign: state the
+              model's actual pick as a sentence before showing the ranked
+              field. The discipline stays the <h1> (it's what the page is
+              about), so this is a statement line, not a competing heading. */}
+          {favorite && (
+            <div className="mt-6">
+              <div className="label-caps text-gold-light">The model&apos;s call</div>
+              <div
+                className="mt-1.5 text-[26px] font-bold leading-tight tracking-tight text-white sm:text-[30px]"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {favorite.name}
+              </div>
+            </div>
+          )}
+
           {top.length > 0 && (
-            <div className="mt-6 max-w-md">
+            <div className="mt-5 max-w-md">
               <div className="label-caps text-terracotta-light">In contention</div>
               <ul className="mt-2 space-y-2">
                 {top.map((a, i) => (

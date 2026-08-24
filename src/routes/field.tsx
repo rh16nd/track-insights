@@ -33,6 +33,8 @@ function FieldPage() {
   return (
     <Shell
       title="Field events"
+      eyebrow={`${state.data.fieldDisciplines.length} field disciplines · 2026 Final`}
+      description="Jumps and throws — every field discipline contested at the Final. Pick an event to see the model's win probability for each qualified athlete."
       lastUpdated={state.data.lastUpdated}
       daysToFinal={state.data.daysToFinal}
     >
