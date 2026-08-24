@@ -169,9 +169,16 @@
 /* No :focus-visible rule existed anywhere in this project -- keyboard users
    fell back to the browser default outline, easy to lose against a
    near-black background. One on-brand ring, applied app-wide now that the
-   whole app (not just the landing page) uses the dark theme. */
+   whole app (not just the landing page) uses the dark theme.
+   2026-08-24: extended to [role="button"] -- the trajectory chart's SVG
+   <circle> data points are focusable and keyboard-actionable (real
+   tabIndex/aria-label, see trajectory-overlay-chart.tsx) but are neither an
+   <a> nor a <button> tag, so they fell back to the unstyled native ring
+   even though every other interactive element on the page got the real
+   one -- caught by the impeccable critique skill's live focus-state check. */
 a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+[role="button"]:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
   border-radius: inherit;

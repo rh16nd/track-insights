@@ -74,7 +74,9 @@ export function TrajectoryOverlayChart({
 
   const xFor = (ts: number) => PAD_X + ((ts - minD) / spanD) * (WIDTH - PAD_RIGHT - PAD_X);
   const yFor = (v: number) =>
-    HEIGHT - PAD_BOTTOM - ((v - domainMin) / (domainMax - domainMin)) * (HEIGHT - PAD_TOP - PAD_BOTTOM);
+    HEIGHT -
+    PAD_BOTTOM -
+    ((v - domainMin) / (domainMax - domainMin)) * (HEIGHT - PAD_TOP - PAD_BOTTOM);
 
   const series = comparable.map((t, i) => {
     const pts = t.history.map((h) => ({
@@ -87,7 +89,10 @@ export function TrajectoryOverlayChart({
 
   // A handful of evenly-spaced real date ticks along the shared timeline.
   const tickCount = Math.min(5, Math.max(2, new Set(allDates).size));
-  const dateTicks = Array.from({ length: tickCount }, (_, i) => minD + (spanD * i) / (tickCount - 1));
+  const dateTicks = Array.from(
+    { length: tickCount },
+    (_, i) => minD + (spanD * i) / (tickCount - 1),
+  );
 
   return (
     <div>
@@ -135,7 +140,9 @@ export function TrajectoryOverlayChart({
             </thead>
             <tbody>
               {series
-                .flatMap((s) => s.pts.map((p) => ({ ...p, name: s.trajectory.name, color: s.color })))
+                .flatMap((s) =>
+                  s.pts.map((p) => ({ ...p, name: s.trajectory.name, color: s.color })),
+                )
                 .sort((a, b) => parseDate(a.date) - parseDate(b.date))
                 .map((p, i) => (
                   <tr key={i} className="border-t border-border/60">
@@ -199,9 +206,14 @@ export function TrajectoryOverlayChart({
                       fill={s.color}
                       stroke="var(--card)"
                       strokeWidth={1.5}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`${s.trajectory.name}, ${p.mark}, ${p.date}, ${p.venue}`}
                       onMouseEnter={() => setHover({ series: si, point: pi })}
                       onMouseLeave={() => setHover(null)}
-                      style={{ cursor: "pointer" }}
+                      onFocus={() => setHover({ series: si, point: pi })}
+                      onBlur={() => setHover(null)}
+                      style={{ cursor: "pointer", outlineColor: s.color }}
                     />
                   ))}
                   {lastPt && (
@@ -219,26 +231,27 @@ export function TrajectoryOverlayChart({
               );
             })}
           </svg>
-          {hover && (() => {
-            const hoveredSeries = series[hover.series];
-            const hoveredPoint = hoveredSeries?.pts[hover.point];
-            if (!hoveredSeries || !hoveredPoint) return null;
-            return (
-              <div
-                className="card-shadow pointer-events-none absolute z-10 -translate-x-1/2 rounded-md border border-border bg-popover px-2.5 py-1.5 text-[11px] text-popover-foreground"
-                style={{
-                  left: `${(hoveredPoint.x / WIDTH) * 100}%`,
-                  top: `${(hoveredPoint.y / HEIGHT) * 100 - 18}%`,
-                }}
-              >
-                <div className="font-medium" style={{ color: hoveredSeries.color }}>
-                  {hoveredSeries.trajectory.name}
+          {hover &&
+            (() => {
+              const hoveredSeries = series[hover.series];
+              const hoveredPoint = hoveredSeries?.pts[hover.point];
+              if (!hoveredSeries || !hoveredPoint) return null;
+              return (
+                <div
+                  className="card-shadow pointer-events-none absolute z-10 -translate-x-1/2 rounded-md border border-border bg-popover px-2.5 py-1.5 text-[11px] text-popover-foreground"
+                  style={{
+                    left: `${(hoveredPoint.x / WIDTH) * 100}%`,
+                    top: `${(hoveredPoint.y / HEIGHT) * 100 - 18}%`,
+                  }}
+                >
+                  <div className="font-medium" style={{ color: hoveredSeries.color }}>
+                    {hoveredSeries.trajectory.name}
+                  </div>
+                  <div>{hoveredPoint.mark}</div>
+                  <div className="text-muted-foreground">{hoveredPoint.venue}</div>
                 </div>
-                <div>{hoveredPoint.mark}</div>
-                <div className="text-muted-foreground">{hoveredPoint.venue}</div>
-              </div>
-            );
-          })()}
+              );
+            })()}
         </div>
       )}
 
@@ -250,7 +263,10 @@ export function TrajectoryOverlayChart({
             params={{ discKey, name: s.trajectory.name }}
             className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground transition-colors hover:text-terracotta-strong"
           >
-            <span className="inline-block size-2 rounded-full" style={{ backgroundColor: s.color }} />
+            <span
+              className="inline-block size-2 rounded-full"
+              style={{ backgroundColor: s.color }}
+            />
             {s.trajectory.name}
           </Link>
         ))}

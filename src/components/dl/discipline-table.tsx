@@ -22,7 +22,34 @@ export function DisciplineTable({
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
+      {/* Mobile-only: a real <select> instead of the pill wall below --
+       * same fix Projections' discipline picker needed (impeccable critique
+       * skill, 2026-08-24): a flat wrapped list of pills at a real 44px
+       * touch-target size gets tall fast (measured live: 358px for Track's
+       * 18 disciplines at the old 32.75px pill height). This is shared by
+       * both Track and Field, so one fix covers both pages. */}
+      <div className="sm:hidden">
+        <label
+          className="label-caps mb-1.5 block text-muted-foreground"
+          htmlFor="discipline-select"
+        >
+          Discipline
+        </label>
+        <select
+          id="discipline-select"
+          value={current.id}
+          onChange={(e) => onActiveChange(e.target.value)}
+          className="w-full rounded-md border border-border bg-card px-3 py-3 text-[13.5px] font-medium text-foreground"
+        >
+          {disciplines.map((d) => (
+            <option key={d.id} value={d.id}>
+              {d.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="hidden flex-wrap gap-2 sm:flex">
         {disciplines.map((d) => (
           <button
             key={d.id}

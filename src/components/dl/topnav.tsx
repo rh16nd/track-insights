@@ -1,4 +1,5 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { PodiumCallMark } from "./logo";
 
 const nav = [
@@ -33,6 +34,19 @@ export function TopNav({
   lastUpdated?: string | undefined;
   daysToFinal?: number | undefined;
 }) {
+  // Real bug caught via the impeccable critique skill's live DOM inspection
+  // (2026-08-24): on mobile this nav is horizontally scrollable
+  // (nav-scroll-mask), and on initial load it sits at scrollLeft 0 -- so
+  // whichever page is actually active can load entirely outside the
+  // visible window (confirmed live: Projections, the rightmost item, was
+  // fully off-screen with no way to tell which page you were even on).
+  // Scroll the current page's own link into view on every route change.
+  const activeRef = useRef<HTMLAnchorElement>(null);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ inline: "center", block: "nearest" });
+  }, [pathname]);
+
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-card/90 backdrop-blur-md">
       <div className="grid h-16 grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-2 px-6 sm:px-8">
@@ -44,16 +58,20 @@ export function TopNav({
         </Link>
 
         <nav className="nav-scroll-mask flex min-w-0 items-center justify-center gap-1 overflow-x-auto">
-          {nav.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="label-caps whitespace-nowrap rounded-full px-3.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-              activeProps={{ className: "!bg-secondary !text-foreground" }}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {nav.map((item) => {
+            const isActive = pathname === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                ref={isActive ? activeRef : undefined}
+                className="label-caps whitespace-nowrap rounded-full px-3.5 py-3.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:py-2"
+                activeProps={{ className: "!bg-secondary !text-foreground" }}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex shrink-0 items-center gap-4 justify-self-end">
