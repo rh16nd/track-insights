@@ -181,7 +181,7 @@ function ProjectionStatRow({
   detailLoaded: boolean;
 }) {
   return (
-    <div className="card-shadow mt-4 grid grid-cols-2 divide-x divide-y divide-border rounded-xl border border-border bg-card sm:grid-cols-4 sm:divide-y-0">
+    <div className="card-shadow card-surface mt-4 grid grid-cols-2 divide-x divide-y divide-border rounded-[18px] bg-card sm:grid-cols-4 sm:divide-y-0">
       <StatCell label="Qualified field" value={String(qualifiedCount)} sub="real DL standings" />
       <StatCell
         label="Real 2026 races"
@@ -289,7 +289,7 @@ function ProjectionsPage() {
   if (state.status === "loading")
     return (
       <Shell title="Projections">
-        <div className="card-shadow flex h-64 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground">
+        <div className="card-shadow flex h-64 items-center justify-center card-surface rounded-[18px] bg-card text-muted-foreground">
           Loading...
         </div>
       </Shell>
@@ -297,7 +297,7 @@ function ProjectionsPage() {
   if (state.status === "error")
     return (
       <Shell title="Projections">
-        <div className="card-shadow rounded-xl border border-border bg-card p-6 text-destructive">
+        <div className="card-shadow card-surface rounded-[18px] bg-card p-6 text-destructive">
           {state.message}
         </div>
       </Shell>
@@ -379,8 +379,12 @@ function ProjectionsBody({
        * correctly sized, natively accessible, no custom listbox needed)
        * without touching the desktop pill picker below, which was never
        * the problem. */}
-      <div className="card-shadow rounded-xl border border-border bg-card p-3 sm:hidden">
-        <label className="label-caps mb-1.5 block text-muted-foreground" htmlFor="disc-select">
+      {/* De-boxed to match Track/Field, whose pickers already sit directly on
+          the canvas. Wrapping this one in a card made Projections carry two
+          extra boxes the other pages don't have. On-canvas labels must be
+          light -- --muted-foreground is tuned for the light card surface. */}
+      <div className="sm:hidden">
+        <label className="label-caps mb-1.5 block text-white/92" htmlFor="disc-select">
           Discipline
         </label>
         <select
@@ -401,10 +405,10 @@ function ProjectionsBody({
         </select>
       </div>
 
-      <div className="card-shadow hidden space-y-2.5 rounded-xl border border-border bg-card p-4 sm:block">
+      <div className="hidden space-y-2.5 sm:block">
         {pickerGroups.map((group) => (
           <div key={group.label} className="flex flex-wrap items-center gap-2">
-            <span className="label-caps w-14 shrink-0 text-muted-foreground">{group.label}</span>
+            <span className="label-caps w-14 shrink-0 text-white/92">{group.label}</span>
             {group.disciplines.map((d) => (
               <button
                 key={d.id}

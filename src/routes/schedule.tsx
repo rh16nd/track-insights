@@ -12,7 +12,7 @@ function SchedulePage() {
   if (state.status === "loading")
     return (
       <Shell title="Schedule">
-        <div className="card-shadow flex h-64 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground">
+        <div className="card-shadow flex h-64 items-center justify-center card-surface rounded-[18px] bg-card text-muted-foreground">
           Loading...
         </div>
       </Shell>
@@ -20,7 +20,7 @@ function SchedulePage() {
   if (state.status === "error")
     return (
       <Shell title="Schedule">
-        <div className="card-shadow rounded-xl border border-border bg-card p-6 text-destructive">
+        <div className="card-shadow card-surface rounded-[18px] bg-card p-6 text-destructive">
           {state.message}
         </div>
       </Shell>

@@ -78,7 +78,7 @@ function AthleteProfilePage() {
   if (state.status === "loading") {
     return (
       <Shell title="Athlete">
-        <div className="card-shadow flex h-64 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground">
+        <div className="card-shadow flex h-64 items-center justify-center card-surface rounded-[18px] bg-card text-muted-foreground">
           Loading athlete profile…
         </div>
       </Shell>

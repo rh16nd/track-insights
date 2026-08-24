@@ -234,7 +234,7 @@ function Dashboard() {
   return (
     <Shell title="Dashboard" hero={hero} lastUpdated={data?.lastUpdated} daysToFinal={data?.daysToFinal}>
       {state.status === "loading" && (
-        <div className="card-shadow rounded-xl border border-border bg-card px-5 py-4 text-[13.5px] text-muted-foreground">
+        <div className="card-shadow card-surface rounded-[18px] bg-card px-5 py-4 text-[13.5px] text-muted-foreground">
           Loading live predictions…
         </div>
       )}
