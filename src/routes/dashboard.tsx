@@ -14,6 +14,7 @@ import {
 import { statusLabel, type TopWinner } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useCountUp } from "@/hooks/useCountUp";
+import { NewsFeed } from "@/components/dl/news-feed";
 
 const LAST_PROBS_KEY = "podiumcall:lastProbs";
 
@@ -234,7 +235,12 @@ function Dashboard() {
   );
 
   return (
-    <Shell title="Dashboard" hero={hero} lastUpdated={data?.lastUpdated} daysToFinal={data?.daysToFinal}>
+    <Shell
+      title="Dashboard"
+      hero={hero}
+      lastUpdated={data?.lastUpdated}
+      daysToFinal={data?.daysToFinal}
+    >
       {state.status === "loading" && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.35fr_1fr]">
           <PanelSkeleton title="Top predicted winners" rows={6} />
@@ -351,10 +357,7 @@ function Dashboard() {
             <Panel
               title="Upcoming calendar"
               action={
-                <Link
-                  to="/schedule"
-                  className="label-caps text-terracotta-strong hover:underline"
-                >
+                <Link to="/schedule" className="label-caps text-terracotta-strong hover:underline">
                   View full schedule →
                 </Link>
               }
@@ -384,6 +387,11 @@ function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Bottom of the dashboard: the evidence behind every injury flag and
+          every athlete missing from the field. Previously this only existed
+          as a tooltip on a badge. */}
+      {data && <NewsFeed />}
     </Shell>
   );
 }

@@ -42,10 +42,46 @@ function NotInField({
   router: { history: { back: () => void } };
 }) {
   const backTo = FIELD_EVENT_KEYS.has(discKey) ? "/field" : "/track";
+
+  // Same real World Athletics photo the in-field profiles get, cropped by
+  // the same real face detection. Not being in the projected eight is not a
+  // reason to give someone a visibly lesser page.
+  const hero = data.photoUrl ? (
+    <div
+      className="relative min-h-[200px] overflow-hidden rounded-2xl sm:min-h-[240px]"
+      style={{
+        backgroundImage: `url(${data.photoUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: data.photoFocus
+          ? `${data.photoFocus.x}% ${data.photoFocus.y}%`
+          : "center 15%",
+      }}
+    >
+      <div className="absolute inset-0 bg-background/25" />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to top, oklch(0.19 0.03 40 / 0.88) 0%, oklch(0.19 0.03 40 / 0.45) 28%, transparent 55%)",
+        }}
+      />
+      <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+        <div className="label-caps text-white/75">{data.disc} · not in the projected field</div>
+        <h1
+          className="mt-1.5 text-[26px] font-semibold tracking-tight text-white sm:text-[30px]"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          {data.name}
+        </h1>
+      </div>
+    </div>
+  ) : undefined;
+
   return (
     <Shell
       title={data.name}
-      eyebrow={`${data.disc} · not in the projected field`}
+      hero={hero}
+      eyebrow={hero ? undefined : `${data.disc} · not in the projected field`}
       description="This athlete is ranked this season but is not among the projected finalists. Here's why, and what they have actually run."
     >
       <Panel

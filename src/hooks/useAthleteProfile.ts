@@ -18,6 +18,8 @@ export type AthleteNotInField = {
   injuryUrl?: string | null;
   history: MeetMark[];
   historyYear: number | null;
+  photoUrl: string | null;
+  photoFocus: { x: number; y: number } | null;
 };
 
 type State =
