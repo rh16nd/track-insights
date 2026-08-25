@@ -250,35 +250,15 @@ function Dashboard() {
 
       {state.status === "error" && <ErrorPanel message={state.message} />}
 
-      {data && data.removedAthletes.length > 0 && (
-        <Panel title="Removed from predictions — injury/withdrawal" className="mt-4">
-          <ul className="divide-y divide-border">
-            {data.removedAthletes.map((r) => (
-              <li
-                key={r.name}
-                className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
-              >
-                <div className="min-w-0">
-                  <div className="text-[13.5px] font-medium text-foreground">{r.name}</div>
-                  <div className="text-[11.5px] text-muted-foreground">
-                    {r.disciplines.join(", ")}
-                  </div>
-                </div>
-                {r.reason && (
-                  <a
-                    href={r.url ?? undefined}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0 truncate text-[12px] text-destructive hover:underline max-w-[45%]"
-                  >
-                    {r.reason}
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        </Panel>
-      )}
+      {/* The "Removed from predictions — injury/withdrawal" panel used to sit
+          here, between the hero and the real content. It was deleted rather
+          than moved: NewsFeed at the bottom of this page is a strict superset
+          of it -- same athlete, disciplines, headline and source link, plus
+          the keyword the checker matched on -- so the panel was duplicating
+          the page's most valuable vertical space. api.py's build_news() now
+          guarantees a row for every removed athlete even when the match has
+          no usable headline, so nothing can go unlisted. `removedAthletes`
+          is still on the API and still tested; it just has no UI. */}
 
       {data && (
         <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1.35fr_1fr]">
