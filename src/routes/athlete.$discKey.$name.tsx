@@ -46,16 +46,27 @@ function NotInField({
   // Same real World Athletics photo the in-field profiles get, cropped by
   // the same real face detection. Not being in the projected eight is not a
   // reason to give someone a visibly lesser page.
-  const hero = data.photoUrl ? (
+  // World Athletics genuinely has no photo for some athletes, and
+  // load_athlete_photo returns null rather than substituting a stock image.
+  // Fall back to the app's own track-surface texture, exactly as the in-field
+  // profile does -- without this the page simply lost its header and looked
+  // broken for anyone WA has no picture of.
+  const hero = (
     <div
-      className="relative min-h-[200px] overflow-hidden rounded-2xl sm:min-h-[240px]"
-      style={{
-        backgroundImage: `url(${data.photoUrl})`,
-        backgroundSize: "cover",
-        backgroundPosition: data.photoFocus
-          ? `${data.photoFocus.x}% ${data.photoFocus.y}%`
-          : "center 15%",
-      }}
+      className={`relative min-h-[200px] overflow-hidden rounded-2xl sm:min-h-[240px] ${
+        data.photoUrl ? "" : "track-surface"
+      }`}
+      style={
+        data.photoUrl
+          ? {
+              backgroundImage: `url(${data.photoUrl})`,
+              backgroundSize: "cover",
+              backgroundPosition: data.photoFocus
+                ? `${data.photoFocus.x}% ${data.photoFocus.y}%`
+                : "center 15%",
+            }
+          : undefined
+      }
     >
       <div className="absolute inset-0 bg-background/25" />
       <div
@@ -75,13 +86,12 @@ function NotInField({
         </h1>
       </div>
     </div>
-  ) : undefined;
+  );
 
   return (
     <Shell
       title={data.name}
       hero={hero}
-      eyebrow={hero ? undefined : `${data.disc} · not in the projected field`}
       description="This athlete is ranked this season but is not among the projected finalists. Here's why, and what they have actually run."
     >
       <Panel
