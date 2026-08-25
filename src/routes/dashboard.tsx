@@ -246,7 +246,7 @@ function Dashboard() {
     >
       {state.status === "loading" && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.35fr_1fr]">
-          <PanelSkeleton title="Top predicted winners" rows={6} />
+          <PanelSkeleton title="Most likely to reach the podium" rows={6} />
           <PanelSkeleton title="Season progress" rows={3} />
         </div>
       )}
@@ -266,8 +266,8 @@ function Dashboard() {
       {data && (
         <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1.35fr_1fr]">
           <Panel
-            title="Top predicted winners"
-            subtitle="The model's #1 pick in each discipline, sorted by confidence"
+            title="Most likely to reach the podium"
+            subtitle="The model's strongest pick in each discipline — chance of finishing top three, not of winning"
           >
             <ul className="divide-y divide-border">
               {data.topWinners.map((w, i) => {

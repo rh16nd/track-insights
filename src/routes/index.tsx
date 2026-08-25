@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useInView } from "@/hooks/useInView";
 import { PodiumCallMark } from "@/components/dl/logo";
-import { AthleteAvatar, ProbabilityBar, RankBadge, WatchBadge } from "@/components/dl/shell";
+import { AthleteAvatar, ProbabilityBar, WatchBadge } from "@/components/dl/shell";
 import { TrackCircuit } from "@/components/dl/track-circuit";
 
 export const Route = createFileRoute("/")({
@@ -80,7 +80,7 @@ const FEATURES = [
   {
     icon: ICONS.refresh,
     title: "Live all season",
-    body: "Predictions refresh as 2026 results come in, right up to the Brussels Final.",
+    body: "Every refresh re-scrapes the season and re-scores all 32 fields, right up to the Brussels Final.",
   },
 ];
 
@@ -93,7 +93,7 @@ const STEPS = [
   {
     n: "02",
     title: "Engineer real features",
-    body: "Season form, consistency across meets, recency, head-to-head history, wind adjustment — 14 features, all carrying real signal, none structurally constant.",
+    body: "Season form, consistency across meets, recency, schedule pacing, head-to-head history, wind adjustment — 15 features, every one measured against a shuffled control before it ships.",
   },
   {
     n: "03",
@@ -103,7 +103,7 @@ const STEPS = [
   {
     n: "04",
     title: "Predict live",
-    body: "The model re-scores the field automatically as the 2026 season unfolds, all the way to Brussels.",
+    body: "The model re-scores the whole field from fresh World Athletics data on every refresh, right up to Brussels.",
   },
 ];
 
@@ -114,7 +114,7 @@ const FEED = [
   "Wanda Diamond League — Lausanne",
   "Prefontaine Classic — Eugene",
   "FBK Games — Hengelo",
-  "World Athletics Championships — Tokyo 2025",
+  "IAAF World Championships in Athletics — 2019",
   "European Athletics Championships",
   "Paavo Nurmi Games — Turku",
 ];
@@ -226,7 +226,7 @@ function Landing() {
           {/* ── Live confidence ticker ─────────────────────────────── */}
           <div className="relative mt-14 border-y border-[var(--landing-border)] bg-[var(--landing-bg-2)] py-4">
             <div className="label-caps mb-3 px-6 text-[var(--landing-muted)] sm:px-10">
-              Live from the model
+              Live from the model — each discipline&apos;s top pick, chance of a podium
             </div>
             {ticker.length > 0 ? (
               <div
@@ -275,7 +275,7 @@ function Landing() {
             className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Real results in. A ranked prediction out.
+            Real results in. A ranked field out.
           </h2>
 
           <div className="mt-10 grid grid-cols-1 items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
@@ -311,9 +311,11 @@ function Landing() {
 
             {topPick ? (
               <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6">
-                <div className="label-caps text-[var(--landing-muted)]">Ranked prediction</div>
+                <div className="label-caps text-[var(--landing-muted)]">
+                  Model&apos;s strongest call
+                </div>
                 <div className="mt-4 flex items-center gap-3">
-                  <RankBadge rank={topPick.rank} className="size-8 text-[13px]" />
+                  <AthleteAvatar name={topPick.name} highlight />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-[15px] font-semibold text-[var(--landing-fg)]">
                       {topPick.name}
@@ -325,6 +327,7 @@ function Landing() {
                   <span className="nums text-[13px] text-[var(--landing-muted)]">
                     {topPick.mark}
                   </span>
+                  <span className="label-caps text-[var(--landing-muted)]">Podium chance</span>
                   <span className="nums text-[18px] font-semibold text-[var(--landing-accent-text)]">
                     {topPick.prob}%
                   </span>
@@ -446,14 +449,15 @@ function Landing() {
                     className="text-[17px] font-semibold text-[var(--landing-fg)]"
                     style={{ fontFamily: "var(--font-display)" }}
                   >
-                    Current top predicted winners
+                    Most likely to reach the podium
                   </h3>
                   {/* The same clarifying line the dashboard panel carries. It is
                     load-bearing, not decoration: these six athletes are each
                     the top pick in a DIFFERENT discipline, and without saying
                     so the list reads as one ranking of six rivals. */}
                   <p className="mt-1 text-[12px] leading-snug text-[var(--landing-muted)]">
-                    The model&apos;s #1 pick in each discipline, sorted by confidence
+                    The model&apos;s strongest pick in each discipline — chance of finishing top
+                    three, not of winning
                   </p>
                 </div>
                 <Link
