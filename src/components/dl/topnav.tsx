@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { PodiumCallMark } from "./logo";
+import { AthleteSearch } from "./athlete-search";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard" },
@@ -83,9 +84,15 @@ export function TopNav({
           })}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-4 justify-self-end">
+        <div className="flex min-w-0 shrink items-center gap-3 justify-self-end sm:gap-4">
+          {/* Search sits in the nav rather than on one page because the
+              question it answers ("why isn't X in the field?") arrives while
+              you're looking at a table that doesn't contain X. */}
+          <div className="hidden min-w-0 sm:block">
+            <AthleteSearch />
+          </div>
           {lastUpdated && (
-            <span className="nums hidden text-[11.5px] text-muted-foreground md:block">
+            <span className="nums hidden text-[11.5px] text-muted-foreground lg:block">
               Updated {lastUpdated} · {daysToFinal}d to Brussels
             </span>
           )}

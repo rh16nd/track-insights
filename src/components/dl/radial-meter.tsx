@@ -1,4 +1,4 @@
-/** Circular meter for a single ratio (win probability) -- per the dataviz
+/** Circular meter for a single ratio (podium chance) -- per the dataviz
  * skill's Meter spec: fill carries the value, the unfilled track is a
  * lighter/neutral step so state reads across the whole ring. Same
  * terracotta->gold accent ProbabilityBar already uses elsewhere in this

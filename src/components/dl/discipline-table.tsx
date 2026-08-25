@@ -6,7 +6,7 @@ import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
 
 /** Which column the table is ordered by. "rank" is the API's own ordering
  * (season-best mark, ascending = fastest/furthest first); "prob" is the
- * model's win probability. The two genuinely disagree -- Men's 100m has
+ * model's podium chance. The two genuinely disagree -- Men's 100m has
  * #1 Lyles 9.79 at 16% sitting above #2 Seville 9.82 at 27% -- so instead of
  * the page picking one ordering and asserting it as *the* ranking, the
  * reader switches. Season best stays the default because it's a directly
@@ -27,8 +27,8 @@ const DEFAULT_SORT: Sort = { key: "rank", dir: "asc" };
 const FIRST_DIR: Record<SortKey, SortDir> = { rank: "asc", prob: "desc" };
 
 const SUBTITLE: Record<SortKey, string> = {
-  rank: "Ranked by season best. Win probability is the model's separate call and can disagree.",
-  prob: "Sorted by the model's win probability. The # column still ranks by season best, so it reads out of sequence.",
+  rank: "Ranked by season best. Podium chance is the model's separate call and can disagree.",
+  prob: "Sorted by the model's podium chance. The # column still ranks by season best, so it reads out of sequence.",
 };
 
 function sortAthletes(athletes: Athlete[], { key, dir }: Sort): Athlete[] {
@@ -190,7 +190,7 @@ export function DisciplineTable({
       </div>
 
       {/* The "#" column ranks by season-best mark, which is NOT the same
-          ordering as win probability (e.g. Men's 100m: #1 Lyles 9.79 at 16%
+          ordering as podium chance (e.g. Men's 100m: #1 Lyles 9.79 at 16%
           sits above #2 Seville 9.82 at 27%). The subtitle says which of the
           two the table is currently ordered by, because the columns
           otherwise look like they should agree and don't. */}
@@ -223,7 +223,7 @@ export function DisciplineTable({
                   className="w-28 pb-3 pl-6 text-right"
                 />
                 <SortHeader
-                  label="Win probability"
+                  label="Podium chance"
                   columnKey="prob"
                   sort={sort}
                   onSort={onSort}

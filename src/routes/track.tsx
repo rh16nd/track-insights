@@ -11,7 +11,7 @@ export const Route = createFileRoute("/track")({
 });
 
 const DESCRIPTION =
-  "Sprints through distance — every track discipline contested at the Final. Pick an event to see the model's win probability for each qualified athlete.";
+  "Sprints through distance — every track discipline contested at the Final. Pick an event to see each qualified athlete's chance of finishing on the podium.";
 
 function TrackPage() {
   const state = usePredictions();

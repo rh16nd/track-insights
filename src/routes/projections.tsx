@@ -132,7 +132,7 @@ function ProjectionsHero({
           <div className="shrink-0">
             <RadialMeter
               value={favorite.prob}
-              label="Win probability"
+              label="Podium chance"
               dark
               size={132}
               strokeWidth={11}
@@ -253,7 +253,7 @@ function ConfidencePanel({
             <button
               type="button"
               onClick={() => onSelectDisc(c.id)}
-              aria-label={`${c.disc}, ${c.value}% win probability`}
+              aria-label={`${c.disc}, ${c.value}% podium chance`}
               className="flex w-full items-center gap-3 rounded-md py-2 pl-1 pr-2 transition-colors hover:bg-secondary/40"
             >
               <span
@@ -350,7 +350,7 @@ function ProjectionsBody({
 }) {
   const detail = useProjectionsDetail(active.id);
 
-  // Sorted by win probability, not rank -- rank is sorted by real season-best
+  // Sorted by podium chance, not rank -- rank is sorted by real season-best
   // mark, so the #1-ranked athlete isn't always the model's top probability
   // pick (upsets are real). Mirrors api.py's build_storylines fix for the
   // exact same bug (an earlier version of the photo-finish storyline

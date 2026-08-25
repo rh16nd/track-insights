@@ -1,9 +1,132 @@
 import { createFileRoute, Link, useCanGoBack, useRouter } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, WatchBadge } from "@/components/dl/shell";
-import { useAthleteProfile } from "@/hooks/useAthleteProfile";
+import { useAthleteProfile, type AthleteNotInField } from "@/hooks/useAthleteProfile";
 import { SeasonTrendChart } from "@/components/dl/season-trend-chart";
 import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
 import { RadialMeter } from "@/components/dl/radial-meter";
+
+const FIELD_EVENT_KEYS = new Set([
+  "men_HJ",
+  "women_HJ",
+  "men_PV",
+  "women_PV",
+  "men_LJ",
+  "women_LJ",
+  "men_TJ",
+  "women_TJ",
+  "men_SP",
+  "women_SP",
+  "men_DT",
+  "women_DT",
+  "men_JT",
+  "women_JT",
+]);
+
+/** An athlete who is really ranked this season but is NOT in the projected
+ * field. Shows the actual reason -- taken from the API, which mirrors
+ * run.py's real selection order -- plus their genuine season marks.
+ *
+ * This page exists because the absence itself was the confusing thing:
+ * Noah Lyles is world #1 at 9.79 and simply has no Diamond League points in
+ * the 100m, so he is ineligible for the Final. That is a real fact, and
+ * before this the site just didn't mention him at all. */
+function NotInField({
+  data,
+  discKey,
+  canGoBack,
+  router,
+}: {
+  data: AthleteNotInField;
+  discKey: string;
+  canGoBack: boolean;
+  router: { history: { back: () => void } };
+}) {
+  const backTo = FIELD_EVENT_KEYS.has(discKey) ? "/field" : "/track";
+  return (
+    <Shell
+      title={data.name}
+      eyebrow={`${data.disc} · not in the projected field`}
+      description="This athlete is ranked this season but is not among the projected finalists. Here's why, and what they have actually run."
+    >
+      <Panel
+        title="Why they're not in the projected field"
+        subtitle="The same eligibility check the projections themselves use"
+      >
+        <p className="text-[13.5px] leading-relaxed text-foreground">{data.reason}</p>
+        {data.injuryReason && (
+          <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">
+            Flagged from: {data.injuryReason}{" "}
+            {data.injuryUrl && (
+              <a
+                href={data.injuryUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-terracotta-strong hover:underline"
+              >
+                View source
+              </a>
+            )}
+          </p>
+        )}
+        <div className="mt-5 flex flex-wrap gap-x-10 gap-y-4">
+          <div>
+            <div className="label-caps text-muted-foreground">Season best</div>
+            <div className="nums mt-1 text-[20px] font-semibold text-foreground">
+              {data.seasonBest ?? "—"}
+            </div>
+          </div>
+          <div>
+            <div className="label-caps text-muted-foreground">World rank</div>
+            <div className="nums mt-1 text-[20px] font-semibold text-foreground">
+              {data.worldRank != null ? `#${data.worldRank}` : "—"}
+            </div>
+          </div>
+        </div>
+        {data.worldRank === 1 && (
+          <p className="mt-4 text-[12.5px] leading-relaxed text-muted-foreground">
+            Worth noting: this is the fastest mark in the world this season. Diamond League Final
+            eligibility is decided by points scored in the series, not by season best.
+          </p>
+        )}
+      </Panel>
+
+      {data.history.length > 0 && (
+        <Panel title="Real season form" className="mt-4">
+          <SeasonTrendChart history={data.history} year={data.historyYear} />
+        </Panel>
+      )}
+
+      <div className="mt-5 flex flex-wrap items-center gap-4">
+        {canGoBack ? (
+          <button
+            type="button"
+            onClick={() => router.history.back()}
+            className="label-caps text-muted-foreground transition-colors hover:text-foreground"
+          >
+            ← Back
+          </button>
+        ) : (
+          <Link
+            to={backTo}
+            className="label-caps text-muted-foreground transition-colors hover:text-foreground"
+          >
+            ← Back to {backTo === "/field" ? "field" : "track"} events
+          </Link>
+        )}
+        {data.waUrl && (
+          <a
+            href={data.waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[12px] text-muted-foreground transition-colors hover:text-terracotta-strong hover:underline"
+          >
+            View full profile on World Athletics
+          </a>
+        )}
+      </div>
+    </Shell>
+  );
+}
 
 export const Route = createFileRoute("/athlete/$discKey/$name")({
   component: AthleteProfilePage,
@@ -81,15 +204,27 @@ function AthleteProfilePage() {
 
   if (state.status === "loading") {
     return (
-      <Shell title={pendingName} eyebrow="Athlete profile" description="Loading real season form, head-to-head record and season stats…">
+      <Shell
+        title={pendingName}
+        eyebrow="Athlete profile"
+        description="Loading real season form, head-to-head record and season stats…"
+      >
         <PanelSkeleton rows={6} />
       </Shell>
     );
   }
 
+  if (state.status === "notInField") {
+    return <NotInField data={state.data} discKey={discKey} canGoBack={canGoBack} router={router} />;
+  }
+
   if (state.status === "error") {
     return (
-      <Shell title={pendingName} eyebrow="Athlete profile" description="This athlete's profile could not be loaded.">
+      <Shell
+        title={pendingName}
+        eyebrow="Athlete profile"
+        description="This athlete's profile could not be loaded."
+      >
         <ErrorPanel
           title="Could not load athlete profile"
           message={state.message}
@@ -194,7 +329,7 @@ function AthleteProfilePage() {
               {a.disc} · {a.nat} · Rank #{a.rank} predicted
             </p>
           </div>
-          <RadialMeter value={a.prob} label="Win probability" dark size={148} strokeWidth={12} />
+          <RadialMeter value={a.prob} label="Podium chance" dark size={148} strokeWidth={12} />
         </div>
       </div>
     </div>
@@ -213,7 +348,11 @@ function AthleteProfilePage() {
               sub="vs. career best"
               icon="ruler"
             />
-            <StatBlock label="Age" value={a.age != null ? String(Math.round(a.age)) : "—"} icon="calendar" />
+            <StatBlock
+              label="Age"
+              value={a.age != null ? String(Math.round(a.age)) : "—"}
+              icon="calendar"
+            />
             {/* Scoped to THIS discipline, and saying so matters now that the
                 Mile no longer counts as a 1500m (2026-08-24 scraper fix):
                 Josh Kerr's whole 2026 Diamond League 1500m season was Miles,
