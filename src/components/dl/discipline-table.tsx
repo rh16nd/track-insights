@@ -127,6 +127,15 @@ export function DisciplineTable({
     () => (current ? sortAthletes(current.athletes, sort) : []),
     [current, sort],
   );
+  // Sorted by the SAME control as the real field, so the two sections stay
+  // consistent when you switch columns -- but kept in their own list and
+  // never merged into `rows`, because these athletes are not in the field
+  // and must not be numbered alongside it. Their `rank` is a within-group
+  // ordering the API supplies for exactly this; the UI never displays it.
+  const nearMiss = useMemo(
+    () => (current?.nearMiss ? sortAthletes(current.nearMiss, sort) : []),
+    [current, sort],
+  );
 
   if (!current) return null;
 
@@ -281,6 +290,73 @@ export function DisciplineTable({
                   </td>
                   <td className="py-3 pl-8">
                     <div className="flex items-center justify-end gap-3">
+                      <ProbabilityBar value={a.prob} className="w-28" trackHeight="h-1.5" />
+                      <span className="nums w-9 text-right text-[12.5px] font-semibold text-foreground">
+                        {a.prob}%
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
+              {/* Athletes who are NOT in WA's Diamond League standings, so
+                  not eligible for the Final -- scored by the same model, but
+                  kept below the real field, unnumbered, and marked. Noah
+                  Lyles is the reason this exists: world #1 at 9.79 with no
+                  DL points in the 100m, previously absent from the site with
+                  no explanation. Zurich is still to come, so these can still
+                  change. */}
+              {nearMiss.length > 0 && (
+                <tr>
+                  <td colSpan={6} className="pb-2 pt-6">
+                    <div className="label-caps text-muted-foreground">
+                      Not qualified — outside the Diamond League standings
+                    </div>
+                    <p className="mt-1 max-w-xl text-[12px] leading-snug text-muted-foreground">
+                      Fast enough to matter, but without the Diamond League points needed to reach
+                      the Final. Scored by the same model so you can see who would be a threat if
+                      they got in.
+                    </p>
+                  </td>
+                </tr>
+              )}
+              {nearMiss.map((a, i) => (
+                <tr
+                  key={`nm-${a.name}`}
+                  className="stagger-item transition-colors hover:bg-secondary/40"
+                  style={{ "--stagger-i": i } as CSSProperties}
+                >
+                  <td className="py-3 pr-2">
+                    <span
+                      aria-hidden
+                      className="flex size-6 items-center justify-center rounded-full border border-dashed border-border text-[11px] text-muted-foreground"
+                    >
+                      –
+                    </span>
+                  </td>
+                  <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
+                    <Link
+                      to="/athlete/$discKey/$name"
+                      params={{ discKey: current.id, name: a.name }}
+                      className="transition-colors hover:text-terracotta-strong hover:underline"
+                    >
+                      {a.name}
+                    </Link>
+                    {a.injuryWatch && (
+                      <WatchBadge reason={a.injuryReason} url={a.injuryUrl} className="ml-2" />
+                    )}
+                  </td>
+                  <td className="nums py-3 pl-4 text-[12px] text-muted-foreground">{a.nat}</td>
+                  <td className="py-3 pl-4">
+                    <span className="label-caps whitespace-nowrap text-muted-foreground">
+                      Not qualified
+                    </span>
+                  </td>
+                  <td className="nums py-3 pl-6 text-right text-[13.5px] font-medium text-foreground">
+                    {a.mark}
+                  </td>
+                  <td className="py-3 pl-8">
+                    <div className="flex items-center justify-end gap-3 opacity-70">
                       <ProbabilityBar value={a.prob} className="w-28" trackHeight="h-1.5" />
                       <span className="nums w-9 text-right text-[12.5px] font-semibold text-foreground">
                         {a.prob}%

@@ -22,7 +22,18 @@ export type Athlete = {
   injuryUrl: string | null;
 };
 
-export type Discipline = { id: string; label: string; athletes: Athlete[] };
+/** `athletes` is the CONFIRMED Diamond League field and nothing else -- every
+ * model-derived figure on the site (top winners, confidence, storylines, the
+ * favourite) reads it, so a non-qualified athlete leaking in would be
+ * presented as a projected finalist. `nearMiss` carries the next-fastest
+ * athletes who are NOT in WA's standings: scored by the same model, shown
+ * separately, never numbered. */
+export type Discipline = {
+  id: string;
+  label: string;
+  athletes: Athlete[];
+  nearMiss?: Athlete[];
+};
 
 export type RemovedAthlete = {
   name: string;
@@ -140,4 +151,3 @@ export const formatMark = (value: number, sample: string): string => {
   }
   return value.toFixed(2);
 };
-
