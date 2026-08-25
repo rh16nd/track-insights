@@ -6,7 +6,16 @@ import type { H2hMatchup } from "@/lib/dl-data";
  * the model (train_model.py's add_h2h_features), never shown to a user.
  * Win/loss as two-segment bars, not a single "win rate" bar, so both real
  * counts stay visible rather than collapsing to one ratio. */
-export function HeadToHeadChart({ matchups }: { matchups: H2hMatchup[] }) {
+export function HeadToHeadChart({
+  matchups,
+  /** Who the opponents are. Defaults to the in-field profile's wording;
+   * the not-in-field profile passes its own, because there "top rivals" is
+   * ambiguous when the athlete isn't in the field those rivals are in. */
+  opponentsLabel = "top rivals",
+}: {
+  matchups: H2hMatchup[];
+  opponentsLabel?: string;
+}) {
   const [tableView, setTableView] = useState(false);
   if (matchups.length === 0) return null;
   const maxMeetings = Math.max(...matchups.map((m) => m.meetings));
@@ -14,7 +23,7 @@ export function HeadToHeadChart({ matchups }: { matchups: H2hMatchup[] }) {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-y-2">
-        <div className="label-caps text-muted-foreground">Head-to-head vs. top rivals</div>
+        <div className="label-caps text-muted-foreground">Head-to-head vs. {opponentsLabel}</div>
         <div className="flex items-center gap-3">
           {!tableView && (
             <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
@@ -39,9 +48,7 @@ export function HeadToHeadChart({ matchups }: { matchups: H2hMatchup[] }) {
       {tableView ? (
         <div className="mt-3 overflow-x-auto">
           <table className="w-full text-left text-[12.5px]">
-            <caption className="sr-only">
-              Head-to-head record against this discipline&apos;s other top picks
-            </caption>
+            <caption className="sr-only">Head-to-head record vs. {opponentsLabel}</caption>
             <thead>
               <tr className="label-caps text-muted-foreground">
                 <th scope="col" className="py-1 pr-3 font-medium">
@@ -71,38 +78,41 @@ export function HeadToHeadChart({ matchups }: { matchups: H2hMatchup[] }) {
           </table>
         </div>
       ) : (
-      <ul className="mt-3 space-y-3">
-        {matchups.map((m) => {
-          const winPct = (m.wins / m.meetings) * 100;
-          const lossPct = 100 - winPct;
-          const barWidthPct = (m.meetings / maxMeetings) * 100;
-          return (
-            <li key={m.opponent}>
-              <div className="flex items-baseline justify-between text-[12.5px]">
-                <span className="min-w-0 truncate text-foreground">{m.opponent}</span>
-                <span className="nums shrink-0 font-medium text-foreground">
-                  {m.wins}-{m.losses}
-                  <span className="ml-1 font-normal text-muted-foreground">({m.meetings})</span>
-                </span>
-              </div>
-              <div
-                className="mt-1.5 flex h-2.5 gap-[2px] overflow-hidden rounded-full bg-transparent"
-                style={{ width: `${barWidthPct}%` }}
-              >
-                {m.wins > 0 && (
-                  <div
-                    className="h-full rounded-full bg-terracotta"
-                    style={{ width: `${winPct}%` }}
-                  />
-                )}
-                {m.losses > 0 && (
-                  <div className="h-full rounded-full bg-border" style={{ width: `${lossPct}%` }} />
-                )}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+        <ul className="mt-3 space-y-3">
+          {matchups.map((m) => {
+            const winPct = (m.wins / m.meetings) * 100;
+            const lossPct = 100 - winPct;
+            const barWidthPct = (m.meetings / maxMeetings) * 100;
+            return (
+              <li key={m.opponent}>
+                <div className="flex items-baseline justify-between text-[12.5px]">
+                  <span className="min-w-0 truncate text-foreground">{m.opponent}</span>
+                  <span className="nums shrink-0 font-medium text-foreground">
+                    {m.wins}-{m.losses}
+                    <span className="ml-1 font-normal text-muted-foreground">({m.meetings})</span>
+                  </span>
+                </div>
+                <div
+                  className="mt-1.5 flex h-2.5 gap-[2px] overflow-hidden rounded-full bg-transparent"
+                  style={{ width: `${barWidthPct}%` }}
+                >
+                  {m.wins > 0 && (
+                    <div
+                      className="h-full rounded-full bg-terracotta"
+                      style={{ width: `${winPct}%` }}
+                    />
+                  )}
+                  {m.losses > 0 && (
+                    <div
+                      className="h-full rounded-full bg-border"
+                      style={{ width: `${lossPct}%` }}
+                    />
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       )}
     </div>
   );

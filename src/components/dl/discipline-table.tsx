@@ -310,12 +310,20 @@ export function DisciplineTable({
                 <tr>
                   <td colSpan={6} className="pb-2 pt-6">
                     <div className="label-caps text-muted-foreground">
-                      Not qualified — outside the Diamond League standings
+                      Not qualified — below the top {current.qualLimit} on Diamond League points
                     </div>
+                    {/* Was "outside the Diamond League standings", which is
+                        wrong for most of these athletes: they are IN the
+                        standings, just below the qualifying places. Verified
+                        2026-08-25 on the men's 1500m, where all four
+                        near-miss athletes have real Diamond League points.
+                        Same imprecision that made the athlete page tell
+                        readers Noah Lyles had never scored. */}
                     <p className="mt-1 max-w-xl text-[12px] leading-snug text-muted-foreground">
-                      Fast enough to matter, but without the Diamond League points needed to reach
-                      the Final. Scored by the same model so you can see who would be a threat if
-                      they got in.
+                      Fast enough to matter, but short of a qualifying place on points — either
+                      below the cut in the standings, or with no Diamond League points in this event
+                      at all. Scored by the same model so you can see who would be a threat if they
+                      got in.
                     </p>
                   </td>
                 </tr>

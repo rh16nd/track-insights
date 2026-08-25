@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as FieldRouteImport } from './routes/field'
 import { Route as ProjectionsRouteImport } from './routes/projections'
+import { Route as QualificationRouteImport } from './routes/qualification'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as TrackRouteImport } from './routes/track'
 import { Route as AthleteDiscKeyNameRouteImport } from './routes/athlete.$discKey.$name'
@@ -37,6 +38,11 @@ const ProjectionsRoute = ProjectionsRouteImport.update({
   path: '/projections',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QualificationRoute = QualificationRouteImport.update({
+  id: '/qualification',
+  path: '/qualification',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ScheduleRoute = ScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/field': typeof FieldRoute
   '/projections': typeof ProjectionsRoute
+  '/qualification': typeof QualificationRoute
   '/schedule': typeof ScheduleRoute
   '/track': typeof TrackRoute
   '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/field': typeof FieldRoute
   '/projections': typeof ProjectionsRoute
+  '/qualification': typeof QualificationRoute
   '/schedule': typeof ScheduleRoute
   '/track': typeof TrackRoute
   '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/field': typeof FieldRoute
   '/projections': typeof ProjectionsRoute
+  '/qualification': typeof QualificationRoute
   '/schedule': typeof ScheduleRoute
   '/track': typeof TrackRoute
   '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/field'
     | '/projections'
+    | '/qualification'
     | '/schedule'
     | '/track'
     | '/athlete/$discKey/$name'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/field'
     | '/projections'
+    | '/qualification'
     | '/schedule'
     | '/track'
     | '/athlete/$discKey/$name'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/field'
     | '/projections'
+    | '/qualification'
     | '/schedule'
     | '/track'
     | '/athlete/$discKey/$name'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   FieldRoute: typeof FieldRoute
   ProjectionsRoute: typeof ProjectionsRoute
+  QualificationRoute: typeof QualificationRoute
   ScheduleRoute: typeof ScheduleRoute
   TrackRoute: typeof TrackRoute
   AthleteDiscKeyNameRoute: typeof AthleteDiscKeyNameRoute
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/qualification': {
+      id: '/qualification'
+      path: '/qualification'
+      fullPath: '/qualification'
+      preLoaderRoute: typeof QualificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/schedule': {
       id: '/schedule'
       path: '/schedule'
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   FieldRoute: FieldRoute,
   ProjectionsRoute: ProjectionsRoute,
+  QualificationRoute: QualificationRoute,
   ScheduleRoute: ScheduleRoute,
   TrackRoute: TrackRoute,
   AthleteDiscKeyNameRoute: AthleteDiscKeyNameRoute,

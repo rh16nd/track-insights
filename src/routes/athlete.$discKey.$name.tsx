@@ -4,6 +4,7 @@ import { useAthleteProfile, type AthleteNotInField } from "@/hooks/useAthletePro
 import { SeasonTrendChart } from "@/components/dl/season-trend-chart";
 import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
 import { RadialMeter } from "@/components/dl/radial-meter";
+import { ordinal } from "@/lib/dl-data";
 
 const FIELD_EVENT_KEYS = new Set([
   "men_HJ",
@@ -27,9 +28,14 @@ const FIELD_EVENT_KEYS = new Set([
  * run.py's real selection order -- plus their genuine season marks.
  *
  * This page exists because the absence itself was the confusing thing:
- * Noah Lyles is world #1 at 9.79 and simply has no Diamond League points in
- * the 100m, so he is ineligible for the Final. That is a real fact, and
- * before this the site just didn't mention him at all. */
+ * Noah Lyles is world #1 at 9.79 and still misses the Final, and before
+ * this the site just didn't mention him at all.
+ *
+ * 2026-08-25: the reason it gave was also wrong. It said he had no Diamond
+ * League points, because standings.json only keeps the qualifying places
+ * and "absent from that list" was read as "never scored". He is 9th on 15
+ * points, two short of the cut. The API now answers from the full
+ * standings table and this page shows the points and the gap. */
 function NotInField({
   data,
   discKey,
@@ -76,14 +82,65 @@ function NotInField({
             "linear-gradient(to top, oklch(0.19 0.03 40 / 0.88) 0%, oklch(0.19 0.03 40 / 0.45) 28%, transparent 55%)",
         }}
       />
-      <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-        <div className="label-caps text-white/75">{data.disc} · not in the projected field</div>
-        <h1
-          className="mt-1.5 text-[26px] font-semibold tracking-tight text-white sm:text-[30px]"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          {data.name}
-        </h1>
+      {/* Top scrim for the back link, matching the in-field hero -- without
+          it the link sits on raw photo and can land on a bright patch. */}
+      <div
+        className="absolute inset-0"
+        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 30%)" }}
+      />
+      <div className="relative flex min-h-[200px] flex-col justify-between p-6 sm:min-h-[240px] sm:p-8">
+        {/* Back sits in the hero here for the same reason it does on the
+            in-field profile: this page is almost always reached from a table
+            or a search result, and the way out shouldn't be below the fold. */}
+        {canGoBack ? (
+          <button
+            type="button"
+            onClick={() => router.history.back()}
+            className="label-caps -m-2 self-start p-2 text-white/75 transition-colors hover:text-white"
+          >
+            ← Back
+          </button>
+        ) : (
+          <Link
+            to={backTo}
+            className="label-caps -m-2 self-start p-2 text-white/75 transition-colors hover:text-white"
+          >
+            ← Back to {backTo === "/field" ? "field" : "track"} events
+          </Link>
+        )}
+        <div className="mt-4 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <div className="label-caps text-white/75">{data.disc} · not in the projected field</div>
+            <h1
+              className="mt-1.5 text-[26px] font-semibold tracking-tight text-white sm:text-[30px]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              {data.name}
+            </h1>
+            <p className="mt-1.5 text-[14px] text-white/85">
+              {[
+                data.nat,
+                data.dl ? `${ordinal(data.dl.rank)} on ${data.dl.points} DL points` : null,
+                data.worldRank != null ? `World #${data.worldRank}` : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+          </div>
+          {/* The model really did score this athlete -- run.py runs the same
+              forest over the near-miss group. Shown with an explicitly
+              conditional label, because it is not a forecast about the
+              Final: they are not in it. */}
+          {data.hypotheticalProb != null && (
+            <RadialMeter
+              value={data.hypotheticalProb}
+              label="Podium chance if they qualified"
+              dark
+              size={148}
+              strokeWidth={12}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -114,20 +171,45 @@ function NotInField({
             )}
           </p>
         )}
-        <div className="mt-5 flex flex-wrap gap-x-10 gap-y-4">
-          <div>
-            <div className="label-caps text-muted-foreground">Season best</div>
-            <div className="nums mt-1 text-[20px] font-semibold text-foreground">
-              {data.seasonBest ?? "—"}
+        {/* Points are what actually decides eligibility, so when the athlete
+            has any they belong right under the reason rather than only
+            inside the prose. The rest of their numbers live in Season stats
+            below, the same panel the in-field profile uses. */}
+        {data.dl && (
+          <div className="mt-5 flex flex-wrap gap-x-10 gap-y-4">
+            <div>
+              <div className="label-caps text-muted-foreground">Diamond League points</div>
+              <div className="nums mt-1 text-[20px] font-semibold text-foreground">
+                {data.dl.points ?? "—"}
+                {/* Separated by a middot, not just whitespace: "15" beside
+                    "9th" reads as "159th" at a glance. */}
+                <span className="ml-2 text-[13px] font-medium text-muted-foreground">
+                  · {ordinal(data.dl.rank)} in the standings
+                </span>
+              </div>
+            </div>
+            <div>
+              <div className="label-caps text-muted-foreground">Gap to the cut</div>
+              <div className="nums mt-1 text-[20px] font-semibold text-foreground">
+                {data.dl.gap == null ? "—" : data.dl.gap > 0 ? `−${data.dl.gap}` : "level"}
+                {data.dl.cutPoints != null && (
+                  <span className="ml-2 text-[13px] font-medium text-muted-foreground">
+                    · cut at {data.dl.cutPoints}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-          <div>
-            <div className="label-caps text-muted-foreground">World rank</div>
-            <div className="nums mt-1 text-[20px] font-semibold text-foreground">
-              {data.worldRank != null ? `#${data.worldRank}` : "—"}
-            </div>
-          </div>
-        </div>
+        )}
+        {data.dl && (
+          <Link
+            to="/qualification"
+            search={{ disc: data.discKey }}
+            className="mt-4 inline-block text-[12.5px] font-medium text-terracotta-strong hover:underline"
+          >
+            See the full {data.disc} standings →
+          </Link>
+        )}
         {data.worldRank === 1 && (
           <p className="mt-4 text-[12.5px] leading-relaxed text-muted-foreground">
             Worth noting: this is the fastest mark in the world this season. Diamond League Final
@@ -136,25 +218,97 @@ function NotInField({
         )}
       </Panel>
 
-      {data.history.length > 0 && (
-        <Panel title="Real season form" className="mt-4">
-          <SeasonTrendChart history={data.history} year={data.historyYear} />
+      {/* Same two-panel row, same StatBlock grid and same chart the in-field
+          profile uses. None of these numbers stop being true because the
+          athlete missed the cut, and the page read as a stub without them. */}
+      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr]">
+        <Panel title="Season stats">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            <StatBlock label="2026 season best" value={data.seasonBest ?? "—"} icon="target" />
+            <StatBlock
+              label="World rank"
+              value={data.worldRank != null ? `#${data.worldRank}` : "—"}
+              sub="this season's toplist"
+              icon="trophy"
+            />
+            <StatBlock label="Career best" value={data.careerBest ?? "—"} icon="trophy" />
+            <StatBlock
+              label="PB gap"
+              value={data.pbGap != null ? data.pbGap.toFixed(2) : "—"}
+              sub="vs. career best"
+              icon="ruler"
+            />
+            <StatBlock
+              label="Age"
+              value={data.age != null ? String(Math.round(data.age)) : "—"}
+              icon="calendar"
+            />
+            <StatBlock
+              label="Meets this season"
+              value={data.meetsCount != null ? String(data.meetsCount) : "—"}
+              sub="in this discipline"
+              icon="grid"
+            />
+            <StatBlock
+              label="Last competed"
+              value={data.daysSinceLast != null ? `${data.daysSinceLast}d ago` : "—"}
+              icon="clock"
+            />
+          </div>
+          {/* Career best, PB gap, meets and last-competed come from run.py's
+              scoring pass, which only covers the field plus the near-miss
+              group. Further down the toplist they are genuinely unknown, and
+              saying so beats a grid of silent dashes. */}
+          {data.careerBest === null && (
+            <p className="mt-4 text-[12px] leading-relaxed text-muted-foreground">
+              Career best, PB gap and activity aren&apos;t computed for athletes this far outside
+              the field — the model only scores the projected finalists and the closest challengers.
+            </p>
+          )}
         </Panel>
-      )}
+
+        <Panel title="Real season form">
+          {data.history.length > 0 ? (
+            <SeasonTrendChart history={data.history} year={data.historyYear} />
+          ) : (
+            <div className="text-[12.5px] text-muted-foreground">
+              No {data.historyYear ?? "recent"} meet history on record for this athlete.
+            </div>
+          )}
+        </Panel>
+      </div>
+
+      {/* The most interesting thing this page can say: how they actually do
+          against the athletes who did qualify. Same data and same
+          two-meeting threshold as the in-field profile's panel -- only the
+          opponent list differs. */}
+      <Panel
+        title="Head-to-head vs the projected field"
+        subtitle="Real meetings against the athletes who did qualify, from World Athletics results."
+        className="mt-4"
+      >
+        {data.h2h.length > 0 ? (
+          <HeadToHeadChart matchups={data.h2h} opponentsLabel="the qualified field" />
+        ) : (
+          <div className="text-[12.5px] text-muted-foreground">
+            No qualifying head-to-head record against this discipline&apos;s projected field.
+          </div>
+        )}
+      </Panel>
 
       <div className="mt-5 flex flex-wrap items-center gap-4">
         {canGoBack ? (
           <button
             type="button"
             onClick={() => router.history.back()}
-            className="label-caps text-muted-foreground transition-colors hover:text-foreground"
+            className="label-caps -m-2 p-2 text-muted-foreground transition-colors hover:text-foreground"
           >
             ← Back
           </button>
         ) : (
           <Link
             to={backTo}
-            className="label-caps text-muted-foreground transition-colors hover:text-foreground"
+            className="label-caps -m-2 p-2 text-muted-foreground transition-colors hover:text-foreground"
           >
             ← Back to {backTo === "/field" ? "field" : "track"} events
           </Link>
@@ -348,14 +502,14 @@ function AthleteProfilePage() {
           <button
             type="button"
             onClick={() => router.history.back()}
-            className={`label-caps transition-colors hover:text-white ${a.photoUrl ? "text-white/75" : "text-white/60"}`}
+            className={`label-caps -m-2 p-2 transition-colors hover:text-white ${a.photoUrl ? "text-white/75" : "text-white/60"}`}
           >
             ← Back
           </button>
         ) : (
           <Link
             to="/dashboard"
-            className={`label-caps transition-colors hover:text-white ${a.photoUrl ? "text-white/75" : "text-white/60"}`}
+            className={`label-caps -m-2 p-2 transition-colors hover:text-white ${a.photoUrl ? "text-white/75" : "text-white/60"}`}
           >
             ← Back to dashboard
           </Link>

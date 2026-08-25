@@ -199,7 +199,10 @@ function Dashboard() {
           label: "Model accuracy",
           value: Math.round(data.modelAccuracy),
           suffix: "%",
-          sub: "walk-forward '23-'25",
+          // Says which of the two backtest numbers this is. The caption
+          // used to read only "walk-forward '23-'25", which was true of
+          // both and identified neither.
+          sub: data.modelAccuracyBasis,
           icon: "target" as const,
           accent: "text-terracotta-light",
         },

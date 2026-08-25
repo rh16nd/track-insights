@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { AthleteProfile, MeetMark } from "@/lib/dl-data";
+import type { AthleteProfile, H2hMatchup, MeetMark, StandingsPosition } from "@/lib/dl-data";
 
 /** An athlete who exists in the season's worldwide toplist but is not in the
  * projected field. Carries the REAL reason (mirroring run.py's selection
@@ -13,13 +13,33 @@ export type AthleteNotInField = {
   worldRank: number | null;
   waUrl: string | null;
   reason: string;
-  reasonCode: "not_in_standings" | "injury_removed" | "outside_cut" | "no_data";
+  reasonCode:
+    "not_in_standings" | "outside_points_cut" | "injury_removed" | "outside_cut" | "no_data";
+  /** Their real place in WA's Diamond League standings, or null when they
+   * have no points in this discipline at all -- the two cases the site used
+   * to report as one. */
+  dl: StandingsPosition | null;
   injuryReason?: string | null;
   injuryUrl?: string | null;
   history: MeetMark[];
   historyYear: number | null;
   photoUrl: string | null;
   photoFocus: { x: number; y: number } | null;
+  /** The same real season stats the in-field profile shows. Present for the
+   * near-miss athletes run.py scores; `nat`/`age` still resolve from the
+   * toplist scrape for anyone further down, the rest stay null. */
+  nat: string | null;
+  careerBest: string | null;
+  pbGap: number | null;
+  age: number | null;
+  meetsCount: number | null;
+  daysSinceLast: number | null;
+  /** The model's podium chance IF this athlete were in the field. Real
+   * output from the same forest, but conditional -- never label it as a
+   * prediction about the actual Final. Null when run.py never scored them. */
+  hypotheticalProb: number | null;
+  /** Record against the athletes who did qualify. */
+  h2h: H2hMatchup[];
 };
 
 type State =

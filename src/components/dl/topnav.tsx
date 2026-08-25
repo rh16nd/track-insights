@@ -7,12 +7,13 @@ const nav = [
   { to: "/dashboard", label: "Dashboard" },
   { to: "/track", label: "Track" },
   { to: "/field", label: "Field" },
+  { to: "/qualification", label: "Qualifying" },
   { to: "/schedule", label: "Schedule" },
   { to: "/projections", label: "Projections" },
 ] as const;
 
 /** Replaced the old fixed left Sidebar per the user's request: the same
- * five sections now live as a single horizontal bar on top, so pages get
+ * sections now live as a single horizontal bar on top, so pages get
  * the full width instead of losing 200px to a permanent side panel.
  *
  * 2026-08-23: dropped the brick/lane track-surface texture that used to

@@ -203,7 +203,7 @@ function ProjectionStatRow({
       <StatCell
         label="Model accuracy"
         value={`${Math.round(modelAccuracy)}%`}
-        sub="walk-forward validated"
+        sub="podium hit rate, real field"
       />
     </div>
   );

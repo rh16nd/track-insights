@@ -209,7 +209,7 @@ function Landing() {
             </div>
 
             <div className="mt-16 flex flex-wrap items-start justify-center gap-x-12 gap-y-8">
-              <Stat value={accuracy} label="Backtest accuracy" />
+              <Stat value={accuracy} label="Podium hit rate" />
               <Stat value={daysToFinal} label="Days to Brussels" />
               <Stat value={disciplineCount} label="Disciplines tracked" />
               <Stat value="7" label="Seasons of real data" />

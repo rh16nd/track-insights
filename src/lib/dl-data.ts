@@ -31,6 +31,10 @@ export type Athlete = {
 export type Discipline = {
   id: string;
   label: string;
+  /** Places this discipline has at the Final (6 field / 10 long distance /
+   * 8 otherwise). NOT the same as athletes.length -- an injury removal
+   * leaves the projected field a place short. */
+  qualLimit: number;
   athletes: Athlete[];
   nearMiss?: Athlete[];
 };
@@ -98,7 +102,14 @@ export type AthleteProfile = {
 export type ApiData = {
   lastUpdated: string;
   daysToFinal: number;
+  /** The number the site should quote about itself: top-3 hit rate among
+   * the athletes who actually contested the Final -- the task run.py
+   * performs. Distinct from `modelAccuracyToplist`, the historical figure
+   * that picks 3 from a discipline's whole ~101-athlete toplist, which the
+   * site never does. Same predictions, ~12 points apart. */
   modelAccuracy: number;
+  modelAccuracyBasis: string;
+  modelAccuracyToplist: number | null;
   meets: Meet[];
   trackDisciplines: Discipline[];
   fieldDisciplines: Discipline[];
@@ -140,6 +151,69 @@ export type Storyline = {
 export type ProjectionsDetail = {
   trajectories: Trajectory[];
   storylines: Storyline[];
+};
+
+/** The race for a place at the Final, from World Athletics' own Diamond
+ * League standings (/api/qualification). Nothing here is modelled -- points
+ * are WA's, and the verdicts are arithmetic:
+ *   safe    — cannot be displaced even scoring nothing again
+ *   in      — above the cut line as it stands, but still catchable
+ *   chasing — below the line and still mathematically alive
+ *   out     — cannot reach the cut even by winning everything left
+ *   unknown — WA lists no points for this athlete */
+export type QualStatus = "safe" | "in" | "chasing" | "out" | "unknown";
+
+export type QualificationRow = {
+  rank: number;
+  name: string;
+  country: string | null;
+  events: number | null;
+  points: number | null;
+  /** Points behind the cut line. Negative means clear of it, 0 means on it. */
+  gap: number | null;
+  /** Current points plus everything still winnable. */
+  maxPoints: number | null;
+  status: QualStatus;
+};
+
+export type QualificationDiscipline = {
+  discKey: string;
+  disc: string;
+  isField: boolean;
+  qualLimit: number;
+  cutPoints: number | null;
+  standings: QualificationRow[];
+};
+
+/** One athlete's row in WA's full standings, as attached to the
+ * "why isn't X in the field?" answer. */
+export type StandingsPosition = QualificationRow & {
+  qualLimit: number;
+  cutPoints: number | null;
+};
+
+export type QualificationData = {
+  scrapedAt: string | null;
+  meetingsLeft: number;
+  nextMeet: Meet | null;
+  pointsForAWin: number;
+  disciplines: QualificationDiscipline[];
+};
+
+/** 1st/2nd/3rd/4th... including the 11-13 exceptions, which a bare
+ * last-digit check gets wrong ("11st"). */
+export const ordinal = (n: number): string => {
+  const suffix =
+    n % 100 >= 11 && n % 100 <= 13
+      ? "th"
+      : n % 10 === 1
+        ? "st"
+        : n % 10 === 2
+          ? "nd"
+          : n % 10 === 3
+            ? "rd"
+            : "th";
+  return `${n}${suffix}`;
 };
 
 export const formatMark = (value: number, sample: string): string => {
