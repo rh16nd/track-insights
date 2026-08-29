@@ -109,6 +109,8 @@ export type AthleteProfile = {
   careerSeasons: CareerSeason[];
   /** null when the athlete has no row in this season's toplist. */
   scoreContext: ScoreContext | null;
+  /** null until src/worldwide_scraper.py has run for this discipline. */
+  analytics: AthleteAnalytics | null;
 };
 
 export type ApiData = {
@@ -307,4 +309,89 @@ export type ScoreContext = {
   discMedian: number;
   indoor: boolean;
   venue: string | null;
+};
+
+/** Analyst-grade race-log statistics (api.py -> src/athlete_analytics.py).
+ * Computed from every scraped final an athlete has contested, not from a
+ * season-best row -- which is only possible since the worldwide scrape
+ * took the median athlete from 2 logged races a season to 5+.
+ *
+ * Note there is deliberately no season best in `form`: `careerSeasons`
+ * owns that number, computed from the toplist, which carries an athlete's
+ * real best wherever it was set. The two genuinely disagree (Kovacs's real
+ * 2018 best is 21.02m; the best race in the log is 20.36m), and showing
+ * both would put two different figures for one season on one page. */
+export type TierRecord = {
+  tier: string | null;
+  label: string;
+  races: number;
+  wins: number;
+  podiums: number;
+  avgFinish: number;
+};
+
+export type SeasonRecord = {
+  year: number;
+  races: number;
+  wins: number;
+  podiums: number;
+};
+
+export type CompetitionRecord = {
+  races: number;
+  wins: number;
+  podiums: number;
+  winRate: number;
+  podiumRate: number;
+  avgFinish: number;
+  bestFinish: number;
+  /** Diamond League, continental championships and Continental Tour Gold.
+   * A count and a share, never a quality score -- the categories are World
+   * Athletics' own and are not comparable on one axis. */
+  topTierRaces: number;
+  topTierShare: number;
+  byTier: TierRecord[];
+  bySeason: SeasonRecord[];
+  seasons: number;
+};
+
+export type SeasonForm = {
+  year: number;
+  marks: number;
+  /** Not for display -- see the note above. */
+  bestLogged: number;
+  top3Average: number;
+  top3Count: number;
+  median: number;
+  /** Coefficient of variation as a percent. Null below 3 marks, where it
+   * would be noise wearing two decimal places. */
+  consistency: number | null;
+  spread: number;
+};
+
+export type SeasonShape = {
+  byMonth: { month: string; races: number }[];
+  bestMonth: string | null;
+  firstRace: string;
+  lastRace: string;
+  races: number;
+};
+
+export type DerivedH2h = {
+  name: string;
+  wins: number;
+  losses: number;
+  draws: number;
+  meetings: number;
+  winRate: number;
+  lastMet: string | null;
+};
+
+export type AthleteAnalytics = {
+  raceCount: number;
+  record: CompetitionRecord | null;
+  form: SeasonForm[];
+  seasonShape: SeasonShape | null;
+  headToHead: DerivedH2h[];
+  coverage: { seasons: number[]; sources: string[]; withPlace: number };
 };

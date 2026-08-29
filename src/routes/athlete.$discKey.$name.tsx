@@ -4,6 +4,7 @@ import { useAthleteProfile, type AthleteNotInField } from "@/hooks/useAthletePro
 import { SeasonTrendChart } from "@/components/dl/season-trend-chart";
 import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
 import { CareerProgressionChart } from "@/components/dl/career-progression-chart";
+import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
 import { RadialMeter } from "@/components/dl/radial-meter";
 import { ordinal } from "@/lib/dl-data";
 
@@ -627,7 +628,15 @@ function AthleteProfilePage() {
         </Panel>
       )}
 
-      <Panel title="Head-to-head" className="mt-4">
+      {a.analytics && (
+        <AthleteAnalyticsBlock analytics={a.analytics} isField={FIELD_EVENT_KEYS.has(a.discKey)} />
+      )}
+
+      {/* Kept alongside the derived record above, because it answers a
+          different question: this is the athlete against the people they
+          will actually face at the Final, scored by the model's rival
+          shortlist. The analytics panel is who they race MOST. */}
+      <Panel title="Head-to-head vs projected field" className="mt-4">
         {a.h2h.length > 0 ? (
           <HeadToHeadChart matchups={a.h2h} />
         ) : (
