@@ -120,6 +120,10 @@ export type AthleteProfile = {
   scoreContext: ScoreContext | null;
   /** null until src/worldwide_scraper.py has run for this discipline. */
   analytics: AthleteAnalytics | null;
+  /** null when no profile has been fetched for this athlete —
+   * athlete_profile_scraper covers the athletes the site renders pages for,
+   * not all 7,628 in the race log. */
+  career: AthleteCareer | null;
   /** The model's rival shortlist. Used to mark, inside the single
    * head-to-head panel, which opponents this athlete will actually meet at
    * the Final -- the separate "vs projected field" panel was removed once
@@ -473,4 +477,52 @@ export type FieldAnalysis = {
   matrix: FieldMatrix;
   comparison: FieldComparisonRow[];
   season: number;
+};
+
+/** What World Athletics says an athlete has already won, and where it ranks
+ * them (api.py -> src/athlete_career.py). Read from WA, not derived here —
+ * which is why it lives apart from AthleteAnalytics, whose every number is
+ * computed from the race log. */
+export type HonourResult = {
+  competition: string | null;
+  mark: string | null;
+  place: number | null;
+};
+
+export type HonourGroup = {
+  /** World Athletics' own label: "Olympic Games", "World Championships",
+   * "Diamond League Final", "National Championships"… 51 distinct values
+   * appear across the fetched profiles. */
+  category: string | null;
+  results: HonourResult[];
+  gold: number;
+  silver: number;
+  bronze: number;
+  podiums: number;
+};
+
+export type WorldRanking = {
+  events: { event: string; place: number }[];
+  overall: number | null;
+  best: { event: string; place: number } | null;
+};
+
+export type PersonalBest = {
+  discipline: string | null;
+  mark: string | null;
+  venue: string | null;
+  date: string | null;
+  indoor: boolean;
+};
+
+export type AthleteCareer = {
+  /** Global titles first; continental ones only when there are none, and
+   * always named ("Commonwealth champion") so the two can't be confused.
+   * Age-group, national and NCAA titles never appear here. null when the
+   * athlete has no podium at any of them — no consolation phrasing. */
+  headline: string | null;
+  honours: HonourGroup[];
+  worldRanking: WorldRanking;
+  personalBests: PersonalBest[];
+  eventCount: number;
 };

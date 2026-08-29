@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type {
   AthleteAnalytics,
+  AthleteCareer,
   AthleteProfile,
   CareerSeason,
   H2hMatchup,
@@ -50,6 +51,10 @@ export type AthleteNotInField = {
    * panel read as broken rather than as "raced, but not here". */
   racesThisSeason: number;
   racesOnRecord: number;
+  /** null when no profile has been fetched for this athlete —
+   * athlete_profile_scraper covers the athletes the site renders pages for,
+   * not all 7,628 in the race log. */
+  career: AthleteCareer | null;
   /** The model's podium chance IF this athlete were in the field. Real
    * output from the same forest, but conditional -- never label it as a
    * prediction about the actual Final. Null when run.py never scored them. */

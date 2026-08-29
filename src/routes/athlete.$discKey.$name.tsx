@@ -4,6 +4,7 @@ import { useAthleteProfile, type AthleteNotInField } from "@/hooks/useAthletePro
 import { SeasonTrendChart } from "@/components/dl/season-trend-chart";
 import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
 import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
+import { AthleteCareerBlock } from "@/components/dl/athlete-career";
 import { RadialMeter } from "@/components/dl/radial-meter";
 import { ordinal } from "@/lib/dl-data";
 
@@ -330,6 +331,8 @@ function NotInField({
           did get in. The old standalone head-to-head panel is gone for the
           same reason it went from the in-field page: the analytics one
           draws the same derived numbers. */}
+      {data.career && <AthleteCareerBlock career={data.career} />}
+
       {data.analytics ? (
         <AthleteAnalyticsBlock
           analytics={data.analytics}
@@ -680,6 +683,8 @@ function AthleteProfilePage() {
           )}
         </Panel>
       </div>
+
+      {a.career && <AthleteCareerBlock career={a.career} />}
 
       {a.analytics && (
         <AthleteAnalyticsBlock
