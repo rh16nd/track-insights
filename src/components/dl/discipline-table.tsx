@@ -304,8 +304,10 @@ export function DisciplineTable({
                   kept below the real field, unnumbered, and marked. Noah
                   Lyles is the reason this exists: world #1 at 9.79 with no
                   DL points in the 100m, previously absent from the site with
-                  no explanation. Zurich is still to come, so these can still
-                  change. */}
+                  no explanation. This list used to say Zurich could still
+                  change it; Zurich ran 26-27 Aug and it was the last scoring
+                  meeting, so who is in this group is now settled except
+                  where World Athletics' tie-break decides it. */}
               {nearMiss.length > 0 && (
                 <tr>
                   <td colSpan={6} className="pb-2 pt-6">

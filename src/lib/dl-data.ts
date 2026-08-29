@@ -4,9 +4,16 @@ export type MeetStatus = "done" | "next" | "upcoming" | "final";
 
 export type Meet = {
   n: number;
+  /** First day, "%d %b". Four 2026 meetings run over two days. */
   date: string;
+  /** Last day, only present when the meeting spans more than one. */
+  dateEnd?: string;
   city: string;
   status: MeetStatus;
+  /** Set on every leg World Athletics tags "DF". Usually one meeting, but
+   * the Final has been split across two before (2018, 2019), which is why
+   * this is a flag and not "the last meeting of the season". */
+  final?: boolean;
 };
 
 export type Athlete = {
