@@ -437,6 +437,12 @@ export type FieldMatrix = {
   coverage: number | null;
 };
 
+export type FormResult = {
+  place: number;
+  date: string;
+  meeting: string | null;
+};
+
 export type FieldComparisonRow = {
   name: string;
   races: number;
@@ -447,6 +453,11 @@ export type FieldComparisonRow = {
   podiumRate: number | null;
   avgFinish: number | null;
   bestMonth: string | null;
+  /** Last six finishing positions, OLDEST FIRST so the strip reads
+   * left-to-right like a timeline. The head-to-head grid is an all-time
+   * record and says nothing about right now — an athlete can lead a rivalry
+   * 6-1 and have just finished ninth. */
+  recentForm: FormResult[];
 };
 
 export type FieldAnalysis = {

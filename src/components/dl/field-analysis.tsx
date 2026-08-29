@@ -1,7 +1,8 @@
 import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import { Panel, ProbabilityBar } from "@/components/dl/shell";
-import type { FieldAnalysis, H2hCell } from "@/lib/dl-data";
+import { ordinal } from "@/lib/dl-data";
+import type { FieldAnalysis, FormResult, H2hCell } from "@/lib/dl-data";
 
 /** The field against itself.
  *
@@ -95,6 +96,9 @@ export function FieldAnalysisBlock({
                       b={matrix.names[j] ?? ""}
                     />
                   ))}
+                  <td className="py-2 pl-6">
+                    <FormStrip form={byName.get(row.name)?.recentForm ?? []} />
+                  </td>
                   <td className="py-2 pl-4 text-right">
                     {row.winRate === null ? (
                       <span className="text-[11.5px] text-muted-foreground">never met</span>
@@ -200,6 +204,43 @@ export function FieldAnalysisBlock({
         </p>
       </Panel>
     </>
+  );
+}
+
+/** Six finishes, oldest to newest, so the strip reads as a timeline and the
+ * rightmost cell is the most recent race. Deliberately positions rather than
+ * marks: a position is already a comparison, where a mark needs a field to
+ * mean anything. Placed in the horizontal room the grid was leaving empty --
+ * 556px of a 1281px panel at desktop width -- and it earns the space by
+ * answering what the all-time grid beside it cannot, which is form right
+ * now. In the men's 100m the model's top pick reads 2 2 3 1 4 9. */
+function FormStrip({ form }: { form: FormResult[] }) {
+  if (form.length === 0) {
+    return <span className="text-[11.5px] text-muted-foreground">no results</span>;
+  }
+  return (
+    <span className="flex items-center gap-1">
+      {form.map((f, i) => {
+        const newest = i === form.length - 1;
+        const tone =
+          f.place === 1
+            ? "bg-[linear-gradient(135deg,var(--gold-light),var(--gold-strong))] text-foreground"
+            : f.place <= 3
+              ? "bg-terracotta/15 text-terracotta-strong"
+              : "bg-secondary text-muted-foreground";
+        return (
+          <span
+            key={`${f.date}-${i}`}
+            title={`${ordinal(f.place)}${f.meeting ? ` — ${f.meeting}` : ""}, ${f.date}`}
+            className={`nums flex size-5 shrink-0 items-center justify-center rounded-[5px] text-[10.5px] font-semibold ${tone} ${
+              newest ? "ring-1 ring-foreground/25" : ""
+            }`}
+          >
+            {f.place}
+          </span>
+        );
+      })}
+    </span>
   );
 }
 
