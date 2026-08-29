@@ -1,802 +1,2011 @@
 {
-  "note": "Real scraped World Athletics data for the Men's 100m, 2026 Diamond League. Use these exact names and numbers. Do not invent athletes or stats.",
-  "discipline": "Men's 100m",
-  "daysToFinal": 6,
-  "matrix": {
-    "names": [
-      "Oblique SEVILLE",
-      "Emmanuel ESEME",
-      "Kenneth BEDNAREK",
-      "Gift LEOTLELA",
-      "Trayvon BROMELL",
-      "Jordan ANTHONY",
-      "Akani SIMBINE",
-      "Ferdinand OMANYALA"
-    ],
-    "rows": [
+  "_note": "Real scraped World Athletics data, 2026 Diamond League. Use these exact names, marks and numbers. Never invent an athlete or a statistic.",
+  "site": {
+    "lastUpdated": "29 Aug 2026",
+    "daysToFinal": 6,
+    "modelAccuracy": 71.9,
+    "modelAccuracyBasis": "top-3 hit rate among the real Final field, walk-forward '23-'25",
+    "disciplineCount": 32
+  },
+  "schedule": [
+    {
+      "city": "Shaoxing/Keqiao",
+      "date": "16 May",
+      "n": 1,
+      "status": "done"
+    },
+    {
+      "city": "Xiamen",
+      "date": "23 May",
+      "n": 2,
+      "status": "done"
+    },
+    {
+      "city": "Rabat",
+      "date": "31 May",
+      "n": 3,
+      "status": "done"
+    },
+    {
+      "city": "Rome",
+      "date": "04 Jun",
+      "n": 4,
+      "status": "done"
+    },
+    {
+      "city": "Stockholm",
+      "date": "07 Jun",
+      "n": 5,
+      "status": "done"
+    },
+    {
+      "city": "Oslo",
+      "date": "10 Jun",
+      "n": 6,
+      "status": "done"
+    },
+    {
+      "city": "Doha",
+      "date": "19 Jun",
+      "n": 7,
+      "status": "done"
+    },
+    {
+      "city": "Paris",
+      "date": "28 Jun",
+      "n": 8,
+      "status": "done"
+    },
+    {
+      "city": "Eugene",
+      "date": "03 Jul",
+      "dateEnd": "04 Jul",
+      "n": 9,
+      "status": "done"
+    },
+    {
+      "city": "Monaco",
+      "date": "10 Jul",
+      "n": 10,
+      "status": "done"
+    },
+    {
+      "city": "London",
+      "date": "18 Jul",
+      "n": 11,
+      "status": "done"
+    },
+    {
+      "city": "Lausanne",
+      "date": "20 Aug",
+      "dateEnd": "21 Aug",
+      "n": 12,
+      "status": "done"
+    },
+    {
+      "city": "Silesia",
+      "date": "22 Aug",
+      "dateEnd": "23 Aug",
+      "n": 13,
+      "status": "done"
+    },
+    {
+      "city": "Zürich",
+      "date": "26 Aug",
+      "dateEnd": "27 Aug",
+      "n": 14,
+      "status": "done"
+    },
+    {
+      "city": "Brussels — Final",
+      "date": "04 Sep",
+      "final": true,
+      "n": 15,
+      "status": "final"
+    }
+  ],
+  "dashboard": {
+    "topWinners": [
       {
-        "name": "Oblique SEVILLE",
-        "cells": [
-          null,
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 0,
-            "meetings": 3,
-            "wins": 3
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 1,
-            "meetings": 3,
-            "wins": 2
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 0,
-            "meetings": 4,
-            "wins": 4
-          },
-          {
-            "lastMet": "06 Jun 2026",
-            "losses": 2,
-            "meetings": 2,
-            "wins": 0
-          },
-          {
-            "lastMet": "18 Jul 2026",
-            "losses": 0,
-            "meetings": 2,
-            "wins": 2
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 1,
-            "meetings": 7,
-            "wins": 6
-          },
-          {
-            "lastMet": "01 Jun 2024",
-            "losses": 1,
-            "meetings": 5,
-            "wins": 4
-          }
-        ],
-        "wins": 21,
-        "losses": 5,
-        "winRate": 80.8
+        "disc": "Women's 400m",
+        "discKey": "women_400m",
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "48.48",
+        "name": "Marileidy PAULINO",
+        "prob": 80,
+        "rank": 1,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14749613"
       },
       {
-        "name": "Emmanuel ESEME",
-        "cells": [
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 3,
-            "meetings": 3,
-            "wins": 0
-          },
-          null,
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 2,
-            "meetings": 2,
-            "wins": 0
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 1,
-            "meetings": 2,
-            "wins": 1
-          },
-          {
-            "lastMet": "06 Jun 2025",
-            "losses": 1,
-            "meetings": 1,
-            "wins": 0
-          },
-          {
-            "lastMet": "18 Jul 2026",
-            "losses": 1,
-            "meetings": 4,
-            "wins": 3
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 10,
-            "meetings": 13,
-            "wins": 3
-          },
-          {
-            "lastMet": "04 Jun 2026",
-            "losses": 5,
-            "meetings": 8,
-            "wins": 3
-          }
-        ],
-        "wins": 10,
-        "losses": 23,
-        "winRate": 30.3
+        "disc": "Women's 1500m",
+        "discKey": "women_1500m",
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "3:55.20",
+        "name": "Jessica HULL",
+        "prob": 74,
+        "rank": 2,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14464506"
       },
       {
-        "name": "Kenneth BEDNAREK",
-        "cells": [
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 2,
-            "meetings": 3,
-            "wins": 1
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 0,
-            "meetings": 2,
-            "wins": 2
-          },
-          null,
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 2,
-            "meetings": 4,
-            "wins": 2
-          },
-          {
-            "lastMet": "23 May 2026",
-            "losses": 4,
-            "meetings": 7,
-            "wins": 3
-          },
-          null,
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 1,
-            "meetings": 6,
-            "wins": 5
-          },
-          {
-            "lastMet": "23 May 2026",
-            "losses": 5,
-            "meetings": 6,
-            "wins": 1
-          }
-        ],
-        "wins": 14,
-        "losses": 14,
-        "winRate": 50.0
+        "disc": "Men's 3000m Steeplechase",
+        "discKey": "men_3000sc",
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "7:57.25",
+        "name": "Soufiane EL BAKKALI",
+        "prob": 73,
+        "rank": 3,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14590424"
       },
       {
-        "name": "Gift LEOTLELA",
-        "cells": [
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 4,
-            "meetings": 4,
-            "wins": 0
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 1,
-            "meetings": 2,
-            "wins": 1
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 2,
-            "meetings": 4,
-            "wins": 2
-          },
-          null,
-          {
-            "lastMet": "23 May 2026",
-            "losses": 0,
-            "meetings": 2,
-            "wins": 2
-          },
-          {
-            "lastMet": "18 Jul 2026",
-            "losses": 0,
-            "meetings": 1,
-            "wins": 1
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 1,
-            "meetings": 5,
-            "wins": 4
-          },
-          {
-            "lastMet": "23 May 2026",
-            "losses": 1,
-            "meetings": 3,
-            "wins": 2
-          }
-        ],
-        "wins": 12,
-        "losses": 9,
-        "winRate": 57.1
+        "disc": "Men's Pole Vault",
+        "discKey": "men_PV",
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "6.31m",
+        "name": "Armand DUPLANTIS",
+        "prob": 72,
+        "rank": 4,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14679502"
       },
       {
-        "name": "Trayvon BROMELL",
-        "cells": [
-          {
-            "lastMet": "06 Jun 2026",
-            "losses": 0,
-            "meetings": 2,
-            "wins": 2
-          },
-          {
-            "lastMet": "06 Jun 2025",
-            "losses": 0,
-            "meetings": 1,
-            "wins": 1
-          },
-          {
-            "lastMet": "23 May 2026",
-            "losses": 3,
-            "meetings": 7,
-            "wins": 4
-          },
-          {
-            "lastMet": "23 May 2026",
-            "losses": 2,
-            "meetings": 2,
-            "wins": 0
-          },
-          null,
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 0,
-            "meetings": 1,
-            "wins": 1
-          },
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 2,
-            "meetings": 11,
-            "wins": 9
-          },
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 4,
-            "meetings": 8,
-            "wins": 4
-          }
-        ],
-        "wins": 21,
-        "losses": 11,
-        "winRate": 65.6
+        "disc": "Men's Discus Throw",
+        "discKey": "men_DT",
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "74.04m",
+        "name": "Matthew DENNY",
+        "prob": 68,
+        "rank": 5,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14436890"
       },
       {
-        "name": "Jordan ANTHONY",
-        "cells": [
-          {
-            "lastMet": "18 Jul 2026",
-            "losses": 2,
-            "meetings": 2,
-            "wins": 0
-          },
-          {
-            "lastMet": "18 Jul 2026",
-            "losses": 3,
-            "meetings": 4,
-            "wins": 1
-          },
-          null,
-          {
-            "lastMet": "18 Jul 2026",
-            "losses": 1,
-            "meetings": 1,
-            "wins": 0
-          },
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 1,
-            "meetings": 1,
-            "wins": 0
-          },
-          null,
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 1,
-            "meetings": 2,
-            "wins": 1
-          },
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 0,
-            "meetings": 2,
-            "wins": 2
-          }
-        ],
-        "wins": 4,
-        "losses": 8,
-        "winRate": 33.3
-      },
-      {
-        "name": "Akani SIMBINE",
-        "cells": [
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 6,
-            "meetings": 7,
-            "wins": 1
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 3,
-            "meetings": 13,
-            "wins": 10
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 5,
-            "meetings": 6,
-            "wins": 1
-          },
-          {
-            "lastMet": "23 Aug 2026",
-            "losses": 4,
-            "meetings": 5,
-            "wins": 1
-          },
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 9,
-            "meetings": 11,
-            "wins": 2
-          },
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 1,
-            "meetings": 2,
-            "wins": 1
-          },
-          null,
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 8,
-            "meetings": 17,
-            "wins": 9
-          }
-        ],
-        "wins": 25,
-        "losses": 36,
-        "winRate": 41.0
-      },
-      {
-        "name": "Ferdinand OMANYALA",
-        "cells": [
-          {
-            "lastMet": "01 Jun 2024",
-            "losses": 4,
-            "meetings": 5,
-            "wins": 1
-          },
-          {
-            "lastMet": "04 Jun 2026",
-            "losses": 3,
-            "meetings": 8,
-            "wins": 5
-          },
-          {
-            "lastMet": "23 May 2026",
-            "losses": 1,
-            "meetings": 6,
-            "wins": 5
-          },
-          {
-            "lastMet": "23 May 2026",
-            "losses": 2,
-            "meetings": 3,
-            "wins": 1
-          },
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 4,
-            "meetings": 8,
-            "wins": 4
-          },
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 2,
-            "meetings": 2,
-            "wins": 0
-          },
-          {
-            "lastMet": "28 Jun 2026",
-            "losses": 9,
-            "meetings": 17,
-            "wins": 8
-          },
-          null
-        ],
-        "wins": 24,
-        "losses": 25,
-        "winRate": 49.0
+        "disc": "Men's 400m",
+        "discKey": "men_400m",
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "43.44",
+        "name": "Busang Collen KEBINATSHIPI",
+        "prob": 67,
+        "rank": 6,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14935809"
       }
     ],
-    "pairsMet": 27,
-    "pairsPossible": 28
+    "confidence": [
+      {
+        "disc": "Women's 400m",
+        "value": 80
+      },
+      {
+        "disc": "Women's 1500m",
+        "value": 74
+      },
+      {
+        "disc": "Men's 3000m Steeplechase",
+        "value": 73
+      },
+      {
+        "disc": "Men's Pole Vault",
+        "value": 72
+      },
+      {
+        "disc": "Men's Discus Throw",
+        "value": 68
+      },
+      {
+        "disc": "Men's 400m",
+        "value": 67
+      },
+      {
+        "disc": "Women's 400m Hurdles",
+        "value": 67
+      },
+      {
+        "disc": "Men's 400m Hurdles",
+        "value": 65
+      }
+    ],
+    "removedAthletes": []
   },
-  "comparison": [
-    {
-      "avgFinish": 2.0,
-      "bestMonth": "Jun",
-      "consistency": 0.34,
-      "name": "Oblique SEVILLE",
-      "podiumRate": 88.0,
-      "races": 25,
-      "recentForm": [
-        {
-          "date": "14 Sep 2025",
-          "meeting": "World Athletics Championships, Tokyo 2025",
-          "place": 1
-        },
-        {
-          "date": "06 Jun 2026",
-          "meeting": "USATF Lone Star Grand Prix",
-          "place": 3
-        },
-        {
-          "date": "19 Jun 2026",
-          "meeting": "Jamaican Championships",
-          "place": 1
-        },
-        {
-          "date": "10 Jul 2026",
-          "meeting": "Meeting International d’Athlétisme Herculis EBS",
-          "place": 1
-        },
-        {
-          "date": "18 Jul 2026",
-          "meeting": "Novuna London Athletics Meet",
-          "place": 2
-        },
-        {
-          "date": "23 Aug 2026",
-          "meeting": "Silesia Kamila Skolimowska Memorial",
-          "place": 1
-        }
-      ],
-      "seasonRaces": 5,
-      "top3Average": 9.84,
-      "winRate": 52.0
+  "trackExample": {
+    "athletes": [
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.82",
+        "name": "Oblique SEVILLE",
+        "nat": "JAM",
+        "prob": 35,
+        "qualified": true,
+        "rank": 1,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14737998"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.83",
+        "name": "Emmanuel ESEME",
+        "nat": "CMR",
+        "prob": 36,
+        "qualified": true,
+        "rank": 2,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14852717"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.87",
+        "name": "Kenneth BEDNAREK",
+        "nat": "USA",
+        "prob": 18,
+        "qualified": true,
+        "rank": 3,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14715244"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.91",
+        "name": "Gift LEOTLELA",
+        "nat": "RSA",
+        "prob": 5,
+        "qualified": true,
+        "rank": 4,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14578589"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.91",
+        "name": "Trayvon BROMELL",
+        "nat": "USA",
+        "prob": 12,
+        "qualified": true,
+        "rank": 5,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14519911"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.91",
+        "name": "Jordan ANTHONY",
+        "nat": "USA",
+        "prob": 3,
+        "qualified": true,
+        "rank": 6,
+        "waUrl": "https://worldathletics.org/athletes/united-states/jordan-anthony-14961803"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.93",
+        "name": "Akani SIMBINE",
+        "nat": "RSA",
+        "prob": 8,
+        "qualified": true,
+        "rank": 7,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14417763"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.94",
+        "name": "Ferdinand OMANYALA",
+        "nat": "KEN",
+        "prob": 2,
+        "qualified": true,
+        "rank": 8,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14747153"
+      }
+    ],
+    "id": "men_100m",
+    "label": "Men's 100m",
+    "nearMiss": [
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.79",
+        "name": "Noah LYLES",
+        "nat": "USA",
+        "prob": 4,
+        "qualified": false,
+        "rank": 1,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14536762"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.84",
+        "name": "Kayinsola AJAYI",
+        "nat": "NGR",
+        "prob": 5,
+        "qualified": false,
+        "rank": 2,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14976296"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.85",
+        "name": "Lachlan KENNEDY",
+        "nat": "AUS",
+        "prob": 10,
+        "qualified": false,
+        "rank": 3,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14970569"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "9.85",
+        "name": "Ronal LONGA",
+        "nat": "COL",
+        "prob": 7,
+        "qualified": false,
+        "rank": 4,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14992007"
+      }
+    ],
+    "qualLimit": 8
+  },
+  "fieldExample": {
+    "athletes": [
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "22.74m",
+        "name": "Leonardo FABBRI",
+        "nat": "ITA",
+        "prob": 35,
+        "qualified": true,
+        "rank": 1,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14567432"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "22.58m",
+        "name": "Joe KOVACS",
+        "nat": "USA",
+        "prob": 21,
+        "qualified": true,
+        "rank": 2,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14243308"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "22.53m",
+        "name": "Jordan GEIST",
+        "nat": "USA",
+        "prob": 36,
+        "qualified": true,
+        "rank": 3,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14713125"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "22.44m",
+        "name": "Rajindra CAMPBELL",
+        "nat": "JAM",
+        "prob": 28,
+        "qualified": true,
+        "rank": 4,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14687604"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "22.07m",
+        "name": "Roger STEEN",
+        "nat": "USA",
+        "prob": 22,
+        "qualified": true,
+        "rank": 5,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14515622"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "21.59m",
+        "name": "Ryan CROUSER",
+        "nat": "USA",
+        "prob": 6,
+        "qualified": true,
+        "rank": 6,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14369211"
+      }
+    ],
+    "id": "men_SP",
+    "label": "Men's Shot Put",
+    "nearMiss": [
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "21.91m",
+        "name": "Adrian PIPERI",
+        "nat": "USA",
+        "prob": 13,
+        "qualified": false,
+        "rank": 1,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14713124"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "21.82m",
+        "name": "Tom WALSH",
+        "nat": "NZL",
+        "prob": 17,
+        "qualified": false,
+        "rank": 2,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14413007"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "21.80m",
+        "name": "Payton OTTERDAHL",
+        "nat": "USA",
+        "prob": 7,
+        "qualified": false,
+        "rank": 3,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14674710"
+      },
+      {
+        "injuryReason": null,
+        "injuryUrl": null,
+        "injuryWatch": false,
+        "mark": "21.74m",
+        "name": "Chukwuebuka ENEKWECHI",
+        "nat": "NGR",
+        "prob": 2,
+        "qualified": false,
+        "rank": 4,
+        "waUrl": "https://worldathletics.org/athletes/athlete=14463876"
+      }
+    ],
+    "qualLimit": 6
+  },
+  "performanceIndex": {
+    "topPerformances": [
+      {
+        "athlete": "Armand DUPLANTIS",
+        "date": "12 MAR 2026",
+        "disc": "Men's Pole Vault",
+        "discKey": "men_PV",
+        "indoor": true,
+        "isField": true,
+        "mark": "6.31m",
+        "score": 1353,
+        "venue": "IFU Arena, Uppsala (SWE) (i)"
+      },
+      {
+        "athlete": "Alison DOS SANTOS",
+        "date": "27 AUG 2026",
+        "disc": "Men's 400m Hurdles",
+        "discKey": "men_400h",
+        "indoor": false,
+        "isField": false,
+        "mark": "45.80",
+        "score": 1348,
+        "venue": "Letzigrund, Zürich (SUI)"
+      },
+      {
+        "athlete": "Emmanouil KARALIS",
+        "date": "27 AUG 2026",
+        "disc": "Men's Pole Vault",
+        "discKey": "men_PV",
+        "indoor": false,
+        "isField": true,
+        "mark": "6.20m",
+        "score": 1322,
+        "venue": "Letzigrund, Zürich (SUI)"
+      },
+      {
+        "athlete": "Matthew DENNY",
+        "date": "09 APR 2026",
+        "disc": "Men's Discus Throw",
+        "discKey": "men_DT",
+        "indoor": false,
+        "isField": true,
+        "mark": "74.04m",
+        "score": 1319,
+        "venue": "Millican Field at Throw Town, Ramona, OK (USA)"
+      },
+      {
+        "athlete": "Steven RICHTER",
+        "date": "09 APR 2026",
+        "disc": "Men's Discus Throw",
+        "discKey": "men_DT",
+        "indoor": false,
+        "isField": true,
+        "mark": "74.00m",
+        "score": 1318,
+        "venue": "Millican Field at Throw Town, Ramona, OK (USA)"
+      },
+      {
+        "athlete": "Valarie SION",
+        "date": "11 APR 2026",
+        "disc": "Women's Discus Throw",
+        "discKey": "women_DT",
+        "indoor": false,
+        "isField": true,
+        "mark": "73.10m",
+        "score": 1313,
+        "venue": "Millican Field at Throw Town, Ramona, OK (USA)"
+      },
+      {
+        "athlete": "Josh HOEY",
+        "date": "24 JAN 2026",
+        "disc": "Men's 800m",
+        "discKey": "men_800m",
+        "indoor": true,
+        "isField": false,
+        "mark": "1:42.50",
+        "score": 1311,
+        "venue": "The Track at New Balance, Boston, MA (USA) (i)"
+      },
+      {
+        "athlete": "Karsten WARHOLM",
+        "date": "23 AUG 2026",
+        "disc": "Men's 400m Hurdles",
+        "discKey": "men_400h",
+        "indoor": false,
+        "isField": false,
+        "mark": "46.52",
+        "score": 1309,
+        "venue": "Stadion Śląski, Chorzów (POL)"
+      },
+      {
+        "athlete": "Ja'Kobe THARP",
+        "date": "10 JUN 2026",
+        "disc": "Men's 110m Hurdles",
+        "discKey": "men_110h",
+        "indoor": false,
+        "isField": false,
+        "mark": "12.75",
+        "score": 1304,
+        "venue": "Hayward Field, Eugene, OR (USA)"
+      },
+      {
+        "athlete": "Rai BENJAMIN",
+        "date": "21 AUG 2026",
+        "disc": "Men's 400m Hurdles",
+        "discKey": "men_400h",
+        "indoor": false,
+        "isField": false,
+        "mark": "46.67",
+        "score": 1301,
+        "venue": "Stade Olympique de la Pontaise, Lausanne (SUI)"
+      },
+      {
+        "athlete": "Garrett KAALUND",
+        "date": "14 MAR 2026",
+        "disc": "Men's 200m",
+        "discKey": "men_200m",
+        "indoor": true,
+        "isField": false,
+        "mark": "19.95",
+        "score": 1298,
+        "venue": "Randal Tyson Indoor Center, Fayetteville, AR (USA) (i)"
+      },
+      {
+        "athlete": "Ziyi YAN",
+        "date": "23 MAY 2026",
+        "disc": "Women's Javelin Throw",
+        "discKey": "women_JT",
+        "indoor": false,
+        "isField": true,
+        "mark": "71.74m",
+        "score": 1296,
+        "venue": "Egret Stadium, Xiamen (CHN)"
+      },
+      {
+        "athlete": "Samuel OGAZI",
+        "date": "12 JUN 2026",
+        "disc": "Men's 400m",
+        "discKey": "men_400m",
+        "indoor": false,
+        "isField": false,
+        "mark": "43.38",
+        "score": 1295,
+        "venue": "Hayward Field, Eugene, OR (USA)"
+      },
+      {
+        "athlete": "Mykolas ALEKNA",
+        "date": "25 JUL 2026",
+        "disc": "Men's Discus Throw",
+        "discKey": "men_DT",
+        "indoor": false,
+        "isField": true,
+        "mark": "72.65m",
+        "score": 1293,
+        "venue": "Palangos Stadionas, Palanga (LTU)"
+      }
+    ],
+    "disciplineDepth": [
+      {
+        "athletes": 100,
+        "disc": "Men's 100m",
+        "discKey": "men_100m",
+        "indoorShare": 0.0,
+        "isField": false,
+        "medianScore": 1206,
+        "topScore": 1280
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's 1500m",
+        "discKey": "men_1500m",
+        "indoorShare": 9.0,
+        "isField": false,
+        "medianScore": 1206,
+        "topScore": 1289
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's 110m Hurdles",
+        "discKey": "men_110h",
+        "indoorShare": 0.0,
+        "isField": false,
+        "medianScore": 1199,
+        "topScore": 1304
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's 400m",
+        "discKey": "men_400m",
+        "indoorShare": 0.0,
+        "isField": false,
+        "medianScore": 1195,
+        "topScore": 1295
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's 800m",
+        "discKey": "men_800m",
+        "indoorShare": 4.0,
+        "isField": false,
+        "medianScore": 1194,
+        "topScore": 1311
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's 100m",
+        "discKey": "women_100m",
+        "indoorShare": 0.0,
+        "isField": false,
+        "medianScore": 1191,
+        "topScore": 1282
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's 200m",
+        "discKey": "men_200m",
+        "indoorShare": 3.0,
+        "isField": false,
+        "medianScore": 1188,
+        "topScore": 1298
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's Pole Vault",
+        "discKey": "men_PV",
+        "indoorShare": 39.0,
+        "isField": true,
+        "medianScore": 1188,
+        "topScore": 1353
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's 800m",
+        "discKey": "women_800m",
+        "indoorShare": 10.0,
+        "isField": false,
+        "medianScore": 1188,
+        "topScore": 1278
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's 400m Hurdles",
+        "discKey": "men_400h",
+        "indoorShare": 0.0,
+        "isField": false,
+        "medianScore": 1187,
+        "topScore": 1348
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's 1500m",
+        "discKey": "women_1500m",
+        "indoorShare": 13.0,
+        "isField": false,
+        "medianScore": 1186,
+        "topScore": 1246
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's 100m Hurdles",
+        "discKey": "women_100h",
+        "indoorShare": 0.0,
+        "isField": false,
+        "medianScore": 1182,
+        "topScore": 1276
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's 200m",
+        "discKey": "women_200m",
+        "indoorShare": 2.0,
+        "isField": false,
+        "medianScore": 1178,
+        "topScore": 1290
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's 400m",
+        "discKey": "women_400m",
+        "indoorShare": 3.0,
+        "isField": false,
+        "medianScore": 1176,
+        "topScore": 1267
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's 5000m",
+        "discKey": "men_5000m",
+        "indoorShare": 3.0,
+        "isField": false,
+        "medianScore": 1175,
+        "topScore": 1255
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's 400m Hurdles",
+        "discKey": "women_400h",
+        "indoorShare": 0.0,
+        "isField": false,
+        "medianScore": 1164,
+        "topScore": 1264
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's Long Jump",
+        "discKey": "men_LJ",
+        "indoorShare": 23.0,
+        "isField": true,
+        "medianScore": 1162,
+        "topScore": 1282
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's 3000m Steeplechase",
+        "discKey": "women_3000sc",
+        "indoorShare": 0.0,
+        "isField": false,
+        "medianScore": 1162,
+        "topScore": 1267
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's 3000m Steeplechase",
+        "discKey": "men_3000sc",
+        "indoorShare": 0.0,
+        "isField": false,
+        "medianScore": 1161,
+        "topScore": 1271
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's Long Jump",
+        "discKey": "women_LJ",
+        "indoorShare": 24.0,
+        "isField": true,
+        "medianScore": 1149,
+        "topScore": 1262
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's Shot Put",
+        "discKey": "men_SP",
+        "indoorShare": 32.0,
+        "isField": true,
+        "medianScore": 1143,
+        "topScore": 1285
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's High Jump",
+        "discKey": "men_HJ",
+        "indoorShare": 47.0,
+        "isField": true,
+        "medianScore": 1135,
+        "topScore": 1215
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's Discus Throw",
+        "discKey": "men_DT",
+        "indoorShare": 0.0,
+        "isField": true,
+        "medianScore": 1134,
+        "topScore": 1319
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's Triple Jump",
+        "discKey": "men_TJ",
+        "indoorShare": 27.0,
+        "isField": true,
+        "medianScore": 1123,
+        "topScore": 1288
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's High Jump",
+        "discKey": "women_HJ",
+        "indoorShare": 44.0,
+        "isField": true,
+        "medianScore": 1121,
+        "topScore": 1249
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's Pole Vault",
+        "discKey": "women_PV",
+        "indoorShare": 41.0,
+        "isField": true,
+        "medianScore": 1120,
+        "topScore": 1255
+      },
+      {
+        "athletes": 100,
+        "disc": "Men's Javelin Throw",
+        "discKey": "men_JT",
+        "indoorShare": 0.0,
+        "isField": true,
+        "medianScore": 1108,
+        "topScore": 1281
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's Triple Jump",
+        "discKey": "women_TJ",
+        "indoorShare": 14.0,
+        "isField": true,
+        "medianScore": 1107,
+        "topScore": 1246
+      },
+      {
+        "athletes": 500,
+        "disc": "Women's 5000m",
+        "discKey": "women_5000m",
+        "indoorShare": 10.6,
+        "isField": false,
+        "medianScore": 1103,
+        "topScore": 1245
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's Discus Throw",
+        "discKey": "women_DT",
+        "indoorShare": 0.0,
+        "isField": true,
+        "medianScore": 1076,
+        "topScore": 1313
+      },
+      {
+        "athletes": 100,
+        "disc": "Women's Javelin Throw",
+        "discKey": "women_JT",
+        "indoorShare": 0.0,
+        "isField": true,
+        "medianScore": 1053,
+        "topScore": 1296
+      },
+      {
+        "athletes": 500,
+        "disc": "Women's Shot Put",
+        "discKey": "women_SP",
+        "indoorShare": 25.6,
+        "isField": true,
+        "medianScore": 939,
+        "topScore": 1276
+      }
+    ],
+    "scoreScale": {
+      "max": 1353,
+      "median": 1158,
+      "min": 880,
+      "rows": 4000
     },
-    {
-      "avgFinish": 2.47,
-      "bestMonth": "Jun",
-      "consistency": 0.88,
-      "name": "Emmanuel ESEME",
-      "podiumRate": 76.3,
-      "races": 38,
-      "recentForm": [
-        {
-          "date": "04 Jun 2026",
-          "meeting": "Golden Gala Pietro Mennea",
-          "place": 2
-        },
-        {
-          "date": "16 Jun 2026",
-          "meeting": "65th Ostrava Golden Spike",
-          "place": 2
-        },
-        {
-          "date": "10 Jul 2026",
-          "meeting": "Meeting International d’Athlétisme Herculis EBS",
-          "place": 3
-        },
-        {
-          "date": "14 Jul 2026",
-          "meeting": "Gyulai István Memorial - Hungarian Athletics Grand Prix",
-          "place": 1
-        },
-        {
-          "date": "18 Jul 2026",
-          "meeting": "Novuna London Athletics Meet",
-          "place": 4
-        },
-        {
-          "date": "23 Aug 2026",
-          "meeting": "Silesia Kamila Skolimowska Memorial",
-          "place": 9
-        }
-      ],
-      "seasonRaces": 9,
-      "top3Average": 9.967,
-      "winRate": 39.5
-    },
-    {
-      "avgFinish": 3.59,
-      "bestMonth": "Jun",
-      "consistency": 1.08,
-      "name": "Kenneth BEDNAREK",
-      "podiumRate": 58.8,
-      "races": 17,
-      "recentForm": [
-        {
-          "date": "14 Sep 2025",
-          "meeting": "World Athletics Championships, Tokyo 2025",
-          "place": 4
-        },
-        {
-          "date": "16 May 2026",
-          "meeting": "Wanda Diamond League",
-          "place": 3
-        },
-        {
-          "date": "23 May 2026",
-          "meeting": "Wanda Diamond League Xiamen",
-          "place": 4
-        },
-        {
-          "date": "14 Jun 2026",
-          "meeting": "USATF LA Grand Prix",
-          "place": 1
-        },
-        {
-          "date": "24 Jul 2026",
-          "meeting": "USA Championships",
-          "place": 3
-        },
-        {
-          "date": "23 Aug 2026",
-          "meeting": "Silesia Kamila Skolimowska Memorial",
-          "place": 2
-        }
-      ],
-      "seasonRaces": 5,
-      "top3Average": 9.823,
-      "winRate": 17.6
-    },
-    {
-      "avgFinish": 2.52,
-      "bestMonth": "Aug",
-      "consistency": 0.71,
-      "name": "Gift LEOTLELA",
-      "podiumRate": 72.4,
-      "races": 31,
-      "recentForm": [
-        {
-          "date": "14 Sep 2025",
-          "meeting": "World Athletics Championships, Tokyo 2025",
-          "place": 5
-        },
-        {
-          "date": "16 Apr 2026",
-          "meeting": "South African Championships",
-          "place": 1
-        },
-        {
-          "date": "16 May 2026",
-          "meeting": "Wanda Diamond League",
-          "place": 1
-        },
-        {
-          "date": "23 May 2026",
-          "meeting": "Wanda Diamond League Xiamen",
-          "place": 2
-        },
-        {
-          "date": "18 Jul 2026",
-          "meeting": "Novuna London Athletics Meet",
-          "place": 5
-        },
-        {
-          "date": "23 Aug 2026",
-          "meeting": "Silesia Kamila Skolimowska Memorial",
-          "place": 5
-        }
-      ],
-      "seasonRaces": 5,
-      "top3Average": 9.97,
-      "winRate": 44.8
-    },
-    {
-      "avgFinish": 2.63,
-      "bestMonth": "Jun",
-      "consistency": 0.74,
-      "name": "Trayvon BROMELL",
-      "podiumRate": 70.4,
-      "races": 28,
-      "recentForm": [
-        {
-          "date": "01 Aug 2025",
-          "meeting": "USA Championships",
-          "place": 4
-        },
-        {
-          "date": "16 Aug 2025",
-          "meeting": "Silesia Kamila Skolimowska Memorial",
-          "place": 5
-        },
-        {
-          "date": "16 May 2026",
-          "meeting": "Wanda Diamond League",
-          "place": 4
-        },
-        {
-          "date": "23 May 2026",
-          "meeting": "Wanda Diamond League Xiamen",
-          "place": 3
-        },
-        {
-          "date": "06 Jun 2026",
-          "meeting": "USATF Lone Star Grand Prix",
-          "place": 1
-        },
-        {
-          "date": "28 Jun 2026",
-          "meeting": "Meeting de Paris",
-          "place": 1
-        }
-      ],
-      "seasonRaces": 4,
-      "top3Average": 9.923,
-      "winRate": 40.7
-    },
-    {
-      "avgFinish": 4.4,
-      "bestMonth": "Jul",
-      "consistency": 0.97,
-      "name": "Jordan ANTHONY",
-      "podiumRate": 20.0,
-      "races": 5,
-      "recentForm": [
-        {
-          "date": "04 Jun 2026",
-          "meeting": "Golden Gala Pietro Mennea",
-          "place": 4
-        },
-        {
-          "date": "16 Jun 2026",
-          "meeting": "65th Ostrava Golden Spike",
-          "place": 5
-        },
-        {
-          "date": "28 Jun 2026",
-          "meeting": "Meeting de Paris",
-          "place": 5
-        },
-        {
-          "date": "10 Jul 2026",
-          "meeting": "Meeting International d’Athlétisme Herculis EBS",
-          "place": 2
-        },
-        {
-          "date": "18 Jul 2026",
-          "meeting": "Novuna London Athletics Meet",
-          "place": 6
-        }
-      ],
-      "seasonRaces": 5,
-      "top3Average": 9.957,
-      "winRate": 0.0
-    },
-    {
-      "avgFinish": 3.16,
-      "bestMonth": "Aug",
-      "consistency": 3.51,
-      "name": "Akani SIMBINE",
-      "podiumRate": 58.7,
-      "races": 63,
-      "recentForm": [
-        {
-          "date": "23 May 2026",
-          "meeting": "Wanda Diamond League Xiamen",
-          "place": 5
-        },
-        {
-          "date": "04 Jun 2026",
-          "meeting": "Golden Gala Pietro Mennea",
-          "place": 6
-        },
-        {
-          "date": "21 Jun 2026",
-          "meeting": "FBK Games",
-          "place": 1
-        },
-        {
-          "date": "28 Jun 2026",
-          "meeting": "Meeting de Paris",
-          "place": 4
-        },
-        {
-          "date": "14 Jul 2026",
-          "meeting": "Gyulai István Memorial - Hungarian Athletics Grand Prix",
-          "place": 4
-        },
-        {
-          "date": "23 Aug 2026",
-          "meeting": "Silesia Kamila Skolimowska Memorial",
-          "place": 7
-        }
-      ],
-      "seasonRaces": 9,
-      "top3Average": 9.987,
-      "winRate": 34.9
-    },
-    {
-      "avgFinish": 2.53,
-      "bestMonth": "May",
-      "consistency": 0.68,
-      "name": "Ferdinand OMANYALA",
-      "podiumRate": 82.4,
-      "races": 51,
-      "recentForm": [
-        {
-          "date": "23 May 2026",
-          "meeting": "Wanda Diamond League Xiamen",
-          "place": 1
-        },
-        {
-          "date": "30 May 2026",
-          "meeting": "19° Triveneto Meeting Internazionale",
-          "place": 1
-        },
-        {
-          "date": "04 Jun 2026",
-          "meeting": "Golden Gala Pietro Mennea",
-          "place": 8
-        },
-        {
-          "date": "20 Jun 2026",
-          "meeting": "Kenyan Championships Cum Trials for Commonwealth Games",
-          "place": 1
-        },
-        {
-          "date": "21 Jun 2026",
-          "meeting": "FBK Games",
-          "place": 5
-        },
-        {
-          "date": "28 Jun 2026",
-          "meeting": "Meeting de Paris",
-          "place": 6
-        }
-      ],
-      "seasonRaces": 10,
-      "top3Average": 9.95,
-      "winRate": 39.2
+    "indoor": {
+      "rows": 519,
+      "share": 13.0,
+      "total": 4000
     }
-  ],
-  "storylines": [
-    {
-      "athletes": [
+  },
+  "qualification": {
+    "meetingsLeft": 0,
+    "pointsForAWin": 8,
+    "example": {
+      "cutPoints": 17,
+      "disc": "Men's 100m",
+      "discKey": "men_100m",
+      "isField": false,
+      "qualLimit": 8,
+      "standings": [
+        {
+          "country": "JAM",
+          "events": 3,
+          "gap": -6,
+          "maxPoints": 23,
+          "name": "Oblique SEVILLE",
+          "points": 23,
+          "rank": 1,
+          "status": "safe"
+        },
+        {
+          "country": "RSA",
+          "events": 4,
+          "gap": -6,
+          "maxPoints": 23,
+          "name": "Gift LEOTLELA",
+          "points": 23,
+          "rank": 2,
+          "status": "safe"
+        },
+        {
+          "country": "USA",
+          "events": 3,
+          "gap": -2,
+          "maxPoints": 19,
+          "name": "Trayvon BROMELL",
+          "points": 19,
+          "rank": 3,
+          "status": "safe"
+        },
+        {
+          "country": "USA",
+          "events": 4,
+          "gap": -2,
+          "maxPoints": 19,
+          "name": "Jordan ANTHONY",
+          "points": 19,
+          "rank": 4,
+          "status": "safe"
+        },
+        {
+          "country": "KEN",
+          "events": 4,
+          "gap": -2,
+          "maxPoints": 19,
+          "name": "Ferdinand OMANYALA",
+          "points": 19,
+          "rank": 5,
+          "status": "safe"
+        },
+        {
+          "country": "USA",
+          "events": 3,
+          "gap": -1,
+          "maxPoints": 18,
+          "name": "Kenneth BEDNAREK",
+          "points": 18,
+          "rank": 6,
+          "status": "safe"
+        },
+        {
+          "country": "CMR",
+          "events": 3,
+          "gap": -1,
+          "maxPoints": 18,
+          "name": "Emmanuel ESEME",
+          "points": 18,
+          "rank": 7,
+          "status": "safe"
+        },
+        {
+          "country": "RSA",
+          "events": 5,
+          "gap": 0,
+          "maxPoints": 17,
+          "name": "Akani SIMBINE",
+          "points": 17,
+          "rank": 8,
+          "status": "safe"
+        },
+        {
+          "country": "USA",
+          "events": 2,
+          "gap": 2,
+          "maxPoints": 15,
+          "name": "Noah LYLES",
+          "points": 15,
+          "rank": 9,
+          "status": "out"
+        },
+        {
+          "country": "NGR",
+          "events": 2,
+          "gap": 4,
+          "maxPoints": 13,
+          "name": "Kayinsola AJAYI",
+          "points": 13,
+          "rank": 10,
+          "status": "out"
+        },
+        {
+          "country": "BOT",
+          "events": 4,
+          "gap": 4,
+          "maxPoints": 13,
+          "name": "Letsile TEBOGO",
+          "points": 13,
+          "rank": 11,
+          "status": "out"
+        },
+        {
+          "country": "ITA",
+          "events": 2,
+          "gap": 7,
+          "maxPoints": 10,
+          "name": "Lamont Marcell JACOBS",
+          "points": 10,
+          "rank": 12,
+          "status": "out"
+        },
+        {
+          "country": "USA",
+          "events": 3,
+          "gap": 8,
+          "maxPoints": 9,
+          "name": "Christian COLEMAN",
+          "points": 9,
+          "rank": 13,
+          "status": "out"
+        },
+        {
+          "country": "AUS",
+          "events": 2,
+          "gap": 10,
+          "maxPoints": 7,
+          "name": "Lachlan KENNEDY",
+          "points": 7,
+          "rank": 14,
+          "status": "out"
+        },
+        {
+          "country": "GBR",
+          "events": 1,
+          "gap": 11,
+          "maxPoints": 6,
+          "name": "Romell GLAVE",
+          "points": 6,
+          "rank": 15,
+          "status": "out"
+        },
+        {
+          "country": "CAN",
+          "events": 2,
+          "gap": 12,
+          "maxPoints": 5,
+          "name": "Andre DE GRASSE",
+          "points": 5,
+          "rank": 16,
+          "status": "out"
+        },
+        {
+          "country": "GER",
+          "events": 1,
+          "gap": 12,
+          "maxPoints": 5,
+          "name": "Owen ANSAH",
+          "points": 5,
+          "rank": 17,
+          "status": "out"
+        },
+        {
+          "country": "COL",
+          "events": 1,
+          "gap": 14,
+          "maxPoints": 3,
+          "name": "Ronal LONGA",
+          "points": 3,
+          "rank": 18,
+          "status": "out"
+        },
+        {
+          "country": "GBR",
+          "events": 1,
+          "gap": 15,
+          "maxPoints": 2,
+          "name": "Zharnel HUGHES",
+          "points": 2,
+          "rank": 19,
+          "status": "out"
+        },
+        {
+          "country": "JAM",
+          "events": 1,
+          "gap": 15,
+          "maxPoints": 2,
+          "name": "Ackeem BLAKE",
+          "points": 2,
+          "rank": 20,
+          "status": "out"
+        },
+        {
+          "country": "USA",
+          "events": 1,
+          "gap": 15,
+          "maxPoints": 2,
+          "name": "Sam BLASKOWSKI",
+          "points": 2,
+          "rank": 20,
+          "status": "out"
+        },
+        {
+          "country": "GBR",
+          "events": 2,
+          "gap": 15,
+          "maxPoints": 2,
+          "name": "Jeremiah AZU",
+          "points": 2,
+          "rank": 22,
+          "status": "out"
+        },
+        {
+          "country": "USA",
+          "events": 1,
+          "gap": 16,
+          "maxPoints": 1,
+          "name": "Ronnie BAKER",
+          "points": 1,
+          "rank": 23,
+          "status": "out"
+        },
+        {
+          "country": "RSA",
+          "events": 1,
+          "gap": 16,
+          "maxPoints": 1,
+          "name": "Bradley NKOANA",
+          "points": 1,
+          "rank": 24,
+          "status": "out"
+        }
+      ]
+    }
+  },
+  "projections": {
+    "storylines": [
+      {
+        "athletes": [
+          "Oblique SEVILLE",
+          "Emmanuel ESEME"
+        ],
+        "stat": "3-0",
+        "text": "3 wins from 3 real career meetings, yet the model makes Emmanuel ESEME the 36% pick for the Final.",
+        "title": "Rivalry renewed",
+        "type": "rivalry"
+      },
+      {
+        "athletes": [
+          "Emmanuel ESEME",
+          "Oblique SEVILLE"
+        ],
+        "stat": "1pt gap",
+        "text": "36% to 35% — the closest projected race in Men's 100m.",
+        "title": "Photo finish",
+        "type": "photo_finish"
+      },
+      {
+        "athletes": [
+          "Kenneth BEDNAREK"
+        ],
+        "stat": "-0.11s",
+        "text": "9.98 → 9.87 across 3 real meetings this season — the biggest real in-season gain among the top contenders.",
+        "title": "Trending up",
+        "type": "hot_streak"
+      },
+      {
+        "athletes": [
+          "Oblique SEVILLE"
+        ],
+        "stat": "#1",
+        "text": "Never made a Diamond League Final in Men's 100m before (no appearance 2018-2025).",
+        "title": "First Final appearance",
+        "type": "debutant"
+      }
+    ],
+    "matrix": {
+      "names": [
         "Oblique SEVILLE",
-        "Emmanuel ESEME"
-      ],
-      "stat": "3-0",
-      "text": "3 wins from 3 real career meetings, yet the model makes Emmanuel ESEME the 36% pick for the Final.",
-      "title": "Rivalry renewed",
-      "type": "rivalry"
-    },
-    {
-      "athletes": [
         "Emmanuel ESEME",
-        "Oblique SEVILLE"
+        "Kenneth BEDNAREK",
+        "Gift LEOTLELA",
+        "Trayvon BROMELL",
+        "Jordan ANTHONY",
+        "Akani SIMBINE",
+        "Ferdinand OMANYALA"
       ],
-      "stat": "1pt gap",
-      "text": "36% to 35% — the closest projected race in Men's 100m.",
-      "title": "Photo finish",
-      "type": "photo_finish"
+      "rows": [
+        {
+          "name": "Oblique SEVILLE",
+          "cells": [
+            null,
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 0,
+              "meetings": 3,
+              "wins": 3
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 1,
+              "meetings": 3,
+              "wins": 2
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 0,
+              "meetings": 4,
+              "wins": 4
+            },
+            {
+              "lastMet": "06 Jun 2026",
+              "losses": 2,
+              "meetings": 2,
+              "wins": 0
+            },
+            {
+              "lastMet": "18 Jul 2026",
+              "losses": 0,
+              "meetings": 2,
+              "wins": 2
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 1,
+              "meetings": 7,
+              "wins": 6
+            },
+            {
+              "lastMet": "01 Jun 2024",
+              "losses": 1,
+              "meetings": 5,
+              "wins": 4
+            }
+          ],
+          "wins": 21,
+          "losses": 5,
+          "winRate": 80.8
+        },
+        {
+          "name": "Emmanuel ESEME",
+          "cells": [
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 3,
+              "meetings": 3,
+              "wins": 0
+            },
+            null,
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 2,
+              "meetings": 2,
+              "wins": 0
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 1,
+              "meetings": 2,
+              "wins": 1
+            },
+            {
+              "lastMet": "06 Jun 2025",
+              "losses": 1,
+              "meetings": 1,
+              "wins": 0
+            },
+            {
+              "lastMet": "18 Jul 2026",
+              "losses": 1,
+              "meetings": 4,
+              "wins": 3
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 10,
+              "meetings": 13,
+              "wins": 3
+            },
+            {
+              "lastMet": "04 Jun 2026",
+              "losses": 5,
+              "meetings": 8,
+              "wins": 3
+            }
+          ],
+          "wins": 10,
+          "losses": 23,
+          "winRate": 30.3
+        },
+        {
+          "name": "Kenneth BEDNAREK",
+          "cells": [
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 2,
+              "meetings": 3,
+              "wins": 1
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 0,
+              "meetings": 2,
+              "wins": 2
+            },
+            null,
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 2,
+              "meetings": 4,
+              "wins": 2
+            },
+            {
+              "lastMet": "23 May 2026",
+              "losses": 4,
+              "meetings": 7,
+              "wins": 3
+            },
+            null,
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 1,
+              "meetings": 6,
+              "wins": 5
+            },
+            {
+              "lastMet": "23 May 2026",
+              "losses": 5,
+              "meetings": 6,
+              "wins": 1
+            }
+          ],
+          "wins": 14,
+          "losses": 14,
+          "winRate": 50.0
+        },
+        {
+          "name": "Gift LEOTLELA",
+          "cells": [
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 4,
+              "meetings": 4,
+              "wins": 0
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 1,
+              "meetings": 2,
+              "wins": 1
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 2,
+              "meetings": 4,
+              "wins": 2
+            },
+            null,
+            {
+              "lastMet": "23 May 2026",
+              "losses": 0,
+              "meetings": 2,
+              "wins": 2
+            },
+            {
+              "lastMet": "18 Jul 2026",
+              "losses": 0,
+              "meetings": 1,
+              "wins": 1
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 1,
+              "meetings": 5,
+              "wins": 4
+            },
+            {
+              "lastMet": "23 May 2026",
+              "losses": 1,
+              "meetings": 3,
+              "wins": 2
+            }
+          ],
+          "wins": 12,
+          "losses": 9,
+          "winRate": 57.1
+        },
+        {
+          "name": "Trayvon BROMELL",
+          "cells": [
+            {
+              "lastMet": "06 Jun 2026",
+              "losses": 0,
+              "meetings": 2,
+              "wins": 2
+            },
+            {
+              "lastMet": "06 Jun 2025",
+              "losses": 0,
+              "meetings": 1,
+              "wins": 1
+            },
+            {
+              "lastMet": "23 May 2026",
+              "losses": 3,
+              "meetings": 7,
+              "wins": 4
+            },
+            {
+              "lastMet": "23 May 2026",
+              "losses": 2,
+              "meetings": 2,
+              "wins": 0
+            },
+            null,
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 0,
+              "meetings": 1,
+              "wins": 1
+            },
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 2,
+              "meetings": 11,
+              "wins": 9
+            },
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 4,
+              "meetings": 8,
+              "wins": 4
+            }
+          ],
+          "wins": 21,
+          "losses": 11,
+          "winRate": 65.6
+        },
+        {
+          "name": "Jordan ANTHONY",
+          "cells": [
+            {
+              "lastMet": "18 Jul 2026",
+              "losses": 2,
+              "meetings": 2,
+              "wins": 0
+            },
+            {
+              "lastMet": "18 Jul 2026",
+              "losses": 3,
+              "meetings": 4,
+              "wins": 1
+            },
+            null,
+            {
+              "lastMet": "18 Jul 2026",
+              "losses": 1,
+              "meetings": 1,
+              "wins": 0
+            },
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 1,
+              "meetings": 1,
+              "wins": 0
+            },
+            null,
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 1,
+              "meetings": 2,
+              "wins": 1
+            },
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 0,
+              "meetings": 2,
+              "wins": 2
+            }
+          ],
+          "wins": 4,
+          "losses": 8,
+          "winRate": 33.3
+        },
+        {
+          "name": "Akani SIMBINE",
+          "cells": [
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 6,
+              "meetings": 7,
+              "wins": 1
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 3,
+              "meetings": 13,
+              "wins": 10
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 5,
+              "meetings": 6,
+              "wins": 1
+            },
+            {
+              "lastMet": "23 Aug 2026",
+              "losses": 4,
+              "meetings": 5,
+              "wins": 1
+            },
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 9,
+              "meetings": 11,
+              "wins": 2
+            },
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 1,
+              "meetings": 2,
+              "wins": 1
+            },
+            null,
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 8,
+              "meetings": 17,
+              "wins": 9
+            }
+          ],
+          "wins": 25,
+          "losses": 36,
+          "winRate": 41.0
+        },
+        {
+          "name": "Ferdinand OMANYALA",
+          "cells": [
+            {
+              "lastMet": "01 Jun 2024",
+              "losses": 4,
+              "meetings": 5,
+              "wins": 1
+            },
+            {
+              "lastMet": "04 Jun 2026",
+              "losses": 3,
+              "meetings": 8,
+              "wins": 5
+            },
+            {
+              "lastMet": "23 May 2026",
+              "losses": 1,
+              "meetings": 6,
+              "wins": 5
+            },
+            {
+              "lastMet": "23 May 2026",
+              "losses": 2,
+              "meetings": 3,
+              "wins": 1
+            },
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 4,
+              "meetings": 8,
+              "wins": 4
+            },
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 2,
+              "meetings": 2,
+              "wins": 0
+            },
+            {
+              "lastMet": "28 Jun 2026",
+              "losses": 9,
+              "meetings": 17,
+              "wins": 8
+            },
+            null
+          ],
+          "wins": 24,
+          "losses": 25,
+          "winRate": 49.0
+        }
+      ],
+      "pairsMet": 27,
+      "pairsPossible": 28
     },
-    {
-      "athletes": [
-        "Kenneth BEDNAREK"
-      ],
-      "stat": "-0.11s",
-      "text": "9.98 → 9.87 across 3 real meetings this season — the biggest real in-season gain among the top contenders.",
-      "title": "Trending up",
-      "type": "hot_streak"
-    },
-    {
-      "athletes": [
-        "Oblique SEVILLE"
-      ],
-      "stat": "#1",
-      "text": "Never made a Diamond League Final in Men's 100m before (no appearance 2018-2025).",
-      "title": "First Final appearance",
-      "type": "debutant"
-    }
-  ],
+    "comparison": [
+      {
+        "avgFinish": 2.0,
+        "bestMonth": "Jun",
+        "consistency": 0.34,
+        "name": "Oblique SEVILLE",
+        "podiumRate": 88.0,
+        "races": 25,
+        "recentForm": [
+          {
+            "date": "14 Sep 2025",
+            "meeting": "World Athletics Championships, Tokyo 2025",
+            "place": 1
+          },
+          {
+            "date": "06 Jun 2026",
+            "meeting": "USATF Lone Star Grand Prix",
+            "place": 3
+          },
+          {
+            "date": "19 Jun 2026",
+            "meeting": "Jamaican Championships",
+            "place": 1
+          },
+          {
+            "date": "10 Jul 2026",
+            "meeting": "Meeting International d’Athlétisme Herculis EBS",
+            "place": 1
+          },
+          {
+            "date": "18 Jul 2026",
+            "meeting": "Novuna London Athletics Meet",
+            "place": 2
+          },
+          {
+            "date": "23 Aug 2026",
+            "meeting": "Silesia Kamila Skolimowska Memorial",
+            "place": 1
+          }
+        ],
+        "seasonRaces": 5,
+        "top3Average": 9.84,
+        "winRate": 52.0
+      },
+      {
+        "avgFinish": 2.47,
+        "bestMonth": "Jun",
+        "consistency": 0.88,
+        "name": "Emmanuel ESEME",
+        "podiumRate": 76.3,
+        "races": 38,
+        "recentForm": [
+          {
+            "date": "04 Jun 2026",
+            "meeting": "Golden Gala Pietro Mennea",
+            "place": 2
+          },
+          {
+            "date": "16 Jun 2026",
+            "meeting": "65th Ostrava Golden Spike",
+            "place": 2
+          },
+          {
+            "date": "10 Jul 2026",
+            "meeting": "Meeting International d’Athlétisme Herculis EBS",
+            "place": 3
+          },
+          {
+            "date": "14 Jul 2026",
+            "meeting": "Gyulai István Memorial - Hungarian Athletics Grand Prix",
+            "place": 1
+          },
+          {
+            "date": "18 Jul 2026",
+            "meeting": "Novuna London Athletics Meet",
+            "place": 4
+          },
+          {
+            "date": "23 Aug 2026",
+            "meeting": "Silesia Kamila Skolimowska Memorial",
+            "place": 9
+          }
+        ],
+        "seasonRaces": 9,
+        "top3Average": 9.967,
+        "winRate": 39.5
+      },
+      {
+        "avgFinish": 3.59,
+        "bestMonth": "Jun",
+        "consistency": 1.08,
+        "name": "Kenneth BEDNAREK",
+        "podiumRate": 58.8,
+        "races": 17,
+        "recentForm": [
+          {
+            "date": "14 Sep 2025",
+            "meeting": "World Athletics Championships, Tokyo 2025",
+            "place": 4
+          },
+          {
+            "date": "16 May 2026",
+            "meeting": "Wanda Diamond League",
+            "place": 3
+          },
+          {
+            "date": "23 May 2026",
+            "meeting": "Wanda Diamond League Xiamen",
+            "place": 4
+          },
+          {
+            "date": "14 Jun 2026",
+            "meeting": "USATF LA Grand Prix",
+            "place": 1
+          },
+          {
+            "date": "24 Jul 2026",
+            "meeting": "USA Championships",
+            "place": 3
+          },
+          {
+            "date": "23 Aug 2026",
+            "meeting": "Silesia Kamila Skolimowska Memorial",
+            "place": 2
+          }
+        ],
+        "seasonRaces": 5,
+        "top3Average": 9.823,
+        "winRate": 17.6
+      },
+      {
+        "avgFinish": 2.52,
+        "bestMonth": "Aug",
+        "consistency": 0.71,
+        "name": "Gift LEOTLELA",
+        "podiumRate": 72.4,
+        "races": 31,
+        "recentForm": [
+          {
+            "date": "14 Sep 2025",
+            "meeting": "World Athletics Championships, Tokyo 2025",
+            "place": 5
+          },
+          {
+            "date": "16 Apr 2026",
+            "meeting": "South African Championships",
+            "place": 1
+          },
+          {
+            "date": "16 May 2026",
+            "meeting": "Wanda Diamond League",
+            "place": 1
+          },
+          {
+            "date": "23 May 2026",
+            "meeting": "Wanda Diamond League Xiamen",
+            "place": 2
+          },
+          {
+            "date": "18 Jul 2026",
+            "meeting": "Novuna London Athletics Meet",
+            "place": 5
+          },
+          {
+            "date": "23 Aug 2026",
+            "meeting": "Silesia Kamila Skolimowska Memorial",
+            "place": 5
+          }
+        ],
+        "seasonRaces": 5,
+        "top3Average": 9.97,
+        "winRate": 44.8
+      },
+      {
+        "avgFinish": 2.63,
+        "bestMonth": "Jun",
+        "consistency": 0.74,
+        "name": "Trayvon BROMELL",
+        "podiumRate": 70.4,
+        "races": 28,
+        "recentForm": [
+          {
+            "date": "01 Aug 2025",
+            "meeting": "USA Championships",
+            "place": 4
+          },
+          {
+            "date": "16 Aug 2025",
+            "meeting": "Silesia Kamila Skolimowska Memorial",
+            "place": 5
+          },
+          {
+            "date": "16 May 2026",
+            "meeting": "Wanda Diamond League",
+            "place": 4
+          },
+          {
+            "date": "23 May 2026",
+            "meeting": "Wanda Diamond League Xiamen",
+            "place": 3
+          },
+          {
+            "date": "06 Jun 2026",
+            "meeting": "USATF Lone Star Grand Prix",
+            "place": 1
+          },
+          {
+            "date": "28 Jun 2026",
+            "meeting": "Meeting de Paris",
+            "place": 1
+          }
+        ],
+        "seasonRaces": 4,
+        "top3Average": 9.923,
+        "winRate": 40.7
+      },
+      {
+        "avgFinish": 4.4,
+        "bestMonth": "Jul",
+        "consistency": 0.97,
+        "name": "Jordan ANTHONY",
+        "podiumRate": 20.0,
+        "races": 5,
+        "recentForm": [
+          {
+            "date": "04 Jun 2026",
+            "meeting": "Golden Gala Pietro Mennea",
+            "place": 4
+          },
+          {
+            "date": "16 Jun 2026",
+            "meeting": "65th Ostrava Golden Spike",
+            "place": 5
+          },
+          {
+            "date": "28 Jun 2026",
+            "meeting": "Meeting de Paris",
+            "place": 5
+          },
+          {
+            "date": "10 Jul 2026",
+            "meeting": "Meeting International d’Athlétisme Herculis EBS",
+            "place": 2
+          },
+          {
+            "date": "18 Jul 2026",
+            "meeting": "Novuna London Athletics Meet",
+            "place": 6
+          }
+        ],
+        "seasonRaces": 5,
+        "top3Average": 9.957,
+        "winRate": 0.0
+      },
+      {
+        "avgFinish": 3.16,
+        "bestMonth": "Aug",
+        "consistency": 3.51,
+        "name": "Akani SIMBINE",
+        "podiumRate": 58.7,
+        "races": 63,
+        "recentForm": [
+          {
+            "date": "23 May 2026",
+            "meeting": "Wanda Diamond League Xiamen",
+            "place": 5
+          },
+          {
+            "date": "04 Jun 2026",
+            "meeting": "Golden Gala Pietro Mennea",
+            "place": 6
+          },
+          {
+            "date": "21 Jun 2026",
+            "meeting": "FBK Games",
+            "place": 1
+          },
+          {
+            "date": "28 Jun 2026",
+            "meeting": "Meeting de Paris",
+            "place": 4
+          },
+          {
+            "date": "14 Jul 2026",
+            "meeting": "Gyulai István Memorial - Hungarian Athletics Grand Prix",
+            "place": 4
+          },
+          {
+            "date": "23 Aug 2026",
+            "meeting": "Silesia Kamila Skolimowska Memorial",
+            "place": 7
+          }
+        ],
+        "seasonRaces": 9,
+        "top3Average": 9.987,
+        "winRate": 34.9
+      },
+      {
+        "avgFinish": 2.53,
+        "bestMonth": "May",
+        "consistency": 0.68,
+        "name": "Ferdinand OMANYALA",
+        "podiumRate": 82.4,
+        "races": 51,
+        "recentForm": [
+          {
+            "date": "23 May 2026",
+            "meeting": "Wanda Diamond League Xiamen",
+            "place": 1
+          },
+          {
+            "date": "30 May 2026",
+            "meeting": "19° Triveneto Meeting Internazionale",
+            "place": 1
+          },
+          {
+            "date": "04 Jun 2026",
+            "meeting": "Golden Gala Pietro Mennea",
+            "place": 8
+          },
+          {
+            "date": "20 Jun 2026",
+            "meeting": "Kenyan Championships Cum Trials for Commonwealth Games",
+            "place": 1
+          },
+          {
+            "date": "21 Jun 2026",
+            "meeting": "FBK Games",
+            "place": 5
+          },
+          {
+            "date": "28 Jun 2026",
+            "meeting": "Meeting de Paris",
+            "place": 6
+          }
+        ],
+        "seasonRaces": 10,
+        "top3Average": 9.95,
+        "winRate": 39.2
+      }
+    ]
+  },
   "athleteProfile": {
     "name": "Oblique SEVILLE",
     "disc": "Men's 100m",
@@ -1032,6 +2241,29 @@
         "bestMark": "9.82",
         "marks": 6,
         "indoorMarks": 0
+      }
+    ],
+    "history": [
+      {
+        "date": "10 JUL 2026",
+        "mark": "9.88",
+        "markValue": 9.88,
+        "venue": "Meeting International d’Athlétisme Herculis EBS",
+        "resultsScore": null
+      },
+      {
+        "date": "18 JUL 2026",
+        "mark": "9.87",
+        "markValue": 9.87,
+        "venue": "Novuna London Athletics Meet",
+        "resultsScore": null
+      },
+      {
+        "date": "23 AUG 2026",
+        "mark": "9.83",
+        "markValue": 9.83,
+        "venue": "Silesia Kamila Skolimowska Memorial",
+        "resultsScore": null
       }
     ],
     "analytics": {

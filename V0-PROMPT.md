@@ -1,44 +1,65 @@
-# v0 prompt — PodiumCall
+# v0 prompt — full-site redesign
 
-Paste everything below the line into v0. It is written to get **visual
-direction** back, not code to paste into this repo — see "Why" at the bottom
-of this file before you use the output.
+**How to use it:** attach `V0-SAMPLE-DATA.json` (same folder) to the v0 chat,
+then paste everything below the line as your message.
+
+**What to bring back:** the generated HTML or screenshots — not code to paste
+into this repo. This app is React 19 + TanStack Router + Tailwind 4 with its
+own component library; v0 outputs Next.js + shadcn/ui, which will not compile
+here and would replace the identity. The design gets ported by hand.
 
 ---
 
-You are redesigning the visual layer of **PodiumCall**, a live analytics site
-for the 2026 Wanda Diamond League Final (Brussels, 4–5 September). Its
-audience is athletics analysts and fans who want to argue with the numbers,
-not a general dashboard audience.
+Redesign an entire website. I've attached the real data it renders — real
+athletes, real marks, real head-to-head records, scraped from World
+Athletics. Design against those exact values and **never invent an athlete
+name or a statistic**.
 
-**Your job is visual only. Do not invent, restructure, or remove information.**
+## The product
 
-## Hard constraints
+**PodiumCall** — a live analytics site that predicts the podium at the 2026
+Wanda Diamond League Final (Brussels, 4–5 September) across all 32 track and
+field disciplines, and lets you interrogate why. A RandomForest model trained
+on real scraped results does the predicting; the site's whole promise is that
+every number on it is real and sourced, never fabricated.
 
-1. **Do not change any data, label, number, or claim.** Every figure on this
-   site is scraped from World Athletics and the project's first principle is
-   that nothing is ever fabricated, hardcoded, or placeholder. If you need
-   sample values, use the ones I give you and no others. Never add a stat
-   that isn't in my markup, and never invent an athlete name.
-2. **Keep every section and every piece of copy.** You may restyle, resize,
-   regroup and re-space. You may not delete a panel, drop a column, shorten
-   an explanatory note, or replace real copy with lorem.
-3. **Keep the existing identity.** This is a warm, earthy athletics-track
-   palette, not a generic SaaS dashboard. Do not introduce blue/violet
-   gradients, glassmorphism, neon, or a dark "analytics" theme.
-4. **No new dependencies, no icon libraries, no chart libraries.** If a chart
-   is needed, inline SVG only.
+The audience is athletics analysts and serious fans. People who want to
+**argue with the model**, not just read its output.
 
-## The design system you must work inside
+## What is wrong with it now, and what "better" means
 
-Colors (CSS custom properties, oklch — use these exact tokens, do not
-substitute hexes):
+It reads like a competent admin dashboard: rows of similar-weight cards,
+panels of equal visual priority, nothing that tells you what matters most on
+a page. It is clean but anonymous — you could swap the data for SaaS metrics
+and it would look unchanged.
+
+I want it to read like **a sports analysis publication**. Editorial
+confidence. A clear focal point per page. Dense data presented as though
+someone chose how to present it. Distinctive enough that a screenshot is
+recognisable.
+
+## Non-negotiable constraints
+
+1. **Never change, invent, or remove data.** Every figure is scraped. Do not
+   add a stat that isn't in the JSON, don't round differently, don't invent
+   athletes. If a page has an explanatory note about what a number means,
+   keep it — those notes exist because the numbers are easy to misread.
+2. **Keep every page and every section.** Restyle, resize, regroup, re-space,
+   change hierarchy. Do not delete panels or shorten explanatory copy.
+3. **Keep the identity below.** Warm athletics-track palette. No blue/violet
+   gradients, no glassmorphism, no neon, no dark "analytics" theme.
+4. **No shadcn/ui, no Next.js, no icon or chart libraries, no
+   tailwind.config.js.** Inline SVG only, if a chart needs one.
+
+## The design system — use these exact values
+
+CSS custom properties, oklch. Do not substitute hexes.
 
 ```
---background: oklch(0.54 0.105 40)    /* warm terracotta page ground */
---foreground: oklch(0.19 0.03 40)     /* near-black brown text */
---card: oklch(0.97 0.012 75)          /* warm cream card surface */
---secondary: oklch(0.91 0.02 60)      /* muted sand */
+--background: oklch(0.54 0.105 40)     /* warm terracotta page ground */
+--foreground: oklch(0.19 0.03 40)      /* near-black brown */
+--card: oklch(0.97 0.012 75)           /* warm cream card surface */
+--secondary: oklch(0.91 0.02 60)       /* muted sand */
 --muted-foreground: oklch(0.42 0.045 45)
 --border: oklch(0.85 0.035 55)
 --terracotta: oklch(0.545 0.164 38.5)
@@ -49,68 +70,74 @@ substitute hexes):
 --brick: oklch(0.406 0.121 40)
 ```
 
-Type:
-- Display / headings: **Space Grotesk**
-- Body / UI: **Barlow**
-- All figures use tabular numerals.
+- Headings: **Space Grotesk**. Body: **Barlow**. Tabular numerals on every figure.
+- Content sits on cream `--card` panels against the terracotta `--background`.
+- **Gold means best / winner / peak.** Terracotta is the primary accent.
+  Secondary text is muted brown — never pure grey.
+- Active state gradient: `linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)`.
+- There is an existing running-track texture (repeating white lane lines on
+  brick) used sparingly as a hero surface. Keep that idea; use it better.
+- Small uppercase letter-spaced labels are a recurring device.
 
-Existing conventions to respect:
-- Content sits on cream `--card` panels against the terracotta page ground.
-- `label-caps` = small uppercase label, letter-spaced, muted.
-- Accent gradient used for active states: `linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)`.
-- Gold is reserved for "best / winner / peak". Terracotta is the primary
-  accent. Muted grey-brown is for secondary text — never pure grey.
+## The eight pages
 
-## What I want from you
+**1. Landing (`/`)** — the pitch. What the model is, that everything is real
+scraped data, live model confidence by discipline, days to Brussels,
+disciplines tracked. Currently the weakest page; it should make someone want
+to explore.
 
-Show me a stronger visual treatment of the page below. Specifically:
+**2. Dashboard (`/dashboard`)** — the overview. Days to final, disciplines,
+meets done, model accuracy. "Most likely to reach the podium" (each athlete
+is the top pick in a *different* discipline — this is a common misreading and
+the design must not imply they're racing each other). Season progress.
+Upcoming calendar. Athletes removed for injury/withdrawal, with sources.
 
-- Sharper hierarchy — right now everything is a panel of similar weight, and
-  a reader can't tell at a glance what the most important thing on the page
-  is.
-- A more distinctive, less "dashboard" feel. This is a sports analysis
-  publication, not an admin console. Editorial confidence is welcome.
-- Better density handling: this page carries dense tables and a matrix, and
-  they should feel deliberate and readable rather than cramped.
-- Genuine use of the palette. Gold and terracotta should mean something, not
-  be sprinkled.
+**3 & 4. Track (`/track`) and Field (`/field`)** — a discipline picker plus
+the projected top 8 for the chosen event: rank, athlete, nationality, season
+best, podium probability. Note the rank column is ordered by season best
+while the percentage is podium chance, so the two disagree on purpose.
 
-Give me **two distinct directions**, not one. For each, output a single
-self-contained HTML file with inline `<style>` using the tokens above, at
-1440px and at 375px. Static markup is fine — no framework, no data fetching.
+**5. Qualifying (`/qualification`)** — the race for a place at the Final.
+Real Diamond League points, the qualification cut line, and each athlete's
+status: Through / Out / Tie-break. Every scoring meeting is now run, so some
+athletes are separated only by World Athletics' tie-break.
 
-## The page and its real content
+**6. Performance Index (`/stats`)** — the whole season on one scale using
+World Athletics' scoring points, so a discus throw and an 800m are directly
+comparable. Best performances of the season across all events, plus how deep
+each of the 32 events is. **Currently 5.3 screens long with an undisclosed
+32-row table — this page most needs your help.**
 
-Attach **`V0-SAMPLE-DATA.json`** (in this repo, next to this file) and add:
+**7. Schedule (`/schedule`)** — the 15-meeting season calendar, each meeting
+done/next/upcoming, with the Final marked.
 
-> Here is the real data this page renders — real athletes, real marks, real
-> head-to-head records, scraped from World Athletics. Design against these
-> exact values. The men's 100m field is Seville, Eseme, Bednarek, Leotlela,
-> Bromell, Anthony, Simbine and Omanyala.
+**8. Projections (`/projections`)** — the deepest page, and the one that
+should feel most like the product's centre. Per discipline: the model's pick
+with podium probability, three stat tiles, the contenders list, then the
+analysis — **an 8×8 head-to-head matrix of every pairing in the field** with
+a "last 6 finishes" form strip, a "what separates them" comparison table
+(top-3 average, steadiness, races, podium rate, month they peaked), a season
+form chart, computed storylines, and a cross-discipline confidence list.
+**The matrix is the centrepiece.** It should look like something an analyst
+would print out, not like a spreadsheet.
 
-Then name the page you want redesigned. Best candidates, in order:
+**Plus: the athlete profile (`/athlete/...`)** — photo hero, season stats,
+World Athletics honours and world ranking, competition record with win and
+podium rates, season-by-season table, a season-shape bar chart, and
+head-to-head records.
 
-1. **Projections** (`/projections`) — the densest and most distinctive page.
-   Sections in order: a hero with the model's pick, a discipline picker,
-   three stat tiles, the contenders list, an 8×8 head-to-head matrix with a
-   "Last 6" form strip, a "what separates them" comparison table, a season
-   form chart, storyline cards, and a cross-discipline confidence list.
-   The matrix is the centrepiece — it should not look like a spreadsheet.
+## What I want back
 
-2. **Athlete profile** (`/athlete/men_100m/Oblique SEVILLE`) — hero with
-   photo, season stats grid, record and ranking (honours + world rank),
-   competition record, season-by-season table, season shape bar chart,
-   head-to-head list.
+Design **the whole site as one coherent system**, not eight unrelated pages.
 
-3. **A page that does not exist yet: discipline vs discipline.** Which of
-   the 32 events are genuinely deep and which are one athlete and a gap.
-   This one has no incumbent design, so you have the most freedom — invent
-   the layout. Data: each discipline's median World Athletics score, its top
-   score, how many athletes are ranked, and the share of marks set indoors.
+1. A short statement of the direction — what you decided and why.
+2. The shared language: type scale, spacing rhythm, how a panel is built, how
+   a data table is styled, how the nav works.
+3. **Full HTML for the Landing page, Projections, Performance Index and the
+   athlete profile** — self-contained files with inline `<style>`, at 1440px
+   and 375px.
+4. The remaining four pages as either HTML or a clear layout description
+   reusing the same system.
 
-## One more thing
-
-Do not output a Next.js app, shadcn/ui components, or a `tailwind.config.js`.
-I want a single static HTML file per direction so I can read the design
-decisions directly. The real site is React 19 + TanStack Router + Tailwind 4
-with its own component library, and I will port your direction by hand.
+Give me **two distinct directions** at step 1 so I can choose, then build out
+the one I pick. Ask me which before writing all four pages.
