@@ -8,6 +8,7 @@ import {
   ProbabilityBar,
   RankBadge,
 } from "@/components/dl/shell";
+import { FieldAnalysisBlock } from "@/components/dl/field-analysis";
 import { RadialMeter } from "@/components/dl/radial-meter";
 import { TrajectoryOverlayChart } from "@/components/dl/trajectory-overlay-chart";
 import { StorylineCards } from "@/components/dl/storyline-cards";
@@ -361,6 +362,12 @@ function ProjectionsBody({
   const probGap =
     byProb.length > 1 ? Math.round((byProb[0]?.prob ?? 0) - (byProb[1]?.prob ?? 0)) : null;
 
+  // Needed only to pick the unit on the field-comparison table: a 22.58m
+  // shot put and a 22.58s 200m are the same float, so the value cannot say
+  // which it is. Read off the API's own track/field split rather than a
+  // second hardcoded list that would need updating alongside it.
+  const activeIsField = state.data.fieldDisciplines.some((d) => d.id === active.id);
+
   let realRaces: number | null = null;
   if (detail.status === "ok") {
     const currentYear =
@@ -475,6 +482,15 @@ function ProjectionsBody({
           summary, the evidence follows it, and the cross-discipline list
           moves to the end where switching subject is the point. */}
       <ContendersPanel active={active} />
+
+      {detail.status === "ok" && detail.data.fieldAnalysis && (
+        <FieldAnalysisBlock
+          analysis={detail.data.fieldAnalysis}
+          discKey={active.id}
+          discLabel={active.label}
+          isField={activeIsField}
+        />
+      )}
 
       <DisciplineDetail discKey={active.id} discLabel={active.label} detail={detail} />
 

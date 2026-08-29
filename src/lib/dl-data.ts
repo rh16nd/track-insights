@@ -170,6 +170,8 @@ export type Storyline = {
 export type ProjectionsDetail = {
   trajectories: Trajectory[];
   storylines: Storyline[];
+  /** null when the race log has fewer than two of this field's athletes. */
+  fieldAnalysis: FieldAnalysis | null;
 };
 
 /** The race for a place at the Final, from World Athletics' own Diamond
@@ -399,4 +401,56 @@ export type AthleteAnalytics = {
   seasonShape: SeasonShape | null;
   headToHead: DerivedH2h[];
   coverage: { seasons: number[]; sources: string[]; withPlace: number };
+};
+
+/** How a discipline's contenders compare to EACH OTHER. The question a
+ * ranked list with probabilities beside it cannot answer: two athletes with
+ * near-identical season bests are not the same bet if one has beaten the
+ * other every time they have lined up.
+ *
+ * Viable because the pairs genuinely exist — measured across all 32 fields,
+ * the median discipline has raced 100% of its possible pairings. A cell is
+ * null where two athletes have never met, which is a fact worth showing
+ * rather than a zero worth inventing. */
+export type H2hCell = {
+  wins: number;
+  losses: number;
+  meetings: number;
+  lastMet: string | null;
+} | null;
+
+export type MatrixRow = {
+  name: string;
+  cells: H2hCell[];
+  wins: number;
+  losses: number;
+  meetings: number;
+  /** null, not 0, when they have never met anyone in this field. */
+  winRate: number | null;
+};
+
+export type FieldMatrix = {
+  names: string[];
+  rows: MatrixRow[];
+  pairsMet: number;
+  pairsPossible: number;
+  coverage: number | null;
+};
+
+export type FieldComparisonRow = {
+  name: string;
+  races: number;
+  seasonRaces: number;
+  top3Average: number | null;
+  consistency: number | null;
+  winRate: number | null;
+  podiumRate: number | null;
+  avgFinish: number | null;
+  bestMonth: string | null;
+};
+
+export type FieldAnalysis = {
+  matrix: FieldMatrix;
+  comparison: FieldComparisonRow[];
+  season: number;
 };
