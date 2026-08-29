@@ -111,6 +111,11 @@ export type AthleteProfile = {
   scoreContext: ScoreContext | null;
   /** null until src/worldwide_scraper.py has run for this discipline. */
   analytics: AthleteAnalytics | null;
+  /** The model's rival shortlist. Used to mark, inside the single
+   * head-to-head panel, which opponents this athlete will actually meet at
+   * the Final -- the separate "vs projected field" panel was removed once
+   * it drew the same derived numbers and became a duplicate. */
+  rivalNames: string[];
 };
 
 export type ApiData = {

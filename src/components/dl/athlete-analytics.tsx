@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { Panel, ProbabilityBar } from "@/components/dl/shell";
-import type { AthleteAnalytics, SeasonForm } from "@/lib/dl-data";
+import type { AthleteAnalytics, CareerSeason, SeasonForm } from "@/lib/dl-data";
 
 /** The analyst block: what an athlete's RESULTS say, as opposed to what
  * their fastest afternoon says. Every number here comes from a real
@@ -16,11 +16,25 @@ import type { AthleteAnalytics, SeasonForm } from "@/lib/dl-data";
 export function AthleteAnalyticsBlock({
   analytics,
   isField,
+  rivalNames = [],
+  careerSeasons = [],
 }: {
   analytics: AthleteAnalytics;
   isField: boolean;
+  /** Opponents this athlete is projected to meet at the Final. Marked in
+   * the list rather than split into their own panel: they are the same
+   * records either way, and two panels of the same numbers was exactly the
+   * duplication this replaced. */
+  rivalNames?: string[];
+  /** Season bests from the toplist. Folded into the form table as one
+   * column rather than getting its own chart -- the profile already has a
+   * season-form chart above, and a second line chart of nine points was
+   * more decoration than information. */
+  careerSeasons?: CareerSeason[];
 }) {
   const { record, form, seasonShape, headToHead, coverage } = analytics;
+  const rivals = new Set(rivalNames);
+  const bestByYear = new Map<number, CareerSeason>(careerSeasons.map((s) => [s.year, s]));
 
   return (
     <>
@@ -106,10 +120,10 @@ export function AthleteAnalyticsBlock({
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr]">
         {form.length > 0 && (
           <Panel
-            title="Form and consistency"
-            subtitle="Average of an athlete's best three marks each season, which survives one lucky day in a way a season best does not."
+            title="Season by season"
+            subtitle="Season best against the average of that year's best three — one lucky afternoon next to the level actually held."
           >
-            <FormTable form={form} isField={isField} />
+            <FormTable form={form} isField={isField} bestByYear={bestByYear} />
           </Panel>
         )}
 
@@ -125,7 +139,7 @@ export function AthleteAnalyticsBlock({
 
       {headToHead.length > 0 && (
         <Panel
-          title="Most-raced opponents"
+          title="Head-to-head record"
           subtitle="Derived from actually sharing a race — same meeting, same day, compared on finishing position. Nothing here is inferred."
           className="mt-4"
         >
@@ -136,8 +150,16 @@ export function AthleteAnalyticsBlock({
                 className="stagger-item flex items-center gap-3 py-2.5 first:pt-0 last:pb-0"
                 style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
               >
-                <span className="min-w-0 flex-1 truncate text-[13.5px] text-foreground">
-                  {h.name}
+                <span className="flex min-w-0 flex-1 items-center gap-2">
+                  <span className="truncate text-[13.5px] text-foreground">{h.name}</span>
+                  {rivals.has(h.name) && (
+                    <span
+                      title="Projected to be in the Final field"
+                      className="label-caps shrink-0 rounded-full bg-terracotta/12 px-1.5 py-0.5 text-terracotta-strong"
+                    >
+                      In field
+                    </span>
+                  )}
                 </span>
                 <span className="nums w-20 shrink-0 text-right text-[13px] font-semibold text-foreground">
                   {h.wins}–{h.losses}
@@ -156,7 +178,9 @@ export function AthleteAnalyticsBlock({
           </ul>
           <p className="mt-3 text-[11.5px] leading-snug text-muted-foreground">
             Sorted by how often they have met, not by record — the deepest rivalries are the
-            informative ones. Losses are shown as plainly as wins.
+            informative ones. Losses are shown as plainly as wins. Opponents marked{" "}
+            <span className="font-medium text-foreground">In field</span> are projected to line up
+            in the Final.
           </p>
         </Panel>
       )}
@@ -199,7 +223,18 @@ function formatValue(value: number, isField: boolean): string {
   return value.toFixed(2);
 }
 
-function FormTable({ form, isField }: { form: SeasonForm[]; isField: boolean }) {
+function FormTable({
+  form,
+  isField,
+  bestByYear,
+}: {
+  form: SeasonForm[];
+  isField: boolean;
+  /** Season best comes from the toplist, never from the race log -- the log
+   * only knows scraped races and the two disagree (Kovacs 2018: 20.36m
+   * logged vs 21.02m real). One number, one owner. */
+  bestByYear: Map<number, CareerSeason>;
+}) {
   // Consistency is a coefficient of variation, so smaller is steadier
   // regardless of event. Scaled against the athlete's own worst season
   // rather than an absolute ceiling -- a 3% spread is enormous for a
@@ -210,11 +245,14 @@ function FormTable({ form, isField }: { form: SeasonForm[]; isField: boolean }) 
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[380px] border-collapse text-left">
+      <table className="w-full min-w-[460px] border-collapse text-left">
         <thead>
           <tr className="label-caps border-b border-border text-muted-foreground">
             <th scope="col" className="pb-2 pr-2 font-semibold">
               Season
+            </th>
+            <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
+              Best
             </th>
             <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
               Top-3 avg
@@ -232,6 +270,9 @@ function FormTable({ form, isField }: { form: SeasonForm[]; isField: boolean }) 
             <tr key={f.year} className="transition-colors hover:bg-secondary/40">
               <td className="nums py-2.5 pr-2 text-[13px] text-foreground">{f.year}</td>
               <td className="nums py-2.5 pl-3 text-right text-[13px] font-semibold text-foreground">
+                {bestByYear.get(f.year)?.bestMark ?? "—"}
+              </td>
+              <td className="nums py-2.5 pl-3 text-right text-[13px] text-foreground">
                 {formatValue(f.top3Average, isField)}
                 {f.top3Count < 3 && (
                   <span className="ml-1 font-normal text-muted-foreground">(of {f.top3Count})</span>

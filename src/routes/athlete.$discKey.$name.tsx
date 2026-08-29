@@ -3,7 +3,6 @@ import { Shell, Panel, PanelSkeleton, ErrorPanel, WatchBadge } from "@/component
 import { useAthleteProfile, type AthleteNotInField } from "@/hooks/useAthleteProfile";
 import { SeasonTrendChart } from "@/components/dl/season-trend-chart";
 import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
-import { CareerProgressionChart } from "@/components/dl/career-progression-chart";
 import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
 import { RadialMeter } from "@/components/dl/radial-meter";
 import { ordinal } from "@/lib/dl-data";
@@ -615,36 +614,14 @@ function AthleteProfilePage() {
         </Panel>
       </div>
 
-      {a.careerSeasons.length > 1 && (
-        <Panel
-          title="Career progression"
-          subtitle="Best mark in each season on record. A season the athlete did not contest is a gap in the line, not an invented point."
-          className="mt-4"
-        >
-          <CareerProgressionChart
-            seasons={a.careerSeasons}
-            isField={FIELD_EVENT_KEYS.has(a.discKey)}
-          />
-        </Panel>
-      )}
-
       {a.analytics && (
-        <AthleteAnalyticsBlock analytics={a.analytics} isField={FIELD_EVENT_KEYS.has(a.discKey)} />
+        <AthleteAnalyticsBlock
+          analytics={a.analytics}
+          isField={FIELD_EVENT_KEYS.has(a.discKey)}
+          rivalNames={a.rivalNames}
+          careerSeasons={a.careerSeasons}
+        />
       )}
-
-      {/* Kept alongside the derived record above, because it answers a
-          different question: this is the athlete against the people they
-          will actually face at the Final, scored by the model's rival
-          shortlist. The analytics panel is who they race MOST. */}
-      <Panel title="Head-to-head vs projected field" className="mt-4">
-        {a.h2h.length > 0 ? (
-          <HeadToHeadChart matchups={a.h2h} />
-        ) : (
-          <div className="text-[12.5px] text-muted-foreground">
-            No qualifying head-to-head record vs. this discipline's other top picks.
-          </div>
-        )}
-      </Panel>
     </Shell>
   );
 }
