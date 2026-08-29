@@ -277,7 +277,7 @@ function NotInField({
           </div>
           {data.scoreContext && (
             <p className="mt-4 max-w-md text-[11.5px] leading-snug text-muted-foreground">
-              {data.scoreContext.discPercentile.toFixed(0)}th percentile within{" "}
+              {ordinal(Math.round(data.scoreContext.discPercentile))} percentile within{" "}
               {data.disc.toLowerCase()}, where the median is{" "}
               <span className="nums">{data.scoreContext.discMedian}</span>.
               {data.scoreContext.indoor && " This mark was set indoors."}
@@ -650,9 +650,10 @@ function AthleteProfilePage() {
           </div>
           {a.scoreContext && (
             <p className="mt-4 max-w-md text-[11.5px] leading-snug text-muted-foreground">
-              {a.scoreContext.discPercentile.toFixed(0)}th percentile within {a.disc.toLowerCase()},
-              where the median is <span className="nums">{a.scoreContext.discMedian}</span>. The two
-              readings differ because events differ in depth.
+              {ordinal(Math.round(a.scoreContext.discPercentile))} percentile within{" "}
+              {a.disc.toLowerCase()}, where the median is{" "}
+              <span className="nums">{a.scoreContext.discMedian}</span>. The two readings differ
+              because events differ in depth.
               {a.scoreContext.indoor && " This mark was set indoors."}
             </p>
           )}
