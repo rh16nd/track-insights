@@ -3,6 +3,7 @@ import { Shell, Panel, PanelSkeleton, ErrorPanel, WatchBadge } from "@/component
 import { useAthleteProfile, type AthleteNotInField } from "@/hooks/useAthleteProfile";
 import { SeasonTrendChart } from "@/components/dl/season-trend-chart";
 import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
+import { CareerProgressionChart } from "@/components/dl/career-progression-chart";
 import { RadialMeter } from "@/components/dl/radial-meter";
 import { ordinal } from "@/lib/dl-data";
 
@@ -570,7 +571,28 @@ function AthleteProfilePage() {
               value={a.daysSinceLast != null ? `${a.daysSinceLast}d ago` : "—"}
               icon="clock"
             />
+            {/* World Athletics' own scoring-table points. The only number on
+                this page that means anything outside this event -- a 1269 in
+                the 100m and a 1269 in the shot put are the same quality of
+                performance -- so it is the one that answers "is that mark
+                actually good" for a reader who does not know the event. */}
+            {a.scoreContext && (
+              <StatBlock
+                label="WA score"
+                value={String(a.scoreContext.score)}
+                sub={`Top ${Math.max(0.1, 100 - a.scoreContext.percentile).toFixed(1)}% of all ranked marks`}
+                icon="ruler"
+              />
+            )}
           </div>
+          {a.scoreContext && (
+            <p className="mt-4 max-w-md text-[11.5px] leading-snug text-muted-foreground">
+              {a.scoreContext.discPercentile.toFixed(0)}th percentile within {a.disc.toLowerCase()},
+              where the median is <span className="nums">{a.scoreContext.discMedian}</span>. The two
+              readings differ because events differ in depth.
+              {a.scoreContext.indoor && " This mark was set indoors."}
+            </p>
+          )}
           <a
             href={a.waUrl}
             target="_blank"
@@ -591,6 +613,19 @@ function AthleteProfilePage() {
           )}
         </Panel>
       </div>
+
+      {a.careerSeasons.length > 1 && (
+        <Panel
+          title="Career progression"
+          subtitle="Best mark in each season on record. A season the athlete did not contest is a gap in the line, not an invented point."
+          className="mt-4"
+        >
+          <CareerProgressionChart
+            seasons={a.careerSeasons}
+            isField={FIELD_EVENT_KEYS.has(a.discKey)}
+          />
+        </Panel>
+      )}
 
       <Panel title="Head-to-head" className="mt-4">
         {a.h2h.length > 0 ? (

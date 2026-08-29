@@ -104,6 +104,11 @@ export type AthleteProfile = {
   history: MeetMark[];
   historyYear: number | null;
   h2h: H2hMatchup[];
+  /** Season-by-season bests. The other axis from `history`, which is one
+   * season race by race. Empty for an athlete with nothing on record. */
+  careerSeasons: CareerSeason[];
+  /** null when the athlete has no row in this season's toplist. */
+  scoreContext: ScoreContext | null;
 };
 
 export type ApiData = {
@@ -275,4 +280,31 @@ export type StatsData = {
   disciplineDepth: DisciplineDepth[];
   scoreScale: { min: number; max: number; median: number; rows: number } | null;
   indoor: { rows: number; total: number; share: number } | null;
+};
+
+/** One season's best for an athlete, assembled across every source that
+ * carries a dated mark. `indoorMarks` is reported rather than filtered:
+ * in the vertical jumps that can be half the data, and a progression line
+ * that hides it is a claim the data cannot make. */
+export type CareerSeason = {
+  year: number;
+  /** Numeric, for plotting -- seconds or metres. */
+  best: number;
+  bestMark: string;
+  marks: number;
+  indoorMarks: number;
+};
+
+/** Where an athlete's season best sits on World Athletics' scoring table.
+ * `percentile` is across ALL disciplines -- the whole reason for using WA's
+ * score -- while `discPercentile` keeps the within-event reading. The two
+ * genuinely differ: Ingebrigtsen's 2026 best is 92.8 overall but 76.0 in
+ * the men's 1500m, because that event is deep. */
+export type ScoreContext = {
+  score: number;
+  percentile: number;
+  discPercentile: number;
+  discMedian: number;
+  indoor: boolean;
+  venue: string | null;
 };
