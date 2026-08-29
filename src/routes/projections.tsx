@@ -185,17 +185,21 @@ function ProjectionStatRow({
   realRaces,
   modelAccuracy,
   detailLoaded,
+  isField,
 }: {
   qualifiedCount: number;
   realRaces: number | null;
   modelAccuracy: number;
   detailLoaded: boolean;
+  /** A shot putter does not race. 12 of the 32 disciplines are field
+   * events and this tile said "races" on all of them. */
+  isField: boolean;
 }) {
   return (
     <div className="card-shadow card-surface mt-4 grid grid-cols-1 divide-y divide-border rounded-[18px] bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0">
       <StatCell label="Qualified field" value={String(qualifiedCount)} sub="real DL standings" />
       <StatCell
-        label="Real 2026 races"
+        label={`Real 2026 ${isField ? "competitions" : "races"}`}
         value={!detailLoaded ? "…" : String(realRaces ?? 0)}
         sub="across top contenders"
       />
@@ -463,6 +467,7 @@ function ProjectionsBody({
         realRaces={realRaces}
         modelAccuracy={state.data.modelAccuracy}
         detailLoaded={detail.status === "ok"}
+        isField={activeIsField}
       />
 
       {/* Order is the fix for "messy and random", and it is an information

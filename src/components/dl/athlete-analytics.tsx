@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { Panel, ProbabilityBar } from "@/components/dl/shell";
+import { startNoun } from "@/lib/dl-data";
 import type { AthleteAnalytics, CareerSeason, SeasonForm } from "@/lib/dl-data";
 
 /** The analyst block: what an athlete's RESULTS say, as opposed to what
@@ -41,7 +42,7 @@ export function AthleteAnalyticsBlock({
       {record && (
         <Panel
           title="Competition record"
-          subtitle={`Every scraped final: ${record.races} races across ${record.seasons} seasons. A season best is one afternoon — this is what happened the rest of the time.`}
+          subtitle={`Every scraped final: ${record.races} ${startNoun(isField)} across ${record.seasons} seasons. A season best is one afternoon — this is what happened the rest of the time.`}
           className="mt-4"
         >
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -59,7 +60,7 @@ export function AthleteAnalyticsBlock({
             <BigStat
               label="Top-tier starts"
               value={`${record.topTierRaces}`}
-              sub={`${record.topTierShare}% of races`}
+              sub={`${record.topTierShare}% of ${startNoun(isField)}`}
             />
           </div>
 
@@ -73,8 +74,8 @@ export function AthleteAnalyticsBlock({
                   <th scope="col" className="pb-2 pr-2 font-semibold">
                     Category
                   </th>
-                  <th scope="col" className="w-16 pb-2 pl-3 text-right font-semibold">
-                    Races
+                  <th scope="col" className="w-20 pb-2 pl-3 text-right font-semibold">
+                    {isField ? "Comps" : "Races"}
                   </th>
                   <th scope="col" className="w-14 pb-2 pl-3 text-right font-semibold">
                     Won
@@ -130,9 +131,9 @@ export function AthleteAnalyticsBlock({
         {seasonShape && seasonShape.byMonth.length > 0 && (
           <Panel
             title="Season shape"
-            subtitle="When they actually race, and when the best mark lands. An athlete who peaked in May is a different bet in September from one still climbing."
+            subtitle={`When they actually ${isField ? "compete" : "race"}, and when the best mark lands. An athlete who peaked in May is a different bet in September from one still climbing.`}
           >
-            <SeasonShapeChart shape={seasonShape} />
+            <SeasonShapeChart shape={seasonShape} isField={isField} />
           </Panel>
         )}
       </div>
@@ -140,7 +141,7 @@ export function AthleteAnalyticsBlock({
       {headToHead.length > 0 && (
         <Panel
           title="Head-to-head record"
-          subtitle="Derived from actually sharing a race — same meeting, same day, compared on finishing position. Nothing here is inferred."
+          subtitle={`Derived from actually sharing a ${startNoun(isField, 1)} — same meeting, same day, compared on finishing position. Nothing here is inferred.`}
           className="mt-4"
         >
           <ul className="divide-y divide-border">
@@ -171,7 +172,7 @@ export function AthleteAnalyticsBlock({
                   <ProbabilityBar value={h.winRate} trackHeight="h-1.5" />
                 </span>
                 <span className="nums w-24 shrink-0 text-right text-[11.5px] text-muted-foreground">
-                  {h.meetings} {h.meetings === 1 ? "race" : "races"}
+                  {h.meetings} {startNoun(isField, h.meetings)}
                 </span>
               </li>
             ))}
@@ -190,7 +191,8 @@ export function AthleteAnalyticsBlock({
         finishing position) across {coverage.seasons.length}{" "}
         {coverage.seasons.length === 1 ? "season" : "seasons"}: {coverage.seasons.join(", ")}. This
         is every meeting World Athletics publishes results for in the senior outdoor competition
-        groups, not an athlete&apos;s complete career — a race outside those groups is not counted.
+        groups, not an athlete&apos;s complete career — a {startNoun(isField, 1)} outside those
+        groups is not counted.
       </p>
     </>
   );
@@ -257,8 +259,8 @@ function FormTable({
             <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
               Top-3 avg
             </th>
-            <th scope="col" className="w-16 pb-2 pl-3 text-right font-semibold">
-              Races
+            <th scope="col" className="w-20 pb-2 pl-3 text-right font-semibold">
+              {isField ? "Comps" : "Races"}
             </th>
             <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
               Consistency
@@ -283,7 +285,9 @@ function FormTable({
               </td>
               <td className="py-2.5 pl-3 text-right">
                 {f.consistency === null ? (
-                  <span className="text-[11.5px] text-muted-foreground">too few races</span>
+                  <span className="text-[11.5px] text-muted-foreground">
+                    too few {startNoun(isField)}
+                  </span>
                 ) : (
                   <span className="flex items-center justify-end gap-2">
                     <span className="hidden w-12 sm:block">
@@ -314,7 +318,9 @@ function FormTable({
 
 function SeasonShapeChart({
   shape,
+  isField,
 }: {
+  isField: boolean;
   shape: {
     byMonth: { month: string; races: number }[];
     bestMonth: string | null;
@@ -340,7 +346,7 @@ function SeasonShapeChart({
                     ? "linear-gradient(180deg, var(--gold-strong), var(--terracotta))"
                     : "linear-gradient(180deg, var(--terracotta), var(--brick))",
                 }}
-                title={`${m.month}: ${m.races} ${m.races === 1 ? "race" : "races"}${isBest ? " — season best set here" : ""}`}
+                title={`${m.month}: ${m.races} ${startNoun(isField, m.races)}${isBest ? " — season best set here" : ""}`}
               />
               <span className="label-caps text-muted-foreground">{m.month}</span>
             </div>
@@ -348,8 +354,7 @@ function SeasonShapeChart({
         })}
       </div>
       <p className="mt-3 text-[12px] leading-snug text-muted-foreground">
-        {shape.races} {shape.races === 1 ? "race" : "races"} from {shape.firstRace} to{" "}
-        {shape.lastRace}.
+        {shape.races} {startNoun(isField, shape.races)} from {shape.firstRace} to {shape.lastRace}.
         {shape.bestMonth && (
           <>
             {" "}

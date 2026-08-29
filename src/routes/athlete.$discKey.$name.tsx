@@ -252,7 +252,11 @@ function NotInField({
               icon="grid"
             />
             <StatBlock
-              label="Races this season"
+              label={
+                FIELD_EVENT_KEYS.has(data.discKey)
+                  ? "Competitions this season"
+                  : "Races this season"
+              }
               value={String(data.racesThisSeason)}
               sub="all competitions"
               icon="grid"
@@ -295,8 +299,7 @@ function NotInField({
               be said rather than left as a dash. */}
           {data.daysSinceLast == null && (
             <p className="mt-4 max-w-md text-[12px] leading-relaxed text-muted-foreground">
-              World Athletics lists a season best for this athlete but no dated race results this
-              season
+              World Athletics lists a season best for this athlete but no dated results this season
               {data.racesOnRecord > 0 ? " — their results on record are from earlier years" : ""},
               so meetings and last-competed are unknown here rather than zero.
             </p>
@@ -311,7 +314,7 @@ function NotInField({
 
         <Panel
           title="Real season form"
-          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its race totals are higher — the two are different scopes, not different answers."
+          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its totals are higher — the two are different scopes, not different answers."
         >
           {data.history.length > 0 ? (
             <SeasonTrendChart history={data.history} year={data.historyYear} />
@@ -626,7 +629,9 @@ function AthleteProfilePage() {
               icon="grid"
             />
             <StatBlock
-              label="Races this season"
+              label={
+                FIELD_EVENT_KEYS.has(a.discKey) ? "Competitions this season" : "Races this season"
+              }
               value={String(a.racesThisSeason)}
               sub="all competitions"
               icon="grid"
@@ -672,7 +677,7 @@ function AthleteProfilePage() {
 
         <Panel
           title="Real season form"
-          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its race totals are higher — the two are different scopes, not different answers."
+          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its totals are higher — the two are different scopes, not different answers."
         >
           {a.history.length > 0 ? (
             <SeasonTrendChart history={a.history} year={a.historyYear} />

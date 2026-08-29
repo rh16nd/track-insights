@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import { Panel, ProbabilityBar } from "@/components/dl/shell";
-import { ordinal } from "@/lib/dl-data";
+import { ordinal, startNoun, startVerb } from "@/lib/dl-data";
 import type { FieldAnalysis, FormResult, H2hCell } from "@/lib/dl-data";
 
 /** The field against itself.
@@ -37,7 +37,7 @@ export function FieldAnalysisBlock({
     <>
       <Panel
         title={`Every pairing in the ${discLabel} field`}
-        subtitle={`Read a row across: that athlete's record against each rival, wins first. Built from races they actually shared — ${matrix.pairsMet} of ${matrix.pairsPossible} possible pairings have met.`}
+        subtitle={`Read a row across: that athlete's record against each rival, wins first. Built from ${startNoun(isField)} they actually shared — ${matrix.pairsMet} of ${matrix.pairsPossible} possible pairings have met.`}
         className="mt-4"
       >
         <div className="overflow-x-auto">
@@ -94,6 +94,7 @@ export function FieldAnalysisBlock({
                       self={i === j}
                       a={row.name}
                       b={matrix.names[j] ?? ""}
+                      isField={isField}
                     />
                   ))}
                   <td className="py-2 pl-6">
@@ -119,10 +120,10 @@ export function FieldAnalysisBlock({
           </table>
         </div>
         <p className="mt-3 max-w-3xl text-[11.5px] leading-relaxed text-muted-foreground">
-          A blank cell means those two have genuinely never raced each other — shown as absent
-          rather than as a nil-all draw. &ldquo;vs. this field&rdquo; totals a row, and is not the
-          same number as a career win rate: an athlete can win often against everyone else and still
-          be behind against the eight who will actually line up in Brussels.
+          A blank cell means those two have genuinely never {startVerb(isField)} each other — shown
+          as absent rather than as a nil-all draw. &ldquo;vs. this field&rdquo; totals a row, and is
+          not the same number as a career win rate: an athlete can win often against everyone else
+          and still be behind against the eight who will actually line up in Brussels.
         </p>
       </Panel>
 
@@ -144,8 +145,8 @@ export function FieldAnalysisBlock({
                 <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
                   Steadiness
                 </th>
-                <th scope="col" className="w-20 pb-2 pl-3 text-right font-semibold">
-                  Races
+                <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
+                  {isField ? "Comps" : "Races"}
                 </th>
                 <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
                   Podium
@@ -199,8 +200,9 @@ export function FieldAnalysisBlock({
           Top-3 average is the mean of this season&apos;s three best marks, which survives one lucky
           afternoon in a way a season best does not. Steadiness is the spread of a season&apos;s
           marks as a percentage of their average — lower is more repeatable, and it reads the same
-          for a sprinter and a thrower. Races counts this season against every scraped final on
-          record. Peaked is the month the season&apos;s best mark landed.
+          for a sprinter and a thrower. The {isField ? "Comps" : "Races"} column counts this season
+          against every scraped final on record. Peaked is the month the season&apos;s best mark
+          landed.
         </p>
       </Panel>
     </>
@@ -247,7 +249,19 @@ function FormStrip({ form }: { form: FormResult[] }) {
 /** Wins over losses, coloured by which way the pairing leans. The tone is
  * carried by the text rather than a filled cell: a grid of solid blocks
  * reads as a heatmap of intensity, and these are records, not magnitudes. */
-function MatrixCell({ cell, self, a, b }: { cell: H2hCell; self: boolean; a: string; b: string }) {
+function MatrixCell({
+  cell,
+  self,
+  a,
+  b,
+  isField,
+}: {
+  cell: H2hCell;
+  self: boolean;
+  a: string;
+  b: string;
+  isField: boolean;
+}) {
   if (self) {
     return (
       <td aria-hidden className="py-2 text-center text-muted-foreground/30">
@@ -258,7 +272,7 @@ function MatrixCell({ cell, self, a, b }: { cell: H2hCell; self: boolean; a: str
   if (!cell) {
     return (
       <td className="py-2 text-center">
-        <span className="sr-only">{`${a} and ${b} have never raced each other`}</span>
+        <span className="sr-only">{`${a} and ${b} have never ${startVerb(isField)} each other`}</span>
         <span aria-hidden className="text-[12px] text-muted-foreground/40">
           —
         </span>
@@ -272,9 +286,10 @@ function MatrixCell({ cell, self, a, b }: { cell: H2hCell; self: boolean; a: str
   return (
     <td className="py-2 text-center">
       <span
-        title={`${a} ${cell.wins}–${cell.losses} ${b} over ${cell.meetings} ${
-          cell.meetings === 1 ? "race" : "races"
-        }${cell.lastMet ? `, last met ${cell.lastMet}` : ""}`}
+        title={`${a} ${cell.wins}–${cell.losses} ${b} over ${cell.meetings} ${startNoun(
+          isField,
+          cell.meetings,
+        )}${cell.lastMet ? `, last met ${cell.lastMet}` : ""}`}
         className={`nums text-[12.5px] ${tone} ${weight}`}
       >
         {cell.wins}–{cell.losses}

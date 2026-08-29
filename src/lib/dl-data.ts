@@ -526,3 +526,16 @@ export type AthleteCareer = {
   personalBests: PersonalBest[];
   eventCount: number;
 };
+
+/** Field athletes do not race — a shot putter competes. The site said
+ * "races" everywhere, including on the 12 field disciplines, which is wrong
+ * in exactly the way an athletics reader notices immediately.
+ *
+ * Discipline-aware rather than neutral-for-everyone: "competition" is
+ * correct for a sprinter too, but "races" is what a sprinter's page should
+ * say, and every component that renders these already knows `isField`. */
+export const startNoun = (isField: boolean, count = 2): string =>
+  isField ? (count === 1 ? "competition" : "competitions") : count === 1 ? "race" : "races";
+
+/** Past tense, for "have never …ed each other". */
+export const startVerb = (isField: boolean): string => (isField ? "competed against" : "raced");
