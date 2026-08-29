@@ -251,8 +251,15 @@ function NotInField({
               icon="grid"
             />
             <StatBlock
+              label="Races this season"
+              value={String(data.racesThisSeason)}
+              sub="all competitions"
+              icon="grid"
+            />
+            <StatBlock
               label="Last competed"
               value={data.daysSinceLast != null ? `${data.daysSinceLast}d ago` : "—"}
+              {...(data.lastRaceDate ? { sub: data.lastRaceDate } : {})}
               icon="clock"
             />
             {/* The same World Athletics score the in-field profile carries,
@@ -280,6 +287,19 @@ function NotInField({
               scoring pass, which only covers the field plus the near-miss
               group. Further down the toplist they are genuinely unknown, and
               saying so beats a grid of silent dashes. */}
+          {/* Covers both shapes of the same gap: an athlete World Athletics
+              has no individual results for at all, and one whose results are
+              all from earlier seasons. Either way the blank is "not known",
+              which is a different statement from "did not race" and has to
+              be said rather than left as a dash. */}
+          {data.daysSinceLast == null && (
+            <p className="mt-4 max-w-md text-[12px] leading-relaxed text-muted-foreground">
+              World Athletics lists a season best for this athlete but no dated race results this
+              season
+              {data.racesOnRecord > 0 ? " — their results on record are from earlier years" : ""},
+              so meetings and last-competed are unknown here rather than zero.
+            </p>
+          )}
           {data.careerBest === null && (
             <p className="mt-4 text-[12px] leading-relaxed text-muted-foreground">
               Career best, PB gap and activity aren&apos;t computed for athletes this far outside
@@ -603,8 +623,15 @@ function AthleteProfilePage() {
               icon="grid"
             />
             <StatBlock
+              label="Races this season"
+              value={String(a.racesThisSeason)}
+              sub="all competitions"
+              icon="grid"
+            />
+            <StatBlock
               label="Last competed"
               value={a.daysSinceLast != null ? `${a.daysSinceLast}d ago` : "—"}
+              {...(a.lastRaceDate ? { sub: a.lastRaceDate } : {})}
               icon="clock"
             />
             {/* World Athletics' own scoring-table points. The only number on

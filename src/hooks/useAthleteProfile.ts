@@ -41,7 +41,15 @@ export type AthleteNotInField = {
   pbGap: number | null;
   age: number | null;
   meetsCount: number | null;
+  /** Days since they last competed anywhere — see the note on AthleteProfile. */
   daysSinceLast: number | null;
+  lastRaceDate: string | null;
+  /** Every competition this season, and every scraped final on record. A
+   * near-miss athlete very often has ZERO Diamond League meetings, which is
+   * frequently why they are not qualified — so meetsCount alone made the
+   * panel read as broken rather than as "raced, but not here". */
+  racesThisSeason: number;
+  racesOnRecord: number;
   /** The model's podium chance IF this athlete were in the field. Real
    * output from the same forest, but conditional -- never label it as a
    * prediction about the actual Final. Null when run.py never scored them. */

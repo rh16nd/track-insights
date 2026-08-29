@@ -93,7 +93,16 @@ export type AthleteProfile = {
   pbGap: number | null;
   age: number | null;
   meetsCount: number | null;
+  /** Days since they last competed ANYWHERE, not just at a Diamond League
+   * meeting. The DL-only figure overstated the gap for 30 of 237 in-field
+   * athletes — one read "71d ago" having raced 19 days earlier elsewhere —
+   * and the label carries no qualifier, so it has to mean what it says. */
   daysSinceLast: number | null;
+  lastRaceDate: string | null;
+  /** Every competition, where meetsCount counts Diamond League meetings
+   * only. Reported separately rather than replacing it: the two count
+   * different things and the tiles say which. */
+  racesThisSeason: number;
   prob: number;
   waUrl: string;
   photoUrl: string | null;
