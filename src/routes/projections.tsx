@@ -174,31 +174,29 @@ function StatCell({ label, value, sub }: { label: string; value: string; sub: st
   );
 }
 
+/** Three tiles, not four. "Storylines found — computed, not written" was
+ * dropped: it counted the cards visible immediately below it, and it
+ * described the software rather than the race. The remaining three read at
+ * two honest scopes — this discipline, then the model as a whole — instead
+ * of four different ones in a row. */
 function ProjectionStatRow({
   qualifiedCount,
   realRaces,
-  storylineCount,
   modelAccuracy,
   detailLoaded,
 }: {
   qualifiedCount: number;
   realRaces: number | null;
-  storylineCount: number | null;
   modelAccuracy: number;
   detailLoaded: boolean;
 }) {
   return (
-    <div className="card-shadow card-surface mt-4 grid grid-cols-2 divide-x divide-y divide-border rounded-[18px] bg-card sm:grid-cols-4 sm:divide-y-0">
+    <div className="card-shadow card-surface mt-4 grid grid-cols-1 divide-y divide-border rounded-[18px] bg-card sm:grid-cols-3 sm:divide-x sm:divide-y-0">
       <StatCell label="Qualified field" value={String(qualifiedCount)} sub="real DL standings" />
       <StatCell
         label="Real 2026 races"
         value={!detailLoaded ? "…" : String(realRaces ?? 0)}
         sub="across top contenders"
-      />
-      <StatCell
-        label="Storylines found"
-        value={!detailLoaded ? "…" : String(storylineCount ?? 0)}
-        sub="computed, not written"
       />
       <StatCell
         label="Model accuracy"
@@ -242,7 +240,11 @@ function ConfidencePanel({
   const shown = expanded ? ranked : ranked.slice(0, CONFIDENCE_COLLAPSED_COUNT);
 
   return (
-    <Panel title="Confidence by discipline">
+    <Panel
+      title="Where the model is most confident"
+      subtitle="Every discipline, not this one — the highest podium chance the model gives anyone in each event. Pick one to switch the page to it."
+      className="mt-4"
+    >
       <ul className="space-y-1">
         {shown.map((c, i) => (
           <li
@@ -360,7 +362,6 @@ function ProjectionsBody({
     byProb.length > 1 ? Math.round((byProb[0]?.prob ?? 0) - (byProb[1]?.prob ?? 0)) : null;
 
   let realRaces: number | null = null;
-  let storylineCount: number | null = null;
   if (detail.status === "ok") {
     const currentYear =
       detail.data.trajectories.length > 0
@@ -368,7 +369,6 @@ function ProjectionsBody({
         : null;
     const comparable = detail.data.trajectories.filter((t) => t.historyYear === currentYear);
     realRaces = comparable.reduce((sum, t) => sum + t.history.length, 0);
-    storylineCount = detail.data.storylines.length;
   }
 
   return (
@@ -454,21 +454,35 @@ function ProjectionsBody({
       <ProjectionStatRow
         qualifiedCount={active.athletes.length}
         realRaces={realRaces}
-        storylineCount={storylineCount}
         modelAccuracy={state.data.modelAccuracy}
         detailLoaded={detail.status === "ok"}
       />
 
+      {/* Order is the fix for "messy and random", and it is an information
+          architecture problem rather than a styling one -- the detector
+          scores this file clean.
+
+          It used to run: hero, stats, form chart + storylines, then a
+          two-column row pairing a CROSS-discipline confidence list with the
+          actual field. That put the page's primary content -- who the model
+          projects for the discipline you selected -- 1.48 screens down and
+          at half width, sharing a row with a panel about the other 31
+          events. The reader's subject changed mid-page, which is exactly
+          what reads as random.
+
+          Now it reads as one argument: who we pick, why we pick them, then
+          where else to look. Contenders is full width directly under the
+          summary, the evidence follows it, and the cross-discipline list
+          moves to the end where switching subject is the point. */}
+      <ContendersPanel active={active} />
+
       <DisciplineDetail discKey={active.id} discLabel={active.label} detail={detail} />
 
-      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <ConfidencePanel
-          allDisciplines={[...state.data.trackDisciplines, ...state.data.fieldDisciplines]}
-          activeId={active.id}
-          onSelectDisc={onSelectDisc}
-        />
-        <ContendersPanel active={active} />
-      </div>
+      <ConfidencePanel
+        allDisciplines={[...state.data.trackDisciplines, ...state.data.fieldDisciplines]}
+        activeId={active.id}
+        onSelectDisc={onSelectDisc}
+      />
     </Shell>
   );
 }
@@ -486,7 +500,10 @@ function ContendersPanel({ active }: { active: Discipline }) {
   const shown = expanded ? active.athletes : active.athletes.slice(0, CONTENDERS_COLLAPSED_COUNT);
 
   return (
-    <Panel title={`Contenders — ${active.label}`}>
+    <Panel
+      title={`Contenders — ${active.label}`}
+      subtitle="Numbered by season best, scored by podium chance — which is why the order and the percentages disagree. The summary above leads with the model's pick; this list leads with the fastest mark."
+    >
       <ul className="space-y-3">
         {shown.map((a, i) => (
           <li
