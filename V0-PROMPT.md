@@ -151,18 +151,41 @@ World Athletics honours and world ranking, competition record with win and
 podium rates, season-by-season table, a season-shape bar chart, and
 head-to-head records.
 
-## What I want back
+## What I want back, and how to structure the files
 
-Design **the whole site as one coherent system**, not eight unrelated pages.
+Design **the whole site as one coherent system**, not nine unrelated pages.
+That means **one shared stylesheet and one page per file** — not everything
+crammed into a single document, and not nine documents that each invent their
+own panel.
 
-1. A short statement of the direction — what you decided and why.
-2. The shared language: type scale, spacing rhythm, how a panel is built, how
-   a data table is styled, how the nav works.
-3. **Full HTML for the Landing page, Projections, Performance Index and the
-   athlete profile** — self-contained files with inline `<style>`, at 1440px
-   and 375px.
-4. The remaining four pages as either HTML or a clear layout description
-   reusing the same system.
+**File 1 — `system.css`.** Every token, the type scale, the spacing rhythm,
+and one reusable class for each recurring object: the page shell, the nav,
+a panel, a data table, a stat figure, a badge, a button, the ticker. This is
+the only place visual decisions live.
 
-Give me **two distinct directions** at step 1 so I can choose, then build out
-the one I pick. Ask me which before writing all four pages.
+**Then one HTML file per page**, each linking `system.css` and adding *only*
+page-specific layout. If a page needs a new component, add it to
+`system.css`, not to the page.
+
+Order, so I can stop you early if the direction is wrong:
+
+1. **First reply:** two distinct directions, described in a short paragraph
+   each with a small visual sample of the shared language — panel, table row,
+   stat figure, nav. **Then stop and ask which one I want.** Do not build
+   pages yet.
+2. **After I choose:** `system.css` plus `index.html` (the landing page).
+3. **Then:** `projections.html`, `stats.html`, `athlete.html` — the three
+   hardest pages.
+4. **Then:** `dashboard.html`, `track.html`, `qualification.html`,
+   `schedule.html`.
+
+Show every page at 1440px and 375px.
+
+Two things to keep in mind while splitting them up:
+
+- **Consistency beats novelty across files.** A panel on the schedule page
+  must be the same object as a panel on the athlete profile. If you find
+  yourself restyling one, change `system.css` and let it propagate.
+- I am porting this by hand into an existing React component library, so a
+  shared class I can map once to a `Panel` component is worth far more to me
+  than a page that looks good in isolation.
