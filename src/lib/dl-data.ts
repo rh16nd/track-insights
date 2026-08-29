@@ -160,7 +160,12 @@ export type ProjectionsDetail = {
  *   in      — above the cut line as it stands, but still catchable
  *   chasing — below the line and still mathematically alive
  *   out     — cannot reach the cut even by winning everything left
- *   unknown — WA lists no points for this athlete */
+ *   unknown — WA lists no points for this athlete
+ * Note `meetingsLeft`: with nothing left to win, `in` and `chasing` no
+ * longer mean "catchable" or "alive" -- they can only be produced by a
+ * points TIE across the cut line, which World Athletics' own tie-break
+ * settles. The qualification page renders those two states differently
+ * in that case; anything else consuming them must do the same. */
 export type QualStatus = "safe" | "in" | "chasing" | "out" | "unknown";
 
 export type QualificationRow = {

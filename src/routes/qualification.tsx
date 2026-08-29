@@ -20,6 +20,11 @@ export const Route = createFileRoute("/qualification")({
 const DESCRIPTION =
   "Who has actually earned a place at the Final. These are World Athletics' own Diamond League points — not a prediction — with the gap to the qualification cut worked out from what is still winnable.";
 
+/* Nothing is winnable any more once the last scoring meeting is run, so the
+ * clause explaining the gap that way has to go rather than quietly stay wrong. */
+const DESCRIPTION_DECIDED =
+  "Who has actually earned a place at the Final. These are World Athletics' own Diamond League points — not a prediction — with every scoring meeting of the 2026 season now run.";
+
 const STATUS_LABEL: Record<QualStatus, string> = {
   safe: "Through",
   in: "In",
@@ -44,6 +49,35 @@ const STATUS_TITLE: Record<QualStatus, string> = {
   unknown: "World Athletics lists no points for this athlete",
 };
 
+/* Once the last scoring meeting is run, "in" and "chasing" can only be
+ * produced by a points TIE across the cut line. With nothing left to gain,
+ * `qualification_race` leaves an athlete unresolved exactly when someone on
+ * the other side of the line is level with them on points — so the live
+ * wording ("still catchable", "still mathematically able to reach it") would
+ * be telling the reader a race is open that is actually over and now sits
+ * with World Athletics' tie-break. Zurich (27 Aug) made this the live state:
+ * 18 athletes across 7 disciplines. "safe"/"out"/"unknown" are unaffected —
+ * those verdicts were already final by construction. */
+const STATUS_LABEL_DECIDED: Record<QualStatus, string> = {
+  ...STATUS_LABEL,
+  in: "Tie-break",
+  chasing: "Tie-break",
+};
+
+const STATUS_CLASS_DECIDED: Record<QualStatus, string> = {
+  ...STATUS_CLASS,
+  // Both sides of a tie share one fate, so they share one treatment --
+  // identical labels in two different colours would read as a bug.
+  chasing: STATUS_CLASS.in,
+};
+
+const STATUS_TITLE_DECIDED: Record<QualStatus, string> = {
+  ...STATUS_TITLE,
+  in: "Above the cut line, but level on points with an athlete below it — World Athletics' tie-break decides",
+  chasing:
+    "Level on points with the last qualifying place, with no scoring meetings left — World Athletics' tie-break decides",
+};
+
 /** Points behind the cut, phrased so the sign never has to be decoded. A
  * gap of zero means two different things either side of the line: the last
  * qualifier IS the cut, while the athlete below it is level on points and
@@ -59,7 +93,10 @@ function gapLabel(row: QualificationRow, qualLimit: number): string {
  * line is from it. That gap is the whole of what the last meeting decides,
  * and it is arithmetic, so it can be stated flatly. Disciplines where
  * nobody below the line is still alive are left out rather than listed with
- * a meaningless number. */
+ * a meaningless number. Once every meeting is run this same list is exactly
+ * the tie-break cases -- a "chasing" row can then only be one that is level
+ * on points with the cut -- which is why the panel's own wording switches
+ * rather than the selection. */
 function tightestRaces(disciplines: QualificationDiscipline[]) {
   return disciplines
     .map((d) => {
@@ -85,6 +122,9 @@ function QualificationPage() {
 
   const meetingsLeft = data?.meetingsLeft ?? 0;
   const nextMeet = data?.nextMeet;
+  // Only meaningful once the data has actually loaded -- the `?? 0` fallback
+  // above would otherwise claim the season is over while it is still fetching.
+  const decided = Boolean(data) && meetingsLeft === 0;
 
   return (
     <Shell
@@ -96,7 +136,7 @@ function QualificationPage() {
             : "Every scoring meeting is run — the standings are final"
           : "2026 Diamond League standings"
       }
-      description={DESCRIPTION}
+      description={decided ? DESCRIPTION_DECIDED : DESCRIPTION}
     >
       {state.status === "loading" && <PanelSkeleton title="Diamond League standings" rows={10} />}
       {state.status === "error" && <ErrorPanel message={state.message} />}
@@ -106,9 +146,17 @@ function QualificationPage() {
           {tight.length > 0 && (
             <Panel
               title={
-                nextMeet ? `Closest to the line going into ${nextMeet.city}` : "Closest to the line"
+                decided
+                  ? "Level at the cut line"
+                  : nextMeet
+                    ? `Closest to the line going into ${nextMeet.city}`
+                    : "Closest to the line"
               }
-              subtitle="The smallest gap between the qualification cut and the first athlete below it — the disciplines the last meeting actually decides."
+              subtitle={
+                decided
+                  ? "Every scoring meeting is run, and in these disciplines the athlete below the cut finished level on points with the athlete on it — World Athletics' tie-break decides them, not another race."
+                  : "The smallest gap between the qualification cut and the first athlete below it — the disciplines the last meeting actually decides."
+              }
             >
               <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {tight.map(({ disc: d, chaser }, i) => (
@@ -247,6 +295,7 @@ function QualificationPage() {
                       // property of either athlete beside it.
                       cutAfter={row.rank === current.qualLimit}
                       qualLimit={current.qualLimit}
+                      decided={decided}
                     />
                   ))}
                 </tbody>
@@ -264,7 +313,12 @@ function QualificationPage() {
                   already final, which only makes &ldquo;Out&rdquo; more certain.
                 </>
               ) : (
-                <>No scoring meetings remain, so these standings are the result.</>
+                <>
+                  No scoring meetings remain, so these standings are the result.
+                  &ldquo;Tie-break&rdquo; marks the one thing points alone cannot settle: two
+                  athletes level on points either side of the cut, separated by World
+                  Athletics&apos; own tie-break rules, which are not in this data.
+                </>
               )}
               {data.scrapedAt && <> Scraped {new Date(data.scrapedAt).toLocaleString()}.</>}
             </p>
@@ -281,12 +335,15 @@ function QualRow({
   discKey,
   cutAfter,
   qualLimit,
+  decided,
 }: {
   row: QualificationRow;
   index: number;
   discKey: string;
   cutAfter: boolean;
   qualLimit: number;
+  /** No scoring meetings left, so an unresolved row is a tie, not a race. */
+  decided: boolean;
 }) {
   // An eliminated athlete recedes rather than disappears: most of a long
   // standings table is already out of the race, and at equal weight the
@@ -326,10 +383,10 @@ function QualRow({
         </td>
         <td className="py-3 pl-4 text-right">
           <span
-            title={STATUS_TITLE[row.status]}
-            className={`label-caps inline-flex items-center rounded-full px-2 py-1 ${STATUS_CLASS[row.status]}`}
+            title={(decided ? STATUS_TITLE_DECIDED : STATUS_TITLE)[row.status]}
+            className={`label-caps inline-flex items-center rounded-full px-2 py-1 ${(decided ? STATUS_CLASS_DECIDED : STATUS_CLASS)[row.status]}`}
           >
-            {STATUS_LABEL[row.status]}
+            {(decided ? STATUS_LABEL_DECIDED : STATUS_LABEL)[row.status]}
           </span>
         </td>
       </tr>
