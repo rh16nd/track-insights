@@ -237,3 +237,42 @@ export const formatMark = (value: number, sample: string): string => {
   }
   return value.toFixed(2);
 };
+
+/** Cross-discipline performance stats (/api/stats), built on World
+ * Athletics' own Results Score -- the only number in this dataset that
+ * compares a shot putter to a 1500m runner. Nothing else on the site can
+ * rank across events, so this is its own endpoint rather than part of
+ * /api/predictions. */
+export type Performance = {
+  athlete: string;
+  discKey: string;
+  disc: string;
+  isField: boolean;
+  mark: string;
+  score: number;
+  venue: string | null;
+  date: string | null;
+  /** WA writes indoor marks into its outdoor toplists, tagged only by a
+   * "(i)" venue suffix. They are kept, never silently filtered -- for a
+   * vault or a shot put indoors is arguably the truer measure -- but they
+   * are always labelled so no indoor mark reads as an outdoor one. */
+  indoor: boolean;
+};
+
+export type DisciplineDepth = {
+  discKey: string;
+  disc: string;
+  isField: boolean;
+  athletes: number;
+  medianScore: number;
+  topScore: number;
+  indoorShare: number;
+};
+
+export type StatsData = {
+  season: number;
+  topPerformances: Performance[];
+  disciplineDepth: DisciplineDepth[];
+  scoreScale: { min: number; max: number; median: number; rows: number } | null;
+  indoor: { rows: number; total: number; share: number } | null;
+};
