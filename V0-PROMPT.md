@@ -28,10 +28,14 @@ The audience is athletics analysts and serious fans. People who want to
 
 ## What is wrong with it now, and what "better" means
 
-It reads like a competent admin dashboard: rows of similar-weight cards,
-panels of equal visual priority, nothing that tells you what matters most on
-a page. It is clean but anonymous — you could swap the data for SaaS metrics
-and it would look unchanged.
+The landing page has real character. **The eight application pages behind it
+do not** — they read like a competent admin dashboard: rows of
+similar-weight cards, panels of equal visual priority, nothing that tells
+you what matters most on a page. Clean, but anonymous. You could swap the
+data for SaaS metrics and they would look unchanged.
+
+So the main job is to carry the landing page's confidence into the rest of
+the site, and to sharpen the landing page itself rather than replace it.
 
 I want it to read like **a sports analysis publication**. Editorial
 confidence. A clear focal point per page. Dense data presented as though
@@ -81,10 +85,31 @@ CSS custom properties, oklch. Do not substitute hexes.
 
 ## The eight pages
 
-**1. Landing (`/`)** — the pitch. What the model is, that everything is real
-scraped data, live model confidence by discipline, days to Brussels,
-disciplines tracked. Currently the weakest page; it should make someone want
-to explore.
+**1. Landing (`/`)** — the pitch, and already the most deliberately designed
+page here. It has had several passes, so treat it as the strongest signal of
+what the brand wants to be rather than as a blank slate. Sections in order:
+
+- Nav with a "View live predictions" call to action.
+- Hero: *"A model trained on real results, not gut feeling."* with a
+  supporting line about scraping World Athletics for all 32 disciplines,
+  and two calls to action.
+- Four figures: podium hit rate, days to Brussels, disciplines tracked,
+  seasons of real data.
+- A continuously scrolling ticker — each discipline's top pick and its
+  podium chance, live from the model.
+- *"Real results in. A ranked field out."* — raw signal (a list of real
+  meetings scraped) resolving into the model's single strongest call, shown
+  as one athlete card.
+- *"No fabricated data, anywhere in the pipeline."* — six claims about
+  method: real results not hand-typed, validated honestly by walk-forward
+  testing, injury and withdrawal aware, wind and venue adjusted,
+  head-to-head history, live all season.
+- *"Real data in. Honest predictions out."* — the pipeline as numbered
+  steps: scrape, engineer features, train and validate, serve.
+
+Keep all of it. The honesty claims in particular are the product's whole
+position and their wording is deliberate. What it needs from you is more
+force and a clearer read down the page, not new content.
 
 **2. Dashboard (`/dashboard`)** — the overview. Days to final, disciplines,
 meets done, model accuracy. "Most likely to reach the podium" (each athlete
