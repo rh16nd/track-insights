@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import type { AthleteProfile, H2hMatchup, MeetMark, StandingsPosition } from "@/lib/dl-data";
+import type {
+  AthleteAnalytics,
+  AthleteProfile,
+  CareerSeason,
+  H2hMatchup,
+  MeetMark,
+  ScoreContext,
+  StandingsPosition,
+} from "@/lib/dl-data";
 
 /** An athlete who exists in the season's worldwide toplist but is not in the
  * projected field. Carries the REAL reason (mirroring run.py's selection
@@ -40,6 +48,15 @@ export type AthleteNotInField = {
   hypotheticalProb: number | null;
   /** Record against the athletes who did qualify. */
   h2h: H2hMatchup[];
+  /** The same analyst material an in-field profile gets. None of it depends
+   * on being selected: a win rate and a head-to-head are facts about races
+   * already run, and for a reader asking whether this athlete should have
+   * qualified they are the evidence. */
+  analytics: AthleteAnalytics | null;
+  careerSeasons: CareerSeason[];
+  scoreContext: ScoreContext | null;
+  /** Here the "In field" badge marks the athletes who DID qualify. */
+  rivalNames: string[];
 };
 
 type State =

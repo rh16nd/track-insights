@@ -247,7 +247,7 @@ function NotInField({
             <StatBlock
               label="Meets this season"
               value={data.meetsCount != null ? String(data.meetsCount) : "—"}
-              sub="in this discipline"
+              sub="Diamond League meetings"
               icon="grid"
             />
             <StatBlock
@@ -255,7 +255,27 @@ function NotInField({
               value={data.daysSinceLast != null ? `${data.daysSinceLast}d ago` : "—"}
               icon="clock"
             />
+            {/* The same World Athletics score the in-field profile carries,
+                and it lands harder here: it is the number that says how good
+                this athlete is in absolute terms, next to a page explaining
+                why they are not in the field. */}
+            {data.scoreContext && (
+              <StatBlock
+                label="WA score"
+                value={String(data.scoreContext.score)}
+                sub={`Top ${Math.max(0.1, 100 - data.scoreContext.percentile).toFixed(1)}% of all ranked marks`}
+                icon="ruler"
+              />
+            )}
           </div>
+          {data.scoreContext && (
+            <p className="mt-4 max-w-md text-[11.5px] leading-snug text-muted-foreground">
+              {data.scoreContext.discPercentile.toFixed(0)}th percentile within{" "}
+              {data.disc.toLowerCase()}, where the median is{" "}
+              <span className="nums">{data.scoreContext.discMedian}</span>.
+              {data.scoreContext.indoor && " This mark was set indoors."}
+            </p>
+          )}
           {/* Career best, PB gap, meets and last-competed come from run.py's
               scoring pass, which only covers the field plus the near-miss
               group. Further down the toplist they are genuinely unknown, and
@@ -268,7 +288,10 @@ function NotInField({
           )}
         </Panel>
 
-        <Panel title="Real season form">
+        <Panel
+          title="Real season form"
+          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its race totals are higher — the two are different scopes, not different answers."
+        >
           {data.history.length > 0 ? (
             <SeasonTrendChart history={data.history} year={data.historyYear} />
           ) : (
@@ -279,23 +302,36 @@ function NotInField({
         </Panel>
       </div>
 
-      {/* The most interesting thing this page can say: how they actually do
-          against the athletes who did qualify. Same data and same
-          two-meeting threshold as the in-field profile's panel -- only the
-          opponent list differs. */}
-      <Panel
-        title="Head-to-head vs the projected field"
-        subtitle="Real meetings against the athletes who did qualify, from World Athletics results."
-        className="mt-4"
-      >
-        {data.h2h.length > 0 ? (
-          <HeadToHeadChart matchups={data.h2h} opponentsLabel="the qualified field" />
-        ) : (
-          <div className="text-[12.5px] text-muted-foreground">
-            No qualifying head-to-head record against this discipline&apos;s projected field.
-          </div>
-        )}
-      </Panel>
+      {/* The near-miss page gets the same analyst block as an in-field one.
+          Withholding it made this look like a stub of the real profile,
+          when for a reader asking "should this athlete have qualified?"
+          the record IS the evidence -- and the "In field" badge inside the
+          head-to-head reads more pointedly here, marking the athletes who
+          did get in. The old standalone head-to-head panel is gone for the
+          same reason it went from the in-field page: the analytics one
+          draws the same derived numbers. */}
+      {data.analytics ? (
+        <AthleteAnalyticsBlock
+          analytics={data.analytics}
+          isField={FIELD_EVENT_KEYS.has(data.discKey)}
+          rivalNames={data.rivalNames}
+          careerSeasons={data.careerSeasons}
+        />
+      ) : (
+        <Panel
+          title="Head-to-head vs the projected field"
+          subtitle="Real meetings against the athletes who did qualify, from World Athletics results."
+          className="mt-4"
+        >
+          {data.h2h.length > 0 ? (
+            <HeadToHeadChart matchups={data.h2h} opponentsLabel="the qualified field" />
+          ) : (
+            <div className="text-[12.5px] text-muted-foreground">
+              No qualifying head-to-head record against this discipline&apos;s projected field.
+            </div>
+          )}
+        </Panel>
+      )}
 
       <div className="mt-5 flex flex-wrap items-center gap-4">
         {canGoBack ? (
@@ -563,7 +599,7 @@ function AthleteProfilePage() {
             <StatBlock
               label="Meets this season"
               value={a.meetsCount != null ? String(a.meetsCount) : "—"}
-              sub="in this discipline"
+              sub="Diamond League meetings"
               icon="grid"
             />
             <StatBlock
@@ -603,7 +639,10 @@ function AthleteProfilePage() {
           </a>
         </Panel>
 
-        <Panel title="Real season form">
+        <Panel
+          title="Real season form"
+          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its race totals are higher — the two are different scopes, not different answers."
+        >
           {a.history.length > 0 ? (
             <SeasonTrendChart history={a.history} year={a.historyYear} />
           ) : (
