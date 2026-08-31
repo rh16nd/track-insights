@@ -670,40 +670,96 @@ html {
   }
 }
 
-/* ── The track surface ────────────────────────────────────────────────
-   An actual running track, not an abstract set of streaks.
+/* ── Lane textures: two of them, deliberately ────────────────────────
+   `.lanes` is v0's drifting version and is what every APP page uses --
+   dashboard, track, field, qualifying, stats, schedule, discipline,
+   athlete. `.lanes-track` is the landing hero only. They are separate
+   classes because a change to the landing should stay on the landing;
+   sharing one class is how a landing-only request last changed all nine
+   pages at once.
 
-   The first version drifted two repeating gradients with different periods
-   (110px and 211px) in OPPOSITE directions at 100deg. Two periods that do
-   not divide each other beat against one another, so the spacing kept
-   drifting in and out of phase -- which is what read as messy -- and near
-   vertical diagonals do not look like lanes in the first place.
+   Both translate an oversized pseudo-element rather than animating
+   `background-position` the way v0 does. That is the one thing kept from
+   the rewrite: background-position repaints the whole layer every frame,
+   which is exactly what this file's ambient-glow note warns against,
+   while a transform stays on the compositor. Nothing visual changes.
 
-   What a track actually looks like: lanes running the direction of travel,
-   evenly spaced, all the same width, and STILL. So the lane lines no longer
-   move at all. One period, one width, one colour.
+   The travel distances are not the gradient periods. The stripes run at
+   100deg, so a horizontal shift moves the pattern's phase by only
+   sin(100deg) = 0.9848 of the distance covered -- looping on the raw
+   110px/211px leaves a visible seam once per cycle. 110/0.9848 = 111.7 and
+   211/0.9848 = 214.25 land exactly on the next tile. */
+@keyframes lane-drift-near {
+  from {
+    transform: rotate(-1deg) translate3d(0, 0, 0);
+  }
+  to {
+    transform: rotate(-1deg) translate3d(111.7px, 0, 0);
+  }
+}
 
-   The motion is now the thing that really moves on a track: a soft band of
-   light travelling ALONG the lanes, the direction a runner runs. Slow and
-   barely-there, so it reads as life on the surface rather than as something
-   sliding across the page. Both layers sit inside a container rotated by a
-   single degree, so the perspective is shared and nothing can beat against
-   anything else. */
-.lanes {
+@keyframes lane-drift-far {
+  from {
+    transform: rotate(-1deg) translate3d(0, 0, 0);
+  }
+  to {
+    transform: rotate(-1deg) translate3d(-214.25px, 0, 0);
+  }
+}
+
+.lanes,
+.lanes-track {
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
 }
 
-/* The lanes. Static by design.
-   Spacing is set from the LANDING HERO, which is the full-height surface
-   where this has to read as an actual track: at ~950px tall, a 104px period
-   draws 9 lanes, which is what a real track has. The earlier 54px drew 17 --
-   dense stripes rather than lanes. The app's shorter head band gets 3-4 of
-   the same lanes, which is the right weight for a strip that sits behind a
-   page title. */
+/* -240px of overhang clears the longer of the two loops (214.25px), so
+   neither layer ever exposes an edge mid-cycle. */
+.lanes::before,
+.lanes::after {
+  content: "";
+  position: absolute;
+  inset: -20% -240px;
+}
+
 .lanes::before {
+  background: repeating-linear-gradient(
+    100deg,
+    transparent 0 108px,
+    oklch(0.97 0.012 75 / 0.06) 108px 110px
+  );
+  animation: lane-drift-near 46s linear infinite;
+}
+
+/* Slower and travelling the other way, so the two never lock into one
+   readable direction -- that is what keeps it reading as texture. */
+.lanes::after {
+  background: repeating-linear-gradient(
+    100deg,
+    transparent 0 208px,
+    oklch(0.8 0.11 68 / 0.05) 208px 211px
+  );
+  animation: lane-drift-far 63s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lanes::before,
+  .lanes::after {
+    animation: none;
+  }
+}
+
+/* ── The landing hero only: an actual running track ──────────────────
+   Lanes running the direction of travel, evenly spaced, one width, and
+   STILL -- a track does not slide. Spacing is set from the hero itself:
+   at ~950px tall a 104px period draws 9 lanes, which is what a real track
+   has.
+
+   The motion is the thing that really moves on a track: a soft band of
+   light travelling ALONG the lanes. */
+.lanes-track::before {
   content: "";
   position: absolute;
   inset: -12% -6%;
@@ -715,7 +771,6 @@ html {
   );
 }
 
-/* The sweep of light down the lanes -- the only moving part. */
 @keyframes lane-sweep {
   from {
     transform: rotate(-1deg) translate3d(-60%, 0, 0);
@@ -725,7 +780,7 @@ html {
   }
 }
 
-.lanes::after {
+.lanes-track::after {
   content: "";
   position: absolute;
   inset: -12% 0;
@@ -739,11 +794,11 @@ html {
   animation: lane-sweep 13s linear infinite;
 }
 
-/* The lanes are the picture and they never moved, so reduced motion only has
-   to stop the sweep. Removed entirely rather than parked mid-track, where a
-   stationary bright band would read as a rendering artefact. */
+/* The lanes are the picture and never moved, so reduced motion only has to
+   stop the sweep -- removed rather than parked mid-track, where a static
+   bright band would read as a rendering artefact. */
 @media (prefers-reduced-motion: reduce) {
-  .lanes::after {
+  .lanes-track::after {
     display: none;
   }
 }

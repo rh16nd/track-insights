@@ -234,7 +234,7 @@ function Landing() {
         {/* ── Hero (track-surface reused as the backdrop, darkened) ──── */}
         <section className="track-surface relative overflow-hidden pt-16">
           <div className="absolute inset-0 bg-[var(--landing-bg)]/88" />
-          <div className="lanes" aria-hidden="true" />
+          <div className="lanes-track" aria-hidden="true" />
           <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] w-full max-w-none -translate-y-1/2 opacity-90 sm:h-[120%]" />
           <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
             <span className="label-caps inline-flex items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-3.5 py-2 text-[var(--landing-muted)]">
