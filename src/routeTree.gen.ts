@@ -17,6 +17,7 @@ import { Route as QualificationRouteImport } from './routes/qualification'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as StatsRouteImport } from './routes/stats'
 import { Route as TrackRouteImport } from './routes/track'
+import { Route as DisciplineDiscKeyRouteImport } from './routes/discipline.$discKey'
 import { Route as AthleteDiscKeyNameRouteImport } from './routes/athlete.$discKey.$name'
 
 const IndexRoute = IndexRouteImport.update({
@@ -59,6 +60,11 @@ const TrackRoute = TrackRouteImport.update({
   path: '/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DisciplineDiscKeyRoute = DisciplineDiscKeyRouteImport.update({
+  id: '/discipline/$discKey',
+  path: '/discipline/$discKey',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AthleteDiscKeyNameRoute = AthleteDiscKeyNameRouteImport.update({
   id: '/athlete/$discKey/$name',
   path: '/athlete/$discKey/$name',
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/schedule': typeof ScheduleRoute
   '/stats': typeof StatsRoute
   '/track': typeof TrackRoute
+  '/discipline/$discKey': typeof DisciplineDiscKeyRoute
   '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/schedule': typeof ScheduleRoute
   '/stats': typeof StatsRoute
   '/track': typeof TrackRoute
+  '/discipline/$discKey': typeof DisciplineDiscKeyRoute
   '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/schedule': typeof ScheduleRoute
   '/stats': typeof StatsRoute
   '/track': typeof TrackRoute
+  '/discipline/$discKey': typeof DisciplineDiscKeyRoute
   '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/stats'
     | '/track'
+    | '/discipline/$discKey'
     | '/athlete/$discKey/$name'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/stats'
     | '/track'
+    | '/discipline/$discKey'
     | '/athlete/$discKey/$name'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/stats'
     | '/track'
+    | '/discipline/$discKey'
     | '/athlete/$discKey/$name'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   ScheduleRoute: typeof ScheduleRoute
   StatsRoute: typeof StatsRoute
   TrackRoute: typeof TrackRoute
+  DisciplineDiscKeyRoute: typeof DisciplineDiscKeyRoute
   AthleteDiscKeyNameRoute: typeof AthleteDiscKeyNameRoute
 }
 
@@ -205,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/discipline/$discKey': {
+      id: '/discipline/$discKey'
+      path: '/discipline/$discKey'
+      fullPath: '/discipline/$discKey'
+      preLoaderRoute: typeof DisciplineDiscKeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/athlete/$discKey/$name': {
       id: '/athlete/$discKey/$name'
       path: '/athlete/$discKey/$name'
@@ -224,6 +244,7 @@ const rootRouteChildren: RootRouteChildren = {
   ScheduleRoute: ScheduleRoute,
   StatsRoute: StatsRoute,
   TrackRoute: TrackRoute,
+  DisciplineDiscKeyRoute: DisciplineDiscKeyRoute,
   AthleteDiscKeyNameRoute: AthleteDiscKeyNameRoute,
 }
 export const routeTree = rootRouteImport

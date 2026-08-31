@@ -38,7 +38,7 @@ export function FieldAnalysisBlock({
       <Panel
         title={`Every pairing in the ${discLabel} field`}
         subtitle={`Read a row across: that athlete's record against each rival, wins first. Built from ${startNoun(isField)} they actually shared — ${matrix.pairsMet} of ${matrix.pairsPossible} possible pairings have met.`}
-        className="mt-4"
+        className="mt-6"
       >
         <div className="overflow-x-auto">
           <table className="border-collapse text-left">
@@ -130,7 +130,7 @@ export function FieldAnalysisBlock({
       <Panel
         title="What separates them"
         subtitle="The same axes for every contender, so two athletes with near-identical season bests stop looking like the same bet."
-        className="mt-4"
+        className="mt-6"
       >
         <div className="overflow-x-auto">
           <table className="w-full min-w-[620px] border-collapse text-left">

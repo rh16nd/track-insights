@@ -131,6 +131,12 @@ export type AthleteProfile = {
   rivalNames: string[];
 };
 
+export type ConfidenceRow = {
+  disc: string;
+  discKey: string;
+  value: number;
+};
+
 export type ApiData = {
   lastUpdated: string;
   daysToFinal: number;
@@ -147,7 +153,9 @@ export type ApiData = {
   fieldDisciplines: Discipline[];
   removedAthletes: RemovedAthlete[];
   topWinners: TopWinner[];
-  confidence: { disc: string; value: number }[];
+  /** Every discipline's favourite's podium probability, strongest first.
+   * All 32, not a truncated list -- the dashboard reads the WEAK end. */
+  confidence: ConfidenceRow[];
 };
 
 export const API_URL = "http://localhost:5000/api/predictions";
@@ -539,3 +547,70 @@ export const startNoun = (isField: boolean, count = 2): string =>
 
 /** Past tense, for "have never …ed each other". */
 export const startVerb = (isField: boolean): string => (isField ? "competed against" : "raced");
+
+/** Discipline vs discipline — the third level of the site, after the field
+ * and the athlete.
+ *
+ * Built on World Athletics' Results Score and deliberately NOT on the
+ * model's probabilities. The target is top-three membership scored per
+ * athlete, so a field's probabilities sum to no fixed total: across the 32
+ * real 2026 fields they run from 31 to 320. Ranking events by them would
+ * rank the model's per-event confidence rather than the depth of the field.
+ * The probabilities still order athletes WITHIN a discipline, which is where
+ * the site uses them. */
+export type DepthVerdict = {
+  key: "level" | "mixed" | "topHeavy";
+  label: string;
+  /** How the verdict was arrived at, in words, so it reads as arithmetic
+   * rather than opinion. */
+  basis: string;
+};
+
+export type DepthRow = {
+  discKey: string;
+  disc: string;
+  isField: boolean;
+  fieldSize: number;
+  /** How many of the field carried a WA score. A spread measured over 5 of 8
+   * athletes is a different claim from one measured over all 8. */
+  scored: number;
+  /** WA points from the strongest finalist to the weakest. Small = level. */
+  spread: number;
+  bestScore: number;
+  bestAthlete: string;
+  worstScore: number;
+  /** The world top-100 median for this event, so the field can be read
+   * against the discipline it is drawn from. */
+  toplistMedian: number | null;
+  favouriteProb: number;
+  probGap: number | null;
+  spreadRank: number;
+};
+
+export type DepthIndexData = {
+  disciplines: (DepthRow & { verdict: DepthVerdict })[];
+  total: number;
+  season: number;
+  toplistDepth: number;
+};
+
+export type FieldScore = {
+  name: string;
+  score: number;
+  prob: number;
+};
+
+export type DisciplineReport = {
+  discKey: string;
+  disc: string;
+  isField: boolean;
+  season: number;
+  athletes: Athlete[];
+  /** Both moved here from /api/projections/<key> when the two pages merged
+   * into one page per event. */
+  trajectories: Trajectory[] | null;
+  storylines: Storyline[] | null;
+  depth: (DepthRow & { verdict: DepthVerdict | null; of: number }) | null;
+  scores: FieldScore[];
+  fieldAnalysis: FieldAnalysis | null;
+};
