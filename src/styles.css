@@ -783,3 +783,25 @@ html {
 main > :first-child {
   margin-top: 0;
 }
+
+/* ── Skip to content ──────────────────────────────────────────────────
+   Written as its own class rather than `sr-only focus:not-sr-only`. Those
+   two utilities have equal specificity, so which one wins is decided by
+   source order in the generated stylesheet -- and `sr-only` was winning,
+   leaving the link clipped to 32x20 with `clip-path: inset(50%)` even while
+   focused. Verified in the browser, not assumed.
+
+   Positioned off-screen instead of clipped: it stays a real, measurable,
+   focusable element that simply isn't on screen until it matters. */
+.skip-link {
+  position: absolute;
+  top: 0.75rem;
+  left: -9999px;
+  z-index: 50;
+  white-space: nowrap;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  left: 0.75rem;
+}

@@ -223,6 +223,9 @@ export function DisciplineTable({
       >
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px]">
+            <caption className="sr-only">
+              {`Projected field for the ${current.label}: rank by season best, athlete, nationality, mark and chance of a podium`}
+            </caption>
             <thead>
               <tr className="label-caps text-muted-foreground">
                 <th scope="col" className="w-10 pb-3 text-left font-semibold">

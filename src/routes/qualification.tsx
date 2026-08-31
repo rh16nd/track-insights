@@ -292,6 +292,9 @@ function QualificationPage() {
           >
             <div className="overflow-x-auto">
               <table className="w-full min-w-[680px]">
+                <caption className="sr-only">
+                  {`Diamond League standings for the ${current.disc}: rank, athlete, points, meetings contested, gap to the qualifying cut and status`}
+                </caption>
                 <thead>
                   <tr className="label-caps text-muted-foreground">
                     <th scope="col" className="w-10 pb-3 text-left font-semibold">

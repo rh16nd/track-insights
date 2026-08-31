@@ -71,6 +71,16 @@ export function Shell({
       />
       <TrackCurveDecoration className="pointer-events-none fixed bottom-0 right-0 z-0 h-[65vh] w-[65vh] opacity-80" />
       <div className="relative z-10">
+        {/* Every page opens with the same nav, so without this a keyboard or
+            screen-reader user tabs the whole thing again on each one before
+            reaching the content. Visually hidden until it takes focus, which
+            is the point -- it is the first thing Tab reaches. */}
+        <a
+          href="#main"
+          className="skip-link label-caps rounded-full bg-card px-4 py-2.5 text-foreground shadow-lg"
+        >
+          Skip to content
+        </a>
         <TopNav lastUpdated={lastUpdated} daysToFinal={daysToFinal} />
 
         {/* v0's `.page-head`: one full-bleed band that opens every app page.
@@ -122,9 +132,28 @@ export function Shell({
         {/* Lifted so the first panel overlaps the band's lower padding --
             the seam between the two reads as one page rather than a header
             sitting on top of a body. */}
-        <main className="relative z-[2] mx-auto -mt-[34px] max-w-[1600px] px-6 pb-[90px] sm:px-8 lg:px-12">
+        <main
+          id="main"
+          // -1 so the skip link can move focus here without making the
+          // region itself a tab stop on the way through.
+          tabIndex={-1}
+          className="relative z-[2] mx-auto -mt-[34px] max-w-[1600px] px-6 pb-[90px] sm:px-8 lg:px-12"
+        >
           {children}
         </main>
+
+        {/* The app pages had no footer landmark at all -- the landing has one,
+            so the two disagreed. Also the only place the site states what it
+            is not: a source, and not affiliated with anyone. */}
+        <footer className="relative z-[2] border-t border-border/40 px-6 pb-10 sm:px-8 lg:px-12">
+          <div className="mx-auto flex max-w-[1600px] flex-col gap-1.5 pt-6 text-[12px] text-white/80 sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              Data scraped from World Athletics. Not affiliated with World Athletics or the Wanda
+              Diamond League.
+            </p>
+            <p>Predictions are model estimates, not betting advice.</p>
+          </div>
+        </footer>
       </div>
     </div>
   );

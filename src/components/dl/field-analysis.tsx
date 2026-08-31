@@ -42,6 +42,12 @@ export function FieldAnalysisBlock({
       >
         <div className="overflow-x-auto">
           <table className="border-collapse text-left">
+            {/* A grid this shape is unreadable without a caption: every cell
+                is a win-loss record whose meaning depends on which athlete
+                owns the row and which owns the column. */}
+            <caption className="sr-only">
+              {`Head-to-head grid for the ${discLabel} field. Each row is one athlete's record against the athlete named in each column, wins first, from ${startNoun(isField)} they actually shared.`}
+            </caption>
             <thead>
               <tr>
                 <th
@@ -134,6 +140,9 @@ export function FieldAnalysisBlock({
       >
         <div className="overflow-x-auto">
           <table className="w-full min-w-[620px] border-collapse text-left">
+            <caption className="sr-only">
+              {`What separates the ${discLabel} field: the same measures for every contender, so two athletes with near-identical season bests can be told apart.`}
+            </caption>
             <thead>
               <tr className="label-caps border-b border-border text-muted-foreground">
                 <th scope="col" className="pb-2 pr-2 font-semibold">

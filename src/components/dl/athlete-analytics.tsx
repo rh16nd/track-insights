@@ -248,6 +248,9 @@ function FormTable({
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[460px] border-collapse text-left">
+        <caption className="sr-only">
+          Season by season: best mark, top-three average, and how consistent each campaign was
+        </caption>
         <thead>
           <tr className="label-caps border-b border-border text-muted-foreground">
             <th scope="col" className="pb-2 pr-2 font-semibold">
