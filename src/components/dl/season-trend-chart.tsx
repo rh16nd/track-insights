@@ -95,7 +95,9 @@ export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year:
               {history.map((h, i) => (
                 <tr key={i} className="border-t border-border/60">
                   <td className="py-1.5 pr-3 text-muted-foreground">{h.date}</td>
-                  <td className={`nums py-1.5 pr-3 ${i === bestIndex ? "font-semibold text-terracotta-strong" : "text-foreground"}`}>
+                  <td
+                    className={`nums py-1.5 pr-3 ${i === bestIndex ? "font-semibold text-terracotta-strong" : "text-foreground"}`}
+                  >
                     {h.mark}
                   </td>
                   <td className="py-1.5 pr-3 text-foreground">{h.venue}</td>
@@ -108,77 +110,77 @@ export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year:
           </table>
         </div>
       ) : (
-      <div className="relative mt-2">
-        <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full" style={{ height: "auto" }}>
-          <line
-            x1={PAD_X}
-            y1={HEIGHT - PAD_BOTTOM}
-            x2={WIDTH - PAD_X}
-            y2={HEIGHT - PAD_BOTTOM}
-            stroke="var(--border)"
-            strokeWidth={1}
-          />
-          {areaPath && <path d={areaPath} fill="var(--terracotta)" opacity={0.1} stroke="none" />}
-          <path
-            d={path}
-            fill="none"
-            stroke="var(--terracotta)"
-            strokeWidth={2}
-            strokeLinejoin="round"
-            strokeLinecap="round"
-          />
-          {points.map((p, i) => (
-            <g key={i}>
-              <circle
-                cx={p.x}
-                cy={p.y}
-                r={i === bestIndex ? 6 : 5}
-                fill={i === bestIndex ? "var(--gold-strong)" : "var(--terracotta)"}
-                stroke="var(--card)"
-                strokeWidth={2}
-                onMouseEnter={() => setHover(i)}
-                onMouseLeave={() => setHover(null)}
-                style={{ cursor: "pointer" }}
-              />
-              <text
-                x={p.x}
-                y={p.y - 12}
-                textAnchor="middle"
-                className="nums"
-                fontSize={11}
-                fill="var(--foreground)"
-                fontWeight={i === bestIndex ? 600 : 400}
-              >
-                {p.mark}
-              </text>
-              <text
-                x={p.x}
-                y={HEIGHT - PAD_BOTTOM + 18}
-                textAnchor="middle"
-                fontSize={10}
-                fill="var(--muted-foreground)"
-              >
-                {p.date.replace(/ \d{4}$/, "")}
-              </text>
-            </g>
-          ))}
-        </svg>
-        {hover !== null && points[hover] && (
-          <div
-            className="card-shadow pointer-events-none absolute z-10 -translate-x-1/2 rounded-md border border-border bg-popover px-2.5 py-1.5 text-[11px] text-popover-foreground"
-            style={{
-              left: `${(points[hover].x / WIDTH) * 100}%`,
-              top: `${(points[hover].y / HEIGHT) * 100 - 18}%`,
-            }}
-          >
-            <div className="font-medium">{points[hover].mark}</div>
-            <div className="text-muted-foreground">{points[hover].venue}</div>
-            {points[hover].resultsScore != null && (
-              <div className="text-muted-foreground">{points[hover].resultsScore} pts</div>
-            )}
-          </div>
-        )}
-      </div>
+        <div className="relative mt-2">
+          <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full" style={{ height: "auto" }}>
+            <line
+              x1={PAD_X}
+              y1={HEIGHT - PAD_BOTTOM}
+              x2={WIDTH - PAD_X}
+              y2={HEIGHT - PAD_BOTTOM}
+              stroke="var(--border)"
+              strokeWidth={1}
+            />
+            {areaPath && <path d={areaPath} fill="var(--terracotta)" opacity={0.1} stroke="none" />}
+            <path
+              d={path}
+              fill="none"
+              stroke="var(--terracotta)"
+              strokeWidth={2}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
+            {points.map((p, i) => (
+              <g key={i}>
+                <circle
+                  cx={p.x}
+                  cy={p.y}
+                  r={i === bestIndex ? 6 : 5}
+                  fill={i === bestIndex ? "var(--gold-strong)" : "var(--terracotta)"}
+                  stroke="var(--card)"
+                  strokeWidth={2}
+                  onMouseEnter={() => setHover(i)}
+                  onMouseLeave={() => setHover(null)}
+                  style={{ cursor: "pointer" }}
+                />
+                <text
+                  x={p.x}
+                  y={p.y - 12}
+                  textAnchor="middle"
+                  className="nums"
+                  fontSize={11}
+                  fill="var(--foreground)"
+                  fontWeight={i === bestIndex ? 600 : 400}
+                >
+                  {p.mark}
+                </text>
+                <text
+                  x={p.x}
+                  y={HEIGHT - PAD_BOTTOM + 18}
+                  textAnchor="middle"
+                  fontSize={10}
+                  fill="var(--muted-foreground)"
+                >
+                  {p.date.replace(/ \d{4}$/, "")}
+                </text>
+              </g>
+            ))}
+          </svg>
+          {hover !== null && points[hover] && (
+            <div
+              className="card-shadow pointer-events-none absolute z-10 -translate-x-1/2 rounded-md border border-border bg-popover px-2.5 py-1.5 text-[11px] text-popover-foreground"
+              style={{
+                left: `${(points[hover].x / WIDTH) * 100}%`,
+                top: `${(points[hover].y / HEIGHT) * 100 - 18}%`,
+              }}
+            >
+              <div className="font-medium">{points[hover].mark}</div>
+              <div className="text-muted-foreground">{points[hover].venue}</div>
+              {points[hover].resultsScore != null && (
+                <div className="text-muted-foreground">{points[hover].resultsScore} pts</div>
+              )}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
