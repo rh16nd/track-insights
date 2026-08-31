@@ -1,0 +1,354 @@
+/* ============================================================
+   PodiumCall — system.css
+   The single source of truth. Every visual decision lives here.
+   One reusable class per recurring object; pages add only layout.
+   ============================================================ */
+
+/* ---------- tokens ---------- */
+:root{
+  --background: oklch(0.54 0.105 40);        /* warm terracotta page ground */
+  --foreground: oklch(0.19 0.03 40);         /* near-black brown */
+  --card: oklch(0.97 0.012 75);              /* warm cream card surface */
+  --secondary: oklch(0.91 0.02 60);          /* muted sand */
+  --muted-foreground: oklch(0.42 0.045 45);
+  --border: oklch(0.85 0.035 55);
+  --terracotta: oklch(0.545 0.164 38.5);
+  --terracotta-strong: oklch(0.45 0.164 38.5);
+  --gold: oklch(0.593 0.128 68);
+  --gold-strong: oklch(0.49 0.128 68);
+  --gold-light: oklch(0.8 0.11 68);
+  --brick: oklch(0.406 0.121 40);
+  --active: linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%);
+
+  /* spacing rhythm */
+  --gap: 24px;
+  --pad: 28px;
+  --radius: 18px;
+  --radius-lg: 26px;
+  --radius-pill: 999px;
+
+  /* type scale */
+  --fs-display: clamp(52px, 7.2vw, 112px);
+  --fs-h1: clamp(30px, 4vw, 52px);
+  --fs-h2: clamp(24px, 3vw, 38px);
+  --fs-h3: 19px;
+  --fs-body: 15.5px;
+  --fs-small: 13px;
+  --fs-label: 11px;
+}
+
+/* ---------- reset + base ---------- */
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--background)}
+body{
+  font-family:'Barlow',system-ui,sans-serif;
+  color:var(--foreground);
+  background:var(--background);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  font-variant-numeric:tabular-nums;
+  font-feature-settings:"tnum" 1;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4,.dg{font-family:'Space Grotesk',system-ui,sans-serif;letter-spacing:-0.02em;line-height:1.05}
+a{color:inherit}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+img{max-width:100%;display:block}
+
+/* ---------- layout primitives ---------- */
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+.wrap-wide{max-width:1360px;margin:0 auto;padding:0 32px}
+.stack > * + *{margin-top:var(--gap)}
+.grid{display:grid;gap:var(--gap)}
+.cols-2{grid-template-columns:repeat(2,1fr)}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:900px){
+  .cols-3,.cols-4{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:640px){
+  .wrap,.wrap-wide{padding:0 20px}
+  .cols-2,.cols-3,.cols-4{grid-template-columns:1fr}
+}
+
+/* ---------- small uppercase label (recurring device) ---------- */
+.eyebrow{font-family:'Space Grotesk';font-size:var(--fs-label);font-weight:600;
+  letter-spacing:0.18em;text-transform:uppercase;color:var(--terracotta-strong)}
+.label{font-family:'Space Grotesk';font-size:10.5px;font-weight:600;
+  letter-spacing:0.14em;text-transform:uppercase;color:var(--muted-foreground)}
+.eyebrow.on-dark,.label.on-dark{color:var(--gold-light)}
+
+/* ---------- lane texture (drifting track surface) ---------- */
+@keyframes laneDrift{from{background-position:0 0}to{background-position:330px 0}}
+@keyframes laneDriftBack{from{background-position:0 0}to{background-position:-420px 0}}
+@keyframes glowBreathe{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+.lanes{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lanes::before,.lanes::after{
+  content:"";position:absolute;inset:-14% -8%;
+  transform:rotate(-1deg);
+  animation:laneDrift 46s linear infinite;
+}
+.lanes::before{
+  background:repeating-linear-gradient(100deg,
+    transparent 0, transparent 108px,
+    oklch(0.97 0.012 75 / 0.06) 108px, oklch(0.97 0.012 75 / 0.06) 110px);
+}
+.lanes::after{
+  background:repeating-linear-gradient(100deg,
+    transparent 0, transparent 208px,
+    oklch(0.8 0.11 68 / 0.05) 208px, oklch(0.8 0.11 68 / 0.05) 211px);
+  animation:laneDriftBack 63s linear infinite;
+}
+.glow{position:absolute;inset:0;pointer-events:none;transform-origin:50% 0;
+  background:radial-gradient(60% 80% at 50% -10%, oklch(0.8 0.11 68 / 0.18), transparent 62%);
+  animation:glowBreathe 11s ease-in-out infinite}
+
+/* ============================================================
+   TOP BAR + NAV
+   ============================================================ */
+.topbar{position:relative;z-index:20;background:var(--card);border-bottom:1px solid var(--border)}
+.topbar .wrap-wide{display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding-top:15px;padding-bottom:15px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand .mark{
+  width:36px;height:36px;border-radius:11px;background:var(--terracotta-strong);
+  box-shadow:0 4px 12px oklch(0.45 0.164 38.5 / 0.28);
+  display:flex;align-items:flex-end;justify-content:center;gap:2.5px;padding:7px 6px;flex:none;
+}
+.brand .mark i{width:5px;border-radius:2px 2px 0 0;display:block}
+.brand .mark i:nth-child(1){height:9px;background:oklch(0.97 0.012 75 / 0.72)}
+.brand .mark i:nth-child(2){height:15px;background:var(--gold-light)}
+.brand .mark i:nth-child(3){height:6px;background:oklch(0.97 0.012 75 / 0.72)}
+.brand b{font-family:'Space Grotesk';color:var(--foreground);font-weight:700;font-size:19px;letter-spacing:-0.01em;display:block;line-height:1}
+.brand small{display:block;color:var(--terracotta-strong);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;margin-top:3px}
+nav{display:flex;gap:2px;flex-wrap:wrap}
+nav a{
+  font-family:'Space Grotesk';font-size:13px;font-weight:500;letter-spacing:0.01em;
+  color:var(--muted-foreground);text-decoration:none;
+  padding:9px 14px;border-radius:var(--radius-pill);transition:.15s;white-space:nowrap;
+}
+nav a:hover{color:var(--foreground);background:var(--secondary)}
+nav a.active{background:var(--active);color:var(--card);font-weight:600;
+  box-shadow:0 3px 12px oklch(0.45 0.164 38.5 / 0.35)}
+.nav-cta{margin-left:6px}
+@media(max-width:1080px){ nav .hide-md{display:none} }
+@media(max-width:720px){ nav{display:none} }
+
+/* ============================================================
+   PAGE HEAD (terracotta hero band that opens every app page)
+   ============================================================ */
+.page-head{position:relative;overflow:hidden;background:var(--background);
+  padding:56px 0 68px;color:var(--card)}
+.page-head .wrap-wide,.page-head .wrap{position:relative;z-index:2}
+.page-head h1{font-size:var(--fs-h1);color:var(--card);margin-top:14px;text-wrap:balance}
+.page-head .sub{color:oklch(0.97 0.012 75 / 0.86);font-size:17px;margin-top:14px;max-width:64ch;line-height:1.5}
+.page-head .crumbs{color:oklch(0.97 0.012 75 / 0.7);font-size:12.5px;font-family:'Space Grotesk';letter-spacing:0.04em}
+
+/* figure row that can sit on the terracotta band */
+.figrow{display:flex;gap:44px;flex-wrap:wrap;margin-top:34px}
+.figrow .stat b{color:var(--card)}
+.figrow .stat span{color:oklch(0.97 0.012 75 / 0.72)}
+
+/* ============================================================
+   BODY REGION (pulls cream content up over the terracotta head)
+   ============================================================ */
+.body-region{background:var(--background);position:relative;z-index:2;padding-bottom:90px}
+.body-region.lift{margin-top:-34px}
+
+/* ============================================================
+   PANEL — the one cream surface object used site-wide
+   ============================================================ */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:var(--pad);box-shadow:0 10px 26px oklch(0.3 0.08 40 / 0.08)}
+.panel.flush{padding:0;overflow:hidden}
+.panel.tint{background:var(--secondary)}
+.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:18px}
+.panel-head h2,.panel-head h3{color:var(--foreground)}
+.panel-head h2{font-size:var(--fs-h2)}
+.panel-head h3{font-size:var(--fs-h3)}
+.panel-title{display:flex;flex-direction:column;gap:8px}
+.panel-note{color:var(--muted-foreground);font-size:var(--fs-small);line-height:1.5;max-width:54ch}
+.panel-lead{color:var(--muted-foreground);font-size:var(--fs-body);line-height:1.55;margin-top:2px}
+
+/* explanatory note callout (for "easy to misread" numbers) */
+.note{display:flex;gap:10px;align-items:flex-start;color:var(--muted-foreground);
+  font-size:var(--fs-small);line-height:1.5}
+.note .pip{width:6px;height:6px;border-radius:999px;background:var(--gold-strong);flex:none;margin-top:7px}
+.note.boxed{background:var(--secondary);border-radius:14px;padding:14px 16px}
+
+/* ============================================================
+   STAT FIGURE
+   ============================================================ */
+.stat b{display:block;font-family:'Space Grotesk';font-weight:700;color:var(--foreground);
+  font-size:40px;letter-spacing:-0.02em;line-height:1;white-space:nowrap}
+.stat b .u{font-size:0.5em;color:var(--muted-foreground);font-weight:600;margin-left:1px}
+.stat b .u.gold{color:var(--gold-strong)}
+.stat span{display:block;color:var(--muted-foreground);font-size:12px;letter-spacing:0.09em;
+  text-transform:uppercase;font-family:'Space Grotesk';margin-top:9px}
+.stat.sm b{font-size:28px}
+.stat.gold b{color:var(--gold-strong)}
+
+/* stat tile (bordered) */
+.tile{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px}
+.tile.on-sand{background:var(--secondary)}
+
+/* ============================================================
+   DATA TABLE
+   ============================================================ */
+.table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.table thead th{font-family:'Space Grotesk';font-size:10.5px;font-weight:600;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--muted-foreground);text-align:left;
+  padding:0 16px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+.table thead th.r,.table td.r{text-align:right}
+.table thead th.c,.table td.c{text-align:center}
+.table tbody td{padding:15px 16px;border-bottom:1px solid var(--border);font-size:14.5px;color:var(--foreground);vertical-align:middle}
+.table tbody tr:last-child td{border-bottom:none}
+.table tbody tr.hi{background:oklch(0.8 0.11 68 / 0.12)}
+.table tbody tr.hover:hover{background:var(--secondary)}
+.table .rk{font-family:'Space Grotesk';font-weight:700;color:var(--muted-foreground);font-size:15px;width:36px}
+.table .rk.top{color:var(--gold-strong)}
+.table .mark{font-family:'Space Grotesk';font-weight:600}
+.table .best{color:var(--gold-strong);font-weight:700}
+
+/* athlete name cell */
+.athlete{display:flex;align-items:center;gap:12px}
+.athlete .nm{font-family:'Space Grotesk';font-weight:600;color:var(--foreground);letter-spacing:-0.01em;line-height:1.1}
+.athlete .nat{color:var(--muted-foreground);font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;font-family:'Space Grotesk';margin-top:2px}
+.athlete .chip{width:30px;height:30px;border-radius:9px;background:var(--secondary);color:var(--terracotta-strong);
+  font-family:'Space Grotesk';font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none}
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:'Space Grotesk';font-size:11px;font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;padding:5px 11px;border-radius:var(--radius-pill);white-space:nowrap}
+.badge-gold{background:var(--active);color:var(--card)}
+.badge-gold.flat{background:oklch(0.8 0.11 68 / 0.22);color:var(--gold-strong)}
+.badge-through{background:oklch(0.49 0.128 68 / 0.16);color:var(--gold-strong)}
+.badge-out{background:oklch(0.85 0.035 55 / 0.6);color:var(--muted-foreground)}
+.badge-line{background:oklch(0.545 0.164 38.5 / 0.16);color:var(--terracotta-strong)}
+.badge-neutral{background:var(--secondary);color:var(--muted-foreground)}
+.badge-live{background:var(--terracotta-strong);color:var(--card)}
+.badge-live i{width:7px;height:7px;border-radius:999px;background:var(--gold-light);display:block}
+
+/* ============================================================
+   PROBABILITY PILL + METER
+   ============================================================ */
+.pill{display:inline-flex;align-items:baseline;gap:3px;font-family:'Space Grotesk';font-weight:700;
+  color:var(--foreground);font-size:16px}
+.pill .u{font-size:11px;color:var(--muted-foreground);font-weight:600}
+.pill.gold{color:var(--gold-strong)}
+
+.meter{position:relative;height:8px;border-radius:999px;background:var(--secondary);overflow:hidden}
+.meter > i{position:absolute;inset:0 auto 0 0;border-radius:999px;background:var(--terracotta);display:block}
+.meter > i.gold{background:var(--active)}
+.meter.tall{height:10px}
+
+/* horizontal bar row (label + track + value) */
+.barrow{display:grid;grid-template-columns:1fr 120px auto;gap:14px;align-items:center}
+.barrow .bl{font-size:13.5px;color:var(--foreground)}
+.barrow .bv{font-family:'Space Grotesk';font-weight:700;font-size:14px;text-align:right;min-width:42px}
+@media(max-width:640px){ .barrow{grid-template-columns:1fr 80px auto} }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn{font-family:'Space Grotesk';font-weight:600;font-size:15px;padding:14px 24px;border-radius:var(--radius-pill);
+  text-decoration:none;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:10px;
+  transition:transform .18s, box-shadow .18s, background .15s}
+.btn svg{width:17px;height:17px}
+.btn-gold{background:var(--card);color:var(--terracotta-strong);box-shadow:0 8px 22px oklch(0.3 0.08 40 / 0.28)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 14px 30px oklch(0.3 0.08 40 / 0.34)}
+.btn-solid{background:var(--active);color:var(--card);box-shadow:0 6px 18px oklch(0.45 0.164 38.5 / 0.34)}
+.btn-solid:hover{transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--card);border:1px solid oklch(0.97 0.012 75 / 0.4)}
+.btn-ghost:hover{background:oklch(0.97 0.012 75 / 0.1)}
+.btn-quiet{background:transparent;color:var(--terracotta-strong);border:1px solid var(--border);font-size:13px;padding:10px 16px}
+.btn-quiet:hover{background:var(--secondary)}
+.btn .arrow{transition:transform .18s}
+.btn:hover .arrow{transform:translateX(4px)}
+
+/* ============================================================
+   SEGMENTED PICKER (discipline switcher, tabs)
+   ============================================================ */
+.picker{display:flex;flex-wrap:wrap;gap:8px}
+.picker button{font-family:'Space Grotesk';font-size:13px;font-weight:500;color:var(--muted-foreground);
+  background:var(--card);border:1px solid var(--border);padding:9px 15px;border-radius:var(--radius-pill);cursor:pointer;transition:.15s}
+.picker button:hover{background:var(--secondary);color:var(--foreground)}
+.picker button.active{background:var(--active);color:var(--card);border-color:transparent;font-weight:600}
+
+/* ============================================================
+   TICKER (continuously scrolling strip)
+   ============================================================ */
+.ticker{overflow:hidden;position:relative;background:var(--brick);border-top:1px solid oklch(0.3 0.08 40 / 0.4);
+  border-bottom:1px solid oklch(0.3 0.08 40 / 0.4)}
+.ticker .track{display:flex;gap:0;width:max-content;animation:tickerMove 46s linear infinite}
+.ticker .it{display:flex;align-items:center;gap:12px;padding:16px 26px;border-right:1px solid oklch(0.97 0.012 75 / 0.1);white-space:nowrap}
+.ticker .it .d{font-family:'Space Grotesk';font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:oklch(0.8 0.11 68)}
+.ticker .it .n{font-family:'Space Grotesk';font-weight:600;color:var(--card);font-size:14px}
+.ticker .it .p{font-family:'Space Grotesk';font-weight:700;color:var(--gold-light);font-size:14px}
+@keyframes tickerMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker:hover .track{animation-play-state:paused}
+
+/* ============================================================
+   MISC
+   ============================================================ */
+.divider{height:1px;background:linear-gradient(90deg, var(--border), transparent);border:none;margin:0}
+.footnote{color:var(--muted-foreground);font-size:13px;display:flex;align-items:center;gap:10px}
+.footnote .pip{width:6px;height:6px;border-radius:999px;background:var(--gold-strong);flex:none}
+.src{color:var(--terracotta-strong);font-size:12px;font-family:'Space Grotesk';text-decoration:none;border-bottom:1px solid oklch(0.545 0.164 38.5 / 0.4)}
+.src:hover{color:var(--gold-strong)}
+.section-gap{margin-top:var(--gap)}
+.mt-lg{margin-top:40px}
+
+/* empty state */
+.empty{text-align:center;padding:40px 20px;color:var(--muted-foreground)}
+.empty b{font-family:'Space Grotesk';color:var(--foreground);font-size:17px;display:block;margin-bottom:6px}
+
+/* ============================================================
+   FACT LIST — label ↔ value rows (recurring across app pages)
+   ============================================================ */
+.factlist{list-style:none;display:flex;flex-direction:column}
+.factlist li{display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:12px 0;border-bottom:1px solid var(--border)}
+.factlist li:last-child{border-bottom:none}
+.factlist li > span{color:var(--muted-foreground);font-size:13.5px;line-height:1.4}
+.factlist li > b{font-family:'Space Grotesk';font-weight:700;font-size:15px;color:var(--foreground);white-space:nowrap}
+.factlist li > b.gold{color:var(--gold-strong)}
+
+/* ============================================================
+   SCORE BAR — a value placed on a fixed points scale w/ median marker
+   ============================================================ */
+.scorebar{position:relative}
+.scorebar-track{position:relative;height:12px;border-radius:999px;background:var(--secondary);overflow:visible}
+.scorebar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--active);border-radius:999px}
+.scorebar-median{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--brick);z-index:2}
+
+/* ============================================================
+   SHARED PAGE FOOTER
+   ============================================================ */
+.foot{background:var(--brick);color:oklch(0.97 0.012 75 / 0.7);padding:40px 0;font-size:13px}
+.foot .wrap,.foot .wrap-wide{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
+.foot b{font-family:'Space Grotesk';color:var(--gold-light);font-weight:600}
+
+/* ---------- animation helpers (respect reduced motion) ---------- */
+@keyframes riseIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes meterFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.reveal{opacity:0}
+.in .reveal{animation:riseIn .7s cubic-bezier(.2,.7,.2,1) forwards}
+.in .d1{animation-delay:.05s}.in .d2{animation-delay:.14s}.in .d3{animation-delay:.24s}
+.in .d4{animation-delay:.36s}.in .d5{animation-delay:.5s}
+
+/* JS-driven scroll reveal (added at runtime by reveal.js) */
+.js-reveal{opacity:0;transform:translateY(24px);will-change:opacity,transform;
+  transition:opacity .68s cubic-bezier(.2,.7,.2,1), transform .68s cubic-bezier(.2,.7,.2,1)}
+.js-reveal.vis{opacity:1;transform:none}
+
+/* gentle hover lift for card-like objects */
+.tile,.pick-card{transition:transform .2s cubic-bezier(.2,.7,.2,1), box-shadow .2s}
+.tile:hover,.pick-card:hover{transform:translateY(-3px)}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal,.js-reveal{opacity:1!important;transform:none!important}
+}

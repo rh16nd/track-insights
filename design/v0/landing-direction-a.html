@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PodiumCall — Race Programme (Direction A)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --background: oklch(0.54 0.105 40);
+    --foreground: oklch(0.19 0.03 40);
+    --card: oklch(0.97 0.012 75);
+    --secondary: oklch(0.91 0.02 60);
+    --muted-foreground: oklch(0.42 0.045 45);
+    --border: oklch(0.85 0.035 55);
+    --terracotta: oklch(0.545 0.164 38.5);
+    --terracotta-strong: oklch(0.45 0.164 38.5);
+    --gold-strong: oklch(0.49 0.128 68);
+    --gold-light: oklch(0.8 0.11 68);
+    --brick: oklch(0.406 0.121 40);
+    --active: linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:var(--background)}
+  body{
+    font-family:'Barlow',system-ui,sans-serif;
+    color:var(--foreground);
+    background:var(--background);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    font-variant-numeric:tabular-nums;
+    font-feature-settings:"tnum" 1;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.dg{font-family:'Space Grotesk',system-ui,sans-serif}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+
+  /* ---------- animation primitives ---------- */
+  @keyframes riseIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes laneDrift{from{background-position:0 0}to{background-position:340px 0}}
+  @keyframes pulseGlow{0%,100%{box-shadow:0 0 0 4px oklch(0.8 0.11 68 / 0.28)}50%{box-shadow:0 0 0 7px oklch(0.8 0.11 68 / 0.08)}}
+  @keyframes meterFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  @keyframes shine{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+
+  /* staggered reveal helper */
+  .reveal{opacity:0}
+  .in .reveal{animation:riseIn .8s cubic-bezier(.2,.7,.2,1) forwards}
+  .in .d1{animation-delay:.05s}
+  .in .d2{animation-delay:.16s}
+  .in .d3{animation-delay:.30s}
+  .in .d4{animation-delay:.46s}
+  .in .d5{animation-delay:.60s}
+
+  /* ---------- lane texture (subtle, drifting) ---------- */
+  .lanes{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .lanes::before{
+    content:"";position:absolute;inset:-12% -8%;
+    background:repeating-linear-gradient(
+      100deg,
+      transparent 0, transparent 108px,
+      oklch(0.97 0.012 75 / 0.06) 108px, oklch(0.97 0.012 75 / 0.06) 110px);
+    transform:rotate(-1deg);
+    animation:laneDrift 46s linear infinite;
+  }
+  .glow{position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(60% 80% at 50% -10%, oklch(0.8 0.11 68 / 0.20), transparent 62%);}
+
+  /* ---------- top bar / nav ---------- */
+  .topbar{position:relative;z-index:3;background:var(--card);border-bottom:1px solid var(--border)}
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:16px;padding-bottom:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .mark{
+    width:36px;height:36px;border-radius:11px;background:var(--terracotta-strong);
+    box-shadow:0 4px 12px oklch(0.45 0.164 38.5 / 0.28);
+    display:flex;align-items:flex-end;justify-content:center;gap:2.5px;padding:7px 6px;flex:none;
+  }
+  .brand .mark i{width:5px;border-radius:2px 2px 0 0;display:block}
+  .brand .mark i:nth-child(1){height:9px;background:oklch(0.97 0.012 75 / 0.72)}
+  .brand .mark i:nth-child(2){height:15px;background:var(--gold-light)}
+  .brand .mark i:nth-child(3){height:6px;background:oklch(0.97 0.012 75 / 0.72)}
+  .brand b{font-family:'Space Grotesk';color:var(--foreground);font-weight:700;font-size:19px;letter-spacing:-0.01em}
+  .brand small{display:block;color:var(--terracotta-strong);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;margin-top:-2px}
+  nav{display:flex;gap:4px;flex-wrap:wrap}
+  nav a{
+    font-family:'Space Grotesk';font-size:13px;font-weight:500;letter-spacing:0.02em;
+    color:var(--muted-foreground);text-decoration:none;
+    padding:9px 15px;border-radius:999px;transition:.15s;white-space:nowrap;
+  }
+  nav a:hover{color:var(--foreground);background:var(--secondary)}
+  nav a.active{background:var(--active);color:var(--card);font-weight:600;box-shadow:0 3px 12px oklch(0.45 0.164 38.5 / 0.35)}
+
+  /* ---------- hero (clean, centred, typographic) ---------- */
+  .hero{position:relative;overflow:hidden;padding:96px 0 132px;text-align:center}
+  .hero .wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+
+  .kicker{
+    display:inline-flex;align-items:center;gap:11px;
+    background:oklch(0.97 0.012 75 / 0.14);
+    border:1px solid oklch(0.8 0.11 68 / 0.5);
+    color:var(--card);padding:8px 16px 8px 12px;border-radius:999px;
+    font-family:'Space Grotesk';font-size:12px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;
+  }
+  .kicker i{width:8px;height:8px;border-radius:999px;background:var(--gold-light);font-style:normal;animation:pulseGlow 2.4s ease-in-out infinite}
+
+  .display{
+    position:relative;color:var(--card);
+    font-size:clamp(52px,7.2vw,112px);
+    line-height:0.9;font-weight:700;letter-spacing:-0.035em;
+    margin:28px 0 0;text-wrap:balance;
+  }
+  .display em{
+    font-style:normal;
+    background:linear-gradient(96deg,var(--gold-light) 0%,oklch(0.88 0.09 78) 45%,var(--gold-light) 90%);
+    background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:shine 6s linear infinite;
+  }
+
+  .lede{color:oklch(0.97 0.012 75 / 0.9);font-size:clamp(16px,1.5vw,19px);max-width:54ch;margin-top:26px;line-height:1.6}
+  .cta-row{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;justify-content:center}
+  .btn{
+    font-family:'Space Grotesk';font-weight:600;font-size:15px;
+    padding:15px 26px;border-radius:999px;text-decoration:none;cursor:pointer;border:none;
+    display:inline-flex;align-items:center;gap:10px;transition:transform .18s, box-shadow .18s;
+  }
+  .btn-gold{background:var(--card);color:var(--terracotta-strong);box-shadow:0 8px 22px oklch(0.3 0.08 40 / 0.28)}
+  .btn-gold:hover{transform:translateY(-2px);box-shadow:0 14px 30px oklch(0.3 0.08 40 / 0.34)}
+  .btn-gold svg{transition:transform .18s}
+  .btn-gold:hover svg{transform:translateX(4px)}
+  .btn-ghost{background:transparent;color:var(--card);border:1px solid oklch(0.97 0.012 75 / 0.4)}
+  .btn-ghost:hover{background:oklch(0.97 0.012 75 / 0.1)}
+  .btn svg{width:17px;height:17px}
+
+  .ribbon{display:flex;gap:52px;margin-top:52px;flex-wrap:wrap;justify-content:center}
+  .ribbon .st b{display:block;font-family:'Space Grotesk';font-weight:700;color:var(--card);font-size:40px;letter-spacing:-0.02em;line-height:1;white-space:nowrap}
+  .ribbon .st b .pc{display:inline;font-size:18px;color:var(--gold-light);margin-top:0}
+  .ribbon .st span{color:oklch(0.97 0.012 75 / 0.72);font-size:12px;letter-spacing:0.09em;text-transform:uppercase;font-family:'Space Grotesk';margin-top:9px;display:block}
+
+  /* ---------- podium band (top 3 in the white space) ---------- */
+  .band{background:var(--card);position:relative;z-index:2;border-radius:44px 44px 0 0;margin-top:-52px}
+  .band .wrap{padding:74px 32px 84px}
+  .band-head{text-align:center;max-width:60ch;margin:0 auto 8px}
+  .eyebrow{color:var(--terracotta-strong);font-family:'Space Grotesk';font-size:12px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase}
+  .band-head h2{font-size:clamp(28px,3.4vw,44px);letter-spacing:-0.02em;color:var(--foreground);margin-top:10px;line-height:1.04;text-wrap:balance}
+  .band-head p{color:var(--muted-foreground);font-size:15.5px;margin-top:14px}
+
+  /* the podium */
+  .podium{
+    display:grid;grid-template-columns:1fr 1.12fr 1fr;align-items:end;gap:22px;
+    max-width:900px;margin:56px auto 0;
+  }
+  .col{display:flex;flex-direction:column;justify-content:flex-end}
+
+  /* athlete plaque above each block */
+  .plaque{
+    background:var(--card);border:1px solid var(--border);border-radius:18px;
+    padding:22px 20px 20px;text-align:center;position:relative;
+    box-shadow:0 8px 20px oklch(0.3 0.08 40 / 0.07);
+    opacity:0;transform:translateY(14px);
+  }
+  .in .plaque{animation:riseIn .7s cubic-bezier(.2,.7,.2,1) forwards}
+  .in .col2 .plaque{animation-delay:.62s}
+  .in .col1 .plaque{animation-delay:.78s}
+  .in .col3 .plaque{animation-delay:.92s}
+
+  .plaque .disc{color:var(--muted-foreground);font-family:'Space Grotesk';font-weight:600;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase}
+  .plaque .nm{font-family:'Space Grotesk';font-weight:600;color:var(--foreground);letter-spacing:-0.01em;line-height:1.12;margin-top:8px;font-size:18px;text-wrap:balance}
+  .plaque .nat{color:var(--muted-foreground);font-size:12px;letter-spacing:0.06em;text-transform:uppercase;font-family:'Space Grotesk';margin-top:6px}
+  .plaque .pct{font-family:'Space Grotesk';font-weight:700;letter-spacing:-0.02em;line-height:1;margin-top:16px;font-size:44px;color:var(--terracotta-strong)}
+  .plaque .pct .pc{font-size:19px;color:var(--muted-foreground)}
+  .plaque .lbl{color:var(--muted-foreground);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;font-family:'Space Grotesk';margin-top:4px}
+
+  /* winner plaque gets the gold */
+  .col2 .plaque{border-color:oklch(0.8 0.11 68 / 0.7);box-shadow:0 14px 34px oklch(0.49 0.128 68 / 0.16)}
+  .col2 .plaque .pct{color:var(--gold-strong)}
+  .col2 .plaque .pct .pc{color:var(--gold-strong);opacity:.7}
+  .medal{
+    position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+    background:var(--active);color:var(--card);
+    font-family:'Space Grotesk';font-weight:600;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+    padding:6px 14px;border-radius:999px;white-space:nowrap;
+    box-shadow:0 6px 16px oklch(0.45 0.164 38.5 / 0.4);
+  }
+
+  /* the blocks */
+  .block{
+    position:relative;margin-top:20px;border-radius:16px 16px 0 0;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    transform:scaleY(0);transform-origin:bottom;
+  }
+  .in .block{animation:stepUp .95s cubic-bezier(.2,.85,.25,1) forwards}
+  @keyframes stepUp{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+  .in .col2 .block{animation-delay:.30s}
+  .in .col1 .block{animation-delay:.46s}
+  .in .col3 .block{animation-delay:.62s}
+
+  .col2 .block{height:188px;background:linear-gradient(180deg, var(--gold-light) 0%, var(--gold-strong) 100%)}
+  .col1 .block{height:138px;background:var(--terracotta)}
+  .col3 .block{height:110px;background:var(--terracotta-strong)}
+
+  .block .rk{font-family:'Space Grotesk';font-weight:700;letter-spacing:-0.02em;line-height:1}
+  .col2 .block .rk{font-size:78px;color:oklch(0.406 0.121 40 / 0.42)}
+  .col1 .block .rk{font-size:56px;color:oklch(0.97 0.012 75 / 0.5)}
+  .col3 .block .rk{font-size:48px;color:oklch(0.97 0.012 75 / 0.5)}
+  .block .sheen{position:absolute;inset:0;background:linear-gradient(180deg, oklch(1 0 0 / 0.12), transparent 46%);pointer-events:none}
+
+  .plinth{max-width:900px;margin:0 auto;height:10px;border-radius:0 0 8px 8px;background:var(--brick);opacity:.85}
+
+  .footnote{margin-top:34px;color:var(--muted-foreground);font-size:13px;display:flex;align-items:center;justify-content:center;gap:10px;text-align:center}
+  .footnote .pip{width:6px;height:6px;border-radius:999px;background:var(--gold-strong);flex:none}
+  .replay{
+    display:inline-flex;align-items:center;gap:8px;margin:26px auto 0;
+    background:transparent;border:1px solid var(--border);
+    color:var(--terracotta-strong);font-family:'Space Grotesk';font-size:12px;font-weight:600;letter-spacing:0.04em;
+    padding:9px 16px;border-radius:999px;cursor:pointer;transition:.15s;
+  }
+  .replay:hover{background:var(--secondary)}
+  .replay svg{width:14px;height:14px}
+  .replay-wrap{text-align:center}
+
+  @media(max-width:900px){
+    .hero{padding:72px 0 104px}
+    .ribbon{gap:36px}
+  }
+  @media(max-width:640px){
+    .wrap{padding:0 20px}
+    .band .wrap{padding:52px 20px 60px}
+    .display{font-size:clamp(44px,13vw,66px)}
+    nav{display:none}
+    .ribbon{gap:28px}
+    .ribbon .st b{font-size:32px}
+    /* podium stacks into a ranked list on mobile */
+    .podium{grid-template-columns:1fr;gap:16px;max-width:420px}
+    .col{order:2}
+    .col2{order:1}
+    .col3{order:3}
+    .block{height:64px!important;margin-top:0;border-radius:0 0 16px 16px}
+    .col2 .block .rk{font-size:40px}
+    .col1 .block .rk,.col3 .block .rk{font-size:34px}
+    .plinth{display:none}
+    .plaque{text-align:left;display:grid;grid-template-columns:1fr auto;gap:2px 14px;align-items:center}
+    .plaque .disc{grid-column:1}
+    .plaque .nm{grid-column:1;margin-top:2px}
+    .plaque .nat{grid-column:1}
+    .plaque .pct{grid-column:2;grid-row:1 / span 3;align-self:center;margin-top:0;font-size:38px}
+    .plaque .lbl{display:none}
+    .medal{left:auto;right:16px;top:-12px;transform:none}
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important}
+    .reveal,.plaque{opacity:1!important;transform:none!important}
+    .block{transform:scaleY(1)!important}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== top bar ===== -->
+  <header class="topbar">
+    <div class="wrap">
+      <div class="brand">
+        <div class="mark"><i></i><i></i><i></i></div>
+        <div>
+          <b>PodiumCall</b>
+          <small>Diamond League Final · Brussels</small>
+        </div>
+      </div>
+      <nav>
+        <a href="#" class="active">The Final</a>
+        <a href="#">Projections</a>
+        <a href="#">Track</a>
+        <a href="#">Field</a>
+        <a href="#">Qualifying</a>
+        <a href="#">Depth Index</a>
+        <a href="#">Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== hero ===== -->
+  <section class="hero" id="hero">
+    <div class="lanes"></div>
+    <div class="glow"></div>
+    <div class="wrap">
+      <span class="kicker reveal d1"><i></i>PodiumCall · 6 days to Brussels</span>
+      <h1 class="display reveal d2">We make the<br>call before<br>the <em>gun.</em></h1>
+      <p class="lede reveal d3">A walk-forward model reads all 32 Diamond League finals and names who wins in Brussels — before a single race is run. Here are its three surest calls.</p>
+      <div class="cta-row reveal d4">
+        <a class="btn btn-gold" href="#">See every call
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#">Browse all 32 events</a>
+      </div>
+      <div class="ribbon reveal d5">
+        <div class="st"><b class="num"><span id="r1">71.9</span><span class="pc">%</span></b><span>Model hit rate</span></div>
+        <div class="st"><b class="num" id="r2">32</b><span>Finals projected</span></div>
+        <div class="st"><b class="num" id="r3">15</b><span>Nations on the board</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== the projected podium ===== -->
+  <section class="band">
+    <div class="wrap">
+      <div class="band-head">
+        <div class="eyebrow">The projected podium</div>
+        <h2>The three the model backs hardest in Brussels.</h2>
+        <p>Ranked by single-athlete win probability across all 32 finals.</p>
+      </div>
+
+      <div class="podium" id="podium">
+        <!-- silver: rank 2 (left) -->
+        <div class="col col1">
+          <div class="plaque">
+            <div class="disc">Women&apos;s 1500m</div>
+            <div class="nm">Jessica Hull</div>
+            <div class="nat">AUS</div>
+            <div class="pct num"><span id="c2">74</span><span class="pc">%</span></div>
+            <div class="lbl">Win probability</div>
+          </div>
+          <div class="block"><span class="rk num">2</span><span class="sheen"></span></div>
+        </div>
+
+        <!-- gold: rank 1 (centre) -->
+        <div class="col col2">
+          <div class="plaque">
+            <span class="medal">Strongest call</span>
+            <div class="disc">Women&apos;s 400m</div>
+            <div class="nm">Marileidy Paulino</div>
+            <div class="nat">DOM · SB 48.48</div>
+            <div class="pct num"><span id="c1">80</span><span class="pc">%</span></div>
+            <div class="lbl">Win probability</div>
+          </div>
+          <div class="block"><span class="rk num">1</span><span class="sheen"></span></div>
+        </div>
+
+        <!-- bronze: rank 3 (right) -->
+        <div class="col col3">
+          <div class="plaque">
+            <div class="disc">Men&apos;s 3000m S/C</div>
+            <div class="nm">Soufiane El Bakkali</div>
+            <div class="nat">MAR</div>
+            <div class="pct num"><span id="c3">73</span><span class="pc">%</span></div>
+            <div class="lbl">Win probability</div>
+          </div>
+          <div class="block"><span class="rk num">3</span><span class="sheen"></span></div>
+        </div>
+      </div>
+      <div class="plinth"></div>
+
+      <div class="replay-wrap">
+        <button class="replay" id="replay" type="button" aria-label="Replay the animation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg>
+          Replay
+        </button>
+      </div>
+
+      <div class="footnote"><span class="pip"></span>Win probability is the model&apos;s single-athlete confidence for the Brussels Final; marks are 2026 season bests from World Athletics.</div>
+    </div>
+  </section>
+
+  <script>
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // entrance sequence
+    requestAnimationFrame(function(){ document.body.classList.add('in'); });
+
+    var podium = document.getElementById('podium');
+
+    function countUp(id, target, decimals, delay){
+      var el = document.getElementById(id);
+      if(!el) return;
+      if(reduce){ el.textContent = decimals ? target.toFixed(decimals) : target; return; }
+      el.textContent = decimals ? (0).toFixed(decimals) : '0';
+      setTimeout(function(){
+        var start = null, dur = 950;
+        function step(ts){
+          if(start === null) start = ts;
+          var p = Math.min(1, (ts - start) / dur);
+          var eased = 1 - Math.pow(1 - p, 3);
+          var val = eased * target;
+          el.textContent = decimals ? val.toFixed(decimals) : Math.round(val);
+          if(p < 1) requestAnimationFrame(step);
+          else el.textContent = decimals ? target.toFixed(decimals) : target;
+        }
+        requestAnimationFrame(step);
+      }, delay);
+    }
+
+    function playCounts(){
+      // hero ribbon
+      countUp('r1', 71.9, 1, 260);
+      countUp('r2', 32, 0, 260);
+      countUp('r3', 15, 0, 260);
+      // podium win %
+      countUp('c1', 80, 0, 780);
+      countUp('c2', 74, 0, 940);
+      countUp('c3', 73, 0, 1080);
+    }
+
+    function replay(){
+      if(reduce) return;
+      document.body.classList.remove('in');
+      void podium.offsetWidth; // reflow so reveals restart
+      document.body.classList.add('in');
+      playCounts();
+    }
+
+    playCounts();
+    if(!reduce){
+      document.getElementById('replay').addEventListener('click', replay);
+    }
+  </script>
+
+</body>
+</html>

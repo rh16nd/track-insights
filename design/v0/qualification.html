@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PodiumCall — Qualifying · Men's 100m</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="system.css" />
+<script defer src="reveal.js"></script>
+<style>
+  .qtable{width:100%;border-collapse:collapse}
+  .qtable th{font-family:'Space Grotesk';font-size:10.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted-foreground);text-align:left;padding:0 14px 12px;border-bottom:1px solid var(--border)}
+  .qtable th.r,.qtable td.r{text-align:right}
+  .qtable td{padding:13px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+  .qtable tr:last-child td{border-bottom:none}
+  .qtable .pos{font-family:'Space Grotesk';font-weight:700;font-size:15px;color:var(--muted-foreground);width:44px}
+  .qtable tr.safe .pos{color:var(--gold-strong)}
+  .qtable .who{font-family:'Space Grotesk';font-weight:600;font-size:15.5px;color:var(--foreground)}
+  .qtable .nat{color:var(--muted-foreground);font-weight:500;font-size:11px;letter-spacing:0.06em;margin-left:8px}
+  .qtable .pts{font-family:'Space Grotesk';font-weight:700;font-size:17px;color:var(--foreground)}
+  .qtable tr.out{opacity:.62}
+  .ptbar{display:inline-block;vertical-align:middle;width:120px;height:8px;border-radius:999px;background:var(--secondary);overflow:hidden;margin-left:12px}
+  .ptbar i{display:block;height:100%;border-radius:999px;background:var(--terracotta)}
+  .qtable tr.safe .ptbar i{background:var(--active)}
+  .gap{font-family:'Space Grotesk';font-weight:600;font-size:13px}
+  .gap.in{color:var(--terracotta-strong)}
+  .gap.out{color:var(--muted-foreground)}
+  .status-pill{font-family:'Space Grotesk';font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:4px 9px;border-radius:999px}
+  .status-pill.safe{background:oklch(0.8 0.11 68 / 0.24);color:var(--gold-strong)}
+  .status-pill.out{background:var(--secondary);color:var(--muted-foreground)}
+  .status-pill.line{background:var(--active);color:var(--card)}
+  /* the cut line */
+  tr.cutline td{padding:0;border:none}
+  .cut{display:flex;align-items:center;gap:12px;padding:10px 14px;background:oklch(0.85 0.035 55 / 0.4);border-top:2px dashed var(--terracotta-strong);border-bottom:2px dashed var(--terracotta-strong)}
+  .cut b{font-family:'Space Grotesk';font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--terracotta-strong)}
+  .cut span{color:var(--muted-foreground);font-size:12.5px}
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="wrap-wide">
+      <a class="brand" href="index.html"><div class="mark"><i></i><i></i><i></i></div><div><b>PodiumCall</b><small>Diamond League Final · Brussels</small></div></a>
+      <nav>
+        <a href="index.html">The Final</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="projections.html">Projections</a>
+        <a href="track.html">Track</a>
+        <a href="field.html">Field</a>
+        <a href="qualification.html" class="active">Qualifying</a>
+        <a href="stats.html">Performance Index</a>
+        <a href="schedule.html">Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-head">
+    <div class="lanes"></div><div class="glow"></div>
+    <div class="wrap-wide">
+      <div class="crumbs">Qualifying / <span style="color:var(--gold-light)">Men&apos;s 100m</span></div>
+      <h1>Eight lanes. The race to make the race.</h1>
+      <p class="sub">Diamond League points decide who lines up in Brussels. Eight men make the Final; the ninth stays home. With no meetings left, the line is now fixed at 17 points.</p>
+      <div class="figrow">
+        <div class="stat"><b class="num">8</b><span>Qualify for the Final</span></div>
+        <div class="stat"><b class="num">17</b><span>Points to make it</span></div>
+        <div class="stat"><b class="num">0</b><span>Meetings left</span></div>
+        <div class="stat"><b class="num">8</b><span>Points for a win</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="body-region lift">
+    <div class="wrap-wide stack">
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="eyebrow">Standings · Men&apos;s 100m</div>
+            <h2>Where the field finished the season</h2>
+          </div>
+          <div class="panel-note">Gold = through to Brussels</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="qtable" id="qtable">
+            <thead>
+              <tr>
+                <th>#</th><th>Athlete</th><th>Points</th>
+                <th class="r">Meets</th><th class="r">Gap to line</th><th class="r">Status</th>
+              </tr>
+            </thead>
+            <tbody id="qbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><div><div class="eyebrow">How to read it</div><h2>The margin, not the medal</h2></div></div>
+        <p style="color:var(--muted-foreground);font-size:15px;line-height:1.6;max-width:70ch">
+          Points come from finishing position at each Diamond League meeting a runner contested — eight for a win, scaling down from there. Akani Simbine holds the eighth and final place on exactly 17 points, level with the cut. Emmanuel Eseme, the model&apos;s pick to win the Final, only scraped in seventh. Noah Lyles — a household name — sits ninth on 15, two points shy, and misses out entirely.
+        </p>
+      </section>
+
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap-wide">
+      <span>PodiumCall · projections for the <b>2026 Diamond League Final</b>, Brussels</span>
+      <span>Source: World Athletics · updated 29 Aug 2026</span>
+    </div>
+  </footer>
+
+<script>
+  var cutPoints = 17, qualLimit = 8;
+  var standings = [
+    {rank:1, name:"Oblique Seville", country:"JAM", points:23, events:3, gap:-6, status:"safe"},
+    {rank:2, name:"Gift Leotlela", country:"RSA", points:23, events:4, gap:-6, status:"safe"},
+    {rank:3, name:"Trayvon Bromell", country:"USA", points:19, events:3, gap:-2, status:"safe"},
+    {rank:4, name:"Jordan Anthony", country:"USA", points:19, events:4, gap:-2, status:"safe"},
+    {rank:5, name:"Ferdinand Omanyala", country:"KEN", points:19, events:4, gap:-2, status:"safe"},
+    {rank:6, name:"Kenneth Bednarek", country:"USA", points:18, events:3, gap:-1, status:"safe"},
+    {rank:7, name:"Emmanuel Eseme", country:"CMR", points:18, events:3, gap:-1, status:"safe"},
+    {rank:8, name:"Akani Simbine", country:"RSA", points:17, events:5, gap:0, status:"safe"},
+    {rank:9, name:"Noah Lyles", country:"USA", points:15, events:2, gap:2, status:"out"},
+    {rank:10, name:"Kayinsola Ajayi", country:"NGR", points:13, events:2, gap:4, status:"out"},
+    {rank:11, name:"Letsile Tebogo", country:"BOT", points:13, events:4, gap:4, status:"out"},
+    {rank:12, name:"Lamont Marcell Jacobs", country:"ITA", points:10, events:2, gap:7, status:"out"},
+    {rank:13, name:"Christian Coleman", country:"USA", points:9, events:3, gap:8, status:"out"},
+    {rank:14, name:"Lachlan Kennedy", country:"AUS", points:7, events:2, gap:10, status:"out"},
+    {rank:15, name:"Romell Glave", country:"GBR", points:6, events:1, gap:11, status:"out"},
+    {rank:16, name:"Andre De Grasse", country:"CAN", points:5, events:2, gap:12, status:"out"},
+    {rank:17, name:"Owen Ansah", country:"GER", points:5, events:1, gap:12, status:"out"},
+    {rank:18, name:"Ronal Longa", country:"COL", points:3, events:1, gap:14, status:"out"},
+    {rank:19, name:"Zharnel Hughes", country:"GBR", points:2, events:1, gap:15, status:"out"},
+    {rank:20, name:"Ackeem Blake", country:"JAM", points:2, events:1, gap:15, status:"out"},
+    {rank:20, name:"Sam Blaskowski", country:"USA", points:2, events:1, gap:15, status:"out"},
+    {rank:22, name:"Jeremiah Azu", country:"GBR", points:2, events:2, gap:15, status:"out"},
+    {rank:23, name:"Ronnie Baker", country:"USA", points:1, events:1, gap:16, status:"out"},
+    {rank:24, name:"Bradley Nkoana", country:"RSA", points:1, events:1, gap:16, status:"out"}
+  ];
+
+  var maxPts = 23;
+  var body = document.getElementById('qbody');
+  standings.forEach(function(s, i){
+    var onLine = (s.rank === qualLimit);
+    var tr = document.createElement('tr');
+    tr.className = s.status === 'safe' ? 'safe' : 'out';
+    var gapTxt = s.gap < 0 ? (Math.abs(s.gap) + ' clear') : (s.gap === 0 ? 'on the line' : ('+' + s.gap + ' short'));
+    var gapCls = s.status === 'safe' ? 'in' : 'out';
+    var pill = onLine ? '<span class="status-pill line">Final place</span>'
+             : (s.status === 'safe' ? '<span class="status-pill safe">In</span>'
+                                    : '<span class="status-pill out">Out</span>');
+    tr.innerHTML =
+      '<td class="pos">' + s.rank + '</td>' +
+      '<td><span class="who">' + s.name + '</span><span class="nat">' + s.country + '</span></td>' +
+      '<td><span class="pts num">' + s.points + '</span>' +
+        '<span class="ptbar"><i style="width:' + (s.points / maxPts * 100) + '%"></i></span></td>' +
+      '<td class="r num" style="color:var(--muted-foreground)">' + s.events + '</td>' +
+      '<td class="r"><span class="gap ' + gapCls + '">' + gapTxt + '</span></td>' +
+      '<td class="r">' + pill + '</td>';
+    body.appendChild(tr);
+
+    // draw the cut line right after rank 8
+    if (s.rank === qualLimit){
+      var cut = document.createElement('tr');
+      cut.className = 'cutline';
+      cut.innerHTML = '<td colspan="6"><div class="cut"><b>Qualifying line · 17 pts</b><span>Everyone above races the Final. Everyone below watches it.</span></div></td>';
+      body.appendChild(cut);
+    }
+  });
+</script>
+</body>
+</html>

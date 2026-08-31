@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PodiumCall — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="system.css" />
+<script defer src="reveal.js"></script>
+<style>
+  /* surest-call cards */
+  .calls{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:900px){ .calls{grid-template-columns:repeat(2,1fr)} }
+  @media(max-width:560px){ .calls{grid-template-columns:1fr} }
+  .call{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;position:relative;overflow:hidden}
+  .call.lead{border-color:oklch(0.8 0.11 68 / 0.7);box-shadow:0 14px 34px oklch(0.49 0.128 68 / 0.14)}
+  .call .rk{font-family:'Space Grotesk';font-weight:700;font-size:13px;color:var(--muted-foreground);letter-spacing:0.04em}
+  .call.lead .rk{color:var(--gold-strong)}
+  .call .disc{font-family:'Space Grotesk';font-size:10.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--terracotta-strong);margin-top:12px}
+  .call .nm{font-family:'Space Grotesk';font-weight:700;font-size:22px;letter-spacing:-0.02em;color:var(--foreground);margin-top:6px;line-height:1.05}
+  .call .mk{color:var(--muted-foreground);font-size:13.5px;margin-top:6px}
+  .call .prob{display:flex;align-items:baseline;gap:5px;margin-top:16px}
+  .call .prob b{font-family:'Space Grotesk';font-weight:700;font-size:38px;letter-spacing:-0.03em;line-height:1;color:var(--terracotta)}
+  .call.lead .prob b{color:var(--gold-strong)}
+  .call .prob span{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-family:'Space Grotesk';color:var(--muted-foreground)}
+  .call .track{height:7px;border-radius:999px;background:var(--secondary);margin-top:14px;overflow:hidden}
+  .call .fill{height:100%;border-radius:999px;background:var(--terracotta);width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+  .call.lead .fill{background:var(--active)}
+
+  /* confidence board */
+  .conf .barrow{display:grid;grid-template-columns:1fr 200px 52px;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+  .conf .barrow:last-child{border-bottom:none}
+  @media(max-width:640px){ .conf .barrow{grid-template-columns:1fr 44px} .conf .barrow .ctrack{display:none} }
+  .conf .cdisc{font-family:'Space Grotesk';font-weight:600;font-size:14.5px;color:var(--foreground)}
+  .conf .ctrack{height:9px;border-radius:999px;background:var(--secondary);overflow:hidden}
+  .conf .cfill{height:100%;border-radius:999px;background:var(--active);width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+  .conf .cval{font-family:'Space Grotesk';font-weight:700;font-size:16px;text-align:right;color:var(--terracotta-strong)}
+
+  .grid-2{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;align-items:start}
+  @media(max-width:900px){ .grid-2{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="wrap-wide">
+      <a class="brand" href="index.html"><div class="mark"><i></i><i></i><i></i></div><div><b>PodiumCall</b><small>Diamond League Final · Brussels</small></div></a>
+      <nav>
+        <a href="index.html">The Final</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="projections.html">Projections</a>
+        <a href="track.html">Track</a>
+        <a href="field.html">Field</a>
+        <a href="qualification.html">Qualifying</a>
+        <a href="stats.html">Performance Index</a>
+        <a href="schedule.html">Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-head">
+    <div class="lanes"></div><div class="glow"></div>
+    <div class="wrap-wide">
+      <div class="crumbs">PodiumCall / <span style="color:var(--gold-light)">Dashboard</span></div>
+      <h1>The board, six days out.</h1>
+      <p class="sub">Every projection the model is most sure of, ranked by win probability across all 32 disciplines of the 2026 Diamond League Final.</p>
+      <div class="figrow">
+        <div class="stat"><b class="num">6</b><span>Days to Brussels</span></div>
+        <div class="stat"><b class="num">71.9</b><span class="u">%</span><span>Top-3 hit rate</span></div>
+        <div class="stat"><b class="num">32</b><span>Disciplines</span></div>
+        <div class="stat"><b class="num">14</b><span>Meetings run · 1 to go</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="body-region lift">
+    <div class="wrap-wide stack">
+
+      <!-- surest calls -->
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <div class="eyebrow">The surest calls</div>
+            <h2>Where the model has the least doubt</h2>
+          </div>
+          <div class="panel-note">Win probability at the Final</div>
+        </div>
+        <div class="calls" id="calls"></div>
+      </section>
+
+      <div class="grid-2">
+        <!-- confidence board -->
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">Confidence board</div>
+              <h2>Top eight by margin</h2>
+            </div>
+          </div>
+          <div class="conf" id="conf"></div>
+        </section>
+
+        <!-- withdrawals -->
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">Withdrawals &amp; scratches</div>
+              <h2>Changes to the field</h2>
+            </div>
+          </div>
+          <div id="removed"></div>
+        </section>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap-wide">
+      <span>PodiumCall · projections for the <b>2026 Diamond League Final</b>, Brussels</span>
+      <span>Source: World Athletics · updated 29 Aug 2026</span>
+    </div>
+  </footer>
+
+<script>
+  var topWinners = [
+    {disc:"Women's 400m", name:"Marileidy Paulino", mark:"48.48", prob:80, rank:1},
+    {disc:"Women's 1500m", name:"Jessica Hull", mark:"3:55.20", prob:74, rank:2},
+    {disc:"Men's 3000m Steeplechase", name:"Soufiane El Bakkali", mark:"7:57.25", prob:73, rank:3},
+    {disc:"Men's Pole Vault", name:"Armand Duplantis", mark:"6.31m", prob:72, rank:4},
+    {disc:"Men's Discus Throw", name:"Matthew Denny", mark:"74.04m", prob:68, rank:5},
+    {disc:"Men's 400m", name:"Busang Collen Kebinatshipi", mark:"43.44", prob:67, rank:6}
+  ];
+  var confidence = [
+    {disc:"Women's 400m", value:80},
+    {disc:"Women's 1500m", value:74},
+    {disc:"Men's 3000m Steeplechase", value:73},
+    {disc:"Men's Pole Vault", value:72},
+    {disc:"Men's Discus Throw", value:68},
+    {disc:"Men's 400m", value:67},
+    {disc:"Women's 400m Hurdles", value:67},
+    {disc:"Men's 400m Hurdles", value:65}
+  ];
+  var removedAthletes = [];
+
+  var callsEl = document.getElementById('calls');
+  topWinners.forEach(function(w){
+    var el = document.createElement('div');
+    el.className = 'call' + (w.rank === 1 ? ' lead' : '');
+    el.innerHTML =
+      '<div class="rk">#' + w.rank + ' surest</div>' +
+      '<div class="disc">' + w.disc + '</div>' +
+      '<div class="nm">' + w.name + '</div>' +
+      '<div class="mk">Projected ' + w.mark + '</div>' +
+      '<div class="prob"><b class="num">' + w.prob + '</b><span>% win</span></div>' +
+      '<div class="track"><div class="fill" data-w="' + w.prob + '"></div></div>';
+    callsEl.appendChild(el);
+  });
+
+  var confEl = document.getElementById('conf');
+  confidence.forEach(function(c){
+    var el = document.createElement('div');
+    el.className = 'barrow';
+    el.innerHTML =
+      '<div class="cdisc">' + c.disc + '</div>' +
+      '<div class="ctrack"><div class="cfill" data-w="' + c.value + '"></div></div>' +
+      '<div class="cval num">' + c.value + '%</div>';
+    confEl.appendChild(el);
+  });
+
+  var remEl = document.getElementById('removed');
+  if (removedAthletes.length === 0){
+    remEl.className = 'empty';
+    remEl.innerHTML = '<b>No withdrawals recorded</b>Every projected athlete is still entered for Brussels. This panel updates the moment a scratch is confirmed by World Athletics.';
+  }
+
+  // animate fills once on load
+  requestAnimationFrame(function(){
+    setTimeout(function(){
+      document.querySelectorAll('.fill,.cfill').forEach(function(f){ f.style.width = f.getAttribute('data-w') + '%'; });
+    }, 120);
+  });
+</script>
+</body>
+</html>

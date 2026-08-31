@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-background">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PodiumCall — Discipline vs discipline · Men's 100m (Direction B)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --background: oklch(0.54 0.105 40);
+    --foreground: oklch(0.19 0.03 40);
+    --card: oklch(0.97 0.012 75);
+    --secondary: oklch(0.91 0.02 60);
+    --muted-foreground: oklch(0.42 0.045 45);
+    --border: oklch(0.85 0.035 55);
+    --terracotta: oklch(0.545 0.164 38.5);
+    --terracotta-strong: oklch(0.45 0.164 38.5);
+    --gold-strong: oklch(0.49 0.128 68);
+    --gold-light: oklch(0.8 0.11 68);
+    --brick: oklch(0.406 0.121 40);
+    --active: linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%);
+    --radius: 24px;
+    --radius-sm: 14px;
+    --shadow: 0 22px 50px -28px oklch(0.30 0.09 40 / 0.55);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--background); }
+  body {
+    font-family: 'Barlow', sans-serif;
+    color: var(--foreground);
+    background: var(--background);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    padding: 28px;
+    position: relative;
+    overflow-x: hidden;
+  }
+  .track-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; width: 100%; height: 100%; }
+  .fig { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
+  h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; }
+  .wrap { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+  .panel { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); }
+
+  /* Top rail — now a flowing pill row, no hard grid lines */
+  .rail {
+    display: grid;
+    grid-template-columns: 1.7fr repeat(4, 1fr);
+    gap: 14px;
+    align-items: stretch;
+    margin-bottom: 18px;
+  }
+  .rail > div { background: var(--card); padding: 22px 24px; border-radius: var(--radius); box-shadow: var(--shadow); }
+  .rail .id { display: flex; flex-direction: column; justify-content: center; background: var(--active); }
+  .rail .brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: var(--card);
+  }
+  .rail .brand span { color: var(--gold-light); }
+  .rail .disc { font-size: 24px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; margin-top: 6px; color: var(--card); }
+  .rail .sub { font-size: 12px; color: oklch(0.97 0.012 75 / 0.85); letter-spacing: 0.04em; margin-top: 3px; }
+  .rail .k { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-foreground); font-weight: 600; }
+  .rail .v { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 32px; line-height: 1.1; margin-top: 10px; }
+  .rail .vu { font-size: 11px; color: var(--muted-foreground); margin-top: 5px; }
+  .rail .peak { background: linear-gradient(170deg, oklch(0.8 0.11 68 / 0.3), var(--card) 62%); }
+  .rail .peak .v { color: var(--gold-strong); }
+
+  /* Two-column body */
+  .cols { display: grid; grid-template-columns: 340px 1fr; gap: 18px; align-items: start; }
+
+  /* Verdict card */
+  .verdict-card { padding: 32px 30px; }
+  .verdict-card .tag {
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    font-weight: 700; color: var(--muted-foreground);
+  }
+  .verdict-badge {
+    display: inline-block;
+    margin: 16px 0 20px;
+    padding: 12px 24px;
+    border-radius: 999px;
+    background: var(--active);
+    color: var(--card);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+  }
+  .verdict-card h1 { font-size: 28px; line-height: 1.1; letter-spacing: -0.01em; text-wrap: balance; }
+  .verdict-card p { font-size: 15px; color: var(--muted-foreground); margin-top: 16px; text-wrap: pretty; }
+  .verdict-card p strong { color: var(--terracotta-strong); }
+
+  .gauge { margin-top: 24px; padding-top: 22px; border-top: 2px solid oklch(0.85 0.035 55 / 0.6); }
+  .gauge.tight { border-top: none; padding-top: 18px; margin-top: 18px; }
+  .gauge .gk { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-foreground); font-weight: 600; margin-bottom: 8px; display:flex; justify-content: space-between; }
+  .bar { height: 14px; border-radius: 999px; background: var(--secondary); overflow: hidden; }
+  .bar > span { display: block; height: 100%; border-radius: 999px; }
+  .bar .g { background: var(--active); }
+  .scale-note { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted-foreground); margin-top: 7px; }
+
+  /* Matrix */
+  .matrix-card { padding: 30px 30px 28px; }
+  .mhead { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-bottom: 10px; flex-wrap: wrap; }
+  .mhead h2 { font-size: 22px; display: inline-flex; align-items: center; gap: 12px; }
+  .mhead h2::before { content: ''; width: 11px; height: 11px; border-radius: 50%; background: var(--active); }
+  .mhead .n { font-size: 12px; color: var(--muted-foreground); }
+  .m-legend { display: flex; gap: 18px; flex-wrap: wrap; margin: 8px 0 18px; font-size: 12px; color: var(--muted-foreground); }
+  .m-legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .sw { width: 13px; height: 13px; border-radius: 5px; display: inline-block; }
+  .sw.win { background: var(--gold-strong); }
+  .sw.loss { background: var(--brick); }
+  .sw.even { background: var(--secondary); }
+  .sw.none { background: repeating-linear-gradient(45deg, var(--secondary), var(--secondary) 3px, var(--card) 3px, var(--card) 6px); box-shadow: inset 0 0 0 1px var(--border); }
+
+  .matrix-scroll { overflow-x: auto; }
+  table.matrix { border-collapse: separate; border-spacing: 5px; width: 100%; min-width: 640px; }
+  table.matrix th, table.matrix td { text-align: center; }
+  table.matrix .corner { text-align: left; }
+  table.matrix thead th {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; font-weight: 600;
+    color: var(--muted-foreground);
+    padding: 4px 2px 10px;
+    vertical-align: bottom;
+    letter-spacing: 0.02em;
+  }
+  table.matrix tbody th {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; font-weight: 600;
+    text-align: left; white-space: nowrap;
+    padding: 0 14px 0 4px; color: var(--foreground);
+  }
+  table.matrix tbody th .ov {
+    display: block; font-size: 11px; color: var(--muted-foreground);
+    font-weight: 500; font-family: 'Barlow', sans-serif;
+  }
+  .cell {
+    width: 58px; height: 48px;
+    border-radius: 12px;
+    font-variant-numeric: tabular-nums;
+    font-size: 14px; font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+  }
+  .cell.win { background: color-mix(in oklch, var(--gold-strong) 20%, var(--card)); color: var(--gold-strong); }
+  .cell.win.dom { background: var(--gold-strong); color: var(--card); }
+  .cell.loss { background: color-mix(in oklch, var(--brick) 14%, var(--card)); color: var(--brick); }
+  .cell.even { background: var(--secondary); color: var(--foreground); }
+  .cell.none { background: repeating-linear-gradient(45deg, var(--secondary), var(--secondary) 4px, var(--card) 4px, var(--card) 8px); color: var(--muted-foreground); }
+  .cell.self { background: var(--foreground); }
+  .matrix-cap { font-size: 12px; color: var(--muted-foreground); margin-top: 16px; }
+  .matrix-cap b { color: var(--gold-strong); }
+
+  /* Storylines strip */
+  .stories { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 18px; }
+  .story { padding: 26px 24px 26px; position: relative; overflow: hidden; }
+  .story::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--terracotta); }
+  .story.gold::before { background: var(--gold-strong); }
+  .story .st { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 26px; color: var(--terracotta-strong); }
+  .story.gold .st { color: var(--gold-strong); }
+  .story .ty { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-foreground); font-weight: 600; margin: 12px 0 5px; }
+  .story h3 { font-size: 16px; margin-bottom: 7px; }
+  .story p { font-size: 13px; color: var(--muted-foreground); text-wrap: pretty; }
+
+  footer { padding: 26px 12px 6px; color: var(--gold-light); font-size: 12px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 980px) {
+    .rail { grid-template-columns: 1fr 1fr; }
+    .rail .id { grid-column: 1 / -1; }
+    .cols { grid-template-columns: 1fr; }
+    .stories { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px) {
+    body { padding: 16px; }
+    .rail { grid-template-columns: 1fr 1fr; }
+    .rail .v { font-size: 26px; }
+    .stories { grid-template-columns: 1fr; }
+    .verdict-card h1 { font-size: 24px; }
+    footer { flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+  <!-- Track lane curve behind everything -->
+  <svg class="track-bg" viewBox="0 0 1440 1024" preserveAspectRatio="xMaxYMin slice" aria-hidden="true">
+    <g fill="none" stroke="var(--gold-light)" stroke-opacity="0.13" stroke-width="2">
+      <circle cx="1520" cy="-60" r="360" />
+      <circle cx="1520" cy="-60" r="470" />
+      <circle cx="1520" cy="-60" r="580" />
+      <circle cx="1520" cy="-60" r="690" />
+      <circle cx="1520" cy="-60" r="800" />
+    </g>
+    <g fill="none" stroke="var(--card)" stroke-opacity="0.09" stroke-width="2">
+      <circle cx="-140" cy="1100" r="440" />
+      <circle cx="-140" cy="1100" r="560" />
+      <circle cx="-140" cy="1100" r="680" />
+    </g>
+  </svg>
+
+  <div class="wrap">
+    <!-- TOP RAIL -->
+    <div class="rail">
+      <div class="id">
+        <div class="brand">Podium<span>Call</span></div>
+        <div class="disc">Men's 100m</div>
+        <div class="sub">Discipline vs discipline · final in 6 days</div>
+      </div>
+      <div>
+        <div class="k">Median score</div>
+        <div class="v fig">1206</div>
+        <div class="vu">World Athletics pts</div>
+      </div>
+      <div class="peak">
+        <div class="k">Top score</div>
+        <div class="v fig">1269</div>
+        <div class="vu">Seville · 99.0 pct</div>
+      </div>
+      <div>
+        <div class="k">Ranked</div>
+        <div class="v fig">8</div>
+        <div class="vu">athletes</div>
+      </div>
+      <div>
+        <div class="k">Indoor share</div>
+        <div class="v fig">0%</div>
+        <div class="vu">all outdoor</div>
+      </div>
+    </div>
+
+    <div class="cols">
+      <!-- VERDICT / GAUGE -->
+      <aside class="panel verdict-card">
+        <div class="tag">Depth verdict</div>
+        <div class="verdict-badge">DEEP FIELD</div>
+        <h1>One of the deepest fields at the final.</h1>
+        <p>The top score beats the median by just <strong>63 points</strong>, and the two favourites are separated by <strong>a single point</strong>. No runaway, no gap.</p>
+
+        <div class="gauge">
+          <div class="gk"><span>Top vs median spread</span><span class="fig">63 pts</span></div>
+          <div class="bar"><span class="g" style="width:18%"></span></div>
+          <div class="scale-note"><span>tight = deep</span><span>wide = top-heavy</span></div>
+        </div>
+        <div class="gauge tight">
+          <div class="gk"><span>Pairings that have raced</span><span class="fig">27 / 28</span></div>
+          <div class="bar"><span class="g" style="width:96.4%"></span></div>
+          <div class="scale-note"><span>96% of the field has met</span><span></span></div>
+        </div>
+        <div class="gauge tight">
+          <div class="gk"><span>Season top-3 spread</span><span class="fig">0.16 s</span></div>
+          <div class="bar"><span class="g" style="width:22%"></span></div>
+          <div class="scale-note"><span>9.82 fastest</span><span>9.99 slowest</span></div>
+        </div>
+      </aside>
+
+      <!-- MATRIX -->
+      <section class="panel matrix-card">
+        <div class="mhead">
+          <h2>Head-to-head matrix</h2>
+          <div class="n">Row vs column · real career meetings (W–L)</div>
+        </div>
+        <div class="m-legend">
+          <span><i class="sw win"></i> row leads</span>
+          <span><i class="sw loss"></i> row trails</span>
+          <span><i class="sw even"></i> level</span>
+          <span><i class="sw none"></i> never met</span>
+        </div>
+        <div class="matrix-scroll">
+          <table class="matrix">
+            <thead>
+              <tr>
+                <th class="corner">Athlete</th>
+                <th>SEV</th><th>ESE</th><th>BED</th><th>LEO</th><th>BRO</th><th>ANT</th><th>SIM</th><th>OMA</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- SEVILLE -->
+              <tr>
+                <th>Seville <span class="ov fig">21–5 · 80.8%</span></th>
+                <td><div class="cell self"></div></td>
+                <td><div class="cell win dom fig">3–0</div></td>
+                <td><div class="cell win fig">2–1</div></td>
+                <td><div class="cell win dom fig">4–0</div></td>
+                <td><div class="cell loss fig">0–2</div></td>
+                <td><div class="cell win dom fig">2–0</div></td>
+                <td><div class="cell win dom fig">6–1</div></td>
+                <td><div class="cell win dom fig">4–1</div></td>
+              </tr>
+              <!-- ESEME -->
+              <tr>
+                <th>Eseme <span class="ov fig">10–23 · 30.3%</span></th>
+                <td><div class="cell loss fig">0–3</div></td>
+                <td><div class="cell self"></div></td>
+                <td><div class="cell loss fig">0–2</div></td>
+                <td><div class="cell even fig">1–1</div></td>
+                <td><div class="cell loss fig">0–1</div></td>
+                <td><div class="cell win fig">3–1</div></td>
+                <td><div class="cell loss fig">3–10</div></td>
+                <td><div class="cell loss fig">3–5</div></td>
+              </tr>
+              <!-- BEDNAREK -->
+              <tr>
+                <th>Bednarek <span class="ov fig">14–14 · 50.0%</span></th>
+                <td><div class="cell loss fig">1–2</div></td>
+                <td><div class="cell win dom fig">2–0</div></td>
+                <td><div class="cell self"></div></td>
+                <td><div class="cell even fig">2–2</div></td>
+                <td><div class="cell loss fig">3–4</div></td>
+                <td><div class="cell none fig">—</div></td>
+                <td><div class="cell win dom fig">5–1</div></td>
+                <td><div class="cell loss fig">1–5</div></td>
+              </tr>
+              <!-- LEOTLELA -->
+              <tr>
+                <th>Leotlela <span class="ov fig">12–9 · 57.1%</span></th>
+                <td><div class="cell loss fig">0–4</div></td>
+                <td><div class="cell even fig">1–1</div></td>
+                <td><div class="cell even fig">2–2</div></td>
+                <td><div class="cell self"></div></td>
+                <td><div class="cell win dom fig">2–0</div></td>
+                <td><div class="cell win dom fig">1–0</div></td>
+                <td><div class="cell win dom fig">4–1</div></td>
+                <td><div class="cell win fig">2–1</div></td>
+              </tr>
+              <!-- BROMELL -->
+              <tr>
+                <th>Bromell <span class="ov fig">21–11 · 65.6%</span></th>
+                <td><div class="cell win dom fig">2–0</div></td>
+                <td><div class="cell win dom fig">1–0</div></td>
+                <td><div class="cell win fig">4–3</div></td>
+                <td><div class="cell loss fig">0–2</div></td>
+                <td><div class="cell self"></div></td>
+                <td><div class="cell win dom fig">1–0</div></td>
+                <td><div class="cell win dom fig">9–2</div></td>
+                <td><div class="cell even fig">4–4</div></td>
+              </tr>
+              <!-- ANTHONY -->
+              <tr>
+                <th>Anthony <span class="ov fig">4–8 · 33.3%</span></th>
+                <td><div class="cell loss fig">0–2</div></td>
+                <td><div class="cell loss fig">1–3</div></td>
+                <td><div class="cell none fig">—</div></td>
+                <td><div class="cell loss fig">0–1</div></td>
+                <td><div class="cell loss fig">0–1</div></td>
+                <td><div class="cell self"></div></td>
+                <td><div class="cell even fig">1–1</div></td>
+                <td><div class="cell win dom fig">2–0</div></td>
+              </tr>
+              <!-- SIMBINE -->
+              <tr>
+                <th>Simbine <span class="ov fig">25–36 · 41.0%</span></th>
+                <td><div class="cell loss fig">1–6</div></td>
+                <td><div class="cell win dom fig">10–3</div></td>
+                <td><div class="cell loss fig">1–5</div></td>
+                <td><div class="cell loss fig">1–4</div></td>
+                <td><div class="cell loss fig">2–9</div></td>
+                <td><div class="cell even fig">1–1</div></td>
+                <td><div class="cell self"></div></td>
+                <td><div class="cell win fig">9–8</div></td>
+              </tr>
+              <!-- OMANYALA -->
+              <tr>
+                <th>Omanyala <span class="ov fig">24–25 · 49.0%</span></th>
+                <td><div class="cell loss fig">1–4</div></td>
+                <td><div class="cell win fig">5–3</div></td>
+                <td><div class="cell win dom fig">5–1</div></td>
+                <td><div class="cell loss fig">1–2</div></td>
+                <td><div class="cell even fig">4–4</div></td>
+                <td><div class="cell loss fig">0–2</div></td>
+                <td><div class="cell loss fig">8–9</div></td>
+                <td><div class="cell self"></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="matrix-cap">Solid <b>gold</b> = a dominant winning record (2+ clear). The lone hatched pair — Bednarek and Anthony — is the only match-up in the field that has never happened. Simbine has raced the most opponents but trails five of the seven.</p>
+      </section>
+    </div>
+
+    <!-- STORYLINES -->
+    <div class="stories">
+      <div class="panel story">
+        <div class="st fig">3–0</div>
+        <div class="ty">Rivalry renewed</div>
+        <h3>H2H says nothing</h3>
+        <p>Seville is 3–0 vs Eseme in real meetings, yet the model makes Eseme the 36% pick for the final.</p>
+      </div>
+      <div class="panel story gold">
+        <div class="st fig">36→35%</div>
+        <div class="ty">Photo finish</div>
+        <h3>One point apart</h3>
+        <p>Eseme to Seville, 36% to 35% — the closest projected race in the Men's 100m.</p>
+      </div>
+      <div class="panel story">
+        <div class="st fig">−0.11s</div>
+        <div class="ty">Trending up</div>
+        <h3>Sharpest riser</h3>
+        <p>Bednarek: 9.98 to 9.87 across 3 real meetings — the biggest in-season gain up top.</p>
+      </div>
+      <div class="panel story gold">
+        <div class="st fig">#1</div>
+        <div class="ty">Debutant</div>
+        <h3>First-ever final</h3>
+        <p>Seville, the world #1, has never made a DL 100m final — no appearance 2018–2025.</p>
+      </div>
+    </div>
+
+    <footer>
+      <span>PodiumCall — Discipline vs discipline. Sample built on real World Athletics data for the Men's 100m.</span>
+      <span class="fig">Direction B · Analyst</span>
+    </footer>
+  </div>
+</body>
+</html>

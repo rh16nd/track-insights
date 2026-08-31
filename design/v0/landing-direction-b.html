@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PodiumCall — Timing Tower (Direction B)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --background: oklch(0.54 0.105 40);
+    --foreground: oklch(0.19 0.03 40);
+    --card: oklch(0.97 0.012 75);
+    --secondary: oklch(0.91 0.02 60);
+    --muted-foreground: oklch(0.42 0.045 45);
+    --border: oklch(0.85 0.035 55);
+    --terracotta: oklch(0.545 0.164 38.5);
+    --terracotta-strong: oklch(0.45 0.164 38.5);
+    --gold-strong: oklch(0.49 0.128 68);
+    --gold-light: oklch(0.8 0.11 68);
+    --brick: oklch(0.406 0.121 40);
+    --active: linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:var(--background)}
+  body{
+    font-family:'Barlow',system-ui,sans-serif;color:var(--foreground);
+    background:var(--background);line-height:1.5;-webkit-font-smoothing:antialiased;
+    font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;
+  }
+  h1,h2,h3,.dg{font-family:'Space Grotesk',system-ui,sans-serif}
+  .cond{font-family:'Barlow Semi Condensed',system-ui,sans-serif}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+
+  /* ---------- top rail ---------- */
+  .rail{
+    background:var(--brick);position:relative;z-index:5;
+    border-bottom:2px solid var(--gold-strong);
+  }
+  .rail .wrap{display:flex;align-items:stretch;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:13px;padding:16px 0}
+  .brand .mark{
+    width:36px;height:36px;border-radius:8px;background:var(--active);
+    display:grid;place-items:center;flex:none;
+  }
+  .brand .mark span{font-family:'Space Grotesk';font-weight:700;color:var(--card);font-size:18px}
+  .brand b{font-family:'Space Grotesk';font-weight:700;font-size:18px;color:var(--card);letter-spacing:-0.01em;line-height:1}
+  .brand small{display:block;color:var(--gold-light);font-size:10.5px;letter-spacing:0.18em;text-transform:uppercase;margin-top:3px}
+  .rnav{display:flex;align-items:stretch}
+  .rnav a{
+    display:flex;align-items:center;gap:8px;
+    font-family:'Space Grotesk';font-size:12.5px;font-weight:500;letter-spacing:0.03em;
+    color:oklch(0.97 0.012 75 / 0.66);text-decoration:none;padding:0 15px;
+    border-left:1px solid oklch(0.97 0.012 75 / 0.12);transition:.15s;position:relative;
+  }
+  .rnav a .ln{font-size:9px;color:var(--gold-light);letter-spacing:0.1em}
+  .rnav a:hover{color:var(--card);background:oklch(0.97 0.012 75 / 0.07)}
+  .rnav a.active{color:var(--card);background:var(--active)}
+  .rnav a.active .ln{color:var(--card)}
+
+  /* status strip */
+  .status{background:var(--foreground);position:relative;z-index:4}
+  .status .wrap{display:flex;align-items:center;gap:26px;padding:9px 28px;flex-wrap:wrap}
+  .status span{color:oklch(0.97 0.012 75 / 0.62);font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;font-family:'Space Grotesk';display:flex;align-items:center;gap:8px}
+  .status span b{color:var(--gold-light);font-weight:600}
+  .status .live{width:7px;height:7px;border-radius:999px;background:var(--gold-light);box-shadow:0 0 0 3px oklch(0.8 0.11 68 / 0.3)}
+
+  /* ---------- hero: timing board ---------- */
+  .hero{position:relative;overflow:hidden;padding:44px 0 54px}
+  .startticks{position:absolute;top:0;left:0;right:0;height:100%;pointer-events:none;
+    background:repeating-linear-gradient(90deg,transparent 0,transparent 119px,oklch(0.97 0.012 75 / 0.08) 119px,oklch(0.97 0.012 75 / 0.08) 120px);
+  }
+  .hero .wrap{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr 0.85fr;gap:40px;align-items:center}
+  .hlead .tag{
+    display:inline-flex;align-items:center;gap:9px;font-family:'Space Grotesk';
+    font-size:11.5px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--brick);background:var(--gold-light);padding:7px 14px;border-radius:6px;
+  }
+  .hlead h1{
+    color:var(--card);font-size:clamp(40px,6vw,74px);line-height:0.96;font-weight:700;
+    letter-spacing:-0.03em;margin-top:20px;text-wrap:balance;
+  }
+  .hlead h1 em{font-style:normal;color:var(--gold-light)}
+  .hlead p{color:oklch(0.97 0.012 75 / 0.88);font-size:17px;max-width:42ch;margin-top:18px}
+  .cta{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+  .btn{font-family:'Space Grotesk';font-weight:600;font-size:14px;padding:13px 22px;border-radius:8px;
+    text-decoration:none;display:inline-flex;align-items:center;gap:9px;transition:.15s;border:none;cursor:pointer}
+  .btn-p{background:var(--card);color:var(--terracotta-strong)}
+  .btn-p:hover{transform:translateY(-1px)}
+  .btn-g{background:transparent;color:var(--card);border:1px solid oklch(0.97 0.012 75 / 0.4)}
+  .btn-g:hover{background:oklch(0.97 0.012 75 / 0.1)}
+  .btn svg{width:16px;height:16px}
+
+  /* the board */
+  .board{background:var(--foreground);border-radius:12px;overflow:hidden;
+    box-shadow:0 24px 50px oklch(0.2 0.05 40 / 0.4);border:1px solid oklch(0.97 0.012 75 / 0.1)}
+  .board-h{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;
+    background:oklch(0.24 0.04 40);border-bottom:1px solid oklch(0.97 0.012 75 / 0.1)}
+  .board-h .t{font-family:'Space Grotesk';color:var(--card);font-size:13px;font-weight:600;letter-spacing:0.05em}
+  .board-h .e{color:var(--gold-light);font-size:11px;letter-spacing:0.14em;text-transform:uppercase}
+  .brow{display:grid;grid-template-columns:34px 1fr auto auto;align-items:center;gap:12px;
+    padding:13px 18px;border-bottom:1px solid oklch(0.97 0.012 75 / 0.08)}
+  .brow:last-child{border-bottom:none}
+  .brow .ln{font-family:'Space Grotesk';font-size:13px;color:oklch(0.97 0.012 75 / 0.4);font-weight:600;text-align:center}
+  .brow .who{color:var(--card);font-weight:500;font-size:15px;line-height:1.15}
+  .brow .who i{display:block;font-style:normal;color:oklch(0.97 0.012 75 / 0.5);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;margin-top:2px}
+  .brow .mk{font-family:'Space Grotesk';color:oklch(0.97 0.012 75 / 0.82);font-size:15px;font-weight:500}
+  .brow .pb{font-family:'Space Grotesk';font-size:16px;font-weight:700;color:var(--gold-light);min-width:52px;text-align:right}
+  .brow.top{background:var(--active)}
+  .brow.top .ln{color:oklch(0.97 0.012 75 / 0.8)}
+  .brow.top .mk{color:oklch(0.97 0.012 75 / 0.9)}
+  .brow.top .pb{color:var(--card)}
+  .board-f{padding:11px 18px;background:oklch(0.24 0.04 40);color:oklch(0.97 0.012 75 / 0.6);
+    font-size:11.5px;letter-spacing:0.05em;display:flex;justify-content:space-between}
+  .board-f b{color:var(--gold-light);font-family:'Space Grotesk'}
+
+  /* ---------- readout strip ---------- */
+  .readout{background:var(--card);position:relative;z-index:2;border-top:2px solid var(--gold-strong)}
+  .readout .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:0}
+  .cell{padding:30px 28px;border-right:1px solid var(--border)}
+  .cell:last-child{border-right:none}
+  .cell .l{font-family:'Space Grotesk';color:var(--muted-foreground);font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase}
+  .cell .v{font-family:'Space Grotesk';font-size:52px;font-weight:700;color:var(--terracotta-strong);letter-spacing:-0.03em;line-height:0.95;margin-top:12px}
+  .cell .v .u{font-size:22px;color:var(--gold-strong);margin-left:2px}
+  .cell .d{color:var(--muted-foreground);font-size:13px;margin-top:9px}
+  .cell.hl .v{background:var(--active);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  @media(max-width:960px){
+    .hero .wrap{grid-template-columns:1fr;gap:30px}
+    .readout .wrap{grid-template-columns:1fr 1fr}
+    .cell:nth-child(2){border-right:none}
+    .cell:nth-child(1),.cell:nth-child(2){border-bottom:1px solid var(--border)}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 18px}
+    .rnav{display:none}
+    .readout .wrap{grid-template-columns:1fr 1fr}
+    .cell{padding:22px 18px}
+    .cell .v{font-size:40px}
+    .status .wrap{gap:16px}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== top rail ===== -->
+  <header class="rail">
+    <div class="wrap">
+      <div class="brand">
+        <div class="mark"><span>P</span></div>
+        <div>
+          <b>PodiumCall</b>
+          <small>Timing Tower</small>
+        </div>
+      </div>
+      <nav class="rnav">
+        <a href="#" class="active"><span>The Final</span></a>
+        <a href="#"><span>Projections</span></a>
+        <a href="#"><span>Track</span></a>
+        <a href="#"><span>Field</span></a>
+        <a href="#"><span>Qualifying</span></a>
+        <a href="#"><span>Depth Index</span></a>
+        <a href="#"><span>Schedule</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== status strip ===== -->
+  <div class="status">
+    <div class="wrap">
+      <span><i class="live"></i>Live model</span>
+      <span>Final&nbsp;<b>Brussels · 04 Sep</b></span>
+      <span>T-minus&nbsp;<b class="num">6 days</b></span>
+      <span>Updated&nbsp;<b>29 Aug 2026</b></span>
+    </div>
+  </div>
+
+  <!-- ===== hero ===== -->
+  <section class="hero">
+    <div class="startticks"></div>
+    <div class="wrap">
+      <div class="hlead">
+        <span class="tag">32 disciplines · 15 meetings scored</span>
+        <h1>The Final,<br>called <em>lane by lane.</em></h1>
+        <p>A walk-forward model reading three seasons of real World Athletics form — then telling you where the podium is settled and where it isn&apos;t.</p>
+        <div class="cta">
+          <a class="btn btn-p" href="#">Open projections
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="btn btn-g" href="#">Depth index</a>
+        </div>
+      </div>
+
+      <!-- timing board: real Men's 100m field -->
+      <div class="board">
+        <div class="board-h">
+          <div class="t">Men&apos;s 100m · projected order</div>
+          <div class="e">Closest call</div>
+        </div>
+        <div class="brow top">
+          <div class="ln num">1</div>
+          <div class="who">Emmanuel Eseme<i>CMR</i></div>
+          <div class="mk num">9.83</div>
+          <div class="pb num">36%</div>
+        </div>
+        <div class="brow">
+          <div class="ln num">2</div>
+          <div class="who">Oblique Seville<i>JAM</i></div>
+          <div class="mk num">9.82</div>
+          <div class="pb num">35%</div>
+        </div>
+        <div class="brow">
+          <div class="ln num">3</div>
+          <div class="who">Kenneth Bednarek<i>USA</i></div>
+          <div class="mk num">9.87</div>
+          <div class="pb num">18%</div>
+        </div>
+        <div class="brow">
+          <div class="ln num">4</div>
+          <div class="who">Trayvon Bromell<i>USA</i></div>
+          <div class="mk num">9.91</div>
+          <div class="pb num">12%</div>
+        </div>
+        <div class="brow">
+          <div class="ln num">5</div>
+          <div class="who">Gift Leotlela<i>RSA</i></div>
+          <div class="mk num">9.91</div>
+          <div class="pb num">5%</div>
+        </div>
+        <div class="board-f">
+          <span>Season best · win probability</span>
+          <span><b>1 point</b> splits the top two</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== readout strip ===== -->
+  <section class="readout">
+    <div class="wrap">
+      <div class="cell hl">
+        <div class="l">Top-3 hit rate</div>
+        <div class="v num">71.9<span class="u">%</span></div>
+        <div class="d">Walk-forward, 2023&ndash;2025</div>
+      </div>
+      <div class="cell">
+        <div class="l">Disciplines</div>
+        <div class="v num">32</div>
+        <div class="d">Track &amp; field, both sexes</div>
+      </div>
+      <div class="cell">
+        <div class="l">Surest call</div>
+        <div class="v num">80<span class="u">%</span></div>
+        <div class="d">Paulino, Women&apos;s 400m</div>
+      </div>
+      <div class="cell">
+        <div class="l">Meetings scored</div>
+        <div class="v num">15</div>
+        <div class="d">Shaoxing to the Final</div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

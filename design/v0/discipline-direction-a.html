@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-background">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PodiumCall — Discipline vs discipline · Men's 100m (Direction A)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --background: oklch(0.54 0.105 40);
+    --foreground: oklch(0.19 0.03 40);
+    --card: oklch(0.97 0.012 75);
+    --secondary: oklch(0.91 0.02 60);
+    --muted-foreground: oklch(0.42 0.045 45);
+    --border: oklch(0.85 0.035 55);
+    --terracotta: oklch(0.545 0.164 38.5);
+    --terracotta-strong: oklch(0.45 0.164 38.5);
+    --gold-strong: oklch(0.49 0.128 68);
+    --gold-light: oklch(0.8 0.11 68);
+    --brick: oklch(0.406 0.121 40);
+    --active: linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%);
+    --radius: 26px;
+    --radius-sm: 14px;
+    --shadow: 0 22px 50px -28px oklch(0.30 0.09 40 / 0.55);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { background: var(--background); }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    color: var(--foreground);
+    background: var(--background);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    padding: 28px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Track-lane curve motif — the terracotta is the track surface */
+  .track-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+  }
+
+  .fig { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
+
+  h1, h2, h3, h4, .display, .kicker { font-family: 'Space Grotesk', sans-serif; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* Masthead */
+  .masthead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 12px 26px;
+    flex-wrap: wrap;
+  }
+  .brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 21px;
+    letter-spacing: 0.16em;
+    color: var(--card);
+    text-transform: uppercase;
+  }
+  .brand span { color: var(--gold-light); }
+  .masthead .meta {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    font-weight: 600;
+    background: oklch(0.45 0.121 40 / 0.55);
+    padding: 8px 16px;
+    border-radius: 999px;
+  }
+
+  .panel {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  /* Hero */
+  .hero {
+    padding: 52px 56px 48px;
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  /* soft lane sweep inside the hero */
+  .hero .lanes {
+    position: absolute;
+    right: -80px;
+    top: -120px;
+    width: 520px;
+    height: 520px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .hero .kicker {
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--terracotta-strong);
+    font-weight: 600;
+    margin-bottom: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero .kicker::before {
+    content: '';
+    width: 26px; height: 3px; border-radius: 2px;
+    background: var(--active);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 250px;
+    gap: 48px;
+    align-items: end;
+    position: relative;
+  }
+  .hero h1 {
+    font-size: 70px;
+    line-height: 0.98;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+    text-wrap: balance;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--terracotta);
+  }
+  .hero .dek {
+    margin-top: 24px;
+    font-size: 18px;
+    max-width: 60ch;
+    color: var(--muted-foreground);
+    text-wrap: pretty;
+  }
+  .verdict {
+    text-align: center;
+    padding: 30px 22px;
+    border-radius: var(--radius);
+    background: var(--active);
+    color: var(--card);
+    position: relative;
+    overflow: hidden;
+  }
+  .verdict .lab {
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: 0.92;
+  }
+  .verdict .big {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 38px;
+    line-height: 1.0;
+    margin: 12px 0 10px;
+  }
+  .verdict .sub {
+    font-size: 13px;
+    opacity: 0.96;
+    background: oklch(0.97 0.012 75 / 0.22);
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 999px;
+  }
+
+  /* Metrics strip */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+  .metric {
+    padding: 28px 26px 26px;
+    position: relative;
+    overflow: hidden;
+  }
+  .metric .lab {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .metric .val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+  }
+  .metric .unit { font-size: 14px; color: var(--muted-foreground); margin-top: 10px; font-weight: 500; }
+  .metric.is-peak { background: linear-gradient(170deg, oklch(0.8 0.11 68 / 0.24), var(--card) 60%); }
+  .metric.is-peak .val { color: var(--gold-strong); }
+  .metric.is-peak .tag {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--card);
+    background: var(--gold-strong);
+    padding: 5px 12px;
+    border-radius: 999px;
+  }
+
+  /* Section */
+  .section { padding: 42px 48px 44px; margin-bottom: 22px; }
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .section-head::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--terracotta) 0%, var(--gold-light) 45%, transparent 80%);
+  }
+  .section-head h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-head h2::before {
+    content: '';
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--active);
+    flex: none;
+  }
+  .section-head .note { font-size: 13px; color: var(--muted-foreground); }
+
+  /* Depth evidence */
+  .evidence { display: grid; grid-template-columns: 1.4fr 1fr; gap: 44px; align-items: center; }
+  .chart-wrap {
+    background: linear-gradient(180deg, oklch(0.91 0.02 60 / 0.4), transparent);
+    border-radius: var(--radius-sm);
+    padding: 22px 24px 16px;
+  }
+  .chart-cap { font-size: 13px; color: var(--muted-foreground); margin-top: 8px; }
+  .chart-title { font-size: 14px; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 8px; }
+  svg { display: block; width: 100%; height: auto; }
+  .ev-copy p { font-size: 16px; color: var(--foreground); margin-bottom: 16px; text-wrap: pretty; }
+  .ev-copy p:last-child { margin-bottom: 0; }
+  .ev-copy strong { color: var(--terracotta-strong); font-weight: 700; }
+  .ev-copy .figbig {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--gold-strong);
+    font-weight: 700;
+  }
+
+  /* Table */
+  .table-shell { border-radius: var(--radius-sm); overflow: hidden; background: oklch(0.91 0.02 60 / 0.28); }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    text-align: right;
+    padding: 16px 16px 14px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  thead th.l { text-align: left; }
+  tbody td {
+    padding: 16px;
+    text-align: right;
+    font-size: 16px;
+  }
+  tbody td.l { text-align: left; }
+  tbody tr { transition: background 0.15s; }
+  tbody tr:nth-child(even) { background: oklch(0.97 0.012 75 / 0.55); }
+  tbody tr.lead { background: linear-gradient(90deg, oklch(0.8 0.11 68 / 0.22), transparent 70%); }
+  .rank {
+    display: inline-flex;
+    width: 30px; height: 30px;
+    align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--card);
+    box-shadow: inset 0 0 0 2px var(--border);
+    color: var(--foreground);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    margin-right: 14px;
+  }
+  tbody tr.lead .rank { background: var(--active); color: var(--card); box-shadow: none; }
+  .aname { font-weight: 600; font-family: 'Space Grotesk', sans-serif; }
+  .best { color: var(--gold-strong); font-weight: 700; }
+  .wl-w { color: var(--terracotta-strong); font-weight: 600; }
+  .pick {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--card);
+    background: var(--gold-strong);
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+  .legend { font-size: 12px; color: var(--muted-foreground); margin-top: 18px; }
+  .legend b { color: var(--gold-strong); }
+
+  /* Storylines */
+  .stories { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .story {
+    padding: 30px 32px;
+    border-radius: var(--radius-sm);
+    background: oklch(0.91 0.02 60 / 0.32);
+    position: relative;
+    padding-left: 40px;
+  }
+  .story::before {
+    content: '';
+    position: absolute;
+    left: 20px; top: 30px; bottom: 30px;
+    width: 5px; border-radius: 3px;
+    background: var(--terracotta);
+  }
+  .story.gold::before { background: var(--gold-strong); }
+  .story .type {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    font-weight: 600;
+  }
+  .story h3 {
+    font-size: 22px;
+    margin: 10px 0 8px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .story h3 .stat {
+    font-size: 15px;
+    color: var(--terracotta-strong);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+  }
+  .story.gold h3 .stat { color: var(--gold-strong); }
+  .story p { font-size: 15px; color: var(--muted-foreground); text-wrap: pretty; }
+  .story .who { margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--foreground); }
+
+  footer {
+    padding: 26px 12px 8px;
+    color: var(--gold-light);
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 30px; }
+    .evidence { grid-template-columns: 1fr; gap: 28px; }
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .stories { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 16px; }
+    .hero { padding: 34px 26px; }
+    .hero .lanes { display: none; }
+    .hero h1 { font-size: 42px; }
+    .hero .dek { font-size: 16px; }
+    .section { padding: 30px 24px; }
+    .metric .val { font-size: 38px; }
+    .table-scroll { overflow-x: auto; }
+    .table-scroll table { min-width: 640px; }
+    footer { flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+  <!-- Track lane curve behind everything -->
+  <svg class="track-bg" viewBox="0 0 1440 1024" preserveAspectRatio="xMaxYMin slice" aria-hidden="true">
+    <g fill="none" stroke="var(--gold-light)" stroke-opacity="0.14" stroke-width="2">
+      <circle cx="1500" cy="-40" r="360" />
+      <circle cx="1500" cy="-40" r="470" />
+      <circle cx="1500" cy="-40" r="580" />
+      <circle cx="1500" cy="-40" r="690" />
+      <circle cx="1500" cy="-40" r="800" />
+    </g>
+    <g fill="none" stroke="var(--card)" stroke-opacity="0.10" stroke-width="2">
+      <circle cx="-120" cy="1080" r="420" />
+      <circle cx="-120" cy="1080" r="540" />
+      <circle cx="-120" cy="1080" r="660" />
+    </g>
+  </svg>
+
+  <div class="wrap">
+    <header class="masthead">
+      <div class="brand">Podium<span>Call</span></div>
+      <div class="meta">Discipline vs discipline · 2026 Diamond League Final · 6 days out</div>
+    </header>
+
+    <!-- HERO -->
+    <section class="panel hero">
+      <svg class="lanes" viewBox="0 0 520 520" aria-hidden="true">
+        <g fill="none" stroke="var(--terracotta)" stroke-opacity="0.16" stroke-width="14">
+          <circle cx="560" cy="-40" r="300" />
+          <circle cx="560" cy="-40" r="330" />
+          <circle cx="560" cy="-40" r="360" />
+          <circle cx="560" cy="-40" r="390" />
+          <circle cx="560" cy="-40" r="420" />
+        </g>
+      </svg>
+      <div class="kicker">Depth Report — Men's 100m</div>
+      <div class="hero-grid">
+        <div>
+          <h1>The 100m isn't one man and a gap. It's <em>eight deep.</em></h1>
+          <p class="dek">Median World Athletics score of 1206, a top mark just 63 points clear, and a projected final decided by a single percentage point. On every measure we track, the blue-riband sprint is the deepest field heading into the final.</p>
+        </div>
+        <div class="verdict">
+          <div class="lab">Verdict</div>
+          <div class="big">DEEP<br />FIELD</div>
+          <div class="sub">8 real contenders</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- METRICS -->
+    <section class="metrics">
+      <div class="panel metric">
+        <div class="lab">Median WA score</div>
+        <div class="val fig">1206</div>
+        <div class="unit">points across the field</div>
+      </div>
+      <div class="panel metric is-peak">
+        <div class="lab">Top score</div>
+        <div class="val fig">1269</div>
+        <div class="unit">Oblique Seville · 99.0th pct</div>
+        <div class="tag">Peak of the field</div>
+      </div>
+      <div class="panel metric">
+        <div class="lab">Athletes ranked</div>
+        <div class="val fig">8</div>
+        <div class="unit">27 of 28 pairings have raced</div>
+      </div>
+      <div class="panel metric">
+        <div class="lab">Marks set indoors</div>
+        <div class="val fig">0<span style="font-size:26px">%</span></div>
+        <div class="unit">a purely outdoor field</div>
+      </div>
+    </section>
+
+    <!-- DEPTH EVIDENCE -->
+    <section class="panel section">
+      <div class="section-head">
+        <h2>Why we call it deep</h2>
+        <div class="note">Season top-3 average, seconds — one dot per contender</div>
+      </div>
+      <div class="evidence">
+        <div class="chart-wrap">
+          <div class="chart-title">Everybody clusters. Nobody runs away.</div>
+          <svg viewBox="0 0 1020 220" role="img" aria-label="Season top-3 average times for eight athletes, clustered between 9.82 and 9.99 seconds">
+            <!-- axis -->
+            <line x1="60" y1="150" x2="960" y2="150" stroke="var(--border)" stroke-width="2" />
+            <!-- ticks -->
+            <g font-family="Barlow" font-size="13" fill="var(--muted-foreground)" text-anchor="middle" style="font-variant-numeric:tabular-nums">
+              <line x1="60"  y1="146" x2="60"  y2="154" stroke="var(--border)" stroke-width="2" /><text x="60"  y="176">9.80</text>
+              <line x1="285" y1="146" x2="285" y2="154" stroke="var(--border)" stroke-width="2" /><text x="285" y="176">9.85</text>
+              <line x1="510" y1="146" x2="510" y2="154" stroke="var(--border)" stroke-width="2" /><text x="510" y="176">9.90</text>
+              <line x1="735" y1="146" x2="735" y2="154" stroke="var(--border)" stroke-width="2" /><text x="735" y="176">9.95</text>
+              <line x1="960" y1="146" x2="960" y2="154" stroke="var(--border)" stroke-width="2" /><text x="960" y="176">10.00</text>
+            </g>
+            <!-- spread bracket 9.823 -> 9.987 : x 163.5 -> 901.5 -->
+            <line x1="163.5" y1="60" x2="901.5" y2="60" stroke="var(--terracotta)" stroke-width="1.5" stroke-dasharray="3 4" />
+            <line x1="163.5" y1="56" x2="163.5" y2="150" stroke="var(--terracotta)" stroke-width="1.5" stroke-dasharray="3 4" />
+            <line x1="901.5" y1="56" x2="901.5" y2="150" stroke="var(--terracotta)" stroke-width="1.5" stroke-dasharray="3 4" />
+            <text x="532" y="48" text-anchor="middle" font-family="Space Grotesk" font-size="14" font-weight="700" fill="var(--terracotta-strong)" style="font-variant-numeric:tabular-nums">whole field inside 0.16s</text>
+            <!-- dots -->
+            <g style="font-variant-numeric:tabular-nums" font-family="Barlow" font-size="12" font-weight="600">
+              <!-- BEDNAREK 9.823 fastest = gold -->
+              <circle cx="163.5" cy="150" r="9" fill="var(--gold-strong)" />
+              <text x="163.5" y="128" text-anchor="middle" fill="var(--gold-strong)" font-family="Space Grotesk" font-weight="700">9.82</text>
+              <text x="163.5" y="200" text-anchor="middle" fill="var(--muted-foreground)">Bednarek</text>
+              <!-- SEVILLE 9.84 -->
+              <circle cx="240" cy="150" r="8" fill="var(--terracotta)" />
+              <text x="240" y="112" text-anchor="middle" fill="var(--muted-foreground)">Seville</text>
+              <!-- BROMELL 9.923 -->
+              <circle cx="613.5" cy="150" r="8" fill="var(--terracotta)" />
+              <text x="613.5" y="128" text-anchor="middle" fill="var(--muted-foreground)">Bromell</text>
+              <!-- OMANYALA 9.95 -->
+              <circle cx="735" cy="150" r="8" fill="var(--terracotta)" />
+              <text x="735" y="200" text-anchor="middle" fill="var(--muted-foreground)">Omanyala</text>
+              <!-- ANTHONY 9.957 -->
+              <circle cx="766.5" cy="150" r="8" fill="var(--terracotta)" />
+              <text x="766.5" y="112" text-anchor="middle" fill="var(--muted-foreground)">Anthony</text>
+              <!-- ESEME 9.967 -->
+              <circle cx="811.5" cy="150" r="8" fill="var(--brick)" />
+              <text x="811.5" y="128" text-anchor="middle" fill="var(--muted-foreground)">Eseme</text>
+              <!-- LEOTLELA 9.97 -->
+              <circle cx="825" cy="150" r="8" fill="var(--terracotta)" />
+              <text x="838" y="200" text-anchor="start" fill="var(--muted-foreground)">Leotlela</text>
+              <!-- SIMBINE 9.987 -->
+              <circle cx="901.5" cy="150" r="8" fill="var(--terracotta)" />
+              <text x="901.5" y="112" text-anchor="middle" fill="var(--muted-foreground)">Simbine</text>
+            </g>
+          </svg>
+          <p class="chart-cap">Gold marks the fastest season top-3 average in the field.</p>
+        </div>
+        <div class="ev-copy">
+          <p>The top score of <span class="figbig">1269</span> sits only <strong>63 points</strong> above the field median of 1206 — in a discipline this crowded, the best athlete barely separates from the middle.</p>
+          <p><strong>27 of 28</strong> possible head-to-head pairings have already met on the track. Only one pair in the whole field has never raced.</p>
+          <p>The two favourites are split <strong>36% to 35%</strong> — the closest projected race in the discipline. This is depth, not a procession.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RANKED FIELD -->
+    <section class="panel section">
+      <div class="section-head">
+        <h2>The ranked field</h2>
+        <div class="note">Ordered by head-to-head win rate within these eight</div>
+      </div>
+      <div class="table-shell">
+      <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th class="l">Athlete</th>
+            <th>Season top-3 avg</th>
+            <th>Head-to-head</th>
+            <th>H2H win %</th>
+            <th>Podium %</th>
+            <th>Avg finish</th>
+            <th>Steadiness</th>
+            <th>Season races</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="lead">
+            <td class="l"><span class="rank fig">1</span><span class="aname">Oblique Seville</span></td>
+            <td class="fig">9.84</td>
+            <td class="fig"><span class="wl-w">21</span>–5</td>
+            <td class="fig best">80.8</td>
+            <td class="fig best">88.0</td>
+            <td class="fig best">2.00</td>
+            <td class="fig best">0.34</td>
+            <td class="fig">5</td>
+          </tr>
+          <tr>
+            <td class="l"><span class="rank fig">2</span><span class="aname">Trayvon Bromell</span></td>
+            <td class="fig">9.92</td>
+            <td class="fig"><span class="wl-w">21</span>–11</td>
+            <td class="fig">65.6</td>
+            <td class="fig">70.4</td>
+            <td class="fig">2.63</td>
+            <td class="fig">0.74</td>
+            <td class="fig">4</td>
+          </tr>
+          <tr>
+            <td class="l"><span class="rank fig">3</span><span class="aname">Gift Leotlela</span></td>
+            <td class="fig">9.97</td>
+            <td class="fig"><span class="wl-w">12</span>–9</td>
+            <td class="fig">57.1</td>
+            <td class="fig">72.4</td>
+            <td class="fig">2.52</td>
+            <td class="fig">0.71</td>
+            <td class="fig">5</td>
+          </tr>
+          <tr>
+            <td class="l"><span class="rank fig">4</span><span class="aname">Kenneth Bednarek</span></td>
+            <td class="fig best">9.82</td>
+            <td class="fig"><span class="wl-w">14</span>–14</td>
+            <td class="fig">50.0</td>
+            <td class="fig">58.8</td>
+            <td class="fig">3.59</td>
+            <td class="fig">1.08</td>
+            <td class="fig">5</td>
+          </tr>
+          <tr>
+            <td class="l"><span class="rank fig">5</span><span class="aname">Ferdinand Omanyala</span></td>
+            <td class="fig">9.95</td>
+            <td class="fig"><span class="wl-w">24</span>–25</td>
+            <td class="fig">49.0</td>
+            <td class="fig">82.4</td>
+            <td class="fig">2.53</td>
+            <td class="fig">0.68</td>
+            <td class="fig best">10</td>
+          </tr>
+          <tr>
+            <td class="l"><span class="rank fig">6</span><span class="aname">Akani Simbine</span></td>
+            <td class="fig">9.99</td>
+            <td class="fig"><span class="wl-w">25</span>–36</td>
+            <td class="fig">41.0</td>
+            <td class="fig">58.7</td>
+            <td class="fig">3.16</td>
+            <td class="fig">3.51</td>
+            <td class="fig">9</td>
+          </tr>
+          <tr>
+            <td class="l"><span class="rank fig">7</span><span class="aname">Jordan Anthony</span></td>
+            <td class="fig">9.96</td>
+            <td class="fig"><span class="wl-w">4</span>–8</td>
+            <td class="fig">33.3</td>
+            <td class="fig">20.0</td>
+            <td class="fig">4.40</td>
+            <td class="fig">0.97</td>
+            <td class="fig">5</td>
+          </tr>
+          <tr>
+            <td class="l"><span class="rank fig">8</span><span class="aname">Emmanuel Eseme</span><span class="pick">36% model pick</span></td>
+            <td class="fig">9.97</td>
+            <td class="fig"><span class="wl-w">10</span>–23</td>
+            <td class="fig">30.3</td>
+            <td class="fig">76.3</td>
+            <td class="fig">2.47</td>
+            <td class="fig">0.88</td>
+            <td class="fig">9</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      </div>
+      <p class="legend"><b>Gold</b> marks the best figure in each column. Steadiness is finish-position spread, where lower is steadier. Eseme owns the worst head-to-head record in the field yet is the model's 36% pick for the final — the tension this discipline runs on.</p>
+    </section>
+
+    <!-- STORYLINES -->
+    <section class="panel section">
+      <div class="section-head">
+        <h2>Four storylines into the final</h2>
+        <div class="note">Every number scraped from real 2026 results</div>
+      </div>
+      <div class="stories">
+        <div class="story">
+          <div class="type">Rivalry renewed</div>
+          <h3>Head-to-head means nothing <span class="stat">3–0</span></h3>
+          <p>Seville has beaten Eseme in all 3 of their real career meetings — yet the model still makes Eseme the 36% pick for the final.</p>
+          <div class="who">Oblique Seville vs Emmanuel Eseme</div>
+        </div>
+        <div class="story gold">
+          <div class="type">Photo finish</div>
+          <h3>One point splits them <span class="stat">36% → 35%</span></h3>
+          <p>The closest projected race in the Men's 100m. Two athletes, a single percentage point, six days to the gun.</p>
+          <div class="who">Emmanuel Eseme vs Oblique Seville</div>
+        </div>
+        <div class="story">
+          <div class="type">Trending up</div>
+          <h3>The sharpest riser <span class="stat">−0.11s</span></h3>
+          <p>9.98 to 9.87 across 3 real meetings this season — the biggest in-season gain among the top contenders.</p>
+          <div class="who">Kenneth Bednarek</div>
+        </div>
+        <div class="story gold">
+          <div class="type">Debutant</div>
+          <h3>First final, world's best <span class="stat">#1</span></h3>
+          <p>The world's top-ranked man in the event has never made a Diamond League final in the 100m — no appearance from 2018 to 2025.</p>
+          <div class="who">Oblique Seville</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>PodiumCall — Discipline vs discipline. Sample built on real World Athletics data for the Men's 100m.</span>
+      <span class="fig">Direction A · Editorial</span>
+    </footer>
+  </div>
+</body>
+</html>

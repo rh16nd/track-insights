@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PodiumCall — Performance Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="system.css" />
+<script defer src="reveal.js"></script>
+<style>
+  /* ---- page-specific: depth ladder ---- */
+  .depth-tools{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px}
+  .depth-legend{display:flex;flex-wrap:wrap;gap:18px;align-items:center;font-size:12.5px;color:var(--muted-foreground);margin-bottom:16px}
+  .depth-legend .lg{display:flex;align-items:center;gap:7px}
+  .dot-med{width:11px;height:11px;border-radius:50%;background:var(--terracotta-strong);flex:none}
+  .dot-top{width:11px;height:11px;border-radius:50%;background:var(--gold-strong);flex:none}
+  .bar-demo{width:34px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--terracotta),var(--gold-strong));flex:none}
+  .scaleaxis{display:flex;justify-content:space-between;font-family:'Space Grotesk';font-size:11px;color:var(--muted-foreground);letter-spacing:.04em;padding:0 0 8px;border-bottom:1px solid var(--border);margin-bottom:6px}
+  .depthchart{display:flex;flex-direction:column}
+  .drow{display:grid;grid-template-columns:190px 1fr 128px;align-items:center;gap:16px;padding:9px 0;border-bottom:1px solid var(--border)}
+  .drow:last-child{border-bottom:none}
+  .drow .dname{font-family:'Space Grotesk';font-weight:600;font-size:13.5px;color:var(--foreground);display:flex;align-items:center;gap:8px}
+  .drow .dsex{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted-foreground);border:1px solid var(--border);border-radius:5px;padding:1px 5px;flex:none}
+  .dtrack{position:relative;height:22px}
+  .dline{position:absolute;top:50%;left:0;right:0;height:1px;background:oklch(0.85 0.035 55 / .5)}
+  .dbar{position:absolute;top:50%;transform:translateY(-50%);height:8px;border-radius:5px;background:linear-gradient(90deg,var(--terracotta),var(--gold-strong));opacity:0;transition:opacity .5s}
+  .dbar.show{opacity:1}
+  .dmed,.dtop{position:absolute;top:50%;transform:translate(-50%,-50%);border-radius:50%;z-index:2}
+  .dmed{width:12px;height:12px;background:var(--terracotta-strong);border:2px solid var(--card)}
+  .dtop{width:13px;height:13px;background:var(--gold-strong);border:2px solid var(--card);box-shadow:0 0 0 3px oklch(0.8 0.11 68 / .28)}
+  .dfig{display:flex;align-items:center;justify-content:flex-end;gap:10px;font-family:'Space Grotesk'}
+  .dgap{font-weight:700;font-size:15px;color:var(--foreground)}
+  .dtier{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:2px 7px;border-radius:999px;flex:none}
+  .t-deep{background:oklch(0.8 0.11 68 / .28);color:var(--gold-strong)}
+  .t-mid{background:var(--secondary);color:var(--muted-foreground)}
+  .t-thin{background:oklch(0.545 0.164 38.5 / .16);color:var(--terracotta-strong)}
+  @media (max-width:760px){
+    .drow{grid-template-columns:1fr;gap:6px;padding:14px 0}
+    .drow .dfig{justify-content:flex-start}
+    .scaleaxis{display:none}
+  }
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="wrap-wide">
+      <a class="brand" href="index.html"><div class="mark"><i></i><i></i><i></i></div><div><b>PodiumCall</b><small>Diamond League Final · Brussels</small></div></a>
+      <nav>
+        <a href="index.html">The Final</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="projections.html">Projections</a>
+        <a href="track.html">Track</a>
+        <a href="field.html">Field</a>
+        <a href="qualification.html">Qualifying</a>
+        <a href="stats.html" class="active">Performance Index</a>
+        <a href="schedule.html">Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- page head -->
+  <section class="page-head">
+    <div class="lanes"></div><div class="glow"></div>
+    <div class="wrap-wide">
+      <div class="eyebrow on-dark">Performance Index</div>
+      <h1>Which events are genuinely deep — and which are one athlete and a gap.</h1>
+      <p class="sub">Every 2026 mark scored on the World Athletics points table, then read as a spread: how far the discipline leader sits above the median of its ranked field. A tight spread is a crowd; a long one is a soloist with daylight behind.</p>
+      <div class="figrow">
+        <div class="stat"><b class="num">4,000</b><span>Marks scored</span></div>
+        <div class="stat"><b class="num">1,158</b><span>Field median (WA pts)</span></div>
+        <div class="stat"><b class="num">880–1353</b><span>Scoring range</span></div>
+        <div class="stat"><b class="num">13.0<span class="u">%</span></b><span>Set indoors</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="body-region lift">
+    <div class="wrap-wide stack">
+
+      <!-- FOCAL: depth ladder -->
+      <div class="panel">
+        <div class="depth-tools">
+          <div class="panel-title">
+            <span class="eyebrow">The depth ladder · 32 disciplines</span>
+            <p class="panel-note">Each bar runs from the field median to the discipline&apos;s top score. Shorter is deeper.</p>
+          </div>
+          <div class="picker" role="group" aria-label="Sort order">
+            <button id="s-depth" class="active" onclick="setSort('depth')">By depth</button>
+            <button id="s-median" onclick="setSort('median')">By median</button>
+            <button id="s-top" onclick="setSort('top')">By top score</button>
+          </div>
+        </div>
+
+        <div class="depth-legend">
+          <span class="lg"><span class="dot-med" aria-hidden="true"></span> Field median</span>
+          <span class="lg"><span class="dot-top" aria-hidden="true"></span> Discipline top</span>
+          <span class="lg"><span class="bar-demo" aria-hidden="true"></span> Spread (top − median)</span>
+        </div>
+
+        <div class="scaleaxis" aria-hidden="true">
+          <span>900</span><span>1000</span><span>1100</span><span>1200</span><span>1300</span>
+        </div>
+        <div class="depthchart" id="depthchart"></div>
+      </div>
+
+      <!-- top performances -->
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><span class="eyebrow">Top 14 marks of 2026 · by WA score</span></div></div>
+        <div style="overflow-x:auto">
+          <table class="table" id="topperf">
+            <thead>
+              <tr><th>#</th><th>Athlete</th><th>Discipline</th><th class="r">Mark</th><th class="r">Score</th><th>When &amp; where</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="note boxed" style="margin-top:18px"><span class="pip"></span><span>World Athletics scores let marks from different events sit on one axis. Duplantis&apos; 6.31m indoor vault (1353) is the season&apos;s single highest-scored performance in any Diamond League discipline — 3 points above Dos Santos&apos; 45.80 over the 400m hurdles.</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap-wide">
+      <span>PodiumCall · Performance Index</span>
+      <span>Model hit rate <b>71.9%</b> · marks via World Athletics · 6 days to Brussels</span>
+    </div>
+  </footer>
+
+<script>
+  var DEPTH = [
+    {disc:"Men's 100m",sex:"M",median:1206,top:1280,indoor:0.0},
+    {disc:"Men's 1500m",sex:"M",median:1206,top:1289,indoor:9.0},
+    {disc:"Men's 110m Hurdles",sex:"M",median:1199,top:1304,indoor:0.0},
+    {disc:"Men's 400m",sex:"M",median:1195,top:1295,indoor:0.0},
+    {disc:"Men's 800m",sex:"M",median:1194,top:1311,indoor:4.0},
+    {disc:"Women's 100m",sex:"W",median:1191,top:1282,indoor:0.0},
+    {disc:"Men's 200m",sex:"M",median:1188,top:1298,indoor:3.0},
+    {disc:"Men's Pole Vault",sex:"M",median:1188,top:1353,indoor:39.0},
+    {disc:"Women's 800m",sex:"W",median:1188,top:1278,indoor:10.0},
+    {disc:"Men's 400m Hurdles",sex:"M",median:1187,top:1348,indoor:0.0},
+    {disc:"Women's 1500m",sex:"W",median:1186,top:1246,indoor:13.0},
+    {disc:"Women's 100m Hurdles",sex:"W",median:1182,top:1276,indoor:0.0},
+    {disc:"Women's 200m",sex:"W",median:1178,top:1290,indoor:2.0},
+    {disc:"Women's 400m",sex:"W",median:1176,top:1267,indoor:3.0},
+    {disc:"Men's 5000m",sex:"M",median:1175,top:1255,indoor:3.0},
+    {disc:"Women's 400m Hurdles",sex:"W",median:1164,top:1264,indoor:0.0},
+    {disc:"Men's Long Jump",sex:"M",median:1162,top:1282,indoor:23.0},
+    {disc:"Women's 3000m Steeplechase",sex:"W",median:1162,top:1267,indoor:0.0},
+    {disc:"Men's 3000m Steeplechase",sex:"M",median:1161,top:1271,indoor:0.0},
+    {disc:"Women's Long Jump",sex:"W",median:1149,top:1262,indoor:24.0},
+    {disc:"Men's Shot Put",sex:"M",median:1143,top:1285,indoor:32.0},
+    {disc:"Men's High Jump",sex:"M",median:1135,top:1215,indoor:47.0},
+    {disc:"Men's Discus Throw",sex:"M",median:1134,top:1319,indoor:0.0},
+    {disc:"Men's Triple Jump",sex:"M",median:1123,top:1288,indoor:27.0},
+    {disc:"Women's High Jump",sex:"W",median:1121,top:1249,indoor:44.0},
+    {disc:"Women's Pole Vault",sex:"W",median:1120,top:1255,indoor:41.0},
+    {disc:"Men's Javelin Throw",sex:"M",median:1108,top:1281,indoor:0.0},
+    {disc:"Women's Triple Jump",sex:"W",median:1107,top:1246,indoor:14.0},
+    {disc:"Women's 5000m",sex:"W",median:1103,top:1245,indoor:10.6},
+    {disc:"Women's Discus Throw",sex:"W",median:1076,top:1313,indoor:0.0},
+    {disc:"Women's Javelin Throw",sex:"W",median:1053,top:1296,indoor:0.0},
+    {disc:"Women's Shot Put",sex:"W",median:939,top:1276,indoor:25.6}
+  ];
+  var SMIN=880, SMAX=1353, RANGE=SMAX-SMIN;
+  DEPTH.forEach(function(d){ d.gap = d.top - d.median; });
+  function pos(v){ return ((v-SMIN)/RANGE)*100; }
+  function tier(gap){ if(gap<=100) return ['t-deep','Deep']; if(gap>=170) return ['t-thin','Thin']; return ['t-mid','Mid']; }
+
+  var sortMode='depth';
+  function sorted(){
+    var a=DEPTH.slice();
+    if(sortMode==='depth') a.sort(function(x,y){return x.gap-y.gap;});
+    else if(sortMode==='median') a.sort(function(x,y){return y.median-x.median;});
+    else a.sort(function(x,y){return y.top-x.top;});
+    return a;
+  }
+  function render(){
+    var host=document.getElementById('depthchart');
+    host.innerHTML='';
+    sorted().forEach(function(d){
+      var t=tier(d.gap), l=pos(d.median), r=pos(d.top);
+      var shortName=d.disc.replace(/^(Men|Women)['\u2019]s\s+/,'');
+      var row=document.createElement('div'); row.className='drow';
+      row.innerHTML =
+        '<div class="dname"><span class="dsex">'+d.sex+'</span>'+shortName+'</div>'+
+        '<div class="dtrack">'+
+          '<span class="dline"></span>'+
+          '<span class="dbar" style="left:'+l+'%;width:'+(r-l)+'%"></span>'+
+          '<span class="dmed" style="left:'+l+'%" title="median '+d.median+'"></span>'+
+          '<span class="dtop" style="left:'+r+'%" title="top '+d.top+'"></span>'+
+        '</div>'+
+        '<div class="dfig"><span class="dgap num">+'+d.gap+'</span><span class="dtier '+t[0]+'">'+t[1]+'</span></div>';
+      host.appendChild(row);
+    });
+    requestAnimationFrame(function(){
+      var bars=host.querySelectorAll('.dbar');
+      if(matchMedia('(prefers-reduced-motion: reduce)').matches){ bars.forEach(function(b){b.classList.add('show');}); return; }
+      bars.forEach(function(b,i){ setTimeout(function(){b.classList.add('show');}, 40+i*22); });
+    });
+  }
+  function setSort(m){
+    sortMode=m;
+    ['depth','median','top'].forEach(function(k){ document.getElementById('s-'+k).classList.toggle('active', k===m); });
+    render();
+  }
+
+  var TOP=[
+    {a:"Armand DUPLANTIS",disc:"Men's Pole Vault",mark:"6.31m",score:1353,indoor:true,where:"12 Mar · Uppsala (SWE)"},
+    {a:"Alison DOS SANTOS",disc:"Men's 400m Hurdles",mark:"45.80",score:1348,indoor:false,where:"27 Aug · Zürich (SUI)"},
+    {a:"Emmanouil KARALIS",disc:"Men's Pole Vault",mark:"6.20m",score:1322,indoor:false,where:"27 Aug · Zürich (SUI)"},
+    {a:"Matthew DENNY",disc:"Men's Discus Throw",mark:"74.04m",score:1319,indoor:false,where:"09 Apr · Ramona, OK (USA)"},
+    {a:"Steven RICHTER",disc:"Men's Discus Throw",mark:"74.00m",score:1318,indoor:false,where:"09 Apr · Ramona, OK (USA)"},
+    {a:"Valarie SION",disc:"Women's Discus Throw",mark:"73.10m",score:1313,indoor:false,where:"11 Apr · Ramona, OK (USA)"},
+    {a:"Josh HOEY",disc:"Men's 800m",mark:"1:42.50",score:1311,indoor:true,where:"24 Jan · Boston, MA (USA)"},
+    {a:"Karsten WARHOLM",disc:"Men's 400m Hurdles",mark:"46.52",score:1309,indoor:false,where:"23 Aug · Chorzów (POL)"},
+    {a:"Ja'Kobe THARP",disc:"Men's 110m Hurdles",mark:"12.75",score:1304,indoor:false,where:"10 Jun · Eugene, OR (USA)"},
+    {a:"Rai BENJAMIN",disc:"Men's 400m Hurdles",mark:"46.67",score:1301,indoor:false,where:"21 Aug · Lausanne (SUI)"},
+    {a:"Garrett KAALUND",disc:"Men's 200m",mark:"19.95",score:1298,indoor:true,where:"14 Mar · Fayetteville, AR (USA)"},
+    {a:"Ziyi YAN",disc:"Women's Javelin Throw",mark:"71.74m",score:1296,indoor:false,where:"23 May · Xiamen (CHN)"},
+    {a:"Samuel OGAZI",disc:"Men's 400m",mark:"43.38",score:1295,indoor:false,where:"12 Jun · Eugene, OR (USA)"},
+    {a:"Mykolas ALEKNA",disc:"Men's Discus Throw",mark:"72.65m",score:1293,indoor:false,where:"25 Jul · Palanga (LTU)"}
+  ];
+  (function(){
+    var tb=document.querySelector('#topperf tbody');
+    TOP.forEach(function(p,i){
+      var tr=document.createElement('tr'); tr.className='hover';
+      tr.innerHTML =
+        '<td class="rk'+(i===0?' top':'')+'">'+(i+1)+'</td>'+
+        '<td><div class="athlete"><div class="nm">'+p.a+'</div></div></td>'+
+        '<td style="color:var(--muted-foreground)">'+p.disc+(p.indoor?' <span class="badge badge-neutral">indoor</span>':'')+'</td>'+
+        '<td class="r mark">'+p.mark+'</td>'+
+        '<td class="r"><span class="badge badge-gold flat num">'+p.score+'</span></td>'+
+        '<td style="color:var(--muted-foreground);font-size:12.5px">'+p.where+'</td>';
+      tb.appendChild(tr);
+    });
+  })();
+
+  render();
+</script>
+</body>
+</html>
