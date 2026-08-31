@@ -11,13 +11,15 @@ import {
 } from "@/components/dl/shell";
 import type { Performance } from "@/lib/dl-data";
 import { useStats } from "@/hooks/useStats";
+import { DepthLadder } from "@/components/dl/depth-ladder";
+import { HeadFigure } from "@/components/dl/shell";
 
 export const Route = createFileRoute("/stats")({
   component: StatsPage,
 });
 
 const DESCRIPTION =
-  "Every event on one scale. These are World Athletics' own scoring-table points, which is the only measure in this data that can put a shot put and a 1500m in the same list — so this is the one page that ranks the season without asking which event you care about.";
+  "Which events are genuinely deep — and which are one athlete and a gap. Every 2026 mark scored on World Athletics' points table, then read as a spread: how far a discipline's leader sits above the median of its own ranked field. A tight spread is a crowd; a long one is a soloist with daylight behind.";
 
 type Filter = "all" | "track" | "field" | "outdoor";
 
@@ -36,8 +38,8 @@ function applyFilter(rows: Performance[], filter: Filter): Performance[] {
 }
 
 /** The score bar is drawn against the range the season actually occupies,
- * not against zero. WA's scores start around 880 here and top out at 1353,
- * so a 0-1353 scale would render every bar between 65% and 100% full and
+ * not against zero. WA's scores start around 1007 here and top out at 1353,
+ * so a 0-1353 scale would render every bar between 75% and 100% full and
  * show nothing. Anchored slightly below the real minimum so the weakest
  * entry still has a visible bar rather than an empty track. */
 function scorePercent(score: number, min: number, max: number): number {
@@ -68,13 +70,27 @@ function StatsPage() {
           : "World Athletics scoring points"
       }
       description={DESCRIPTION}
+      figures={
+        <>
+          <HeadFigure value={scale ? scale.rows.toLocaleString() : "—"} label="Marks scored" />
+          <HeadFigure
+            value={scale ? scale.median.toLocaleString() : "—"}
+            label="Field median (WA pts)"
+          />
+          <HeadFigure value={scale ? `${scale.min}–${scale.max}` : "—"} label="Scoring range" />
+          <HeadFigure value={indoor ? indoor.share : "—"} unit="%" label="Set indoors" />
+        </>
+      }
     >
       {state.status === "loading" && <PanelSkeleton title="Best of the season" rows={10} />}
       {state.status === "error" && <ErrorPanel message={state.message} />}
 
       {data && scale && (
         <>
+          <DepthLadder rows={data.disciplineDepth} />
+
           <Panel
+            className="mt-6"
             title={`Best of ${data.season}, any event`}
             subtitle="Ranked by World Athletics points, so a discus throw and an 800m are directly comparable. The bar is scaled to the range this season actually covers, not to zero."
           >
@@ -158,73 +174,6 @@ function StatsPage() {
                 <em>Outdoor only</em> above to drop them.
               </p>
             )}
-          </Panel>
-
-          <Panel
-            title="How deep each event is"
-            subtitle="The median score across everyone World Athletics ranks in that event. A high median means the whole field is strong, not just the winner — and it is the baseline the list above is measured against."
-            className="mt-5"
-          >
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[520px] border-collapse text-left">
-                <thead>
-                  <tr className="label-caps border-b border-border text-muted-foreground">
-                    <th scope="col" className="pb-3 pr-2 font-semibold">
-                      Event
-                    </th>
-                    <th scope="col" className="w-24 pb-3 pl-4 text-right font-semibold">
-                      Median
-                    </th>
-                    <th scope="col" className="w-24 pb-3 pl-4 text-right font-semibold">
-                      Best
-                    </th>
-                    <th scope="col" className="w-24 pb-3 pl-4 text-right font-semibold">
-                      Ranked
-                    </th>
-                    <th scope="col" className="w-24 pb-3 pl-4 text-right font-semibold">
-                      Indoor
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {data.disciplineDepth.map((d, i) => (
-                    <tr
-                      key={d.discKey}
-                      className="stagger-item transition-colors hover:bg-secondary/40"
-                      style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
-                    >
-                      <td className="py-3 pr-2 text-[13.5px] font-medium text-foreground">
-                        <Link
-                          to={d.isField ? "/field" : "/track"}
-                          search={{ disc: d.discKey }}
-                          className="transition-colors hover:text-terracotta-strong hover:underline"
-                        >
-                          {d.disc}
-                        </Link>
-                      </td>
-                      <td className="nums py-3 pl-4 text-right text-[13.5px] font-semibold text-foreground">
-                        {d.medianScore}
-                      </td>
-                      <td className="nums py-3 pl-4 text-right text-[12.5px] text-muted-foreground">
-                        {d.topScore}
-                      </td>
-                      <td className="nums py-3 pl-4 text-right text-[12.5px] text-muted-foreground">
-                        {d.athletes}
-                      </td>
-                      <td className="nums py-3 pl-4 text-right text-[12.5px] text-muted-foreground">
-                        {d.indoorShare > 0 ? `${d.indoorShare}%` : "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-              Medians span {data.disciplineDepth[data.disciplineDepth.length - 1]?.medianScore} to{" "}
-              {data.disciplineDepth[0]?.medianScore} across the {data.disciplineDepth.length}{" "}
-              events, so World Athletics&apos; scale is close to comparable but not perfectly flat —
-              read a score against its own event&apos;s median, not against the whole table.
-            </p>
           </Panel>
         </>
       )}
