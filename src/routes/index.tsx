@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
 import { usePredictions } from "@/hooks/usePredictions";
+import { useStats } from "@/hooks/useStats";
 import { useInView } from "@/hooks/useInView";
 import { PodiumCallMark } from "@/components/dl/logo";
 import { AthleteAvatar, ProbabilityBar, WatchBadge } from "@/components/dl/shell";
+import { Podium } from "@/components/dl/podium";
 import { TrackCircuit } from "@/components/dl/track-circuit";
 
 export const Route = createFileRoute("/")({
@@ -20,6 +22,56 @@ function Stat({ value, label }: { value: string; label: string }) {
         {value}
       </div>
       <div className="label-caps mt-2 text-[var(--landing-muted)]">{label}</div>
+    </div>
+  );
+}
+
+/** The v0 direction's recurring section opener: a small uppercase eyebrow
+ * above a display-face heading, with an optional line under it. Replaces the
+ * bare h2 each section used to carry, so the page has one section rhythm
+ * rather than six similar-but-not-identical ones.
+ *
+ * `tone` exists because the page now alternates terracotta and cream bands
+ * and the two need opposite text colours -- a cream band inherits the app's
+ * own --foreground, a terracotta one the landing's near-white. */
+function SectionHead({
+  eyebrow,
+  title,
+  children,
+  tone = "dark",
+  center = false,
+}: {
+  eyebrow: string;
+  title: string;
+  children?: string;
+  tone?: "dark" | "cream";
+  center?: boolean;
+}) {
+  const cream = tone === "cream";
+  return (
+    <div className={`max-w-[60ch] ${center ? "mx-auto text-center" : ""}`}>
+      <div
+        className={`label-caps ${cream ? "text-terracotta-strong" : "text-[var(--landing-accent-text-gold)]"}`}
+      >
+        {eyebrow}
+      </div>
+      <h2
+        className={`mt-3 text-balance text-[28px] font-semibold leading-tight sm:text-[34px] ${
+          cream ? "text-foreground" : "text-[var(--landing-fg)]"
+        }`}
+        style={{ fontFamily: "var(--font-display)" }}
+      >
+        {title}
+      </h2>
+      {children && (
+        <p
+          className={`mt-3 text-[15px] leading-relaxed ${
+            cream ? "text-muted-foreground" : "text-[var(--landing-muted)]"
+          }`}
+        >
+          {children}
+        </p>
+      )}
     </div>
   );
 }
@@ -41,44 +93,28 @@ function Icon({ path, className = "size-5" }: { path: string; className?: string
   );
 }
 
-const ICONS = {
-  database:
-    "M4 6c0-1.1 3.58-2 8-2s8 .9 8 2-3.58 2-8 2-8-.9-8-2Zm0 0v12c0 1.1 3.58 2 8 2s8-.9 8-2V6M4 12c0 1.1 3.58 2 8 2s8-.9 8-2",
-  shieldCheck: "M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Zm-3 9 2 2 4-4",
-  pulse: "M3 12h4l2 6 4-14 2 8h6",
-  wind: "M4 8h9a2.5 2.5 0 1 0-2.5-2.5M4 12h13a2.5 2.5 0 1 1-2.5 2.5M4 16h7",
-  versus: "M6 4l4 8-4 8M18 4l-4 8 4 8",
-  refresh: "M4 4v5h5M20 20v-5h-5M4.5 15a8 8 0 0 0 14.5 3.5M19.5 9A8 8 0 0 0 5 5.5",
-};
-
 const FEATURES = [
   {
-    icon: ICONS.database,
     title: "Real results, not hand-typed",
     body: "Every mark comes straight from World Athletics' own API — the Diamond League circuit, Olympics, World Championships, Continental Tour Gold and European Championships.",
   },
   {
-    icon: ICONS.shieldCheck,
     title: "Validated honestly",
     body: "Walk-forward tested across five independent seasons — trained only on years strictly before each test year, never peeking at the future.",
   },
   {
-    icon: ICONS.pulse,
     title: "Injury & withdrawal aware",
     body: "News and meet recaps are scanned automatically. Flagged athletes get a watch badge; confirmed withdrawals are dropped from the field entirely.",
   },
   {
-    icon: ICONS.wind,
     title: "Wind & venue adjusted",
     body: "Sprint, hurdle and jump marks are corrected for following wind; results at bigger meets carry more weight than a small regional invitational.",
   },
   {
-    icon: ICONS.versus,
     title: "Head-to-head history",
     body: "Real matchup win rates between rivals feed the model directly — not a manual post-hoc adjustment bolted on afterward.",
   },
   {
-    icon: ICONS.refresh,
     title: "Live all season",
     body: "Every refresh re-scrapes the season and re-scores all 32 fields, right up to the Brussels Final.",
   },
@@ -121,6 +157,11 @@ const FEED = [
 
 function Landing() {
   const state = usePredictions();
+  // Second fetch, for one number: the total marks scored. Worth it because
+  // the alternative is hand-typing it, and it just moved -- two toplists
+  // were being read 500 deep instead of 100, which had the site quoting
+  // 4,000 when the uniform figure is 3,200.
+  const stats = useStats();
   const accuracy = state.status === "ok" ? `${Math.round(state.data.modelAccuracy)}%` : "—";
   const daysToFinal = state.status === "ok" ? String(state.data.daysToFinal) : "—";
   const disciplineCount =
@@ -134,6 +175,15 @@ function Landing() {
   const topPick = preview[0];
   const ticker = state.status === "ok" ? state.data.confidence.slice(0, 10) : [];
   const demoInView = useInView<HTMLElement>();
+  const marksScored =
+    stats.status === "ok" && stats.data.scoreScale
+      ? stats.data.scoreScale.rows.toLocaleString()
+      : "—";
+  // Counted from the schedule rather than written down. v0's mockup said
+  // "Fourteen finals of real racing" -- wrong twice over: they are meetings,
+  // not finals, and the number goes stale the moment another one is run.
+  const meetingsDone =
+    state.status === "ok" ? state.data.meets.filter((m) => m.status === "done").length : 0;
 
   return (
     <div className="landing relative min-h-screen bg-[var(--landing-bg)] text-[var(--landing-fg)]">
@@ -169,6 +219,7 @@ function Landing() {
         {/* ── Hero (track-surface reused as the backdrop, darkened) ──── */}
         <section className="track-surface relative overflow-hidden pt-16">
           <div className="absolute inset-0 bg-[var(--landing-bg)]/88" />
+          <div className="lanes" aria-hidden="true" />
           <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] w-full max-w-none -translate-y-1/2 opacity-90 sm:h-[120%]" />
           <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
             <span className="label-caps inline-flex items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-3.5 py-2 text-[var(--landing-muted)]">
@@ -176,17 +227,31 @@ function Landing() {
               Brussels Final — Sep 4–5, 2026
             </span>
 
+            {/* The v0 direction's display headline. Deliberately much larger
+                than the old one (clamped 44px→96px rather than a flat 56px):
+                it is the only piece of type on the site allowed to be this
+                loud, and "the gun." carries the gold gradient so the accent
+                lands on the moment the page is about. */}
             <h1
-              className="mx-auto mt-6 max-w-3xl text-[40px] font-semibold leading-[1.1] tracking-tight sm:text-[56px]"
+              className="mx-auto mt-6 max-w-4xl text-[clamp(44px,11vw,96px)] font-bold leading-[0.92] tracking-[-0.03em] text-balance"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              A model trained on real results, not gut feeling.
+              We make the call before{" "}
+              <span
+                className="bg-clip-text text-transparent"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(96deg, var(--gold-light) 0%, oklch(0.88 0.09 78) 45%, var(--gold-light) 90%)",
+                }}
+              >
+                the gun.
+              </span>
             </h1>
 
-            <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-[var(--landing-muted)] sm:text-base">
-              Every Diamond League meeting, the Olympics, World Championships and more — scraped
-              straight from World Athletics, turned into predictions for all 32 disciplines at the
-              2026 Final.
+            <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-[var(--landing-muted)] sm:text-base">
+              A model trained on real results, not gut feeling. Every World Athletics mark across
+              all 32 Diamond League disciplines, scraped and scored — so you know who reaches the
+              podium in Brussels before a single race is run.
             </p>
 
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -212,7 +277,7 @@ function Landing() {
               <Stat value={accuracy} label="Podium hit rate" />
               <Stat value={daysToFinal} label="Days to Brussels" />
               <Stat value={disciplineCount} label="Disciplines tracked" />
-              <Stat value="7" label="Seasons of real data" />
+              <Stat value={marksScored} label="Marks scored" />
             </div>
             {state.status !== "ok" && (
               <p className="mt-4 text-[12.5px] text-[var(--landing-muted)]">
@@ -269,14 +334,58 @@ function Landing() {
           </div>
         </section>
 
+        {/* ── The projected podium (cream band) ─────────────────────── */}
+        {/* The v0 direction's structural idea, and the biggest visual change
+            here: the page now alternates terracotta and cream bands instead
+            of running one colour top to bottom. This band is pulled up over
+            the hero with a large top radius so the seam reads as a deliberate
+            edge rather than a colour change. */}
+        <section className="relative z-[2] -mt-8 rounded-t-[44px] bg-card sm:-mt-13">
+          <div className="mx-auto max-w-5xl px-6 pb-20 pt-14 sm:px-10 sm:pb-24 sm:pt-[74px]">
+            <SectionHead
+              eyebrow="The projected podium"
+              title="The three the model backs hardest in Brussels."
+              tone="cream"
+              center
+            >
+              Ranked by each athlete&apos;s chance of finishing in the top three.
+            </SectionHead>
+
+            {preview.length >= 3 ? (
+              <Podium winners={preview} />
+            ) : (
+              <p className="mt-10 text-center text-[13.5px] text-muted-foreground">
+                {state.status === "error"
+                  ? "The podium fills in once the live model is reachable."
+                  : "Loading the model's strongest calls…"}
+              </p>
+            )}
+
+            {/* Load-bearing, not a disclaimer: a podium shape implies these
+                three raced each other. They didn't -- each is the strongest
+                call in a different discipline. */}
+            <p className="mx-auto mt-8 max-w-2xl text-center text-[12px] leading-relaxed text-muted-foreground">
+              Each of these is the model&apos;s strongest call in a <em>different</em> discipline,
+              so they are not racing each other — the steps rank the model&apos;s confidence, not
+              the athletes. The percentage is a chance of finishing top three, not of winning; marks
+              are 2026 season bests from World Athletics.
+            </p>
+          </div>
+        </section>
+
         {/* ── Raw signal → ranked prediction demo ──────────────────── */}
         <section ref={demoInView.ref} className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
-          <h2
-            className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
-            style={{ fontFamily: "var(--font-display)" }}
+          <SectionHead
+            eyebrow="Real results in. A ranked field out."
+            title={
+              meetingsDone > 0
+                ? `${meetingsDone} meetings of real racing, resolved into one call.`
+                : "A season of real racing, resolved into one call."
+            }
           >
-            Real results in. A ranked field out.
-          </h2>
+            Every Diamond League meeting this season is scraped from World Athletics, then reduced
+            to the model&apos;s single strongest prediction for the Final.
+          </SectionHead>
 
           <div className="mt-10 grid grid-cols-1 items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
             <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6">
@@ -351,49 +460,44 @@ function Landing() {
           </div>
         </section>
 
-        {/* ── Feature grid ──────────────────────────────────────────── */}
-        <section className="mx-auto max-w-5xl px-6 pb-20 sm:px-10 sm:pb-28">
-          <h2
-            className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            No fabricated data, anywhere in the pipeline.
-          </h2>
+        {/* ── The six commitments (cream band) ──────────────────────── */}
+        {/* v0 dropped the icons for numbered claims on a cream ground, which
+            reads as a stated list rather than six feature tiles -- the right
+            move for copy whose whole point is that it is a commitment. The
+            WORDS are the app's existing ones, not v0's: its card 04 claimed
+            "altitude, wind and indoor vs outdoor are all part of the feature
+            set", and only wind is (`wind_adj_season_best`). Altitude was
+            measured and dropped; indoor is labelled, never fed to the model.
+            A false claim under a "no fabricated data" heading is the one
+            thing this section cannot carry. */}
+        <section className="bg-card">
+          <div className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-24">
+            <SectionHead
+              eyebrow="No fabricated data, anywhere in the pipeline."
+              title="Six commitments that separate a model from a guess."
+              tone="cream"
+            />
 
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((f) => (
-              <div
-                key={f.title}
-                className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6"
-              >
-                <span
-                  className="inline-flex size-10 items-center justify-center rounded-full text-[var(--landing-bg)]"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(100deg, var(--terracotta) 0%, var(--gold) 100%)",
-                  }}
-                >
-                  <Icon path={f.icon} />
-                </span>
-                <h3 className="mt-4 text-[15px] font-semibold text-[var(--landing-fg)]">
-                  {f.title}
-                </h3>
-                <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--landing-muted)]">
-                  {f.body}
-                </p>
-              </div>
-            ))}
+            <div className="mt-10 grid grid-cols-1 gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
+              {FEATURES.map((f, i) => (
+                <div key={f.title}>
+                  <div className="dg nums text-[13px] font-bold tracking-[0.1em] text-gold-strong">
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+                  <h3 className="mt-2 text-[17px] font-semibold text-foreground">{f.title}</h3>
+                  <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{f.body}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
         {/* ── How it works ─────────────────────────────────────────── */}
         <section id="how-it-works" className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
-          <h2
-            className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Real data in. Honest predictions out.
-          </h2>
+          <SectionHead
+            eyebrow="Real data in. Honest predictions out."
+            title="The pipeline, in four steps."
+          />
 
           <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {STEPS.map((step) => (
@@ -423,12 +527,10 @@ function Landing() {
 
         {/* ── Live app preview (browser-chrome framed) ─────────────── */}
         <section className="mx-auto max-w-5xl px-6 pb-24 sm:px-10 sm:pb-32">
-          <h2
-            className="max-w-xl text-[28px] font-semibold leading-tight sm:text-[34px]"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            A live look at the model's current picks.
-          </h2>
+          <SectionHead
+            eyebrow="Straight from the running model"
+            title="A live look at the model's current picks."
+          />
 
           <div className="mt-10 overflow-hidden rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow">
             <div className="flex items-center gap-2 border-b border-[var(--landing-border)] px-4 py-3">
