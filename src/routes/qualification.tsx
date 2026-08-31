@@ -1,11 +1,17 @@
 import { useMemo } from "react";
 import type { CSSProperties } from "react";
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, HeadFigure } from "@/components/dl/shell";
 import type { QualificationDiscipline, QualificationRow, QualStatus } from "@/lib/dl-data";
 import { useQualification } from "@/hooks/useQualification";
 
 export const Route = createFileRoute("/qualification")({
+  head: () =>
+    pageHead(
+      "Qualifying",
+      "Diamond League standings, the points cut for each discipline, and who makes the Final in Brussels.",
+    ),
   // Same URL-as-state convention Track/Field use, so clicking into an
   // athlete and hitting Back restores the discipline you were reading.
   // Discipline switches navigate with `replace: true` for the same reason

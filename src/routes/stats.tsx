@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Shell,
@@ -15,6 +16,11 @@ import { DepthLadder } from "@/components/dl/depth-ladder";
 import { HeadFigure } from "@/components/dl/shell";
 
 export const Route = createFileRoute("/stats")({
+  head: () =>
+    pageHead(
+      "Performance Index",
+      "Which athletics events are genuinely deep and which are one athlete and a gap, scored on World Athletics' own points table.",
+    ),
   component: StatsPage,
 });
 

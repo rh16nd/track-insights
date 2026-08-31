@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { disciplineLabel, pageHead } from "@/lib/seo";
 import { createFileRoute, Link, useCanGoBack, useRouter } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, WatchBadge } from "@/components/dl/shell";
 import { useAthleteProfile, type AthleteNotInField } from "@/hooks/useAthleteProfile";
@@ -395,6 +396,20 @@ function NotInField({
 }
 
 export const Route = createFileRoute("/athlete/$discKey/$name")({
+  // ~237 athlete pages. The name comes off the URL, where World Athletics'
+  // caps convention still applies, so it is title-cased for the tab and the
+  // search result the same way the dossier headline is.
+  head: ({ params }) => {
+    const name = decodeURIComponent(params.name)
+      .split(/\s+/)
+      .map((w) => (w.length > 1 ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w))
+      .join(" ");
+    const label = disciplineLabel(params.discKey);
+    return pageHead(
+      `${name} — ${label}`,
+      `${name}'s ${label} form for the 2026 Diamond League Final: season and career bests, real per-meeting results, head-to-head record and World Athletics ranking.`,
+    );
+  },
   component: AthleteProfilePage,
 });
 

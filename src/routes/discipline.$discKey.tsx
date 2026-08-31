@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { disciplineLabel, pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, ProbabilityBar } from "@/components/dl/shell";
 import { FieldAnalysisBlock } from "@/components/dl/field-analysis";
@@ -8,6 +9,16 @@ import { useDiscipline } from "@/hooks/useDiscipline";
 import type { DepthVerdict, DisciplineReport, FieldScore } from "@/lib/dl-data";
 
 export const Route = createFileRoute("/discipline/$discKey")({
+  // head() runs before the data loads, so the label is derived from the
+  // param rather than waiting for the API. 32 real pages, each previously
+  // sharing one title with the whole site.
+  head: ({ params }) => {
+    const label = disciplineLabel(params.discKey);
+    return pageHead(
+      label,
+      `Is the ${label} at the 2026 Diamond League Final a contest all the way down, or one athlete and a gap? Field depth, form and every head-to-head.`,
+    );
+  },
   component: DisciplinePage,
 });
 

@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState, type CSSProperties } from "react";
 import {
@@ -57,6 +58,11 @@ function useProbabilityDeltas(topWinners: TopWinner[] | undefined) {
 }
 
 export const Route = createFileRoute("/dashboard")({
+  head: () =>
+    pageHead(
+      "Dashboard",
+      "The model's surest calls across all 32 Diamond League disciplines, and the events it is least sure about.",
+    ),
   component: Dashboard,
 });
 

@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, HeadFigure } from "@/components/dl/shell";
 import { statusLabel } from "@/lib/dl-data";
@@ -6,6 +7,11 @@ import type { Meet } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 
 export const Route = createFileRoute("/schedule")({
+  head: () =>
+    pageHead(
+      "Schedule",
+      "The full 2026 Wanda Diamond League calendar, from the season opener to the Final in Brussels.",
+    ),
   component: SchedulePage,
 });
 
