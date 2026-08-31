@@ -1,11 +1,17 @@
 import { useMemo } from "react";
 import type { CSSProperties } from "react";
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Shell, Panel, PanelSkeleton, ErrorPanel } from "@/components/dl/shell";
+import { Shell, Panel, PanelSkeleton, ErrorPanel, HeadFigure } from "@/components/dl/shell";
 import type { QualificationDiscipline, QualificationRow, QualStatus } from "@/lib/dl-data";
 import { useQualification } from "@/hooks/useQualification";
 
 export const Route = createFileRoute("/qualification")({
+  head: () =>
+    pageHead(
+      "Qualifying",
+      "Diamond League standings, the points cut for each discipline, and who makes the Final in Brussels.",
+    ),
   // Same URL-as-state convention Track/Field use, so clicking into an
   // athlete and hitting Back restores the discipline you were reading.
   // Discipline switches navigate with `replace: true` for the same reason
@@ -16,6 +22,23 @@ export const Route = createFileRoute("/qualification")({
   }),
   component: QualificationPage,
 });
+
+/** v0's headline is "Eight lanes. The race to make the race." — hardcoded for
+ * the 100m. The Final seats 6 in the field events and 10 over the long
+ * distances, so both the number and the noun are read from the data. This is
+ * the same hardcoded-count family that put "Projected top 8" on a six-man
+ * shot put final. */
+const NUMBER_WORD: Record<number, string> = {
+  6: "Six",
+  8: "Eight",
+  10: "Ten",
+};
+
+function placesHeadline(limit: number, isField: boolean): string {
+  const word = NUMBER_WORD[limit] ?? String(limit);
+  // A thrower does not have a lane.
+  return `${word} ${isField ? "places" : "lanes"}. The race to make the race.`;
+}
 
 const DESCRIPTION =
   "Who has actually earned a place at the Final. These are World Athletics' own Diamond League points — not a prediction — with the gap to the qualification cut worked out from what is still winnable.";
@@ -128,7 +151,8 @@ function QualificationPage() {
 
   return (
     <Shell
-      title="Race for the Final"
+      title={current ? placesHeadline(current.qualLimit, current.isField) : "Race for the Final"}
+      crumb="Qualifying"
       eyebrow={
         data
           ? meetingsLeft > 0
@@ -137,6 +161,16 @@ function QualificationPage() {
           : "2026 Diamond League standings"
       }
       description={decided ? DESCRIPTION_DECIDED : DESCRIPTION}
+      figures={
+        data && current ? (
+          <>
+            <HeadFigure value={current.qualLimit} label="Qualify for the Final" />
+            <HeadFigure value={current.cutPoints ?? "—"} label="Points to make it" />
+            <HeadFigure value={meetingsLeft} label="Meetings left" />
+            <HeadFigure value={data.pointsForAWin} label="Points for a win" />
+          </>
+        ) : undefined
+      }
     >
       {state.status === "loading" && <PanelSkeleton title="Diamond League standings" rows={10} />}
       {state.status === "error" && <ErrorPanel message={state.message} />}
@@ -254,10 +288,13 @@ function QualificationPage() {
                 ? `The top ${current.qualLimit} on points qualify for the Final.`
                 : `The top ${current.qualLimit} on points qualify for the Final. The cut currently sits at ${current.cutPoints} points.`
             }
-            className="mt-4"
+            className="mt-6"
           >
             <div className="overflow-x-auto">
               <table className="w-full min-w-[680px]">
+                <caption className="sr-only">
+                  {`Diamond League standings for the ${current.disc}: rank, athlete, points, meetings contested, gap to the qualifying cut and status`}
+                </caption>
                 <thead>
                   <tr className="label-caps text-muted-foreground">
                     <th scope="col" className="w-10 pb-3 text-left font-semibold">
@@ -323,6 +360,8 @@ function QualificationPage() {
               {data.scrapedAt && <> Scraped {new Date(data.scrapedAt).toLocaleString()}.</>}
             </p>
           </Panel>
+
+          <HowToRead current={current} decided={decided} pointsForAWin={data.pointsForAWin} />
         </>
       )}
     </Shell>
@@ -406,5 +445,67 @@ function QualRow({
         </tr>
       )}
     </>
+  );
+}
+
+/** v0's "How to read it · The margin, not the medal" panel.
+ *
+ * v0 wrote its version as prose naming specific athletes. That reads well and
+ * goes stale the moment the standings move, so this one is GENERATED from the
+ * same rows the table above renders: whoever actually holds the last
+ * qualifying place, and whoever is first out. If the data can't support a
+ * sentence, the sentence isn't written. */
+function HowToRead({
+  current,
+  decided,
+  pointsForAWin,
+}: {
+  current: QualificationDiscipline;
+  decided: boolean;
+  pointsForAWin: number;
+}) {
+  const rows = current.standings ?? [];
+  const onLine = rows.find((r) => r.rank === current.qualLimit);
+  const firstOut = rows.find((r) => r.rank != null && r.rank > current.qualLimit);
+  if (!onLine && !firstOut) return null;
+
+  return (
+    <Panel title="How to read it" subtitle="The margin, not the medal." className="mt-6">
+      <p className="max-w-3xl text-[14px] leading-relaxed text-muted-foreground">
+        Points come from finishing position at each Diamond League meeting an athlete actually
+        contested — <span className="nums">{pointsForAWin}</span> for a win, scaling down from
+        there. Nothing here is a projection: it is the arithmetic of who has scored what.
+        {onLine && (
+          <>
+            {" "}
+            <Link
+              to="/athlete/$discKey/$name"
+              params={{ discKey: current.discKey, name: onLine.name }}
+              className="font-medium text-foreground hover:text-terracotta-strong hover:underline"
+            >
+              {onLine.name}
+            </Link>{" "}
+            holds the {current.qualLimit}th and final place on{" "}
+            <span className="nums">{onLine.points}</span> points
+            {onLine.gap === 0 ? ", exactly level with the cut" : ""}.
+          </>
+        )}
+        {firstOut && (
+          <>
+            {" "}
+            <Link
+              to="/athlete/$discKey/$name"
+              params={{ discKey: current.discKey, name: firstOut.name }}
+              className="font-medium text-foreground hover:text-terracotta-strong hover:underline"
+            >
+              {firstOut.name}
+            </Link>{" "}
+            is first out, <span className="nums">{Math.abs(firstOut.gap ?? 0)}</span>{" "}
+            {Math.abs(firstOut.gap ?? 0) === 1 ? "point" : "points"} short
+            {decided ? " with no meetings left to change it" : " with racing still to come"}.
+          </>
+        )}
+      </p>
+    </Panel>
   );
 }

@@ -32,6 +32,12 @@
   --color-gold: var(--gold);
   --color-gold-strong: var(--gold-strong);
   --color-gold-light: var(--gold-light);
+  /* Gold that is legible as TEXT on the terracotta canvas. --gold-light is a
+     surface/accent colour and measures 2.80:1 there -- fine for a bar or a
+     border, a real failure for an 11px label. This is the same value the
+     landing has used for that job; promoted to :root so the app's head band
+     can use it too, and so the two cannot drift apart. */
+  --color-gold-on-canvas: var(--gold-on-canvas);
   /* Was missing while `text-terracotta-strong` was already used in 19 places
      across 9 files (win-probability figures, the "next up" meet badge, the
      WatchBadge source link, storyline stat numbers, profile accents). The
@@ -52,7 +58,9 @@
      stadium-signage rather than generic-SaaS, and its tabular figures suit
      a page full of marks, ranks, and times. System stack kept as the real
      fallback while the font loads or if the stylesheet fails. */
-  --font-sans: "Barlow", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-sans:
+    "Barlow", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -140,6 +148,11 @@
      in those heroes uses white/translucent-white instead, see
      dashboard.tsx). Kept, not deleted, since both heroes still use them. */
   --gold-light: oklch(0.8 0.11 68);
+  /* Solved against the real canvas (161,87,61), not picked by eye:
+     0.94/0.09 measured 4.18:1, under the 4.5 floor for the 11-12.5px text
+     that uses it. This clears at 4.55:1 while keeping as much chroma as
+     possible, so it still reads gold rather than washing out to white. */
+  --gold-on-canvas: oklch(0.97 0.08 68);
   --terracotta-light: oklch(0.74 0.15 38.5);
   --sand: oklch(0.941 0.014 76);
 }
@@ -198,7 +211,7 @@
      --landing-bg, since most of this text sits on the tinted card):
      4.71:1 / 5.24:1 at the final --landing-card opacity above. */
   --landing-accent-text: oklch(0.93 0.1 38.5);
-  --landing-accent-text-gold: oklch(0.94 0.09 68);
+  --landing-accent-text-gold: var(--gold-on-canvas);
 }
 
 /* No :focus-visible rule existed anywhere in this project -- keyboard users
@@ -587,4 +600,263 @@ html {
     200px 100%,
     100% 100%,
     160px 160px;
+}
+
+/* ── The projected podium (landing) ──────────────────────────────────
+   Ported from the v0 "Race Programme" direction. Three plaques sitting on
+   stepped blocks, centre tallest, so the page's single most important
+   claim -- the model's three strongest calls -- is read as a podium rather
+   than as three more cards in a row.
+
+   Both animations are driven by a `.podium-in` class on the wrapper rather
+   than by scroll position alone, so the Replay control can retrigger them
+   by removing and re-adding it. Delays ride on a per-column custom
+   property; the centre goes first, because the eye should land on the
+   strongest call before the two beside it. */
+@keyframes podium-plaque-in {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes podium-block-up {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.podium-plaque {
+  opacity: 0;
+}
+
+.podium-in .podium-plaque {
+  animation: podium-plaque-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: var(--podium-plaque-delay, 0s);
+}
+
+.podium-block {
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.podium-in .podium-block {
+  animation: podium-block-up 0.95s cubic-bezier(0.2, 0.85, 0.25, 1) forwards;
+  animation-delay: var(--podium-block-delay, 0s);
+}
+
+/* The blocks are the load-bearing shape of the whole section -- collapsed
+   to scaleY(0) they read as a rendering fault, not as "motion turned off"
+   -- so reduced motion resolves them to their final state rather than
+   leaving the initial one. */
+@media (prefers-reduced-motion: reduce) {
+  .podium-plaque,
+  .podium-in .podium-plaque {
+    animation: none;
+    opacity: 1;
+  }
+
+  .podium-block,
+  .podium-in .podium-block {
+    animation: none;
+    transform: scaleY(1);
+  }
+}
+
+/* ── Lane textures: two of them, deliberately ────────────────────────
+   `.lanes` is v0's drifting version and is what every APP page uses --
+   dashboard, track, field, qualifying, stats, schedule, discipline,
+   athlete. `.lanes-track` is the landing hero only. They are separate
+   classes because a change to the landing should stay on the landing;
+   sharing one class is how a landing-only request last changed all nine
+   pages at once.
+
+   Both translate an oversized pseudo-element rather than animating
+   `background-position` the way v0 does. That is the one thing kept from
+   the rewrite: background-position repaints the whole layer every frame,
+   which is exactly what this file's ambient-glow note warns against,
+   while a transform stays on the compositor. Nothing visual changes.
+
+   The travel distances are not the gradient periods. The stripes run at
+   100deg, so a horizontal shift moves the pattern's phase by only
+   sin(100deg) = 0.9848 of the distance covered -- looping on the raw
+   110px/211px leaves a visible seam once per cycle. 110/0.9848 = 111.7 and
+   211/0.9848 = 214.25 land exactly on the next tile. */
+@keyframes lane-drift-near {
+  from {
+    transform: rotate(-1deg) translate3d(0, 0, 0);
+  }
+  to {
+    transform: rotate(-1deg) translate3d(111.7px, 0, 0);
+  }
+}
+
+@keyframes lane-drift-far {
+  from {
+    transform: rotate(-1deg) translate3d(0, 0, 0);
+  }
+  to {
+    transform: rotate(-1deg) translate3d(-214.25px, 0, 0);
+  }
+}
+
+.lanes,
+.lanes-track {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* -240px of overhang clears the longer of the two loops (214.25px), so
+   neither layer ever exposes an edge mid-cycle. */
+.lanes::before,
+.lanes::after {
+  content: "";
+  position: absolute;
+  inset: -20% -240px;
+}
+
+.lanes::before {
+  background: repeating-linear-gradient(
+    100deg,
+    transparent 0 108px,
+    oklch(0.97 0.012 75 / 0.06) 108px 110px
+  );
+  animation: lane-drift-near 46s linear infinite;
+}
+
+/* Slower and travelling the other way, so the two never lock into one
+   readable direction -- that is what keeps it reading as texture. */
+.lanes::after {
+  background: repeating-linear-gradient(
+    100deg,
+    transparent 0 208px,
+    oklch(0.8 0.11 68 / 0.05) 208px 211px
+  );
+  animation: lane-drift-far 63s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lanes::before,
+  .lanes::after {
+    animation: none;
+  }
+}
+
+/* ── The landing hero only: an actual running track ──────────────────
+   Lanes running the direction of travel, evenly spaced, one width, and
+   STILL -- a track does not slide. Spacing is set from the hero itself:
+   at ~950px tall a 104px period draws 9 lanes, which is what a real track
+   has.
+
+   The motion is the thing that really moves on a track: a soft band of
+   light travelling ALONG the lanes. */
+.lanes-track::before {
+  content: "";
+  position: absolute;
+  inset: -12% -6%;
+  transform: rotate(-1deg);
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0 102px,
+    oklch(0.97 0.012 75 / 0.12) 102px 104px
+  );
+}
+
+@keyframes lane-sweep {
+  from {
+    transform: rotate(-1deg) translate3d(-60%, 0, 0);
+  }
+  to {
+    transform: rotate(-1deg) translate3d(160%, 0, 0);
+  }
+}
+
+.lanes-track::after {
+  content: "";
+  position: absolute;
+  inset: -12% 0;
+  width: 42%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    oklch(0.97 0.012 75 / 0.07) 50%,
+    transparent 100%
+  );
+  animation: lane-sweep 13s linear infinite;
+}
+
+/* The lanes are the picture and never moved, so reduced motion only has to
+   stop the sweep -- removed rather than parked mid-track, where a static
+   bright band would read as a rendering artefact. */
+@media (prefers-reduced-motion: reduce) {
+  .lanes-track::after {
+    display: none;
+  }
+}
+
+/* A slow breath on the page's ambient glow. 11s and a 5% scale is below the
+   threshold where you would call it an animation -- it just stops the
+   canvas reading as a flat fill behind everything. */
+@keyframes ambient-breath {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.ambient-breath {
+  transform-origin: 50% 0;
+  animation: ambient-breath 11s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-breath {
+    animation: none;
+    opacity: 0.9;
+  }
+}
+
+/* The head band supplies the overlap that pulls the first panel up over it
+   (Shell's -34px). A top margin on that first panel collapses straight
+   through <main> and cancels most of it -- measured 34px of intended lift
+   arriving as 10px. The band owns the spacing above the first panel; the
+   panel rhythm owns everything after it. */
+main > :first-child {
+  margin-top: 0;
+}
+
+/* ── Skip to content ──────────────────────────────────────────────────
+   Written as its own class rather than `sr-only focus:not-sr-only`. Those
+   two utilities have equal specificity, so which one wins is decided by
+   source order in the generated stylesheet -- and `sr-only` was winning,
+   leaving the link clipped to 32x20 with `clip-path: inset(50%)` even while
+   focused. Verified in the browser, not assumed.
+
+   Positioned off-screen instead of clipped: it stays a real, measurable,
+   focusable element that simply isn't on screen until it matters. */
+.skip-link {
+  position: absolute;
+  top: 0.75rem;
+  left: -9999px;
+  z-index: 50;
+  white-space: nowrap;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  left: 0.75rem;
 }

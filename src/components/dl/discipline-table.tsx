@@ -203,13 +203,29 @@ export function DisciplineTable({
           sits above #2 Seville 9.82 at 27%). The subtitle says which of the
           two the table is currently ordered by, because the columns
           otherwise look like they should agree and don't. */}
+      {/* "Projected top 8" was hardcoded, and 8 is only this Final's field
+          size for 14 of the 32 disciplines -- the field events start 6 and
+          the long-distance races 10, so the men's shot put page promised a
+          top 8 of a 6-man final. qualLimit is the real number. */}
       <Panel
-        title={`Projected top 8 — ${current.label}`}
+        title={`Projected top ${current.qualLimit} — ${current.label}`}
         subtitle={SUBTITLE[sort.key]}
         className="mt-4"
+        action={
+          <Link
+            to="/discipline/$discKey"
+            params={{ discKey: current.id }}
+            className="label-caps shrink-0 rounded-full border border-border px-3 py-1.5 text-muted-foreground transition-colors hover:border-terracotta/40 hover:text-foreground"
+          >
+            How level is this field?
+          </Link>
+        }
       >
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px]">
+            <caption className="sr-only">
+              {`Projected field for the ${current.label}: rank by season best, athlete, nationality, mark and chance of a podium`}
+            </caption>
             <thead>
               <tr className="label-caps text-muted-foreground">
                 <th scope="col" className="w-10 pb-3 text-left font-semibold">

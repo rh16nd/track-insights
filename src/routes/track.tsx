@@ -1,9 +1,15 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Shell, PanelSkeleton, ErrorPanel } from "@/components/dl/shell";
 import { DisciplineTable } from "@/components/dl/discipline-table";
 import { usePredictions } from "@/hooks/usePredictions";
 
 export const Route = createFileRoute("/track")({
+  head: () =>
+    pageHead(
+      "Track events",
+      "Every track discipline at the 2026 Diamond League Final, with each qualified athlete's chance of finishing on the podium.",
+    ),
   validateSearch: (search: Record<string, unknown>): { disc?: string | undefined } => ({
     disc: typeof search["disc"] === "string" ? (search["disc"] as string) : undefined,
   }),
@@ -34,7 +40,7 @@ function TrackPage() {
       lastUpdated={data?.lastUpdated}
       daysToFinal={data?.daysToFinal}
     >
-      {state.status === "loading" && <PanelSkeleton title="Projected top 8" rows={8} />}
+      {state.status === "loading" && <PanelSkeleton title="Projected field" rows={8} />}
       {state.status === "error" && <ErrorPanel message={state.message} />}
       {data && (
         <DisciplineTable

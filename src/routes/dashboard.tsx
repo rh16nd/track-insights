@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState, type CSSProperties } from "react";
 import {
@@ -6,12 +7,12 @@ import {
   PanelSkeleton,
   ErrorPanel,
   ProbabilityBar,
-  AthleteAvatar,
   WatchBadge,
+  HeadFigure,
   dotClass,
   badgeClass,
 } from "@/components/dl/shell";
-import { statusLabel, type TopWinner } from "@/lib/dl-data";
+import { statusLabel, type ConfidenceRow, type TopWinner } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useCountUp } from "@/hooks/useCountUp";
 import { NewsFeed } from "@/components/dl/news-feed";
@@ -57,13 +58,18 @@ function useProbabilityDeltas(topWinners: TopWinner[] | undefined) {
 }
 
 export const Route = createFileRoute("/dashboard")({
+  head: () =>
+    pageHead(
+      "Dashboard",
+      "The model's surest calls across all 32 Diamond League disciplines, and the events it is least sure about.",
+    ),
   component: Dashboard,
 });
 
-/* Small hand-drawn 20x20 line icons, matching the landing page's existing
- * icon pattern (index.tsx) instead of pulling in an icon-library dependency
- * -- one glyph per stat, so the tile row reads at a glance instead of as
- * four identical generic number blocks. */
+/* Our own hand-drawn 20x20 line icons, restored rather than dropped: v0's
+ * figrow carries no glyph, and these read better than anything generated for
+ * it. One per stat, so the row scans as four distinct facts instead of four
+ * identical number blocks. No icon-library dependency. */
 function StatIcon({ kind }: { kind: "flag" | "calendar" | "grid" | "target" }) {
   const common = {
     viewBox: "0 0 20 20",
@@ -110,57 +116,168 @@ function StatIcon({ kind }: { kind: "flag" | "calendar" | "grid" | "target" }) {
   );
 }
 
-function StatTile({
-  label,
-  value,
-  suffix = "",
-  sub,
-  icon,
-  accent,
+/** The head-band figures keep the count-up the old stat tiles had — it is
+ * the one bit of that treatment worth carrying over, since a number ticking
+ * up on arrival is what makes the band feel live rather than printed. */
+function CountUpValue({ value }: { value: number }) {
+  return <>{Math.round(useCountUp(value))}</>;
+}
+
+/** One of the six surest calls, as a card rather than a list row (the v0
+ * "Race Programme" treatment). The probability is the card's anchor at 38px,
+ * which is the point: this page's job is to say how sure the model is, and
+ * the old row buried that in a 12px figure at the right-hand edge. */
+function CallCard({
+  winner,
   index,
+  delta,
 }: {
-  label: string;
-  value: number;
-  suffix?: string;
-  sub: string;
-  icon: "flag" | "calendar" | "grid" | "target";
-  accent: string;
+  winner: TopWinner;
   index: number;
+  delta: number | undefined;
 }) {
-  const animated = useCountUp(value);
+  const lead = index === 0;
   return (
-    <div className="stagger-item" style={{ "--stagger-i": index } as CSSProperties}>
-      <div className={`flex items-center gap-1.5 ${accent}`}>
-        <StatIcon kind={icon} />
-        <span className="label-caps text-white/75">{label}</span>
+    <Link
+      to="/athlete/$discKey/$name"
+      params={{ discKey: winner.discKey, name: winner.name }}
+      style={{ "--stagger-i": index } as CSSProperties}
+      className={`stagger-item card-shadow group relative block overflow-hidden rounded-[26px] border bg-card p-[22px] transition-[transform,border-color] duration-150 hover:-translate-y-0.5 active:scale-[0.99] ${
+        lead ? "border-gold-light/70" : "border-border hover:border-terracotta/40"
+      }`}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span
+          className={`dg text-[13px] font-bold tracking-[0.04em] ${
+            lead ? "text-gold-strong" : "text-muted-foreground"
+          }`}
+        >
+          #{index + 1} surest
+        </span>
+        {winner.injuryWatch && <WatchBadge reason={winner.injuryReason} url={winner.injuryUrl} />}
       </div>
-      <div
-        className="nums mt-2.5 text-[30px] font-semibold leading-none tracking-tight text-white"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
-        {Math.round(animated)}
-        {suffix}
+
+      <div className="label-caps mt-3 text-terracotta-strong">{winner.disc}</div>
+      <div className="dg mt-1.5 text-[22px] leading-[1.05] font-bold tracking-[-0.02em] text-foreground">
+        {winner.name}
       </div>
-      <div className="nums mt-1.5 text-[12px] text-white/75">{sub}</div>
-    </div>
+      <div className="nums mt-1.5 text-[13.5px] text-muted-foreground">
+        Season best {winner.mark}
+      </div>
+
+      <div className="mt-4 flex items-baseline gap-1.5">
+        <span
+          className={`dg nums text-[38px] leading-none font-bold tracking-[-0.03em] ${
+            lead ? "text-gold-strong" : "text-terracotta"
+          }`}
+        >
+          {winner.prob}
+        </span>
+        <span className="label-caps text-muted-foreground">% podium</span>
+        {typeof delta === "number" && (
+          <span
+            className={`delta-chip nums ml-auto text-[10.5px] font-semibold ${
+              delta > 0 ? "text-gold-strong" : "text-muted-foreground"
+            }`}
+            title={`${delta > 0 ? "Up" : "Down"} ${Math.abs(delta)} pt${
+              Math.abs(delta) === 1 ? "" : "s"
+            } since your last visit`}
+          >
+            {delta > 0 ? "▲" : "▼"}
+            {Math.abs(delta)}
+          </span>
+        )}
+      </div>
+      <ProbabilityBar value={winner.prob} className="mt-3.5" trackHeight="h-[7px]" />
+    </Link>
   );
 }
 
-/** Same footprint as a real StatTile (icon + label row, big number, sub
- * line) so the hero doesn't jump/reflow once real data arrives -- filled
- * with themed pulses instead of a fabricated number, since nothing true is
- * known yet. */
-function StatTileSkeleton({ index }: { index: number }) {
+/** v0 put a "Confidence board — top eight by margin" here. Two problems, so
+ * this is the same board read from the OTHER end.
+ *
+ * First, it is not a margin: `build_confidence()` returns each discipline's
+ * favourite's probability. Second, sorted descending it is the same ranking
+ * as the surest-calls panel directly above — its top six ARE those six
+ * athletes' numbers, so the page would state them twice.
+ *
+ * Read from the bottom it stops duplicating and starts saying something the
+ * dashboard never has: which events the model cannot call. That is the more
+ * useful half on a site whose stated principle is not overclaiming, and it
+ * lands the reader on the discipline page built to explain exactly that. */
+function LeastSurePanel({ confidence }: { confidence: ConfidenceRow[] }) {
+  const least = [...confidence].sort((a, b) => a.value - b.value).slice(0, 8);
+  if (least.length === 0) return null;
+  const widest = least[least.length - 1]?.value || 1;
+
   return (
-    <div className="stagger-item" style={{ "--stagger-i": index } as CSSProperties}>
-      <div className="flex items-center gap-1.5">
-        <span className="skeleton-pulse size-[18px] rounded bg-white" />
-        <span className="skeleton-pulse h-2.5 w-16 rounded-full bg-white" />
-      </div>
-      <span className="skeleton-pulse mt-2.5 block h-[26px] w-12 rounded-md bg-white" />
-      <span className="skeleton-pulse mt-2 block h-2.5 w-20 rounded-full bg-white" />
-    </div>
+    <Panel
+      title="Where the model is least sure"
+      subtitle="The eight events whose strongest pick is weakest — the most open fields at the Final, and the ones most likely to surprise."
+    >
+      <ul className="divide-y divide-border">
+        {least.map((c, i) => {
+          const row = (
+            <>
+              <span className="min-w-0 flex-1 truncate text-[14.5px] font-medium text-foreground">
+                {c.disc}
+              </span>
+              <span
+                aria-hidden="true"
+                className="hidden h-[9px] w-[200px] shrink-0 overflow-hidden rounded-full bg-secondary sm:block"
+              >
+                <span
+                  className="block h-full rounded-full"
+                  style={{
+                    width: `${Math.max((c.value / Math.max(widest, 1)) * 100, 4)}%`,
+                    backgroundImage:
+                      "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
+                  }}
+                />
+              </span>
+              <span className="nums w-13 shrink-0 text-right text-[13.5px] font-semibold text-foreground">
+                {c.value}%
+              </span>
+            </>
+          );
+          return (
+            <li
+              key={c.disc}
+              className="stagger-item py-3 first:pt-0 last:pb-0"
+              style={{ "--stagger-i": i } as CSSProperties}
+            >
+              {c.discKey ? (
+                <Link
+                  to="/discipline/$discKey"
+                  params={{ discKey: c.discKey }}
+                  className="flex items-center gap-4 rounded-md transition-colors hover:bg-secondary/30"
+                >
+                  {row}
+                </Link>
+              ) : (
+                <div className="flex items-center gap-4">{row}</div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-4 text-[12px] leading-relaxed text-muted-foreground">
+        This is the favourite&apos;s own chance of a podium, not a margin over the next athlete. A
+        low number means no one in that field stands out — follow a row through to see how level it
+        really is.
+      </p>
+    </Panel>
   );
+}
+
+/** "six days out" / "tomorrow" / "today". The Final is a fixed date, so the
+ * headline hits 0 and then goes negative if nobody refreshes the data — say
+ * something true at each end rather than printing "-2 days out". */
+function dayPhrase(days: number): string {
+  if (days > 1) return `${days} days out`;
+  if (days === 1) return "one day out";
+  if (days === 0) return "race day";
+  return "under way";
 }
 
 function Dashboard() {
@@ -175,28 +292,17 @@ function Dashboard() {
   const stats = data
     ? [
         {
-          label: "Meets done",
-          value: doneCount,
-          sub: `of ${totalCount}`,
-          icon: "flag" as const,
-          accent: "text-terracotta-light",
-        },
-        {
-          label: "Days to final",
+          label: "Days to Brussels",
           value: data.daysToFinal,
-          sub: "Brussels, 04 Sep",
+          sub: "Final, 04 Sep",
           icon: "calendar" as const,
           accent: "text-gold-light",
         },
         {
-          label: "Disciplines",
-          value: data.trackDisciplines.length + data.fieldDisciplines.length,
-          sub: "tracked",
-          icon: "grid" as const,
-          accent: "text-gold-light",
-        },
-        {
-          label: "Model accuracy",
+          // v0's label, and a better one than "Model accuracy": it names the
+          // task the number measures rather than implying the model is right
+          // 72% of the time about everything.
+          label: "Top-3 hit rate",
           value: Math.round(data.modelAccuracy),
           suffix: "%",
           // Says which of the two backtest numbers this is. The caption
@@ -206,46 +312,63 @@ function Dashboard() {
           icon: "target" as const,
           accent: "text-terracotta-light",
         },
+        {
+          label: "Disciplines",
+          value: data.trackDisciplines.length + data.fieldDisciplines.length,
+          sub: "tracked",
+          icon: "grid" as const,
+          accent: "text-gold-light",
+        },
+        {
+          label: "Meetings run",
+          value: doneCount,
+          sub: totalCount - doneCount === 1 ? "1 to go" : `${totalCount - doneCount} to go`,
+          icon: "flag" as const,
+          accent: "text-terracotta-light",
+        },
       ]
     : null;
 
-  // The branded track-surface hero now stays on screen through every state
-  // (loading, error, success) instead of dropping to a generic gray box --
-  // the 2026-08-24 critique found that exact swap happened at the worst
-  // possible moment: a first-time visitor's or anxious daily-checker's
-  // first paint. Stat tiles become themed skeleton pulses rather than
-  // showing a fabricated number while real data is still in flight.
-  const hero = (
-    <div className="track-surface relative overflow-hidden rounded-2xl">
-      <div className="absolute inset-0 bg-background/85" />
-      <div className="relative px-6 pb-6 pt-7 sm:px-8 sm:pt-8">
-        <h1
-          className="text-[24px] font-semibold tracking-tight text-white sm:text-[28px]"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Dashboard
-        </h1>
-        <p className="mt-1.5 max-w-lg text-[13.5px] leading-relaxed text-white/75">
-          Live predictions for the 2026 Diamond League Final, updated straight from the model.
-        </p>
-        <div className="mt-7 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
-          {stats
-            ? stats.map((s, i) => <StatTile key={s.label} index={i} {...s} />)
-            : [0, 1, 2, 3].map((i) => <StatTileSkeleton key={i} index={i} />)}
+  // The track-surface hero box is gone. v0 opens every app page with one
+  // full-bleed band (Shell's page head), and the dashboard was the only page
+  // still wrapping its title in a textured, darkened, rounded card -- which
+  // is what made it read as a different design from the rest of the site,
+  // and what the drifting lanes were fighting with.
+  //
+  // Figures still hold their shape through loading so the band doesn't
+  // reflow when data lands, and still never show a fabricated number.
+  const figures = stats ? (
+    stats.map((s) => (
+      <HeadFigure
+        key={s.label}
+        icon={<StatIcon kind={s.icon} />}
+        value={<CountUpValue value={s.value} />}
+        unit={s.suffix}
+        label={s.label}
+      />
+    ))
+  ) : (
+    <>
+      {[0, 1, 2, 3].map((i) => (
+        <div key={i}>
+          <span className="skeleton-pulse block h-10 w-16 rounded-md bg-white" />
+          <span className="skeleton-pulse mt-3 block h-2.5 w-24 rounded-full bg-white" />
         </div>
-      </div>
-    </div>
+      ))}
+    </>
   );
 
   return (
     <Shell
-      title="Dashboard"
-      hero={hero}
+      title={data ? `The board, ${dayPhrase(data.daysToFinal)}.` : "The board"}
+      crumb="Dashboard"
+      description="Every projection the model is most sure of, and the events it is least sure of, across all 32 disciplines of the 2026 Diamond League Final."
+      figures={figures}
       lastUpdated={data?.lastUpdated}
       daysToFinal={data?.daysToFinal}
     >
       {state.status === "loading" && (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.35fr_1fr]">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.35fr_1fr]">
           <PanelSkeleton title="Most likely to reach the podium" rows={6} />
           <PanelSkeleton title="Season progress" rows={3} />
         </div>
@@ -264,111 +387,77 @@ function Dashboard() {
           is still on the API and still tested; it just has no UI. */}
 
       {data && (
-        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1.35fr_1fr]">
+        <>
+          {/* v0 promotes the surest calls from list rows to full cards, which
+              is the right weight for the page's headline content -- the
+              probability becomes a 38px figure instead of a 12px one. Every
+              feature the list row carried comes with it: the since-last-visit
+              delta chip, the injury watch badge, and the link through to the
+              athlete. */}
           <Panel
-            title="Most likely to reach the podium"
-            subtitle="The model's strongest pick in each discipline — chance of finishing top three, not of winning"
+            title="The surest calls"
+            subtitle="The model's strongest pick in each discipline — chance of finishing top three, not of winning. Each card is a different event, so these six are not racing each other."
+            className="mt-6"
           >
-            <ul className="divide-y divide-border">
-              {data.topWinners.map((w, i) => {
-                const delta = deltas[w.name];
-                return (
-                  <li
-                    key={w.name}
-                    className="stagger-item py-3 first:pt-0 last:pb-0"
-                    style={{ "--stagger-i": i } as CSSProperties}
-                  >
-                    <Link
-                      to="/athlete/$discKey/$name"
-                      params={{ discKey: w.discKey, name: w.name }}
-                      className="flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 rounded-md transition-[background-color,transform] duration-150 hover:bg-secondary/30 active:scale-[0.99]"
-                    >
-                      <AthleteAvatar name={w.name} highlight={i === 0} />
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="truncate text-[13.5px] font-medium text-foreground">
-                            {w.name}
-                          </span>
-                          {w.injuryWatch && (
-                            <WatchBadge reason={w.injuryReason} url={w.injuryUrl} />
-                          )}
-                        </div>
-                        <div className="text-[11.5px] text-muted-foreground">{w.disc}</div>
-                      </div>
-                      <div className="flex w-full items-center justify-between gap-3 pl-9 sm:w-auto sm:justify-end sm:pl-0">
-                        <div className="nums text-[13px] font-medium text-foreground sm:w-20 sm:text-right">
-                          {w.mark}
-                        </div>
-                        <div className="w-24">
-                          <div className="flex items-center justify-end gap-1.5">
-                            {typeof delta === "number" && (
-                              <span
-                                className={`delta-chip nums text-[10.5px] font-semibold ${delta > 0 ? "text-gold-strong" : "text-muted-foreground"}`}
-                                title={`${delta > 0 ? "Up" : "Down"} ${Math.abs(delta)} pt${Math.abs(delta) === 1 ? "" : "s"} since your last visit`}
-                              >
-                                {delta > 0 ? "▲" : "▼"}
-                                {Math.abs(delta)}
-                              </span>
-                            )}
-                            <span className="nums text-right text-[12px] font-semibold text-terracotta-strong">
-                              {w.prob}%
-                            </span>
-                          </div>
-                          <ProbabilityBar value={w.prob} className="mt-1.5" trackHeight="h-1.5" />
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
+              {data.topWinners.map((w, i) => (
+                <CallCard key={w.name} winner={w} index={i} delta={deltas[w.name]} />
+              ))}
+            </div>
           </Panel>
 
-          <div className="space-y-4">
-            <Panel title="Season progress">
-              <div className="flex items-baseline justify-between">
-                <span className="nums text-[28px] font-semibold leading-none text-foreground">
-                  {progressPct}%
-                </span>
-                <span className="nums text-[12px] text-muted-foreground">
-                  {doneCount} of {totalCount} meets scored
-                </span>
-              </div>
-              <ProbabilityBar value={progressPct} className="mt-4" trackHeight="h-2" />
-            </Panel>
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.5fr_1fr]">
+            <LeastSurePanel confidence={data.confidence} />
 
-            <Panel
-              title="Upcoming calendar"
-              action={
-                <Link to="/schedule" className="label-caps text-terracotta-strong hover:underline">
-                  View full schedule →
-                </Link>
-              }
-            >
-              <ul className="space-y-2.5">
-                {data.meets.slice(-5).map((m) => (
-                  <li key={m.n} className="flex items-center gap-3">
-                    <span className={`size-1.5 shrink-0 rounded-full ${dotClass[m.status]}`} />
-                    <span className="nums w-14 text-[12px] text-muted-foreground">{m.date}</span>
-                    <span
-                      className={[
-                        "flex-1 truncate text-[13px]",
-                        m.status === "done" ? "text-muted-foreground" : "text-foreground",
-                        m.status === "next" ? "font-semibold" : "",
-                        m.status === "final" ? "font-semibold text-gold-strong" : "",
-                      ].join(" ")}
-                    >
-                      {m.city}
-                    </span>
-                    <span className={`label-caps rounded-sm px-1.5 py-1 ${badgeClass[m.status]}`}>
-                      {statusLabel[m.status]}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </Panel>
+            <div className="space-y-6">
+              <Panel title="Season progress">
+                <div className="flex items-baseline justify-between">
+                  <span className="nums text-[28px] font-semibold leading-none text-foreground">
+                    {progressPct}%
+                  </span>
+                  <span className="nums text-[12px] text-muted-foreground">
+                    {doneCount} of {totalCount} meets scored
+                  </span>
+                </div>
+                <ProbabilityBar value={progressPct} className="mt-4" trackHeight="h-2" />
+              </Panel>
+
+              <Panel
+                title="Upcoming calendar"
+                action={
+                  <Link
+                    to="/schedule"
+                    className="label-caps text-terracotta-strong hover:underline"
+                  >
+                    View full schedule →
+                  </Link>
+                }
+              >
+                <ul className="space-y-2.5">
+                  {data.meets.slice(-5).map((m) => (
+                    <li key={m.n} className="flex items-center gap-3">
+                      <span className={`size-1.5 shrink-0 rounded-full ${dotClass[m.status]}`} />
+                      <span className="nums w-14 text-[12px] text-muted-foreground">{m.date}</span>
+                      <span
+                        className={[
+                          "flex-1 truncate text-[13px]",
+                          m.status === "done" ? "text-muted-foreground" : "text-foreground",
+                          m.status === "next" ? "font-semibold" : "",
+                          m.status === "final" ? "font-semibold text-gold-strong" : "",
+                        ].join(" ")}
+                      >
+                        {m.city}
+                      </span>
+                      <span className={`label-caps rounded-sm px-1.5 py-1 ${badgeClass[m.status]}`}>
+                        {statusLabel[m.status]}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </Panel>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Bottom of the dashboard: the evidence behind every injury flag and

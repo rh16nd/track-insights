@@ -91,6 +91,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      // twitter:card promised a large image and none was ever set, so every
+      // share rendered blank. Drawn from the app's own palette and lane
+      // motif (scripts/make-og.py) rather than a stock graphic.
+      { property: "og:image", content: "/og.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "PodiumCall — We make the call before the gun." },
+      { name: "twitter:image", content: "/og.png" },
+      { property: "og:site_name", content: "PodiumCall" },
     ],
     links: [
       {

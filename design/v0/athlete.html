@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PodiumCall — Oblique Seville</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="system.css" />
+<script defer src="reveal.js"></script>
+<style>
+  /* ---- athlete dossier hero (page-specific) ---- */
+  .dossier{position:relative;overflow:hidden;background:var(--brick);color:var(--card)}
+  .dossier .lanes::before{background:repeating-linear-gradient(100deg,transparent 0,transparent 106px,oklch(0.97 0.012 75 / .08) 106px,oklch(0.97 0.012 75 / .08) 108px)}
+  .dossier .glow{background:radial-gradient(60% 80% at 90% 0%,oklch(0.8 0.11 68 / .2),transparent 60%)}
+  .dossier-inner{position:relative;z-index:2;padding:44px 0 40px;display:grid;grid-template-columns:1.35fr .65fr;gap:44px;align-items:end}
+  .dh-name{font-family:'Space Grotesk';font-weight:700;letter-spacing:-.03em;line-height:.92;font-size:clamp(46px,7vw,92px);color:var(--card);margin:14px 0 0}
+  .dh-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .dh-tags span{font-family:'Space Grotesk';font-size:12.5px;font-weight:600;letter-spacing:.02em;padding:6px 13px;border-radius:999px;background:oklch(0.97 0.012 75 / .12);color:var(--card)}
+  .dh-tags span.gold{background:var(--active);color:var(--card)}
+  .dh-figs{display:flex;flex-wrap:wrap;gap:26px;margin-top:26px}
+  .dh-fig .k{font-family:'Space Grotesk';font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.97 0.012 75 / .62)}
+  .dh-fig b{display:block;font-family:'Space Grotesk';font-weight:700;font-size:30px;letter-spacing:-.02em;color:var(--card);line-height:1.05;margin-top:3px}
+  .dh-fig b.g{color:var(--gold-light)}
+  .callbox{background:oklch(0.97 0.012 75 / .1);border:1px solid oklch(0.97 0.012 75 / .2);border-radius:20px;padding:22px 24px}
+  .callbox .lab{font-family:'Space Grotesk';font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-light)}
+  .callbox .big{font-family:'Space Grotesk';font-weight:700;font-size:58px;letter-spacing:-.03em;color:var(--card);line-height:1;margin:8px 0 2px}
+  .callbox p{font-size:13px;color:oklch(0.97 0.012 75 / .78);margin:6px 0 0}
+
+  /* ---- progression chart (page-specific) ---- */
+  .prog-wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center}
+  .prog svg{width:100%;height:auto;display:block}
+  .prog .cap{font-size:13px;color:var(--muted-foreground);margin-top:12px}
+  .prog-note h3{font-family:'Space Grotesk';font-weight:700;font-size:22px;letter-spacing:-.01em;color:var(--foreground);margin:0 0 10px;line-height:1.2}
+  .prog-note p{font-size:14px;color:var(--muted-foreground);margin:0 0 14px}
+  .pill-row{display:flex;flex-wrap:wrap;gap:8px}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .statgrid .c{background:var(--card);padding:16px}
+  .statgrid .c .k{font-family:'Space Grotesk';font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-foreground)}
+  .statgrid .c b{display:block;font-family:'Space Grotesk';font-weight:700;font-size:26px;letter-spacing:-.02em;color:var(--foreground);margin-top:4px}
+
+  .h2h-row{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--border)}
+  .h2h-row:last-child{border-bottom:none}
+  .h2h-row .nm{flex:1;font-family:'Space Grotesk';font-weight:600;font-size:14px;color:var(--foreground)}
+  .h2h-bar{width:120px;height:9px;border-radius:5px;background:var(--secondary);overflow:hidden;display:flex}
+  .h2h-bar .w{background:var(--gold-strong)}
+  .h2h-bar .l{background:var(--terracotta)}
+  .h2h-rec{font-family:'Space Grotesk';font-weight:700;font-size:13.5px;color:var(--muted-foreground);width:52px;text-align:right}
+
+  @media (max-width:860px){
+    .dossier-inner{grid-template-columns:1fr;gap:28px;align-items:start}
+    .prog-wrap,.split{grid-template-columns:1fr}
+    .statgrid{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="wrap-wide">
+      <a class="brand" href="index.html"><div class="mark"><i></i><i></i><i></i></div><div><b>PodiumCall</b><small>Diamond League Final · Brussels</small></div></a>
+      <nav>
+        <a href="index.html">The Final</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="projections.html">Projections</a>
+        <a href="track.html">Track</a>
+        <a href="field.html">Field</a>
+        <a href="qualification.html">Qualifying</a>
+        <a href="stats.html">Performance Index</a>
+        <a href="schedule.html">Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- dossier hero -->
+  <header class="dossier">
+    <div class="lanes"></div><div class="glow"></div>
+    <div class="wrap-wide dossier-inner">
+      <div>
+        <div class="eyebrow on-dark">Athlete dossier · Men&apos;s 100m</div>
+        <h1 class="dh-name">Oblique<br>Seville</h1>
+        <div class="dh-tags">
+          <span class="gold">World champion</span>
+          <span>JAM</span>
+          <span>Age 25.5</span>
+          <span>World rank #1 · 100m</span>
+        </div>
+        <div class="dh-figs">
+          <div class="dh-fig"><span class="k">Season best</span><b class="num">9.82</b></div>
+          <div class="dh-fig"><span class="k">Personal best</span><b class="num g">9.77</b></div>
+          <div class="dh-fig"><span class="k">Last race</span><b class="num">23 Aug</b></div>
+          <div class="dh-fig"><span class="k">Races in 2026</span><b class="num">5</b></div>
+        </div>
+      </div>
+      <div class="callbox">
+        <p class="lab">PodiumCall model</p>
+        <div class="big num">35%</div>
+        <p>Win probability at the Final — second on the board behind Emmanuel Eseme (36%), despite owning the fastest season mark in the field.</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="body-region lift">
+    <div class="wrap-wide stack">
+
+      <!-- FOCAL: progression -->
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><span class="eyebrow">Career progression · season best by year</span></div></div>
+        <div class="prog-wrap prog">
+          <div>
+            <svg viewBox="0 0 640 300" role="img" aria-label="Line chart of Oblique Seville's season best from 10.13 in 2019 to a 9.77 personal best in 2025, then 9.82 in 2026">
+              <g stroke="var(--border)" stroke-width="1">
+                <line x1="60" y1="40" x2="620" y2="40"></line>
+                <line x1="60" y1="110" x2="620" y2="110"></line>
+                <line x1="60" y1="180" x2="620" y2="180"></line>
+                <line x1="60" y1="250" x2="620" y2="250"></line>
+              </g>
+              <g font-family="Space Grotesk" font-size="11" fill="var(--muted-foreground)">
+                <text x="52" y="44" text-anchor="end">9.75</text>
+                <text x="52" y="114" text-anchor="end">9.88</text>
+                <text x="52" y="184" text-anchor="end">10.00</text>
+                <text x="52" y="254" text-anchor="end">10.13</text>
+              </g>
+              <polyline id="progline" fill="none" stroke="var(--terracotta)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points=""></polyline>
+              <g id="progdots"></g>
+            </svg>
+            <p class="cap">Vertical axis inverted so faster sits higher. Gold marks the 9.77 world-title run in Tokyo, September 2025 — still his lifetime best.</p>
+          </div>
+          <div class="prog-note">
+            <h3>Six years, three tenths, one world title.</h3>
+            <p>Seville has taken his season best from 10.13 as a teenager to a 9.77 world crown, improving in every year that carried a full campaign. The 2026 mark of 9.82 is his second-fastest ever — and the quickest in this Final&apos;s field.</p>
+            <div class="pill-row">
+              <span class="badge badge-gold flat num">PB 9.77 · 2025</span>
+              <span class="badge badge-neutral num">SB 9.82 · 2026</span>
+              <span class="badge badge-neutral num">PB gap 0.05</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- score context + form -->
+      <div class="split">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title"><span class="eyebrow">Where the 9.82 sits · World Athletics score</span></div></div>
+          <div style="display:flex;align-items:baseline;gap:14px;margin:2px 0 4px">
+            <span class="num" style="font-family:'Space Grotesk';font-weight:700;font-size:52px;letter-spacing:-.03em;color:var(--gold-strong);line-height:1">1269</span>
+            <span style="color:var(--muted-foreground);font-size:14px">WA points · Kingston (JAM)</span>
+          </div>
+          <div class="scorebar" style="margin:18px 0 12px">
+            <div class="scorebar-track">
+              <span class="scorebar-fill" style="width:calc((1269 - 1150) / (1300 - 1150) * 100%)"></span>
+              <span class="scorebar-median" style="left:calc((1206 - 1150) / (1300 - 1150) * 100%)"></span>
+            </div>
+          </div>
+          <ul class="factlist">
+            <li><span>Discipline percentile</span><b class="num">99.0th</b></li>
+            <li><span>Across all disciplines</span><b class="num">98.7th</b></li>
+            <li><span>Men&apos;s 100m field median</span><b class="num">1206</b></li>
+            <li><span>Above median by</span><b class="num gold">+63</b></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title"><span class="eyebrow">2026 season shape · 5 races, Jun–Aug</span></div></div>
+          <ul class="factlist">
+            <li><span>10 Jul · Herculis, Monaco</span><b class="num">9.88</b></li>
+            <li><span>18 Jul · London Athletics Meet</span><b class="num">9.87</b></li>
+            <li><span>23 Aug · Silesia, Chorzów</span><b class="num">9.83</b></li>
+          </ul>
+          <div class="note boxed" style="margin-top:16px"><span class="pip"></span><span>Top-3 season average 9.84 · median 9.87 · spread just 0.09s — the tightest, most consistent campaign of his career. Six days since his last race into Brussels.</span></div>
+        </div>
+      </div>
+
+      <!-- competition record -->
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><span class="eyebrow">Head-to-head record · 25 senior races tracked</span></div></div>
+        <div class="statgrid" style="margin-bottom:22px">
+          <div class="c"><span class="k">Win rate</span><b class="num">52%</b></div>
+          <div class="c"><span class="k">Podium rate</span><b class="num">88%</b></div>
+          <div class="c"><span class="k">Avg finish</span><b class="num">2.0</b></div>
+          <div class="c"><span class="k">Wins</span><b class="num">13</b></div>
+          <div class="c"><span class="k">Podiums</span><b class="num">22</b></div>
+          <div class="c"><span class="k">Diamond League races</span><b class="num">9</b></div>
+        </div>
+        <div class="prog-wrap" style="align-items:start">
+          <div>
+            <div class="eyebrow" style="margin-bottom:12px">By competition tier</div>
+            <div style="overflow-x:auto">
+              <table class="table">
+                <thead><tr><th>Tier</th><th class="r">Races</th><th class="r">Wins</th><th class="r">Podiums</th><th class="r">Avg</th></tr></thead>
+                <tbody>
+                  <tr><td>Diamond League</td><td class="r num">9</td><td class="r num">5</td><td class="r num">6</td><td class="r num">2.56</td></tr>
+                  <tr><td>Continental Tour Gold</td><td class="r num">2</td><td class="r num">0</td><td class="r num">2</td><td class="r num">2.50</td></tr>
+                  <tr><td>Silver / national</td><td class="r num">12</td><td class="r num">6</td><td class="r num">12</td><td class="r num">1.67</td></tr>
+                  <tr><td>Challenger</td><td class="r num">2</td><td class="r num">2</td><td class="r num">2</td><td class="r num">1.00</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="eyebrow" style="margin-bottom:12px">Verified head-to-heads</div>
+            <div id="h2hlist"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- honours + PBs -->
+      <div class="split">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title"><span class="eyebrow">Championship honours</span></div></div>
+          <ul class="factlist">
+            <li><span>World Championships, Tokyo 2025 · <strong style="color:var(--foreground)">gold</strong></span><b class="num gold">9.77</b></li>
+            <li><span>World Championships, Budapest 2023 · bronze (4x100m)</span><b class="num">37.76</b></li>
+            <li><span>Diamond League wins in 2026</span><b class="num">5</b></li>
+            <li><span>Jamaican champion 2026</span><b class="num">9.82</b></li>
+            <li><span>Overall world ranking</span><b class="num">#11</b></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title"><span class="eyebrow">Personal bests</span></div></div>
+          <div style="overflow-x:auto">
+            <table class="table">
+              <thead><tr><th>Event</th><th class="r">Mark</th><th>Where · when</th></tr></thead>
+              <tbody>
+                <tr><td>60m</td><td class="r num">6.42</td><td style="color:var(--muted-foreground);font-size:12.5px">Kingston · Feb 2023</td></tr>
+                <tr><td>100m</td><td class="r"><span class="badge badge-gold flat num">9.77</span></td><td style="color:var(--muted-foreground);font-size:12.5px">Tokyo · Sep 2025</td></tr>
+                <tr><td>150m</td><td class="r num">16.75</td><td style="color:var(--muted-foreground);font-size:12.5px">Spanish Town · Dec 2016</td></tr>
+                <tr><td>200m</td><td class="r num">20.13</td><td style="color:var(--muted-foreground);font-size:12.5px">Miramar, FL · May 2025</td></tr>
+                <tr><td>400m</td><td class="r num">46.98</td><td style="color:var(--muted-foreground);font-size:12.5px">Kingston · Feb 2026</td></tr>
+                <tr><td>4x100m</td><td class="r num">37.68</td><td style="color:var(--muted-foreground);font-size:12.5px">Budapest · Aug 2023</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap-wide">
+      <span>PodiumCall · Athlete dossier</span>
+      <span>All marks &amp; honours via World Athletics · model win probability <b>35%</b></span>
+    </div>
+  </footer>
+
+<script>
+  (function(){
+    var seasons=[
+      {y:2019,t:10.13},{y:2021,t:10.04},{y:2022,t:9.86},
+      {y:2023,t:9.86},{y:2024,t:9.81},{y:2025,t:9.77},{y:2026,t:9.82}
+    ];
+    var TMIN=9.75, TMAX=10.13, X0=60, X1=620, Y0=40, Y1=250;
+    function px(i){ return X0 + (i/(seasons.length-1))*(X1-X0); }
+    function py(t){ return Y0 + ((t-TMIN)/(TMAX-TMIN))*(Y1-Y0); }
+    var pts=seasons.map(function(s,i){ return px(i).toFixed(1)+','+py(s.t).toFixed(1); }).join(' ');
+    document.getElementById('progline').setAttribute('points', pts);
+    var g=document.getElementById('progdots');
+    seasons.forEach(function(s,i){
+      var isPB=(s.t===9.77), cx=px(i), cy=py(s.t);
+      var c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx',cx); c.setAttribute('cy',cy); c.setAttribute('r', isPB?7:5);
+      c.setAttribute('fill', isPB?'var(--gold-strong)':'var(--terracotta)');
+      c.setAttribute('stroke','var(--card)'); c.setAttribute('stroke-width','2'); g.appendChild(c);
+      var yr=document.createElementNS('http://www.w3.org/2000/svg','text');
+      yr.setAttribute('x',cx); yr.setAttribute('y',272); yr.setAttribute('text-anchor','middle');
+      yr.setAttribute('font-family','Space Grotesk'); yr.setAttribute('font-size','11'); yr.setAttribute('fill','var(--muted-foreground)');
+      yr.textContent=s.y; g.appendChild(yr);
+      var tm=document.createElementNS('http://www.w3.org/2000/svg','text');
+      tm.setAttribute('x',cx); tm.setAttribute('y',cy-13); tm.setAttribute('text-anchor','middle');
+      tm.setAttribute('font-family','Space Grotesk'); tm.setAttribute('font-size', isPB?'12':'11');
+      tm.setAttribute('font-weight', isPB?'700':'500');
+      tm.setAttribute('fill', isPB?'var(--gold-strong)':'var(--foreground)');
+      tm.textContent=s.t.toFixed(2); g.appendChild(tm);
+    });
+  })();
+
+  (function(){
+    var H=[
+      {name:"Kadrian Goldson",w:8,l:0,m:8},
+      {name:"Ackeem Blake",w:8,l:0,m:8},
+      {name:"Akani Simbine",w:6,l:1,m:7},
+      {name:"Zharnel Hughes",w:5,l:1,m:6},
+      {name:"Rohan Watson",w:5,l:1,m:6},
+      {name:"Noah Lyles",w:4,l:2,m:6}
+    ];
+    var host=document.getElementById('h2hlist');
+    H.forEach(function(h){
+      var wp=(h.w/h.m*100), lp=(h.l/h.m*100);
+      var row=document.createElement('div'); row.className='h2h-row';
+      row.innerHTML='<span class="nm">'+h.name+'</span>'+
+        '<span class="h2h-bar"><span class="w" style="width:'+wp+'%"></span><span class="l" style="width:'+lp+'%"></span></span>'+
+        '<span class="h2h-rec num">'+h.w+'\u2013'+h.l+'</span>';
+      host.appendChild(row);
+    });
+  })();
+</script>
+</body>
+</html>

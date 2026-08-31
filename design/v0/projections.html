@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PodiumCall — Projections · Men's 100m</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="system.css" />
+<script defer src="reveal.js"></script>
+<style>
+  /* pick banner */
+  .pick{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:stretch}
+  @media(max-width:820px){ .pick{grid-template-columns:1fr} }
+  .pick-card{background:var(--active);color:var(--card);border-radius:var(--radius-lg);padding:30px;position:relative;overflow:hidden}
+  .pick-card .lanes::before{opacity:.5}
+  .pick-card .inner{position:relative;z-index:2}
+  .pick-card .disc{font-family:'Space Grotesk';font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:oklch(0.97 0.012 75 / 0.85)}
+  .pick-card .nm{font-family:'Space Grotesk';font-weight:700;font-size:40px;letter-spacing:-0.03em;line-height:1;margin-top:14px}
+  .pick-card .meta{color:oklch(0.97 0.012 75 / 0.88);font-size:14.5px;margin-top:10px}
+  .pick-card .big{display:flex;align-items:baseline;gap:6px;margin-top:22px}
+  .pick-card .big b{font-family:'Space Grotesk';font-weight:700;font-size:66px;letter-spacing:-0.03em;line-height:1}
+  .pick-card .big span{font-size:13px;letter-spacing:0.1em;text-transform:uppercase;font-family:'Space Grotesk';color:oklch(0.97 0.012 75 / 0.85)}
+  .tiles{display:grid;grid-template-rows:repeat(3,1fr);gap:16px}
+  .tiles .tile{display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .tiles .tile b{font-family:'Space Grotesk';font-weight:700;font-size:30px;color:var(--foreground);letter-spacing:-0.02em;white-space:nowrap}
+  .tiles .tile .t{color:var(--muted-foreground);font-size:13px;line-height:1.4;max-width:22ch}
+
+  /* ===== the matrix (centrepiece) ===== */
+  .matrix-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.matrix{border-collapse:separate;border-spacing:5px;margin:0 auto;min-width:640px}
+  table.matrix th{font-family:'Space Grotesk';font-size:11px;font-weight:600;color:var(--muted-foreground);padding:0}
+  table.matrix th.col{writing-mode:vertical-rl;transform:rotate(180deg);height:96px;vertical-align:bottom;letter-spacing:0.02em;white-space:nowrap;padding-bottom:6px}
+  table.matrix th.row{text-align:right;padding-right:12px;white-space:nowrap;color:var(--foreground);font-weight:600;min-width:120px}
+  table.matrix th.row .nat{color:var(--muted-foreground);font-weight:500;font-size:10px;letter-spacing:0.06em}
+  table.matrix th.corner{background:transparent}
+  .cell{width:60px;height:60px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+    font-family:'Space Grotesk';position:relative}
+  .cell .wl{font-weight:700;font-size:15px;letter-spacing:-0.01em}
+  .cell .mt{font-size:9.5px;letter-spacing:0.04em;opacity:.72}
+  .cell.diag{background:repeating-linear-gradient(-45deg,var(--brick),var(--brick) 6px,oklch(0.36 0.11 40) 6px,oklch(0.36 0.11 40) 12px);opacity:.5}
+  .cell.none{background:repeating-linear-gradient(-45deg,var(--secondary),var(--secondary) 5px,var(--border) 5px,var(--border) 10px)}
+  .cell.none .wl{color:var(--muted-foreground);font-size:11px;font-weight:600}
+  .cell.win{background:var(--gold-light);color:var(--brick)}
+  .cell.win.strong{background:var(--active);color:var(--card)}
+  .cell.loss{background:oklch(0.85 0.035 55 / 0.55);color:var(--muted-foreground)}
+  .cell.loss.strong{background:var(--terracotta);color:var(--card)}
+  .cell.even{background:var(--secondary);color:var(--foreground)}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:22px}
+  .legend .lg{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted-foreground);font-family:'Space Grotesk'}
+  .legend .sw{width:18px;height:18px;border-radius:6px}
+
+  /* form strip */
+  .form-strip{display:flex;gap:5px;align-items:center}
+  .fdot{width:22px;height:22px;border-radius:7px;font-family:'Space Grotesk';font-weight:700;font-size:11px;
+    display:flex;align-items:center;justify-content:center}
+  .fdot.p1{background:var(--active);color:var(--card)}
+  .fdot.p2,.fdot.p3{background:oklch(0.8 0.11 68 / 0.3);color:var(--gold-strong)}
+  .fdot.p4{background:var(--secondary);color:var(--muted-foreground)}
+
+  /* season form chart */
+  .sform{overflow-x:auto}
+  .sform svg{display:block;min-width:560px}
+
+  /* storylines */
+  .stories{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  @media(max-width:760px){ .stories{grid-template-columns:1fr} }
+  .story{border-left:3px solid var(--gold-strong);padding:4px 0 4px 20px}
+  .story .tp{font-family:'Space Grotesk';font-size:10.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--terracotta-strong)}
+  .story h3{font-size:20px;margin:8px 0 4px;color:var(--foreground)}
+  .story .big{font-family:'Space Grotesk';font-weight:700;color:var(--gold-strong);font-size:15px}
+  .story p{color:var(--muted-foreground);font-size:14px;line-height:1.55;margin-top:8px}
+
+  /* cross-discipline confidence */
+  .xconf .barrow{padding:11px 0;border-bottom:1px solid var(--border)}
+  .xconf .barrow:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="wrap-wide">
+      <a class="brand" href="index.html"><div class="mark"><i></i><i></i><i></i></div><div><b>PodiumCall</b><small>Diamond League Final · Brussels</small></div></a>
+      <nav>
+        <a href="index.html">The Final</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="projections.html" class="active">Projections</a>
+        <a href="track.html">Track</a>
+        <a href="field.html">Field</a>
+        <a href="qualification.html">Qualifying</a>
+        <a href="stats.html">Performance Index</a>
+        <a href="schedule.html">Schedule</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- page head -->
+  <section class="page-head">
+    <div class="lanes"></div><div class="glow"></div>
+    <div class="wrap-wide">
+      <div class="crumbs">Projections / Track / <span style="color:var(--gold-light)">Men&apos;s 100m</span></div>
+      <h1>Men&apos;s 100m — who actually wins in Brussels.</h1>
+      <p class="sub">Eight men qualified. The model reads every real head-to-head, every season mark and every finish, then ranks the field. Its pick is not the fastest man on paper.</p>
+    </div>
+  </section>
+
+  <div class="body-region lift">
+    <div class="wrap-wide stack">
+
+      <!-- pick + tiles -->
+      <div class="pick">
+        <div class="pick-card">
+          <div class="lanes"></div>
+          <div class="inner">
+            <div class="disc">Model&apos;s pick · Men&apos;s 100m</div>
+            <div class="nm">Emmanuel Eseme</div>
+            <div class="meta">CMR · Season best 9.83 · Ranked 2nd by season best</div>
+            <div class="big"><b class="num">36</b><span>% win probability</span></div>
+          </div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><b class="num">27<span style="color:var(--muted-foreground);font-size:18px"> / 28</span></b><span class="t">pairings in the field have actually raced each other</span></div>
+          <div class="tile"><b class="num">1 pt</b><span class="t">splits the top two — 36% Eseme to 35% Seville</span></div>
+          <div class="tile"><b class="num">0.12<span style="color:var(--muted-foreground);font-size:18px">s</span></b><span class="t">covers all eight season bests, 9.82 to 9.94</span></div>
+        </div>
+      </div>
+
+      <!-- contenders -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title"><span class="eyebrow">The field</span><h2>Projected top 8</h2></div>
+        </div>
+        <div class="note boxed" style="margin-bottom:18px"><span class="pip"></span><span>Rank is ordered by <b>season best</b>; the percentage is <b>podium/win probability</b>. They disagree on purpose — the quickest time this year is not always the model&apos;s favourite.</span></div>
+        <div style="overflow-x:auto">
+          <table class="table" id="contenders">
+            <thead><tr><th>Rank</th><th>Athlete</th><th>Nat</th><th class="r">Season best</th><th class="r">Win prob</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MATRIX -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title"><span class="eyebrow">The centrepiece</span><h2>Head-to-head matrix</h2>
+            <p class="panel-note">Every pairing in the field, read as the row athlete&apos;s record against the column athlete. Career meetings, all real. One pair — Bednarek and Anthony — has never met.</p>
+          </div>
+        </div>
+        <div class="matrix-wrap">
+          <table class="matrix" id="matrix"></table>
+        </div>
+        <div class="legend">
+          <div class="lg"><span class="sw" style="background:var(--active)"></span>Row leads clearly</div>
+          <div class="lg"><span class="sw" style="background:var(--gold-light)"></span>Row leads</div>
+          <div class="lg"><span class="sw" style="background:var(--secondary)"></span>Even</div>
+          <div class="lg"><span class="sw" style="background:var(--terracotta)"></span>Row trails clearly</div>
+          <div class="lg"><span class="sw" style="background:repeating-linear-gradient(-45deg,var(--secondary),var(--secondary) 4px,var(--border) 4px,var(--border) 8px)"></span>Never met</div>
+        </div>
+      </div>
+
+      <!-- what separates them -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title"><span class="eyebrow">What separates them</span><h2>The tale of the tape</h2>
+            <p class="panel-note">Steadiness is the spread of finishing times — lower is more predictable. Peak month is when each ran their fastest this season.</p>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="table" id="tape">
+            <thead><tr><th>Athlete</th><th class="r">Top-3 avg</th><th class="r">Steadiness</th><th class="r">Races</th><th class="r">Podium rate</th><th class="c">Peak</th><th>Last 6 finishes</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- season form chart -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title"><span class="eyebrow">Season form</span><h2>Where each contender is trending</h2>
+            <p class="panel-note">Finishing position across each athlete&apos;s last six recorded races — lower is better. Gold marks a win.</p>
+          </div>
+        </div>
+        <div class="sform"><svg id="formChart" viewBox="0 0 720 260" role="img" aria-label="Season form: finishing positions over the last six races for each contender"></svg></div>
+      </div>
+
+      <!-- storylines -->
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><span class="eyebrow">Computed storylines</span><h2>Four things the data is saying</h2></div></div>
+        <div class="stories">
+          <div class="story"><div class="tp">Rivalry renewed</div><h3>Seville leads it 3&ndash;0 <span class="big">· yet loses the call</span></h3><p>3 wins from 3 real career meetings, yet the model makes Emmanuel Eseme the 36% pick for the Final.</p></div>
+          <div class="story"><div class="tp">Photo finish</div><h3>A one-point call <span class="big">· 36% to 35%</span></h3><p>36% to 35% — the closest projected race in Men&apos;s 100m.</p></div>
+          <div class="story"><div class="tp">Trending up</div><h3>Bednarek is surging <span class="big">· &minus;0.11s</span></h3><p>9.98 &rarr; 9.87 across 3 real meetings this season — the biggest real in-season gain among the top contenders.</p></div>
+          <div class="story"><div class="tp">First Final appearance</div><h3>Seville, debutant <span class="big">· #1 by season best</span></h3><p>Never made a Diamond League Final in Men&apos;s 100m before (no appearance 2018&ndash;2025).</p></div>
+        </div>
+      </div>
+
+      <!-- cross-discipline confidence -->
+      <div class="panel xconf">
+        <div class="panel-head"><div class="panel-title"><span class="eyebrow">Across the programme</span><h2>Where the model is most confident</h2>
+          <p class="panel-note">The disciplines where a single athlete carries the highest win probability into Brussels.</p></div></div>
+        <div id="xconf"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="foot" style="background:var(--brick);color:oklch(0.97 0.012 75 / 0.7);padding:40px 0;font-size:13px;text-align:center">
+    <div class="wrap-wide">PodiumCall — projections from real World Athletics results · Head-to-head records are career meetings · Updated 29 Aug 2026</div>
+  </footer>
+
+  <script>
+    var names = ["Oblique SEVILLE","Emmanuel ESEME","Kenneth BEDNAREK","Gift LEOTLELA","Trayvon BROMELL","Jordan ANTHONY","Akani SIMBINE","Ferdinand OMANYALA"];
+    var nats  = ["JAM","CMR","USA","RSA","USA","USA","RSA","KEN"];
+    var last  = ["SEVILLE","ESEME","BEDNAREK","LEOTLELA","BROMELL","ANTHONY","SIMBINE","OMANYALA"];
+
+    // contenders (rank by season best, with win prob)
+    var field = [
+      {r:1,n:"Oblique SEVILLE",nat:"JAM",sb:"9.82",p:35},
+      {r:2,n:"Emmanuel ESEME",nat:"CMR",sb:"9.83",p:36},
+      {r:3,n:"Kenneth BEDNAREK",nat:"USA",sb:"9.87",p:18},
+      {r:4,n:"Gift LEOTLELA",nat:"RSA",sb:"9.91",p:5},
+      {r:5,n:"Trayvon BROMELL",nat:"USA",sb:"9.91",p:12},
+      {r:6,n:"Jordan ANTHONY",nat:"USA",sb:"9.91",p:3},
+      {r:7,n:"Akani SIMBINE",nat:"RSA",sb:"9.93",p:8},
+      {r:8,n:"Ferdinand OMANYALA",nat:"KEN",sb:"9.94",p:2}
+    ];
+    var cb = document.querySelector('#contenders tbody'), ch='';
+    field.forEach(function(a){
+      var top = a.p===36;
+      ch += '<tr'+(top?' class="hi"':'')+'><td class="rk'+(a.r===1?' top':'')+'">'+a.r+'</td>'
+        + '<td><div class="athlete"><span class="chip">'+a.nat+'</span><div><div class="nm">'+a.n+'</div></div></div></td>'
+        + '<td class="label" style="color:var(--muted-foreground)">'+a.nat+'</td>'
+        + '<td class="r mark">'+a.sb+'</td>'
+        + '<td class="r"><span class="pill'+(top?' gold':'')+'">'+a.p+'<span class="u">%</span></span></td></tr>';
+    });
+    cb.innerHTML = ch;
+
+    // matrix cells: [wins,losses] from row perspective; null = never met / diagonal
+    var M = [
+      [null,[3,0],[2,1],[4,0],[0,2],[2,0],[6,1],[4,1]],
+      [[0,3],null,[0,2],[1,1],[0,1],[3,1],[3,10],[3,5]],
+      [[1,2],[2,0],null,[2,2],[3,4],null,[5,1],[1,5]],
+      [[0,4],[1,1],[2,2],null,[2,0],[1,0],[4,1],[2,1]],
+      [[2,0],[1,0],[4,3],[0,2],null,[1,0],[9,2],[4,4]],
+      [[0,2],[1,3],null,[0,1],[0,1],null,[1,1],[2,0]],
+      [[1,6],[10,3],[1,5],[1,4],[2,9],[1,1],null,[9,8]],
+      [[1,4],[5,3],[5,1],[1,2],[4,4],[0,2],[8,9],null]
+    ];
+    var mt = document.getElementById('matrix');
+    var head = '<tr><th class="corner"></th>';
+    for(var c=0;c<8;c++){ head += '<th class="col">'+last[c]+'</th>'; }
+    head += '</tr>';
+    var body='';
+    for(var r=0;r<8;r++){
+      body += '<tr><th class="row">'+last[r]+' <span class="nat">'+nats[r]+'</span></th>';
+      for(var c2=0;c2<8;c2++){
+        var v=M[r][c2];
+        if(r===c2){ body += '<td><div class="cell diag"></div></td>'; continue; }
+        if(v===null){ body += '<td><div class="cell none"><span class="wl">&mdash;</span><span class="mt">never met</span></div></td>'; continue; }
+        var w=v[0], l=v[1], m=w+l, cls='even';
+        if(w>l){ cls = (w-l)>=3 || (l===0&&w>=2) ? 'win strong':'win'; }
+        else if(l>w){ cls = (l-w)>=3 || (w===0&&l>=2) ? 'loss strong':'loss'; }
+        body += '<td><div class="cell '+cls+'"><span class="wl">'+w+'\u2013'+l+'</span><span class="mt">'+m+' mtg</span></div></td>';
+      }
+      body += '</tr>';
+    }
+    mt.innerHTML = head + body;
+
+    // tale of the tape
+    var tape = [
+      {n:"Oblique SEVILLE",t3:"9.84",st:0.34,ra:25,pr:88.0,pk:"Jun",f:[1,3,1,1,2,1]},
+      {n:"Emmanuel ESEME",t3:"9.97",st:0.88,ra:38,pr:76.3,pk:"Jun",f:[2,2,3,1,4,9]},
+      {n:"Kenneth BEDNAREK",t3:"9.82",st:1.08,ra:17,pr:58.8,pk:"Jun",f:[4,3,4,1,3,2]},
+      {n:"Gift LEOTLELA",t3:"9.97",st:0.71,ra:31,pr:72.4,pk:"Aug",f:[5,1,1,2,5,5]},
+      {n:"Trayvon BROMELL",t3:"9.92",st:0.74,ra:28,pr:70.4,pk:"Jun",f:[4,5,4,3,1,1]},
+      {n:"Jordan ANTHONY",t3:"9.96",st:0.97,ra:5,pr:20.0,pk:"Jul",f:[4,5,5,2,6]},
+      {n:"Akani SIMBINE",t3:"9.99",st:3.51,ra:63,pr:58.7,pk:"Aug",f:[5,6,1,4,4,7]},
+      {n:"Ferdinand OMANYALA",t3:"9.95",st:0.68,ra:51,pr:82.4,pk:"May",f:[1,1,8,1,5,6]}
+    ];
+    function strip(arr){
+      var s='<div class="form-strip">';
+      arr.forEach(function(p){ var cl = p===1?'p1':(p<=3?'p2':'p4'); s+='<span class="fdot '+cl+'">'+p+'</span>'; });
+      return s+'</div>';
+    }
+    var tb=document.querySelector('#tape tbody'), th='';
+    tape.forEach(function(a){
+      th += '<tr class="hover"><td><div class="nm" style="font-family:\'Space Grotesk\';font-weight:600">'+a.n+'</div></td>'
+        + '<td class="r mark">'+a.t3+'</td>'
+        + '<td class="r">'+a.st.toFixed(2)+'</td>'
+        + '<td class="r">'+a.ra+'</td>'
+        + '<td class="r">'+a.pr.toFixed(1)+'%</td>'
+        + '<td class="c"><span class="badge badge-neutral">'+a.pk+'</span></td>'
+        + '<td>'+strip(a.f)+'</td></tr>';
+    });
+    tb.innerHTML = th;
+
+    // season form chart (inline SVG) — finishing places over last 6, lower=better
+    (function(){
+      var svg=document.getElementById('formChart');
+      var W=720,H=260, padL=40,padR=150,padT=20,padB=30;
+      var plotW=W-padL-padR, plotH=H-padT-padB, maxP=9;
+      var pal=["var(--terracotta-strong)","var(--gold-strong)","var(--brick)","var(--terracotta)","oklch(0.55 0.09 60)","oklch(0.5 0.05 45)","oklch(0.62 0.13 55)","oklch(0.45 0.1 68)"];
+      var s='';
+      // gridlines for places 1,3,5,7,9
+      [1,3,5,7,9].forEach(function(p){
+        var y=padT+(p-1)/(maxP-1)*plotH;
+        s+='<line x1="'+padL+'" y1="'+y+'" x2="'+(padL+plotW)+'" y2="'+y+'" stroke="var(--border)" stroke-width="1"/>';
+        s+='<text x="'+(padL-8)+'" y="'+(y+4)+'" text-anchor="end" font-family="Space Grotesk" font-size="10" fill="var(--muted-foreground)">'+p+'</text>';
+      });
+      tape.forEach(function(a,i){
+        var n=a.f.length, pts=[];
+        for(var k=0;k<n;k++){
+          var x=padL+(n===1?plotW/2:k/(n-1)*plotW);
+          var y=padT+(a.f[k]-1)/(maxP-1)*plotH;
+          pts.push([x,y]);
+        }
+        var d=pts.map(function(p,idx){return (idx?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}).join(' ');
+        var col=pal[i];
+        s+='<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2" opacity="0.9" stroke-linejoin="round"/>';
+        pts.forEach(function(p){ s+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3" fill="'+col+'"/>'; });
+        // label at end
+        var lp=pts[pts.length-1];
+        s+='<text x="'+(lp[0]+8)+'" y="'+(lp[1]+4)+'" font-family="Space Grotesk" font-size="11" font-weight="600" fill="'+col+'">'+last[i]+'</text>';
+      });
+      svg.innerHTML=s;
+    })();
+
+    // cross-discipline confidence
+    var xc=[
+      ["Women's 400m",80],["Women's 1500m",74],["Men's 3000m Steeplechase",73],["Men's Pole Vault",72],
+      ["Men's Discus Throw",68],["Men's 400m",67],["Women's 400m Hurdles",67],["Men's 400m Hurdles",65]
+    ];
+    var xh='';
+    xc.forEach(function(d,i){
+      var top=i===0;
+      xh += '<div class="barrow"><span class="bl">'+d[0]+'</span>'
+        + '<span class="meter"><i class="'+(top?'gold':'')+'" style="width:'+d[1]+'%"></i></span>'
+        + '<span class="bv"'+(top?' style="color:var(--gold-strong)"':'')+'>'+d[1]+'%</span></div>';
+    });
+    document.getElementById('xconf').innerHTML=xh;
+  </script>
+</body>
+</html>

@@ -19,75 +19,181 @@ export const badgeClass: Record<MeetStatus, string> = {
 
 export function Shell({
   title,
+  crumb,
   children,
   lastUpdated,
   daysToFinal,
   hero,
+  figures,
+  headTone = "canvas",
+  headBackdrop,
   eyebrow,
   description,
 }: {
   title: string;
+  /** The page's NAME, for the breadcrumb — distinct from `title`, which is
+   * the headline. The dashboard is called "Dashboard" in the crumb while its
+   * headline reads "The board, 4 days out."; defaults to the title for pages
+   * where the two are the same thing. */
+  crumb?: string | undefined;
   children: ReactNode;
   lastUpdated?: string | undefined;
   daysToFinal?: number | undefined;
-  /** Replaces the plain title with a custom banner (currently just
-   * Dashboard's track-surface hero) -- `title` is still passed for the
-   * document/route title, it just isn't rendered as the visible `<h1>`. */
+  /** Replaces the band's default title block with custom content — still
+   * inside the same band, so a page with its own header (the athlete
+   * profile) keeps the site's one head treatment instead of inventing a
+   * second. */
   hero?: ReactNode;
-  /** Small caps line above the page title, on the canvas. */
+  /** Figures that belong ON the head band rather than in a panel below it —
+   * v0's `.figrow`. The dashboard's four stats are the only user today. */
+  figures?: ReactNode;
+  /** The head band's ground. "brick" is v0's athlete dossier: a darker,
+   * heavier band that signals a different KIND of page — a file on one
+   * person rather than a view over the field. */
+  headTone?: "canvas" | "brick";
+  /** A backdrop rendered behind the band's content (the athlete photo).
+   * Sits under the lanes and the glow. */
+  headBackdrop?: ReactNode;
+  /** Small caps line above the page title. */
   eyebrow?: string | undefined;
-  /** One-line explanation under the page title. Supplying this (or
-   * `eyebrow`) switches the header from the old bordered title card to the
-   * on-canvas treatment: the Dashboard earns a full banner because it IS an
-   * overview, but on a browsing page a tall filled box just repeats a shape
-   * and pushes the actual content down. Text sits directly on the canvas
-   * (white measures 5.29:1 there, verified). */
+  /** One-line explanation under the page title. */
   description?: string | undefined;
 }) {
-  const hasPageHeader = Boolean(eyebrow || description);
   return (
     <div className="relative min-h-screen bg-background">
+      {/* Grain stays perfectly still -- it is a surface texture, and moving
+          noise reads as television static. Only the glow breathes, on its own
+          layer so the two can't drag each other. */}
+      <div className="ambient-grain pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
       <div
-        className="ambient-glow ambient-grain pointer-events-none fixed inset-0 z-0"
+        className="ambient-glow ambient-breath pointer-events-none fixed inset-0 z-0"
         aria-hidden="true"
       />
       <TrackCurveDecoration className="pointer-events-none fixed bottom-0 right-0 z-0 h-[65vh] w-[65vh] opacity-80" />
       <div className="relative z-10">
+        {/* Every page opens with the same nav, so without this a keyboard or
+            screen-reader user tabs the whole thing again on each one before
+            reaching the content. Visually hidden until it takes focus, which
+            is the point -- it is the first thing Tab reaches. */}
+        <a
+          href="#main"
+          className="skip-link label-caps rounded-full bg-card px-4 py-2.5 text-foreground shadow-lg"
+        >
+          Skip to content
+        </a>
         <TopNav lastUpdated={lastUpdated} daysToFinal={daysToFinal} />
-        <main className="mx-auto max-w-[1600px] px-6 pb-14 pt-8 sm:px-8 lg:px-12">
-          {hero ??
-            (hasPageHeader ? (
-              <div className="pb-1 pt-1">
-                {eyebrow && (
-                  <div className="flex items-center gap-2">
-                    <span className="size-[7px] shrink-0 rounded-full bg-gold-light" />
-                    {/* /75 measured 3.75:1 on the canvas — under the 4.5
-                        floor for 11px text. /92 clears it. */}
-                    <span className="label-caps text-white/92">{eyebrow}</span>
-                  </div>
-                )}
+
+        {/* v0's `.page-head`: one full-bleed band that opens every app page.
+            It replaces two different old treatments -- a bordered title card
+            on some pages and the dashboard's textured `track-surface` hero
+            box on another -- which is why the app read as several designs
+            stitched together. The drifting lanes live HERE, inside a band
+            with nothing but a title on it, so the motion never sits behind a
+            number the reader is trying to hold. */}
+        <section
+          className={`relative overflow-hidden pt-9 pb-11 sm:pt-14 sm:pb-[68px] ${
+            headTone === "brick" ? "bg-brick" : ""
+          }`}
+        >
+          {headBackdrop}
+          <div className="lanes" aria-hidden="true" />
+          <div
+            className="ambient-breath pointer-events-none absolute inset-0 origin-top bg-[radial-gradient(60%_80%_at_50%_-10%,oklch(0.8_0.11_68/0.18),transparent_62%)]"
+            aria-hidden="true"
+          />
+          <div className="relative z-[2] mx-auto max-w-[1600px] px-6 sm:px-8 lg:px-12">
+            {hero ?? (
+              <>
+                <div className="dg text-[12.5px] tracking-[0.04em] text-white/92">
+                  PodiumCall / <span className="text-gold-on-canvas">{crumb ?? title}</span>
+                </div>
+                {eyebrow && <div className="label-caps mt-3 text-gold-on-canvas">{eyebrow}</div>}
                 <h1
-                  className="mt-2 text-[30px] font-bold tracking-tight text-white sm:text-[38px]"
+                  className="mt-3.5 max-w-[22ch] text-balance text-[clamp(30px,4vw,52px)] leading-[1.04] font-bold tracking-tight text-white"
                   style={{ fontFamily: "var(--font-display)" }}
                 >
                   {title}
                 </h1>
                 {description && (
-                  <p className="mt-2 max-w-2xl text-[14.5px] leading-relaxed text-white/90">
+                  <p className="mt-3.5 max-w-[64ch] text-[15px] leading-relaxed text-white/92 sm:text-[17px]">
                     {description}
                   </p>
                 )}
-              </div>
-            ) : (
-              <div className="card-shadow card-surface rounded-[18px] bg-card px-5 py-4">
-                <h1 className="text-[20px] font-semibold tracking-tight text-foreground">
-                  {title}
-                </h1>
-              </div>
-            ))}
-          <div className={hasPageHeader ? "mt-5" : "mt-6"}>{children}</div>
+                {figures && (
+                  <div className="mt-7 flex flex-wrap gap-x-8 gap-y-5 sm:mt-8 sm:gap-x-11 sm:gap-y-6">
+                    {figures}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+
+        {/* Lifted so the first panel overlaps the band's lower padding --
+            the seam between the two reads as one page rather than a header
+            sitting on top of a body. */}
+        <main
+          id="main"
+          // -1 so the skip link can move focus here without making the
+          // region itself a tab stop on the way through.
+          tabIndex={-1}
+          className="relative z-[2] mx-auto -mt-[34px] max-w-[1600px] px-6 pb-[90px] sm:px-8 lg:px-12"
+        >
+          {children}
         </main>
+
+        {/* The app pages had no footer landmark at all -- the landing has one,
+            so the two disagreed. Also the only place the site states what it
+            is not: a source, and not affiliated with anyone. */}
+        <footer className="relative z-[2] border-t border-border/40 px-6 pb-10 sm:px-8 lg:px-12">
+          <div className="mx-auto flex max-w-[1600px] flex-col gap-1.5 pt-6 text-[12px] text-white/80 sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              Data scraped from World Athletics. Not affiliated with World Athletics or the Wanda
+              Diamond League.
+            </p>
+            <p>Predictions are model estimates, not betting advice.</p>
+          </div>
+        </footer>
       </div>
+    </div>
+  );
+}
+
+/** A figure on the head band — v0's `.stat` inside `.figrow`. Big number,
+ * small caps label under it, no icon and no card: on a coloured band the
+ * band is already the container, and boxing each stat again was what made
+ * the old dashboard hero read as a panel inside a panel. */
+export function HeadFigure({
+  icon,
+  value,
+  unit,
+  label,
+  gold = false,
+}: {
+  /** The app's own hand-drawn glyph. v0's figrow has none; ours reads
+   * better, so the icon stayed. */
+  icon?: ReactNode;
+  value: ReactNode;
+  unit?: string | undefined;
+  label: string;
+  /** v0's `.stat.gold` — the one figure on a band that is the point of the
+   * page (the Final's date on the schedule). */
+  gold?: boolean;
+}) {
+  return (
+    <div>
+      <b
+        className={`dg nums block text-[40px] leading-none font-bold tracking-[-0.02em] whitespace-nowrap ${
+          gold ? "text-gold-on-canvas" : "text-white"
+        }`}
+      >
+        {value}
+        {unit && <span className="ml-px text-[0.5em] font-semibold text-white/92">{unit}</span>}
+      </b>
+      <span className="label-caps mt-2.5 flex items-center gap-1.5 text-white/92">
+        {icon}
+        {label}
+      </span>
     </div>
   );
 }
@@ -136,11 +242,11 @@ export function PanelSkeleton({
 }) {
   return (
     <section
-      className={`card-shadow card-surface rounded-[18px] bg-card ${className}`}
+      className={`card-shadow card-surface rounded-[26px] bg-card ${className}`}
       aria-busy="true"
       aria-live="polite"
     >
-      <div className="px-6 pt-5">
+      <div className="px-5 pt-5 sm:px-7 sm:pt-6">
         {title ? (
           <h2 className="label-caps text-muted-foreground">{title}</h2>
         ) : (
@@ -148,7 +254,7 @@ export function PanelSkeleton({
         )}
         <span className="sr-only">Loading…</span>
       </div>
-      <div className="space-y-4 px-6 pb-6 pt-5">
+      <div className="space-y-4 px-5 pt-4 pb-5 sm:px-7 sm:pt-5 sm:pb-7">
         {Array.from({ length: rows }).map((_, i) => (
           <div key={i} className="flex items-center gap-3">
             <span className="skeleton-pulse size-6 shrink-0 rounded-full bg-foreground" />
@@ -176,7 +282,7 @@ export function ErrorPanel({
   title?: string;
 }) {
   return (
-    <section className="card-shadow card-surface rounded-[18px] bg-card p-6">
+    <section className="card-shadow card-surface rounded-[26px] bg-card p-6 sm:p-7">
       <div className="text-[14px] font-semibold text-destructive">{title}</div>
       <p className="mt-1 text-[13.5px] text-foreground">{message}</p>
       <p className="mt-2 text-[12.5px] text-muted-foreground">
@@ -403,17 +509,29 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <section className={`card-shadow card-surface rounded-[18px] bg-card ${className}`}>
-      <div className="flex items-center justify-between px-6 pt-5">
+    // 2026-08-31, the v0 "cleaner look" pass: radius 18 -> 26px and padding
+    // 24 -> 28px, both taken from the direction's --radius-lg/--pad tokens.
+    // Changed here rather than per route, so all nine pages move together --
+    // a panel that is 26px on one page and 18px on the next is the exact
+    // inconsistency this pass exists to remove. The subtitle also gains a
+    // measure limit: several run long enough to stretch the full panel width,
+    // which is what made dense pages read as walls of small text.
+    <section className={`card-shadow card-surface rounded-[26px] bg-card ${className}`}>
+      {/* 28px is right on a desktop panel and too much on a 375px phone,
+          where it would spend 15% of the screen on gutters -- v0 steps its
+          own band padding down on mobile for the same reason. */}
+      <div className="flex items-start justify-between gap-4 px-5 pt-5 sm:px-7 sm:pt-6">
         <div className="min-w-0">
           <h2 className="label-caps text-muted-foreground">{title}</h2>
           {subtitle && (
-            <p className="mt-1 text-[12px] leading-snug text-muted-foreground">{subtitle}</p>
+            <p className="mt-1.5 max-w-[70ch] text-[12px] leading-relaxed text-muted-foreground">
+              {subtitle}
+            </p>
           )}
         </div>
         {action}
       </div>
-      <div className="px-6 pb-6 pt-4">{children}</div>
+      <div className="px-5 pt-4 pb-5 sm:px-7 sm:pt-5 sm:pb-7">{children}</div>
     </section>
   );
 }
