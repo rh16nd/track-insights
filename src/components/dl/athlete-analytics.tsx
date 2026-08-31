@@ -43,7 +43,7 @@ export function AthleteAnalyticsBlock({
         <Panel
           title="Competition record"
           subtitle={`Every scraped final: ${record.races} ${startNoun(isField)} across ${record.seasons} seasons. A season best is one afternoon — this is what happened the rest of the time.`}
-          className="mt-4"
+          className="mt-6"
         >
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <BigStat label="Wins" value={`${record.wins}`} sub={`${record.winRate}% of starts`} />
@@ -118,7 +118,7 @@ export function AthleteAnalyticsBlock({
         </Panel>
       )}
 
-      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr]">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
         {form.length > 0 && (
           <Panel
             title="Season by season"
@@ -142,7 +142,7 @@ export function AthleteAnalyticsBlock({
         <Panel
           title="Head-to-head record"
           subtitle={`Derived from actually sharing a ${startNoun(isField, 1)} — same meeting, same day, compared on finishing position. Nothing here is inferred.`}
-          className="mt-4"
+          className="mt-6"
         >
           <ul className="divide-y divide-border">
             {headToHead.slice(0, 10).map((h, i) => (

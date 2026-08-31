@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { createFileRoute, Link, useCanGoBack, useRouter } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, WatchBadge } from "@/components/dl/shell";
 import { useAthleteProfile, type AthleteNotInField } from "@/hooks/useAthleteProfile";
@@ -5,7 +6,6 @@ import { SeasonTrendChart } from "@/components/dl/season-trend-chart";
 import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
 import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
 import { AthleteCareerBlock } from "@/components/dl/athlete-career";
-import { RadialMeter } from "@/components/dl/radial-meter";
 import { ordinal } from "@/lib/dl-data";
 
 const FIELD_EVENT_KEYS = new Set([
@@ -59,100 +59,103 @@ function NotInField({
   // Fall back to the app's own track-surface texture, exactly as the in-field
   // profile does -- without this the page simply lost its header and looked
   // broken for anyone WA has no picture of.
-  const hero = (
-    <div
-      className={`relative min-h-[200px] overflow-hidden rounded-2xl sm:min-h-[240px] ${
-        data.photoUrl ? "" : "track-surface"
-      }`}
-      style={
-        data.photoUrl
-          ? {
-              backgroundImage: `url(${data.photoUrl})`,
-              backgroundSize: "cover",
-              backgroundPosition: data.photoFocus
-                ? `${data.photoFocus.x}% ${data.photoFocus.y}%`
-                : "center 15%",
-            }
-          : undefined
-      }
-    >
-      <div className="absolute inset-0 bg-background/25" />
+  // Same dossier head as an in-field athlete -- this page had its own older
+  // rounded-card hero, which meant one athlete page looked like two designs
+  // depending on whether the athlete qualified. The only differences that
+  // survive are the ones that are actually true: the tag says they are not in
+  // the field, and the model figure is labelled as conditional.
+  const words = data.name.trim().split(/\s+/);
+  const tc = (w: string) =>
+    w.length > 1 ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w;
+  const surname = words.length > 1 ? tc(words[words.length - 1]!) : "";
+  const forename = words.length > 1 ? words.slice(0, -1).map(tc).join(" ") : data.name;
+
+  const backdrop = data.photoUrl ? (
+    <div aria-hidden="true" className="absolute inset-0">
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `url(${data.photoUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: data.photoFocus
+            ? `${data.photoFocus.x}% ${data.photoFocus.y}%`
+            : "center 15%",
+        }}
+      />
+      <div className="absolute inset-0 bg-brick/45" />
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to top, oklch(0.19 0.03 40 / 0.88) 0%, oklch(0.19 0.03 40 / 0.45) 28%, transparent 55%)",
+            "linear-gradient(to top, oklch(0.406 0.121 40 / 0.92) 0%, oklch(0.406 0.121 40 / 0.55) 38%, oklch(0.406 0.121 40 / 0.08) 72%, transparent 88%)",
         }}
       />
-      {/* Top scrim for the back link, matching the in-field hero -- without
-          it the link sits on raw photo and can land on a bright patch. */}
-      <div
-        className="absolute inset-0"
-        style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, transparent 30%)" }}
-      />
-      <div className="relative flex min-h-[200px] flex-col justify-between p-6 sm:min-h-[240px] sm:p-8">
-        {/* Back sits in the hero here for the same reason it does on the
-            in-field profile: this page is almost always reached from a table
-            or a search result, and the way out shouldn't be below the fold. */}
+    </div>
+  ) : null;
+
+  const hero = (
+    <div className="grid items-end gap-9 lg:grid-cols-[1.35fr_0.65fr] lg:gap-11">
+      <div>
         {canGoBack ? (
           <button
             type="button"
             onClick={() => router.history.back()}
-            className="label-caps -m-2 self-start p-2 text-white/75 transition-colors hover:text-white"
+            className="label-caps -m-2 p-2 text-white/80 transition-colors hover:text-white"
           >
             ← Back
           </button>
         ) : (
           <Link
             to={backTo}
-            className="label-caps -m-2 self-start p-2 text-white/75 transition-colors hover:text-white"
+            className="label-caps -m-2 p-2 text-white/80 transition-colors hover:text-white"
           >
             ← Back to {backTo === "/field" ? "field" : "track"} events
           </Link>
         )}
-        <div className="mt-4 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <div className="label-caps text-white/75">{data.disc} · not in the projected field</div>
-            <h1
-              className="mt-1.5 text-[26px] font-semibold tracking-tight text-white sm:text-[30px]"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {data.name}
-            </h1>
-            <p className="mt-1.5 text-[14px] text-white/85">
-              {[
-                data.nat,
-                data.dl ? `${ordinal(data.dl.rank)} on ${data.dl.points} DL points` : null,
-                data.worldRank != null ? `World #${data.worldRank}` : null,
-              ]
-                .filter(Boolean)
-                .join(" · ")}
-            </p>
-          </div>
-          {/* The model really did score this athlete -- run.py runs the same
-              forest over the near-miss group. Shown with an explicitly
-              conditional label, because it is not a forecast about the
-              Final: they are not in it. */}
-          {data.hypotheticalProb != null && (
-            <RadialMeter
-              value={data.hypotheticalProb}
-              label="Podium chance if they qualified"
-              dark
-              size={148}
-              strokeWidth={12}
-            />
+        <div className="label-caps mt-3 text-gold-on-canvas">Athlete dossier · {data.disc}</div>
+        <h1
+          className="mt-3.5 text-[clamp(40px,7vw,92px)] leading-[0.92] font-bold tracking-[-0.03em] text-white"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          {forename}
+          {surname && (
+            <>
+              <br />
+              {surname}
+            </>
           )}
+        </h1>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <Tag>{data.nat}</Tag>
+          <Tag>Not in the projected field</Tag>
+          {data.dl && (
+            <Tag>
+              {ordinal(data.dl.rank)} on {data.dl.points} DL points
+            </Tag>
+          )}
+          {data.worldRank != null && <Tag>World #{data.worldRank}</Tag>}
         </div>
       </div>
+
+      {/* The model really did score this athlete -- run.py runs the same
+          forest over the near-miss group. Kept, with an explicitly
+          conditional label, because it is not a forecast about the Final:
+          they are not in it. */}
+      {data.hypotheticalProb != null && (
+        <div className="rounded-[20px] border border-white/20 bg-white/10 px-6 py-5">
+          <div className="label-caps text-gold-on-canvas">If they had qualified</div>
+          <p className="mt-2 text-[14px] leading-relaxed text-white/92">
+            <span className="nums font-semibold text-white">{data.hypotheticalProb}%</span> chance
+            of a podium — the same model, run over the near-miss group. Not a projection about
+            Brussels: they are not in the field.
+          </p>
+        </div>
+      )}
     </div>
   );
 
   return (
-    <Shell
-      title={data.name}
-      hero={hero}
-      description="This athlete is ranked this season but is not among the projected finalists. Here's why, and what they have actually run."
-    >
+    <Shell title={data.name} crumb={data.name} hero={hero} headTone="brick" headBackdrop={backdrop}>
       <Panel
         title="Why they're not in the projected field"
         subtitle="The same eligibility check the projections themselves use"
@@ -223,7 +226,7 @@ function NotInField({
       {/* Same two-panel row, same StatBlock grid and same chart the in-field
           profile uses. None of these numbers stop being true because the
           athlete missed the cut, and the page read as a stub without them. */}
-      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr]">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
         <Panel title="Season stats">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             <StatBlock label="2026 season best" value={data.seasonBest ?? "—"} icon="target" />
@@ -347,7 +350,7 @@ function NotInField({
         <Panel
           title="Head-to-head vs the projected field"
           subtitle="Real meetings against the athletes who did qualify, from World Athletics results."
-          className="mt-4"
+          className="mt-6"
         >
           {data.h2h.length > 0 ? (
             <HeadToHeadChart matchups={data.h2h} opponentsLabel="the qualified field" />
@@ -455,6 +458,40 @@ function StatBlock({
   );
 }
 
+/** v0's `.dh-tags` pill and `.dh-fig` figure — the two repeating pieces of
+ * the dossier head. Both sit on the brick band, so their colours are fixed
+ * to it rather than inheriting page tokens. */
+function Tag({ children }: { children: ReactNode }) {
+  return (
+    <span className="dg rounded-full bg-white/12 px-3.5 py-1.5 text-[12.5px] font-semibold tracking-[0.02em] text-white">
+      {children}
+    </span>
+  );
+}
+
+function DossierFigure({
+  label,
+  value,
+  gold = false,
+}: {
+  label: string;
+  value: string;
+  gold?: boolean;
+}) {
+  return (
+    <div>
+      <div className="label-caps text-white/70">{label}</div>
+      <b
+        className={`dg nums mt-1 block text-[30px] leading-[1.05] font-bold tracking-[-0.02em] ${
+          gold ? "text-gold-on-canvas" : "text-white"
+        }`}
+      >
+        {value}
+      </b>
+    </div>
+  );
+}
+
 function AthleteProfilePage() {
   const { discKey, name } = Route.useParams();
   const state = useAthleteProfile(discKey, decodeURIComponent(name));
@@ -499,108 +536,120 @@ function AthleteProfilePage() {
 
   const a = state.data;
 
-  const hero = (
-    <div
-      className={`relative min-h-[220px] overflow-hidden rounded-2xl sm:min-h-[260px] ${a.photoUrl ? "" : "track-surface"}`}
-      style={
-        a.photoUrl
-          ? {
-              backgroundImage: `url(${a.photoUrl})`,
-              backgroundSize: "cover",
-              backgroundPosition: a.photoFocus
-                ? `${a.photoFocus.x}% ${a.photoFocus.y}%`
-                : "center 15%",
-            }
-          : undefined
-      }
-    >
-      {/* Real action-shot photo from World Athletics' own CDN (see api.py's
-          load_athlete_photo) as a full banner -- never a stock photo or
-          generic avatar; falls back to the app's own track-surface texture
-          when no real photo exists, same honesty principle as everywhere
-          else in this project. The crop position comes from api.py's real
-          face detection (photoFocus, get_photo_focus) run on the actual
-          downloaded photo -- these are wide action shots, not pre-cropped
-          headshots, so a fixed crop reliably cut faces out of frame on wide
-          desktop banners (verified: it cropped Noah Lyles' own face out
-          entirely). Falls back to a fixed top-biased "15%" position (still
-          better than the original "30%") only when detection found no face.
-          A single flat tint strong enough to guarantee text contrast
-          (measured worst-case against a near-white photo patch) muddied the
-          photo too much to actually see it -- split into two layers
-          instead: a light, uniform brand tint for warmth/consistency with
-          the rest of the app (barely dims the photo), plus a black scrim
-          that's only strong at the bottom, where the name/meter/subtitle
-          actually sit, fading to nothing by mid-height so the upper photo
-          stays genuinely clear. */}
-      {a.photoUrl ? (
-        <>
-          <div className="absolute inset-0 bg-background/25" />
-          {/* Bottom scrim protects the name/subtitle/meter; top scrim
-              protects the back link -- both fade to nothing
-              well before the vertical middle, so the actual subject of the
-              photo (not just its edges) stays clearly visible. */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.4) 32%, rgba(0,0,0,0.05) 62%, transparent 78%)",
-            }}
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 30%)",
-            }}
-          />
-        </>
-      ) : (
-        <div className="absolute inset-0 bg-background/85" />
-      )}
+  // v0's athlete dossier head. The name is the page -- clamp(46px,7vw,92px),
+  // split across two lines the way a file front reads -- with the figures
+  // inline beneath it and the model's own read boxed off to the side.
+  //
+  // The real photo is KEPT, as the band's backdrop rather than as its own
+  // rounded banner: it comes from World Athletics' CDN with a crop position
+  // from api.py's face detection (a fixed crop cut Noah Lyles' face out of
+  // frame entirely), and v0 having no photo is not a reason to throw that
+  // away. Two scrims rather than one flat tint -- a uniform tint dark enough
+  // to guarantee contrast muddied the photo past the point of being worth
+  // showing.
+  // World Athletics writes surnames in caps ("Oblique SEVILLE"). At 12px in a
+  // table that is just a convention; at 92px across a dossier front it reads
+  // as shouting, so the display is title-cased. The underlying name is
+  // untouched -- every link, lookup and API call still uses WA's own string.
+  const titleCase = (w: string) =>
+    w.length > 1 ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w;
+  const words = a.name.trim().split(/\s+/);
+  const surname = words.length > 1 ? titleCase(words[words.length - 1]!) : "";
+  const forename = words.length > 1 ? words.slice(0, -1).map(titleCase).join(" ") : a.name;
+
+  const backdrop = a.photoUrl ? (
+    <div aria-hidden="true" className="absolute inset-0">
       <div
-        className="relative flex h-full flex-col justify-between px-6 pb-6 pt-7 sm:px-8 sm:pt-8"
-        style={a.photoUrl ? { textShadow: "0 1px 4px rgba(0,0,0,0.45)" } : undefined}
-      >
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `url(${a.photoUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: a.photoFocus ? `${a.photoFocus.x}% ${a.photoFocus.y}%` : "center 15%",
+        }}
+      />
+      <div className="absolute inset-0 bg-brick/45" />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to top, oklch(0.406 0.121 40 / 0.92) 0%, oklch(0.406 0.121 40 / 0.55) 38%, oklch(0.406 0.121 40 / 0.08) 72%, transparent 88%)",
+        }}
+      />
+    </div>
+  ) : null;
+
+  const hero = (
+    <div className="grid items-end gap-9 lg:grid-cols-[1.35fr_0.65fr] lg:gap-11">
+      <div>
         {canGoBack ? (
           <button
             type="button"
             onClick={() => router.history.back()}
-            className={`label-caps -m-2 p-2 transition-colors hover:text-white ${a.photoUrl ? "text-white/75" : "text-white/60"}`}
+            className="label-caps -m-2 p-2 text-white/80 transition-colors hover:text-white"
           >
             ← Back
           </button>
         ) : (
           <Link
             to="/dashboard"
-            className={`label-caps -m-2 p-2 transition-colors hover:text-white ${a.photoUrl ? "text-white/75" : "text-white/60"}`}
+            className="label-caps -m-2 p-2 text-white/80 transition-colors hover:text-white"
           >
             ← Back to dashboard
           </Link>
         )}
-        <div className="mt-4 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <h1
-                className="text-[28px] font-semibold tracking-tight text-white sm:text-[36px]"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                {a.name}
-              </h1>
-              {a.injuryWatch && <WatchBadge reason={a.injuryReason} url={a.injuryUrl} />}
-            </div>
-            <p className="mt-1.5 text-[14px] text-white/85">
-              {a.disc} · {a.nat} · Rank #{a.rank} predicted
-            </p>
-          </div>
-          <RadialMeter value={a.prob} label="Podium chance" dark size={148} strokeWidth={12} />
+        <div className="label-caps mt-3 text-gold-on-canvas">Athlete dossier · {a.disc}</div>
+        <h1
+          className="mt-3.5 text-[clamp(40px,7vw,92px)] leading-[0.92] font-bold tracking-[-0.03em] text-white"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          {forename}
+          {surname && (
+            <>
+              <br />
+              {surname}
+            </>
+          )}
+        </h1>
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <Tag>{a.nat}</Tag>
+          {a.age != null && <Tag>Age {a.age}</Tag>}
+          <Tag>#{a.rank} in the projected field</Tag>
+          {a.injuryWatch && <WatchBadge reason={a.injuryReason} url={a.injuryUrl} tone="dark" />}
         </div>
+        <div className="mt-6 flex flex-wrap gap-x-7 gap-y-5">
+          <DossierFigure label="Season best" value={a.mark} />
+          {a.careerBest && <DossierFigure label="Personal best" value={a.careerBest} />}
+          {a.lastRaceDate && <DossierFigure label="Last competed" value={a.lastRaceDate} />}
+          <DossierFigure
+            label={`Races in ${a.historyYear ?? ""}`.trim()}
+            value={String(a.racesThisSeason)}
+          />
+          <DossierFigure label="PodiumCall model" value={`${a.prob}%`} gold />
+        </div>
+      </div>
+
+      <div className="rounded-[20px] border border-white/20 bg-white/10 px-6 py-5">
+        <div className="label-caps text-gold-on-canvas">PodiumCall model</div>
+        <p className="mt-2 text-[14px] leading-relaxed text-white/92">
+          <span className="nums font-semibold text-white">{a.prob}%</span> chance of finishing on
+          the podium in Brussels — not of winning; the model predicts top-three membership.
+          {a.scoreContext && (
+            <>
+              {" "}
+              The <span className="nums">{a.mark}</span> scores{" "}
+              <span className="nums">{a.scoreContext.score}</span> World Athletics points, the{" "}
+              <span className="nums">{a.scoreContext.discPercentile}th</span> percentile of this
+              discipline.
+            </>
+          )}
+        </p>
       </div>
     </div>
   );
 
   return (
-    <Shell title={a.name} hero={hero}>
-      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr]">
+    <Shell title={a.name} crumb={a.name} hero={hero} headTone="brick" headBackdrop={backdrop}>
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
         <Panel title="Season stats">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             <StatBlock label="2026 season best" value={a.mark} icon="target" />
