@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
 import { usePredictions } from "@/hooks/usePredictions";
@@ -9,6 +10,11 @@ import { Podium } from "@/components/dl/podium";
 import { TrackCircuit } from "@/components/dl/track-circuit";
 
 export const Route = createFileRoute("/")({
+  head: () =>
+    pageHead(
+      "Predicting the 2026 Diamond League Final",
+      "Real-data podium predictions for all 32 disciplines at the 2026 Wanda Diamond League Final in Brussels, trained on results scraped from World Athletics.",
+    ),
   component: Landing,
 });
 
@@ -200,17 +206,26 @@ function Landing() {
       />
       <div className="relative z-10">
         {/* ── Nav ───────────────────────────────────────────────────── */}
-        <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between border-b border-[var(--landing-border)] bg-[var(--landing-bg)]/80 px-6 backdrop-blur-md sm:px-10">
+        {/* Cream bar rather than translucent terracotta. Every text colour
+            in here flips with it -- the landing's --landing-fg/-muted are
+            near-white, tuned for the dark canvas, and would be invisible on
+            cream. The CTA inverts the other way: a terracotta-to-gold pill,
+            which is also the only saturated thing in the bar. */}
+        <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-card/92 px-6 backdrop-blur-md sm:px-10">
           <div className="flex items-center gap-2.5">
             <PodiumCallMark className="size-6" />
-            <div className="label-caps text-[var(--landing-muted)]">
-              <span className="font-semibold text-[var(--landing-fg)]">PodiumCall</span>
+            <div className="label-caps text-muted-foreground">
+              <span className="font-semibold text-foreground">PodiumCall</span>
               <span className="ml-2">2026 Diamond League Predictor</span>
             </div>
           </div>
           <Link
             to="/dashboard"
-            className="label-caps rounded-full bg-[var(--landing-fg)] px-4 py-2.5 text-[var(--landing-bg)] transition-opacity hover:opacity-90"
+            className="label-caps rounded-full px-4 py-2.5 text-primary-foreground transition-transform hover:scale-[1.02]"
+            style={{
+              backgroundImage:
+                "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
+            }}
           >
             View live predictions
           </Link>
