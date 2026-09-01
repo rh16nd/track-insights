@@ -66,7 +66,13 @@ export function TopNav({
           </span>
         </Link>
 
-        <nav className="nav-scroll-mask flex min-w-0 items-center justify-center gap-1 overflow-x-auto">
+        {/* Named because it is not the only nav on the page -- Shell renders a
+            Breadcrumb nav too, and two unlabelled landmarks of the same type
+            are indistinguishable in a screen reader's landmark list. */}
+        <nav
+          aria-label="Main"
+          className="nav-scroll-mask flex min-w-0 items-center justify-center gap-1 overflow-x-auto"
+        >
           {nav.map((item) => {
             const isActive = pathname === item.to;
             return (

@@ -253,11 +253,16 @@
    near-black background. One on-brand ring, applied app-wide now that the
    whole app (not just the landing page) uses the dark theme.
    2026-08-24: extended to [role="button"] -- the trajectory chart's SVG
-   <circle> data points are focusable and keyboard-actionable (real
-   tabIndex/aria-label, see trajectory-overlay-chart.tsx) but are neither an
-   <a> nor a <button> tag, so they fell back to the unstyled native ring
-   even though every other interactive element on the page got the real
-   one -- caught by the impeccable critique skill's live focus-state check. */
+   <circle> data points are focusable (real tabIndex/aria-label, see
+   trajectory-overlay-chart.tsx) but are neither an <a> nor a <button> tag,
+   so they fell back to the unstyled native ring even though every other
+   interactive element on the page got the real one -- caught by the
+   impeccable critique skill's live focus-state check.
+   2026-09-01: those circles are now role="img" (they are reachable, not
+   actionable -- nothing happens on Enter, so "button" was a promise the
+   markup did not keep). They keep the ring through the [tabindex] selector
+   below, which is role-agnostic; [role="button"] stays for anything that
+   genuinely is one. */
 /* 2026-08-24: the gold ring alone measured 3.83:1 on a card but only 1.27:1
    against the terracotta canvas -- so every focusable element sitting
    directly on the canvas (the Track/Field/Projections discipline pills, the

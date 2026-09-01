@@ -129,7 +129,16 @@ export function AthleteSearch() {
         type="search"
         role="combobox"
         aria-expanded={showList}
-        aria-controls={`${listId}-list`}
+        /* Only while the list is actually rendered. It used to be set
+           unconditionally, so with the combobox closed the IDREF pointed at
+           an element that did not exist -- a dangling reference every ARIA
+           validator flags. */
+        aria-controls={showList ? `${listId}-list` : undefined}
+        /* Without this, arrowing through results was SILENT to a screen
+           reader: focus correctly stays in the input (that is the combobox
+           pattern), so the only way to announce which option is current is
+           to point at it. The visual highlight had no spoken equivalent. */
+        aria-activedescendant={showList && hits[active] ? `${listId}-opt-${active}` : undefined}
         aria-autocomplete="list"
         autoComplete="off"
         value={query}
@@ -158,30 +167,38 @@ export function AthleteSearch() {
             </li>
           )}
           {hits.map((h, i) => (
-            <li key={`${h.discKey}-${h.name}`} role="option" aria-selected={i === active}>
-              <button
-                type="button"
-                onMouseEnter={() => setActive(i)}
-                onClick={() => go(h)}
-                className={`flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors ${
-                  i === active ? "bg-secondary/60" : "hover:bg-secondary/40"
-                }`}
-              >
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13.5px] font-medium text-foreground">
-                    {h.name}
+            /* The option IS the li -- it used to wrap a <button>, and an
+               element with role="option" must not contain a focusable
+               control: it put the results in the tab order, competing with
+               the arrow-key navigation the input already owns, and gave each
+               option a nested control the pattern does not expect. Mouse
+               click still works from here; keyboard goes through the input's
+               ArrowUp/ArrowDown/Enter, which was always implemented. */
+            <li
+              key={`${h.discKey}-${h.name}`}
+              id={`${listId}-opt-${i}`}
+              role="option"
+              aria-selected={i === active}
+              onMouseEnter={() => setActive(i)}
+              onClick={() => go(h)}
+              className={`flex w-full cursor-pointer items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                i === active ? "bg-secondary/60" : "hover:bg-secondary/40"
+              }`}
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[13.5px] font-medium text-foreground">
+                  {h.name}
+                </span>
+                <span className="block text-[11.5px] text-muted-foreground">{h.disc}</span>
+              </span>
+              <span className="nums shrink-0 text-right">
+                <span className="block text-[12.5px] text-foreground">{h.mark ?? "—"}</span>
+                {h.worldRank != null && (
+                  <span className="block text-[11px] text-muted-foreground">
+                    world #{h.worldRank}
                   </span>
-                  <span className="block text-[11.5px] text-muted-foreground">{h.disc}</span>
-                </span>
-                <span className="nums shrink-0 text-right">
-                  <span className="block text-[12.5px] text-foreground">{h.mark ?? "—"}</span>
-                  {h.worldRank != null && (
-                    <span className="block text-[11px] text-muted-foreground">
-                      world #{h.worldRank}
-                    </span>
-                  )}
-                </span>
-              </button>
+                )}
+              </span>
             </li>
           ))}
         </ul>

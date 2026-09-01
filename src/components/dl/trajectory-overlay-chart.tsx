@@ -270,7 +270,16 @@ export function TrajectoryOverlayChart({
                       stroke="var(--card)"
                       strokeWidth={1.5}
                       tabIndex={0}
-                      role="button"
+                      /* role="img", not "button". These are focusable so a
+                         keyboard user can reach each data point and have
+                         onFocus surface the same tooltip a mouse gets on
+                         hover -- but nothing activates. Calling them buttons
+                         announced an action to screen-reader users that
+                         Enter and Space do not perform. They are labelled
+                         graphics, and the label is the reading of the point.
+                         The focus ring is unaffected: styles.css targets
+                         [tabindex]:not([tabindex="-1"]), not the role. */
+                      role="img"
                       aria-label={`${s.trajectory.name}, ${p.mark}, ${p.date}, ${p.venue}`}
                       onMouseEnter={() => setHover({ series: si, point: pi })}
                       onMouseLeave={() => setHover(null)}
