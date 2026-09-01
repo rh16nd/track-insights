@@ -1,6 +1,6 @@
 import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useStats } from "@/hooks/useStats";
 import { useInView } from "@/hooks/useInView";
@@ -8,6 +8,7 @@ import { useCountUp } from "@/hooks/useCountUp";
 import { PodiumCallMark } from "@/components/dl/logo";
 import { AthleteAvatar, ProbabilityBar, WatchBadge } from "@/components/dl/shell";
 import { Podium } from "@/components/dl/podium";
+import { WaSourceLink } from "@/components/dl/wa-link";
 import { TrackCircuit } from "@/components/dl/track-circuit";
 
 export const Route = createFileRoute("/")({
@@ -88,7 +89,9 @@ function SectionHead({
 }: {
   eyebrow: string;
   title: string;
-  children?: string;
+  /** ReactNode, not string: the lede below the heading is where this page
+      names World Athletics as its source, and that name is now a link. */
+  children?: ReactNode;
   tone?: "dark" | "cream";
   center?: boolean;
 }) {
@@ -564,8 +567,8 @@ function Landing() {
                 : "A season of real racing, resolved into one call."
             }
           >
-            Every Diamond League meeting this season is scraped from World Athletics, then reduced
-            to the model&apos;s single strongest prediction for the Final.
+            Every Diamond League meeting this season is scraped from <WaSourceLink tone="canvas" />,
+            then reduced to the model&apos;s single strongest prediction for the Final.
           </SectionHead>
 
           <div className="mt-10 grid grid-cols-1 items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
@@ -799,8 +802,13 @@ function Landing() {
             the page sits on. */}
         <footer className="border-t border-[var(--landing-border)] py-8">
           <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 sm:flex-row sm:px-10">
+            {/* The landing renders under <Outlet />, not Shell, so it has its
+                own footer and did not inherit the app footer's source link.
+                It is the page that argues hardest that the data is real, and
+                it was the one with nothing to click. */}
             <p className="text-[12px] text-[var(--landing-muted)]">
-              Not affiliated with World Athletics or the Wanda Diamond League.
+              Data scraped from <WaSourceLink tone="canvas" />. Not affiliated with World Athletics
+              or the Wanda Diamond League.
             </p>
             <Link
               to="/dashboard"

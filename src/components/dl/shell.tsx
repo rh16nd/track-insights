@@ -3,6 +3,7 @@ import { TopNav } from "./topnav";
 import { TrackCurveDecoration } from "./track-curve";
 import type { MeetStatus } from "@/lib/dl-data";
 import { API_IS_LOCAL } from "@/lib/api";
+import { WaSourceLink } from "./wa-link";
 
 export const dotClass: Record<MeetStatus, string> = {
   done: "bg-muted-foreground/40",
@@ -154,8 +155,10 @@ export function Shell({
               line. Measured by compositing, not by eye; see styles.css. */}
           <div className="mx-auto flex max-w-[1600px] flex-col gap-1.5 pt-6 text-[12px] text-white/90 sm:flex-row sm:items-center sm:justify-between">
             <p>
-              Data scraped from World Athletics. Not affiliated with World Athletics or the Wanda
-              Diamond League.
+              {/* tone="canvas": this footer has no surface of its own, so it
+                  sits on the terracotta like the landing's does. */}
+              Data scraped from <WaSourceLink tone="canvas" />. Not affiliated with World Athletics
+              or the Wanda Diamond League.
             </p>
             <p>Predictions are model estimates, not betting advice.</p>
           </div>
