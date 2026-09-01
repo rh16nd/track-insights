@@ -238,13 +238,13 @@ function Landing() {
 
   return (
     <div className="landing relative min-h-screen bg-[var(--landing-bg)] text-[var(--landing-fg)]">
-      {/* Off-white ambient glow -- the hero has the track-surface texture to
-          break up the flat terracotta, but everything below it (feature
-          grid, steps, preview) sat directly on solid canvas color with no
-          variation. Same fixed, once-per-page layer the rest of the app
-          already uses (see shell.tsx), so the landing page picks up a touch
-          of the same off-white lift instead of reading flatter than the
-          app it leads into. */}
+      {/* Off-white ambient glow -- the hero has the lane texture and the
+          track circuit to break up the flat terracotta, but everything
+          below it (feature grid, steps, preview) sat directly on solid
+          canvas color with no variation. Same fixed, once-per-page layer
+          the rest of the app already uses (see shell.tsx), so the landing
+          page picks up a touch of the same off-white lift instead of
+          reading flatter than the app it leads into. */}
       <div
         className="ambient-glow ambient-grain pointer-events-none fixed inset-0 z-0"
         aria-hidden="true"
@@ -276,11 +276,32 @@ function Landing() {
           </Link>
         </header>
 
-        {/* ── Hero (track-surface reused as the backdrop, darkened) ──── */}
-        <section className="track-surface relative overflow-hidden pt-16">
-          <div className="absolute inset-0 bg-[var(--landing-bg)]/88" />
-          <div className="lanes-track" aria-hidden="true" />
-          <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] w-full max-w-none -translate-y-1/2 opacity-90 sm:h-[120%]" />
+        {/* ── Hero ─────────────────────────────────────────────────────
+            The backdrop used to be `.track-surface` under an 88% scrim.
+            That utility paints hard white bars every 200px at 0.55 alpha
+            (`repeating-linear-gradient(90deg, …)`), plus a noise tile and a
+            dark vignette — and the bars run at 90deg while the lane texture
+            runs at 100deg, so the two crossed into a grid rather than
+            reading as one surface. The scrim was only ever there to hold it
+            down, so both are gone; the canvas underneath is the same
+            --landing-bg the scrim was resolving to anyway.
+
+            What is left is what the reference actually shows: flat canvas,
+            one faint drifting lane texture, and the track circuit. */}
+        <section className="relative overflow-hidden pt-16">
+          {/* v0's drifting lane texture, the same one every app page uses.
+              The landing used to have its own horizontal version plus a
+              sweeping light band, which put a second set of lanes at right
+              angles to the track circuit drawn on top of it — two tracks,
+              not one. */}
+          <div className="lanes" aria-hidden="true" />
+          {/* Width, not height, is what sizes this: the viewBox is 900x340
+              against a much taller box, so `meet` fits it by width and the
+              height only sets the letterbox. At `w-full` the circuit ran
+              from edge to edge with no margin either side; 80% gives it the
+              breathing room the design reference has. Full width on mobile,
+              where 80% of 375px would leave a token oval. */}
+          <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 mx-auto -mt-6 h-[140%] w-full max-w-none -translate-y-1/2 sm:h-[120%] sm:w-[80%]" />
           <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
             {/* v0's kicker: brand plus a live countdown, gold-ringed, with a
                 dot that pulses. The five hero rows carry v0's own reveal

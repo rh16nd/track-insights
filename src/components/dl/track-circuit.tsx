@@ -34,13 +34,19 @@ export function TrackCircuit({ className = "" }: { className?: string }) {
       aria-hidden="true"
       preserveAspectRatio="xMidYMid meet"
     >
+      {/* Opacities are set so the circuit reads as the picture in the hero
+          rather than as noise under it. At the original 0.07 the lanes
+          resolved to roughly a 6% lift over the terracotta canvas -- close
+          enough to invisible that the hero looked like a flat fill, which
+          is exactly what it was reported as. 0.2 puts them at about a 20%
+          lift, matching the design reference. */}
       {lanes.map((d, i) => (
         <path
           key={i}
           d={d}
           fill="none"
           stroke={i === 0 ? "var(--gold)" : "white"}
-          strokeOpacity={i === 0 ? 0.22 : 0.07}
+          strokeOpacity={i === 0 ? 0.32 : 0.2}
           strokeWidth={1.5}
         />
       ))}
@@ -53,7 +59,7 @@ export function TrackCircuit({ className = "" }: { className?: string }) {
         x2={START_X + 40}
         y2={320}
         stroke="white"
-        strokeOpacity={0.1}
+        strokeOpacity={0.22}
         strokeWidth={1.5}
         strokeDasharray="3 5"
       />

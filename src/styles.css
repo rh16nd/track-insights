@@ -670,15 +670,24 @@ html {
   }
 }
 
-/* ── Lane textures: two of them, deliberately ────────────────────────
-   `.lanes` is v0's drifting version and is what every APP page uses --
-   dashboard, track, field, qualifying, stats, schedule, discipline,
-   athlete. `.lanes-track` is the landing hero only. They are separate
-   classes because a change to the landing should stay on the landing;
-   sharing one class is how a landing-only request last changed all nine
-   pages at once.
+/* ── Lane texture ────────────────────────────────────────────────────
+   v0's drifting version, used by every page including the landing hero.
 
-   Both translate an oversized pseudo-element rather than animating
+   There used to be a second class here, `.lanes-track`, for the landing
+   alone: horizontal lanes running the direction of travel, plus a band of
+   light sweeping along them. It was built to read as "a real running
+   track" -- but the landing already HAS a real running track in the
+   foreground (`TrackCircuit`, the 400m outline with the marker lapping
+   it), and a second, differently-angled set of lanes behind it read as
+   two tracks at right angles rather than one. v0's own landing runs this
+   texture, and it is what the hero is supposed to look like.
+
+   The split existed so a landing-only change could not reach the other
+   eight pages. That still holds in the other direction, which is what
+   matters: this file is the only definition, and the landing is the only
+   page that also draws the circuit on top of it.
+
+   It translates an oversized pseudo-element rather than animating
    `background-position` the way v0 does. That is the one thing kept from
    the rewrite: background-position repaints the whole layer every frame,
    which is exactly what this file's ambient-glow note warns against,
@@ -707,8 +716,7 @@ html {
   }
 }
 
-.lanes,
-.lanes-track {
+.lanes {
   position: absolute;
   inset: 0;
   overflow: hidden;
@@ -748,58 +756,6 @@ html {
   .lanes::before,
   .lanes::after {
     animation: none;
-  }
-}
-
-/* ── The landing hero only: an actual running track ──────────────────
-   Lanes running the direction of travel, evenly spaced, one width, and
-   STILL -- a track does not slide. Spacing is set from the hero itself:
-   at ~950px tall a 104px period draws 9 lanes, which is what a real track
-   has.
-
-   The motion is the thing that really moves on a track: a soft band of
-   light travelling ALONG the lanes. */
-.lanes-track::before {
-  content: "";
-  position: absolute;
-  inset: -12% -6%;
-  transform: rotate(-1deg);
-  background: repeating-linear-gradient(
-    180deg,
-    transparent 0 102px,
-    oklch(0.97 0.012 75 / 0.12) 102px 104px
-  );
-}
-
-@keyframes lane-sweep {
-  from {
-    transform: rotate(-1deg) translate3d(-60%, 0, 0);
-  }
-  to {
-    transform: rotate(-1deg) translate3d(160%, 0, 0);
-  }
-}
-
-.lanes-track::after {
-  content: "";
-  position: absolute;
-  inset: -12% 0;
-  width: 42%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    oklch(0.97 0.012 75 / 0.07) 50%,
-    transparent 100%
-  );
-  animation: lane-sweep 13s linear infinite;
-}
-
-/* The lanes are the picture and never moved, so reduced motion only has to
-   stop the sweep -- removed rather than parked mid-track, where a static
-   bright band would read as a rendering artefact. */
-@media (prefers-reduced-motion: reduce) {
-  .lanes-track::after {
-    display: none;
   }
 }
 
