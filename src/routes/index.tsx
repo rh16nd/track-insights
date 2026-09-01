@@ -462,7 +462,19 @@ function Landing() {
           </div>
 
           {/* ── Live confidence ticker ─────────────────────────────── */}
-          <div className="relative mt-14 border-y border-[var(--landing-border)] bg-[var(--landing-bg-2)] py-4">
+          {/* The bottom padding is asymmetric on purpose, and it is load-bearing.
+              The section BELOW this one is pulled up over it (-mt-8, sm:-mt-13)
+              so its rounded corner overlaps the band -- v0's card-lifted-over-a-
+              strip idea. With py-4 the band offered only 16px of bottom padding
+              against a 32-52px overlap, so what the cream card ate was not
+              padding but the chip row itself: 15 of 35px at 375, and ALL 35px at
+              desktop, where the card's top landed exactly on the chips' top.
+              The chips were rendering and animating the whole time, underneath
+              it. Reported as the strip not existing, and from the outside that
+              is precisely what it looked like.
+              Padding now exceeds the overlap by 12px at both breakpoints, so the
+              card still overlaps the band and no longer overlaps its contents. */}
+          <div className="relative mt-14 border-y border-[var(--landing-border)] bg-[var(--landing-bg-2)] pt-4 pb-11 sm:pb-16">
             {/* The band is full-bleed on purpose (the marquee has to run off
                 both edges), but its caption is page copy and belongs on the
                 page's content column with everything else -- it was hanging
