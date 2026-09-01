@@ -241,21 +241,33 @@ function LeastSurePanel({ confidence }: { confidence: ConfidenceRow[] }) {
             </>
           );
           return (
+            /* The row's vertical padding lives on the CHILD, not here. With
+               py-3 on the <li> the link was only 21.8px tall while the row it
+               sat in was 47px, so most of the row looked clickable and wasn't.
+               Moving the padding down makes the target the whole row (45.8px)
+               and actually clickable; the first/last trims move with it, so
+               the rhythm is unchanged (panel height identical, measured).
+
+               NOT a WCAG 2.5.8 fix, though it looks like one: 21.8px is under
+               the 24x24 minimum, but the rows are 35-47px apart and the
+               success criterion's spacing exception clears anything whose
+               neighbouring target centres are 24px away. It conformed before
+               and conforms now. This is a UX change. */
             <li
               key={c.disc}
-              className="stagger-item py-3 first:pt-0 last:pb-0"
+              className="stagger-item [&:first-child>*]:pt-0 [&:last-child>*]:pb-0"
               style={{ "--stagger-i": i } as CSSProperties}
             >
               {c.discKey ? (
                 <Link
                   to="/discipline/$discKey"
                   params={{ discKey: c.discKey }}
-                  className="flex items-center gap-4 rounded-md transition-colors hover:bg-secondary/30"
+                  className="flex items-center gap-4 rounded-md py-3 transition-colors hover:bg-secondary/30"
                 >
                   {row}
                 </Link>
               ) : (
-                <div className="flex items-center gap-4">{row}</div>
+                <div className="flex items-center gap-4 py-3">{row}</div>
               )}
             </li>
           );
