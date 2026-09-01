@@ -6,7 +6,7 @@ colors:
   terracotta-strong: "oklch(0.45 0.164 38.5)"
   terracotta-light: "oklch(0.74 0.15 38.5)"
   brick: "oklch(0.406 0.121 40)"
-  canvas: "oklch(0.54 0.105 40)"
+  canvas: "oklch(0.52 0.105 40)"
   canvas-deep: "oklch(0.47 0.095 40)"
   gold: "oklch(0.593 0.128 68)"
   gold-strong: "oklch(0.49 0.128 68)"
@@ -126,17 +126,19 @@ A single warm hue family — terracotta through brick — carrying one gold acce
 - **Low Gold** (`oklch(0.593 0.128 68)`): decorative gold for fills, bars and borders on cream.
 - **Legible Gold** (`oklch(0.49 0.128 68)`): gold as text or as a badge fill under white type; darkened so it still clears 4.5:1 against a *tinted* gold-15% surface, not just plain cream.
 - **Gold Light** (`oklch(0.8 0.11 68)`): surface and accent gold on the dark canvas — pulsing badge dot, marker halo, gradient stops.
-- **Canvas Gold** (`oklch(0.97 0.08 68)`): the only gold that is legible **on the terracotta canvas**. Solved against the real canvas value (161,87,61), not picked by eye. Base gold sits at the canvas's own lightness and tops out at 1.27:1 there — effectively invisible. Any gold on terracotta uses this token.
+- **Canvas Gold** (`oklch(0.98 0.08 68)`): the only gold that is legible **on the terracotta canvas**. Solved against the canvas the page ACTUALLY PAINTS — the grain composite (157,90,66) — not the bare token. Base gold sits at the canvas's own lightness and tops out at 1.27:1 there — effectively invisible. Any gold on terracotta uses this token. Measures 4.63 on the body, 4.53 in the hero where a second grain layer stacks. Chroma stays at 0.08 on purpose: the alternative fix, lightening this token against the OLD canvas, needed 0.06 chroma and turned it warm white.
 
 ### Neutral
-- **Track Canvas** (`oklch(0.54 0.105 40)`): the page. Deliberately byte-identical to the landing's `--landing-bg`; the two drifting apart is the exact "two different products stitched together" complaint that drove the theme unification, so change both or neither.
+- **Track Canvas** (`oklch(0.52 0.105 40)`): the page. Deliberately byte-identical to the landing's `--landing-bg`; the two drifting apart is the exact "two different products stitched together" complaint that drove the theme unification, so change both or neither. Dropped from 0.54 on 2026-09-01 — see The Grain Rule.
 - **Canvas Deep** (`oklch(0.47 0.095 40)`): banded strips within the canvas — the confidence ticker's rail.
 - **Paper** (`oklch(0.97 0.012 75)`): every card, panel and reading surface. Warm, not white.
 - **Sand** (`oklch(0.941 0.014 76)`): paper's quieter sibling for nested fills.
 - **Ink** (`oklch(0.19 0.03 40)`) / **Ink Muted** (`oklch(0.42 0.045 45)`): text on paper. Muted measures 7.88:1 on Paper.
-- **On Canvas** (`oklch(0.97 0.01 80)`) / **On Canvas Muted** (`oklch(0.955 0.018 60)`): text on terracotta. Both live at ~4.9:1 and 4.67:1 — there is no headroom to darken them.
+- **On Canvas** (`oklch(0.97 0.01 80)`) / **On Canvas Muted** (`oklch(0.955 0.018 60)`): text on terracotta. Against the composited canvas they measure 4.87 and 4.63 — there is no headroom to darken them.
 
 ### Named Rules
+
+**The Grain Rule.** Every contrast figure in this document is solved against the canvas **as composited with the grain**, never against the bare token. `ambient-grain` is a fixed full-page overlay that paints on all nine pages, so the bare canvas is a colour the user never sees. Solving against it was wrong by about a third of a point in the direction that matters: at the old 0.54 it put `--landing-muted` at 4.33 and `--gold-on-canvas` at 4.23, both under AA, on 11-17.6px text sitewide, while this document claimed 4.67 and 4.55. The canvas dropped 0.54 -> 0.52 and Canvas Gold 0.97 -> 0.98 to fix it; measured, that took canvas-backed AA failures from 8 to 0 on the landing and 1 to 0 on the athlete page. The hero is the tight case — it stacks `track-grain` at 0.12 on top of `ambient-grain`, so solve there, not on a body section.
 
 **The Lightness Rule.** Contrast on this canvas is a *lightness* problem, not an opacity one. The canvas sits at oklch 0.54, and any token near that lightness — `gold` at 0.593 above all — cannot be made visible by raising alpha; it tops out at 1.27:1 solid. Before placing a colour on terracotta, resolve it through a canvas and check the ratio. `getComputedStyle` returns `oklch()` strings here, and parsing them as RGB produced 121 out of 121 false readings once already.
 
@@ -220,7 +222,7 @@ The landing hero's backdrop and the system's clearest statement of the North Sta
 ## Do's and Don'ts
 
 ### Do:
-- **Do** resolve any colour through a canvas before trusting its contrast, and check against the real canvas value (161,87,61). `getComputedStyle` returns `oklch()` here.
+- **Do** resolve any colour through a canvas before trusting its contrast, and check it against the GRAIN COMPOSITE (157,90,66), never the bare token. `getComputedStyle` returns `oklch()` here.
 - **Do** use `--gold-on-canvas` for any gold placed on terracotta, and `--gold-strong` / `--terracotta-strong` for gold or terracotta used as text on cream.
 - **Do** give every number `nums`, and derive every count from the data it describes rather than typing it beside it.
 - **Do** keep gutters inside the `max-w-5xl` box so each band's content edge lands on the same column, and return full-bleed captions to that column.

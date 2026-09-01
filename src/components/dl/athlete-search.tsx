@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { apiFetch } from "@/lib/api";
 
 export type SearchHit = {
   name: string;
@@ -44,17 +45,23 @@ export function AthleteSearch() {
     const controller = new AbortController();
     setLoading(true);
     const timer = setTimeout(() => {
-      fetch(`http://localhost:5000/api/search?q=${encodeURIComponent(q)}`, {
+      // Search does not retry: a keystroke supersedes the last query within
+      // the debounce window anyway, so a retried request would race the one
+      // the user actually wants. `retries: 0` is expressed by treating any
+      // failure as an empty result set, which is what the UI already did.
+      apiFetch<{ results?: SearchHit[] }>(`/api/search?q=${encodeURIComponent(q)}`, {
         signal: controller.signal,
       })
-        .then((r) => (r.ok ? r.json() : { results: [] }))
         .then((d) => {
           setHits(d.results ?? []);
           setActive(0);
           setLoading(false);
         })
         .catch(() => {
-          if (!controller.signal.aborted) setLoading(false);
+          if (!controller.signal.aborted) {
+            setHits([]);
+            setLoading(false);
+          }
         });
     }, 180);
     return () => {

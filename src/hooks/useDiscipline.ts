@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { DisciplineReport } from "@/lib/dl-data";
+import { apiFetch, describeApiError } from "@/lib/api";
 
 type State =
   | { status: "loading" }
-  | { status: "error"; message: string }
+  | { status: "error"; message: string; retry: () => void }
   | { status: "ok"; data: DisciplineReport };
 
 /** One discipline read as a field: how level it is against the other 31, the
@@ -14,37 +15,28 @@ type State =
  * has no business in the bulk /api/predictions payload. */
 export function useDiscipline(discKey: string): State {
   const [state, setState] = useState<State>({ status: "loading" });
+  const [attempt, setAttempt] = useState(0);
+  const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
   useEffect(() => {
-    let live = true;
-    setState({ status: "loading" });
-
-    fetch(`http://localhost:5000/api/discipline/${discKey}`)
-      .then((r) => {
-        if (!r.ok)
-          throw new Error(
-            r.status === 404
-              ? "No predictions yet — run python run.py to build them"
-              : `API returned ${r.status}`,
-          );
-        return r.json() as Promise<DisciplineReport>;
-      })
-      .then((data) => live && setState({ status: "ok", data }))
-      .catch(
-        (e) =>
-          live &&
-          setState({
-            status: "error",
-            message: e.message ?? "Could not reach API — is api.py running?",
-          }),
-      );
-
     // Switching discipline mid-flight would otherwise let a slower earlier
     // request land last and render the wrong event's depth report.
-    return () => {
-      live = false;
-    };
-  }, [discKey]);
+    const ac = new AbortController();
+    setState({ status: "loading" });
+
+    apiFetch<DisciplineReport>(`/api/discipline/${discKey}`, { signal: ac.signal })
+      .then((data) => setState({ status: "ok", data }))
+      .catch((e) => {
+        if (ac.signal.aborted) return;
+        setState({
+          status: "error",
+          message: describeApiError(e, "No predictions yet — run python run.py to build them."),
+          retry,
+        });
+      });
+
+    return () => ac.abort();
+  }, [discKey, attempt, retry]);
 
   return state;
 }

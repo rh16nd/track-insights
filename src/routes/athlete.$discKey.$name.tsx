@@ -544,6 +544,7 @@ function AthleteProfilePage() {
           title="Could not load athlete profile"
           message={state.message}
           hint="This athlete may not be in the current predictions file — withdrawn athletes are filtered out before profiles are built."
+          onRetry={state.retry}
         />
       </Shell>
     );

@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { TopNav } from "./topnav";
 import { TrackCurveDecoration } from "./track-curve";
 import type { MeetStatus } from "@/lib/dl-data";
+import { API_IS_LOCAL } from "@/lib/api";
 
 export const dotClass: Record<MeetStatus, string> = {
   done: "bg-muted-foreground/40",
@@ -146,7 +147,12 @@ export function Shell({
             so the two disagreed. Also the only place the site states what it
             is not: a source, and not affiliated with anyone. */}
         <footer className="relative z-[2] border-t border-border/40 px-6 pb-10 sm:px-8 lg:px-12">
-          <div className="mx-auto flex max-w-[1600px] flex-col gap-1.5 pt-6 text-[12px] text-white/80 sm:flex-row sm:items-center sm:justify-between">
+          {/* white/90, not /80: at 12px this is small text and needs 4.5:1.
+              Over the grain-composited canvas /80 measured 3.80 before the
+              2026-09-01 canvas change and 4.03 after -- failing either way, on
+              all nine pages. /90 clears it at 4.65 and is visually the same
+              line. Measured by compositing, not by eye; see styles.css. */}
+          <div className="mx-auto flex max-w-[1600px] flex-col gap-1.5 pt-6 text-[12px] text-white/90 sm:flex-row sm:items-center sm:justify-between">
             <p>
               Data scraped from World Athletics. Not affiliated with World Athletics or the Wanda
               Diamond League.
@@ -272,27 +278,46 @@ export function PanelSkeleton({
 
 /** Error state that keeps the page's own shell/header rather than replacing
  * the whole page with a red box. */
+/** The site's one failure surface.
+ *
+ * `onRetry` matters more than it looks: before it existed the only way out
+ * of an error state was a full page reload, which is a poor answer when the
+ * cause is usually an API that was restarting for two seconds. The hint is
+ * suppressed when the API is remote -- telling a visitor to run api.py in a
+ * folder they do not have is worse than saying nothing. */
 export function ErrorPanel({
   message,
   hint,
   title = "Could not load predictions",
+  onRetry,
 }: {
   message: string;
   hint?: ReactNode;
   title?: string;
+  onRetry?: () => void;
 }) {
+  const fallbackHint = API_IS_LOCAL ? (
+    <>
+      Make sure <code className="nums">python api.py</code> is running in your athletics-predictor
+      folder.
+    </>
+  ) : null;
+  const shownHint = hint ?? fallbackHint;
+
   return (
     <section className="card-shadow card-surface rounded-[26px] bg-card p-6 sm:p-7">
       <div className="text-[14px] font-semibold text-destructive">{title}</div>
       <p className="mt-1 text-[13.5px] text-foreground">{message}</p>
-      <p className="mt-2 text-[12.5px] text-muted-foreground">
-        {hint ?? (
-          <>
-            Make sure <code className="nums">python api.py</code> is running in your
-            athletics-predictor folder.
-          </>
-        )}
-      </p>
+      {shownHint && <p className="mt-2 text-[12.5px] text-muted-foreground">{shownHint}</p>}
+      {onRetry && (
+        <button
+          type="button"
+          onClick={onRetry}
+          className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-primary px-5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-terracotta-strong"
+        >
+          Try again
+        </button>
+      )}
     </section>
   );
 }

@@ -28,9 +28,11 @@ export const Route = createFileRoute("/")({
  * arrival, which is what `reveal.js` does to every `.stat b` it reveals.
  *
  * `value` is a number, not a pre-formatted string, because a counter cannot
- * animate a string -- and the decimal place matters: the shipped figure is
- * 71.9%, and rounding it to 72% was quietly claiming a tenth of a point the
- * model has not earned. `null` while the API is still answering; the
+ * animate a string -- and the decimal place matters: the figure carries a
+ * tenth (72.8% as of the 2026-09-01 retrain, 71.9% before it), and rounding
+ * it away was quietly claiming a tenth of a point the model has not earned.
+ * The value itself comes from `/api/stats`, never from a literal here, so a
+ * retrain moves it on its own. `null` while the API is still answering; the
  * counter still runs on a real value arriving. */
 function Stat({
   value,
@@ -731,10 +733,21 @@ function Landing() {
                   </p>
                 )}
                 {state.status === "error" && (
-                  <p className="py-6 text-[13.5px] text-[var(--landing-muted)]">
-                    Live predictions aren't reachable right now. This preview and the full dashboard
-                    both show the same data once the model is running.
-                  </p>
+                  <div className="py-6">
+                    <p className="text-[13.5px] text-[var(--landing-muted)]">
+                      Live predictions aren&apos;t reachable right now. This preview and the full
+                      dashboard both show the same data once the model is running.
+                    </p>
+                    {/* The landing had no way back from a failed load at all --
+                        the only recovery was reloading the page. */}
+                    <button
+                      type="button"
+                      onClick={state.retry}
+                      className="mt-3 inline-flex min-h-[44px] items-center rounded-full border border-[var(--landing-border)] px-4 text-[12.5px] font-semibold text-[var(--landing-fg)] transition-colors hover:bg-[var(--landing-fg)]/10"
+                    >
+                      Try again
+                    </button>
+                  </div>
                 )}
                 {preview.map((w, i) => (
                   <div key={w.name} className="py-3.5 first:pt-0 last:pb-0">

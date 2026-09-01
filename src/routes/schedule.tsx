@@ -149,7 +149,7 @@ function SchedulePage() {
       daysToFinal={data?.daysToFinal}
     >
       {state.status === "loading" && <PanelSkeleton title="The road to the Final" rows={8} />}
-      {state.status === "error" && <ErrorPanel message={state.message} />}
+      {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
       {data && (
         <Panel
           title="The road to the Final"

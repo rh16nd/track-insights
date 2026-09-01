@@ -1,5 +1,7 @@
-// dl-data.ts — all data fetched live from Flask API at localhost:5000
-// Run `python api.py` in your athletics-predictor folder first
+// dl-data.ts — types for everything the Flask API serves.
+// The API's location lives in lib/api.ts (VITE_API_BASE_URL, defaulting to
+// http://localhost:5000); run `python api.py` in your athletics-predictor
+// folder for the local default.
 export type MeetStatus = "done" | "next" | "upcoming" | "final";
 
 export type Meet = {
@@ -157,8 +159,6 @@ export type ApiData = {
    * All 32, not a truncated list -- the dashboard reads the WEAK end. */
   confidence: ConfidenceRow[];
 };
-
-export const API_URL = "http://localhost:5000/api/predictions";
 
 export const statusLabel: Record<MeetStatus, string> = {
   done: "Done",

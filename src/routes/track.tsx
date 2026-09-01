@@ -41,7 +41,7 @@ function TrackPage() {
       daysToFinal={data?.daysToFinal}
     >
       {state.status === "loading" && <PanelSkeleton title="Projected field" rows={8} />}
-      {state.status === "error" && <ErrorPanel message={state.message} />}
+      {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
       {data && (
         <DisciplineTable
           disciplines={data.trackDisciplines}

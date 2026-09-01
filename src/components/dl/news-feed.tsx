@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Panel } from "./shell";
+import { apiFetch } from "@/lib/api";
 
 export type NewsItem = {
   headline: string;
@@ -32,18 +33,19 @@ export function NewsFeed() {
   const [state, setState] = useState<State>({ status: "loading" });
 
   useEffect(() => {
-    let alive = true;
-    fetch("http://localhost:5000/api/news")
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad status"))))
+    const ac = new AbortController();
+    // No retry affordance here on purpose: the feed renders nothing at all
+    // when it fails (see below), so there is no error surface to put a
+    // button on. apiFetch's own retries are the whole recovery story.
+    apiFetch<{ items?: NewsItem[]; checkedAt?: string | null }>("/api/news", { signal: ac.signal })
       .then((d) => {
-        if (alive) setState({ status: "ok", items: d.items ?? [], checkedAt: d.checkedAt ?? null });
+        if (!ac.signal.aborted)
+          setState({ status: "ok", items: d.items ?? [], checkedAt: d.checkedAt ?? null });
       })
       .catch(() => {
-        if (alive) setState({ status: "error" });
+        if (!ac.signal.aborted) setState({ status: "error" });
       });
-    return () => {
-      alive = false;
-    };
+    return () => ac.abort();
   }, []);
 
   if (state.status === "error") return null;

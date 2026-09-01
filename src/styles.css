@@ -97,8 +97,18 @@
      the two drifting apart is exactly the "two different products stitched
      together" complaint that drove the earlier theme unification, so change
      BOTH or neither. Every landing text token was re-measured against this
-     lighter value afterwards (see the .landing block). */
-  --background: oklch(0.54 0.105 40);
+     lighter value afterwards (see the .landing block).
+
+     2026-09-01: 0.54 -> 0.52. Every contrast figure in DESIGN.md was solved
+     against this colour BARE, and the page never paints it bare: ambient-grain
+     is a fixed full-page overlay, so the real backdrop is the composite. That
+     lifts it to (163,94,70) and dropped --landing-muted to 4.33 and
+     --gold-on-canvas to 4.23, both under AA, on 11-17px text across all nine
+     pages. Darkening the canvas fixes both without touching either text
+     token's chroma -- lightening them instead needed gold at 0.99L/0.06C,
+     which is warm white and gives up the gold. Measured, not assumed: at 0.52
+     the canvas-backed failures go 8 -> 0. */
+  --background: oklch(0.52 0.105 40);
   --foreground: oklch(0.19 0.03 40);
   --card: oklch(0.97 0.012 75);
   --card-foreground: oklch(0.19 0.03 40);
@@ -148,11 +158,20 @@
      in those heroes uses white/translucent-white instead, see
      dashboard.tsx). Kept, not deleted, since both heroes still use them. */
   --gold-light: oklch(0.8 0.11 68);
-  /* Solved against the real canvas (161,87,61), not picked by eye:
-     0.94/0.09 measured 4.18:1, under the 4.5 floor for the 11-12.5px text
-     that uses it. This clears at 4.55:1 while keeping as much chroma as
-     possible, so it still reads gold rather than washing out to white. */
-  --gold-on-canvas: oklch(0.97 0.08 68);
+  /* Solved against the real canvas, not picked by eye: 0.94/0.09 measured
+     4.18:1, under the 4.5 floor for the 11-17.6px text that uses it.
+
+     2026-09-01, 0.97 -> 0.98. The canvas drop to 0.52 cleared seven of the
+     eight canvas-backed failures on its own; this token's one remaining use
+     is the hero stat ribbon's "%" at 17.6px/600, which is small text by
+     WCAG and sits where BOTH grain layers stack (ambient-grain sitewide plus
+     the hero's own track-grain at 0.12). It measured 4.44. Lightness alone
+     closes it -- 4.53 in the hero, 4.63 in the body -- and CHROMA IS
+     DELIBERATELY UNCHANGED at 0.08. That is the whole point: solving this by
+     lightening the token against the OLD canvas needed 0.99L/0.06C, which is
+     warm white and gives up the gold. Against the darker canvas the same
+     fix costs 3-4 points of RGB and keeps the colour. */
+  --gold-on-canvas: oklch(0.98 0.08 68);
   --terracotta-light: oklch(0.74 0.15 38.5);
   --sand: oklch(0.941 0.014 76);
 }
@@ -188,8 +207,9 @@
    keep chasing the text lighter and lighter, which was starting to wash
    the accent colors out toward plain white. */
 .landing {
-  /* Kept in lockstep with :root's --background (see the note there). */
-  --landing-bg: oklch(0.54 0.105 40);
+  /* Kept in lockstep with :root's --background (see the note there), including
+     the 2026-09-01 drop to 0.52 for the grain composite. */
+  --landing-bg: oklch(0.52 0.105 40);
   --landing-bg-2: oklch(0.47 0.095 40);
   --landing-fg: oklch(0.97 0.01 80);
   /* 2026-08-24, measured not guessed: on the lighter canvas the old
