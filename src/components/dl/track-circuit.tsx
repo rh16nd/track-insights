@@ -13,7 +13,16 @@
 const START_X = 170;
 const END_X = 730;
 const OUTER_R = 150;
-const LANE_GAP = 15;
+// 11, not 15, and the headline is the reason: the infield is what is left
+// inside the innermost lane, so the lane spacing sets how much clear space
+// the drawing has in the middle. At 15 the infield was 60% of the oval's
+// height and the headline overhung it; at 10 it is 73.3%, which clears a
+// three-line display headline at every width from 375px up.
+//
+// It is also the more accurate number. A real 400m track has a ~36.5m bend
+// radius and eight 1.22m lanes, so the lanes take about 27% of the radius.
+// At 15 these five took 40%; at 10 they take 27%.
+const LANE_GAP = 10;
 const LANE_COUNT = 5;
 
 /** The 100m start spur.
