@@ -339,9 +339,11 @@ function Landing() {
               measured 1589px across at a 1823px viewport, 87% of the
               screen, and swallowed the stat ribbon; the design reference
               is 970px at 1274px, narrower than the 1024px content column
-              the copy sits in. Capped just above that, the circuit frames
-              the headline at every width instead of racing the window. */}
-          <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 mx-auto -mt-6 h-[140%] w-full max-w-[1040px] -translate-y-1/2 sm:h-[120%] sm:w-[88%]" />
+              the copy sits in. Capped, the circuit frames the headline at
+              every width instead of racing the window — 1200px, set by eye
+              against a wide monitor rather than by the reference, which
+              leaves the ribbon 70px of clearance below the oval. */}
+          <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 mx-auto -mt-6 h-[140%] w-full max-w-[1200px] -translate-y-1/2 sm:h-[120%] sm:w-[88%]" />
           <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
             {/* v0's kicker: brand plus a live countdown, gold-ringed, with a
                 dot that pulses. The five hero rows carry v0's own reveal
