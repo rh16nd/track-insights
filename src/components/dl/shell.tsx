@@ -1,9 +1,12 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { TopNav } from "./topnav";
 import { TrackCurveDecoration } from "./track-curve";
 import type { MeetStatus } from "@/lib/dl-data";
 import { API_IS_LOCAL } from "@/lib/api";
 import { WaSourceLink } from "./wa-link";
+import { JsonLd } from "./json-ld";
+import { breadcrumbSchema } from "@/lib/seo";
 
 export const dotClass: Record<MeetStatus, string> = {
   done: "bg-muted-foreground/40",
@@ -61,6 +64,11 @@ export function Shell({
   /** One-line explanation under the page title. */
   description?: string | undefined;
 }) {
+  /* Mirrors the visible breadcrumb below. Read from the router rather than
+     passed in, so the two cannot drift: a page that changes its crumb gets
+     the structured data updated with it. Returns null until VITE_SITE_URL
+     exists -- see lib/seo.ts. */
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
     <div className="relative min-h-screen bg-background">
       {/* Grain stays perfectly still -- it is a surface texture, and moving
@@ -106,9 +114,37 @@ export function Shell({
           <div className="relative z-[2] mx-auto max-w-[1600px] px-6 sm:px-8 lg:px-12">
             {hero ?? (
               <>
-                <div className="dg text-[12.5px] tracking-[0.04em] text-white/92">
-                  PodiumCall / <span className="text-gold-on-canvas">{crumb ?? title}</span>
-                </div>
+                {/* A real breadcrumb, not a line that looks like one. It used
+                    to be a <div> of plain text, so "PodiumCall" was dead --
+                    the one affordance a breadcrumb exists to give -- and
+                    assistive tech had no way to know this was navigation.
+                    Now nav > ol > li with aria-current on the leaf. The
+                    separator is aria-hidden: it is punctuation, and read
+                    aloud it is noise between the two names that matter. */}
+                <JsonLd
+                  data={breadcrumbSchema([
+                    { name: "PodiumCall", path: "/" },
+                    { name: crumb ?? title, path: pathname },
+                  ])}
+                />
+                <nav
+                  aria-label="Breadcrumb"
+                  className="dg text-[12.5px] tracking-[0.04em] text-white/92"
+                >
+                  <ol className="flex items-center">
+                    <li>
+                      <Link to="/" className="transition-colors hover:text-white hover:underline">
+                        PodiumCall
+                      </Link>
+                    </li>
+                    <li aria-hidden="true" className="px-1.5">
+                      /
+                    </li>
+                    <li className="text-gold-on-canvas" aria-current="page">
+                      {crumb ?? title}
+                    </li>
+                  </ol>
+                </nav>
                 {eyebrow && <div className="label-caps mt-3 text-gold-on-canvas">{eyebrow}</div>}
                 <h1
                   className="mt-3.5 max-w-[22ch] text-balance text-[clamp(30px,4vw,52px)] leading-[1.04] font-bold tracking-tight text-white"

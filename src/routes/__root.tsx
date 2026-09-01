@@ -10,12 +10,24 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { JsonLd } from "@/components/dl/json-ld";
+import { websiteSchema } from "@/lib/seo";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    /* <main>, not a bare <div>: every other page on the site exposes a main
+       landmark through Shell, and this one renders outside it, so a screen
+       reader lost the "skip to the content" anchor exactly where a lost
+       visitor needs it most. Same gap the landing had before it was given
+       one -- both are pages that do not go through Shell. */
+    <main className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
+        {/* The tab still said "PodiumCall - 2026 Diamond League Predictions"
+            on a page that is not that. A wrong title is worse than a plain
+            one in history, in bookmarks, and read aloud. */}
+        <title>Page not found · PodiumCall</title>
+        <meta name="robots" content="noindex" />
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -30,7 +42,7 @@ function NotFoundComponent() {
           </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -130,6 +142,9 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        {/* Emitted once for the whole site; per-page BreadcrumbList
+            lives in Shell. */}
+        <JsonLd data={websiteSchema()} />
         <Scripts />
       </body>
     </html>
