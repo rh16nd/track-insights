@@ -173,7 +173,7 @@ function QualificationPage() {
       }
     >
       {state.status === "loading" && <PanelSkeleton title="Diamond League standings" rows={10} />}
-      {state.status === "error" && <ErrorPanel message={state.message} />}
+      {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
 
       {data && current && (
         <>

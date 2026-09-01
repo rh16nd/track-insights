@@ -374,7 +374,7 @@ function Dashboard() {
         </div>
       )}
 
-      {state.status === "error" && <ErrorPanel message={state.message} />}
+      {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
 
       {/* The "Removed from predictions — injury/withdrawal" panel used to sit
           here, between the hero and the real content. It was deleted rather

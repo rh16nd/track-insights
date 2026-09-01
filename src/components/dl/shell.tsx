@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { TopNav } from "./topnav";
 import { TrackCurveDecoration } from "./track-curve";
 import type { MeetStatus } from "@/lib/dl-data";
+import { API_IS_LOCAL } from "@/lib/api";
 
 export const dotClass: Record<MeetStatus, string> = {
   done: "bg-muted-foreground/40",
@@ -277,27 +278,46 @@ export function PanelSkeleton({
 
 /** Error state that keeps the page's own shell/header rather than replacing
  * the whole page with a red box. */
+/** The site's one failure surface.
+ *
+ * `onRetry` matters more than it looks: before it existed the only way out
+ * of an error state was a full page reload, which is a poor answer when the
+ * cause is usually an API that was restarting for two seconds. The hint is
+ * suppressed when the API is remote -- telling a visitor to run api.py in a
+ * folder they do not have is worse than saying nothing. */
 export function ErrorPanel({
   message,
   hint,
   title = "Could not load predictions",
+  onRetry,
 }: {
   message: string;
   hint?: ReactNode;
   title?: string;
+  onRetry?: () => void;
 }) {
+  const fallbackHint = API_IS_LOCAL ? (
+    <>
+      Make sure <code className="nums">python api.py</code> is running in your athletics-predictor
+      folder.
+    </>
+  ) : null;
+  const shownHint = hint ?? fallbackHint;
+
   return (
     <section className="card-shadow card-surface rounded-[26px] bg-card p-6 sm:p-7">
       <div className="text-[14px] font-semibold text-destructive">{title}</div>
       <p className="mt-1 text-[13.5px] text-foreground">{message}</p>
-      <p className="mt-2 text-[12.5px] text-muted-foreground">
-        {hint ?? (
-          <>
-            Make sure <code className="nums">python api.py</code> is running in your
-            athletics-predictor folder.
-          </>
-        )}
-      </p>
+      {shownHint && <p className="mt-2 text-[12.5px] text-muted-foreground">{shownHint}</p>}
+      {onRetry && (
+        <button
+          type="button"
+          onClick={onRetry}
+          className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-primary px-5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-terracotta-strong"
+        >
+          Try again
+        </button>
+      )}
     </section>
   );
 }

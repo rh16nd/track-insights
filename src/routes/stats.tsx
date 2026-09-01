@@ -89,7 +89,7 @@ function StatsPage() {
       }
     >
       {state.status === "loading" && <PanelSkeleton title="Best of the season" rows={10} />}
-      {state.status === "error" && <ErrorPanel message={state.message} />}
+      {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
 
       {data && scale && (
         <>

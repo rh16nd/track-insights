@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type {
   AthleteAnalytics,
   AthleteCareer,
@@ -9,6 +9,7 @@ import type {
   ScoreContext,
   StandingsPosition,
 } from "@/lib/dl-data";
+import { apiFetch, ApiError, describeApiError } from "@/lib/api";
 
 /** An athlete who exists in the season's worldwide toplist but is not in the
  * projected field. Carries the REAL reason (mirroring run.py's selection
@@ -74,7 +75,7 @@ export type AthleteNotInField = {
 
 type State =
   | { status: "loading" }
-  | { status: "error"; message: string }
+  | { status: "error"; message: string; retry: () => void }
   | { status: "notInField"; data: AthleteNotInField }
   | { status: "ok"; data: AthleteProfile };
 
@@ -84,40 +85,52 @@ type State =
  * every dashboard load would be wasted work for the ones never opened. */
 export function useAthleteProfile(discKey: string, name: string): State {
   const [state, setState] = useState<State>({ status: "loading" });
+  const [attempt, setAttempt] = useState(0);
+  const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
   useEffect(() => {
+    const ac = new AbortController();
     setState({ status: "loading" });
-    fetch(`http://localhost:5000/api/athlete/${discKey}/${encodeURIComponent(name)}`)
-      .then(async (r) => {
-        if (r.ok) {
-          setState({ status: "ok", data: (await r.json()) as AthleteProfile });
-          return;
-        }
+
+    const load = async () => {
+      try {
+        const data = await apiFetch<AthleteProfile>(
+          `/api/athlete/${discKey}/${encodeURIComponent(name)}`,
+          { signal: ac.signal },
+        );
+        setState({ status: "ok", data });
+      } catch (e) {
+        if (ac.signal.aborted) return;
         // A 404 here does NOT mean "no such athlete" -- it means they aren't
         // in predictions_latest.csv, which is only the ~230 projected
         // finalists out of ~3,700 ranked athletes. Ask why before giving up.
-        if (r.status === 404) {
-          const s = await fetch(
-            `http://localhost:5000/api/athlete-status/${discKey}/${encodeURIComponent(name)}`,
-          );
-          if (s.ok) {
-            const data = (await s.json()) as AthleteNotInField;
-            if (!data.inField) {
-              setState({ status: "notInField", data });
+        if (e instanceof ApiError && e.status === 404) {
+          try {
+            const status = await apiFetch<AthleteNotInField>(
+              `/api/athlete-status/${discKey}/${encodeURIComponent(name)}`,
+              { signal: ac.signal },
+            );
+            if (ac.signal.aborted) return;
+            if (!status.inField) {
+              setState({ status: "notInField", data: status });
               return;
             }
+          } catch {
+            // Fall through to the not-found message below: the follow-up
+            // question could not be answered either, and the useful thing to
+            // say is still that this athlete is not in the projected field.
           }
-          throw new Error("Athlete not found");
+          if (ac.signal.aborted) return;
+          setState({ status: "error", message: "Athlete not found.", retry });
+          return;
         }
-        throw new Error(`API returned ${r.status}`);
-      })
-      .catch((e) =>
-        setState({
-          status: "error",
-          message: e.message ?? "Could not reach API — is api.py running?",
-        }),
-      );
-  }, [discKey, name]);
+        setState({ status: "error", message: describeApiError(e), retry });
+      }
+    };
+    void load();
+
+    return () => ac.abort();
+  }, [discKey, name, attempt, retry]);
 
   return state;
 }

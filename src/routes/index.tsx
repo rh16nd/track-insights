@@ -733,10 +733,21 @@ function Landing() {
                   </p>
                 )}
                 {state.status === "error" && (
-                  <p className="py-6 text-[13.5px] text-[var(--landing-muted)]">
-                    Live predictions aren't reachable right now. This preview and the full dashboard
-                    both show the same data once the model is running.
-                  </p>
+                  <div className="py-6">
+                    <p className="text-[13.5px] text-[var(--landing-muted)]">
+                      Live predictions aren&apos;t reachable right now. This preview and the full
+                      dashboard both show the same data once the model is running.
+                    </p>
+                    {/* The landing had no way back from a failed load at all --
+                        the only recovery was reloading the page. */}
+                    <button
+                      type="button"
+                      onClick={state.retry}
+                      className="mt-3 inline-flex min-h-[44px] items-center rounded-full border border-[var(--landing-border)] px-4 text-[12.5px] font-semibold text-[var(--landing-fg)] transition-colors hover:bg-[var(--landing-fg)]/10"
+                    >
+                      Try again
+                    </button>
+                  </div>
                 )}
                 {preview.map((w, i) => (
                   <div key={w.name} className="py-3.5 first:pt-0 last:pb-0">

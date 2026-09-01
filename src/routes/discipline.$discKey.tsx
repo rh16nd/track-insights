@@ -59,7 +59,7 @@ function DisciplinePage() {
       description={DESCRIPTION}
     >
       {state.status === "loading" && <PanelSkeleton title="Depth of the field" rows={6} />}
-      {state.status === "error" && <ErrorPanel message={state.message} />}
+      {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
 
       {data && (
         <>

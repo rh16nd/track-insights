@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { StatsData } from "@/lib/dl-data";
+import { apiFetch, describeApiError } from "@/lib/api";
 
 type State =
-  { status: "loading" } | { status: "error"; message: string } | { status: "ok"; data: StatsData };
+  | { status: "loading" }
+  | { status: "error"; message: string; retry: () => void }
+  | { status: "ok"; data: StatsData };
 
 /** Cross-discipline performance stats. Separate from /api/predictions for
  * the same reason /api/qualification is: this is raw scraped material --
@@ -10,26 +13,27 @@ type State =
  * one page asks for it. */
 export function useStats(): State {
   const [state, setState] = useState<State>({ status: "loading" });
+  const [attempt, setAttempt] = useState(0);
+  const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/stats")
-      .then((r) => {
-        if (!r.ok)
-          throw new Error(
-            r.status === 404
-              ? "No season toplists yet — run python run.py to scrape them"
-              : `API returned ${r.status}`,
-          );
-        return r.json() as Promise<StatsData>;
-      })
+    const ac = new AbortController();
+    setState({ status: "loading" });
+    apiFetch<StatsData>("/api/stats", { signal: ac.signal })
       .then((data) => setState({ status: "ok", data }))
-      .catch((e) =>
+      .catch((e) => {
+        if (ac.signal.aborted) return;
         setState({
           status: "error",
-          message: e.message ?? "Could not reach API — is api.py running?",
-        }),
-      );
-  }, []);
+          message: describeApiError(
+            e,
+            "No season toplists yet — run python run.py to scrape them.",
+          ),
+          retry,
+        });
+      });
+    return () => ac.abort();
+  }, [attempt, retry]);
 
   return state;
 }
