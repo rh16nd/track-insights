@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { useCountUp } from "@/hooks/useCountUp";
 import { WatchBadge } from "./shell";
 import type { TopWinner } from "@/lib/dl-data";
+import { WaAthleteLink } from "./wa-link";
 
 /** The projected podium — the landing page's signature block, ported from
  * the v0 "Race Programme" direction.
@@ -186,6 +187,10 @@ function Plaque({
           top-three membership, not the winner — so the label was corrected
           rather than ported. */}
       <div className="label-caps mt-1 text-muted-foreground">Chance of a podium</div>
+      {/* The page stakes its credibility on these three names and, before
+          this, gave the reader nothing to check them against. The season
+          best above is the claim most worth following up. */}
+      <WaAthleteLink href={winner.waUrl} name={winner.name} className="mt-3 inline-block" />
     </div>
   );
 }
