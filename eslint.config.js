@@ -6,7 +6,11 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", ".output", ".vinxi", ".claude/**"] },
+  // design/v0 is vendored design output, not app source -- it is the spec the
+  // app is ported FROM, so reformatting it to this project's prettier rules
+  // would edit the reference. It was failing lint with 15 errors from the day
+  // it landed, which is why `npm run lint` had stopped being clean.
+  { ignores: ["dist", ".output", ".vinxi", ".claude/**", "design/**"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],

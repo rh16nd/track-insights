@@ -162,7 +162,7 @@ function Plaque({
         <Link
           to="/athlete/$discKey/$name"
           params={{ discKey: winner.discKey, name: winner.name }}
-          className="dg text-balance text-[18px] leading-[1.12] font-semibold text-foreground transition-colors hover:text-terracotta-strong hover:underline"
+          className="dg text-balance py-1 text-[18px] leading-[1.12] font-semibold text-foreground transition-colors hover:text-terracotta-strong hover:underline"
         >
           {winner.name}
         </Link>

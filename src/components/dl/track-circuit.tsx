@@ -13,14 +13,42 @@
 const START_X = 170;
 const END_X = 730;
 const OUTER_R = 150;
-const LANE_GAP = 15;
+// 11, not 15, and the headline is the reason: the infield is what is left
+// inside the innermost lane, so the lane spacing sets how much clear space
+// the drawing has in the middle. At 15 the infield was 60% of the oval's
+// height and the headline overhung it; at 10 it is 73.3%, which clears a
+// three-line display headline at every width from 375px up.
+//
+// It is also the more accurate number. A real 400m track has a ~36.5m bend
+// radius and eight 1.22m lanes, so the lanes take about 27% of the radius.
+// At 15 these five took 40%; at 10 they take 27%.
+const LANE_GAP = 10;
 const LANE_COUNT = 5;
+
+/** The 100m start spur.
+ *
+ * A 400m track cannot start the 100m on the oval. Each straight is 84.39m,
+ * the finish sits at the end of the home straight, and 100m back from it
+ * falls inside the bend — so every real track builds a short extension off
+ * the end of the home straight and starts the sprints there. It is the
+ * detail that makes a drawing read as a track rather than as an oval.
+ *
+ * Its length is derived, not eyeballed: 560 units span one 84.39m straight,
+ * so a unit is 0.1507m and the missing 15.61m is 103.6 units. */
+const SPRINT_X = Math.round(START_X - (100 - 84.39) * ((END_X - START_X) / 84.39));
 
 function laneD(index: number) {
   const r = OUTER_R - index * LANE_GAP;
   const top = 20 + index * LANE_GAP;
   const bottom = 320 - index * LANE_GAP;
   return `M${START_X},${top} L${END_X},${top} A${r},${r} 0 0 1 ${END_X},${bottom} L${START_X},${bottom} A${r},${r} 0 0 1 ${START_X},${top} Z`;
+}
+
+/** One lane of the sprint spur: the home straight continuing past the point
+ * where the bend takes the oval away. */
+function sprintLaneD(index: number) {
+  const y = 320 - index * LANE_GAP;
+  return `M${SPRINT_X},${y} L${START_X},${y}`;
 }
 
 export function TrackCircuit({ className = "" }: { className?: string }) {
@@ -34,16 +62,57 @@ export function TrackCircuit({ className = "" }: { className?: string }) {
       aria-hidden="true"
       preserveAspectRatio="xMidYMid meet"
     >
+      {/* Opacities are set so the circuit reads as the picture in the hero
+          rather than as noise under it. At the original 0.07 the lanes
+          resolved to roughly a 6% lift over the terracotta canvas -- close
+          enough to invisible that the hero looked like a flat fill, which
+          is exactly what it was reported as. 0.2 puts them at about a 20%
+          lift, matching the design reference.
+
+          The accent lane is --gold-on-canvas, NOT --gold, and that is a
+          measurement rather than a preference. --gold is oklch(0.593) and
+          this canvas is oklch(0.54) -- near-identical lightness -- so gold
+          over it tops out at 1.27:1 SOLID, and 1.07:1 at the 0.32 this used
+          to use. The lane meant to be the accent was the least visible line
+          in the drawing, and no amount of opacity could have fixed it;
+          contrast against a background is a lightness problem. Resolved
+          through a canvas, since getComputedStyle hands back oklch() here
+          and a regex reads that as nonsense. --gold-on-canvas was already
+          solved against this exact background (161,87,61) for text, and at
+          0.7 it puts the accent lane at 3.08:1 -- clearly ahead of the
+          white lanes' 1.48:1, which is the point of it. */}
       {lanes.map((d, i) => (
         <path
           key={i}
           d={d}
           fill="none"
-          stroke={i === 0 ? "var(--gold)" : "white"}
-          strokeOpacity={i === 0 ? 0.22 : 0.07}
+          stroke={i === 0 ? "var(--gold-on-canvas)" : "white"}
+          strokeOpacity={i === 0 ? 0.7 : 0.2}
+          strokeWidth={i === 0 ? 2 : 1.5}
+        />
+      ))}
+      {/* The 100m spur, and its start line at the far end of it. Drawn
+          under the finish line so the two read in the right order. */}
+      {Array.from({ length: LANE_COUNT }, (_, i) => (
+        <path
+          key={`sprint-${i}`}
+          d={sprintLaneD(i)}
+          fill="none"
+          stroke="white"
+          strokeOpacity={0.2}
           strokeWidth={1.5}
         />
       ))}
+      <line
+        x1={SPRINT_X}
+        y1={320 - (LANE_COUNT - 1) * LANE_GAP}
+        x2={SPRINT_X}
+        y2={320}
+        stroke="var(--gold-on-canvas)"
+        strokeOpacity={0.85}
+        strokeWidth={2.5}
+      />
+
       {/* Straight-line "start" markers across all lanes, like real track
           start/finish lines -- a small concrete detail, not just abstract
           ovals. */}
@@ -53,13 +122,16 @@ export function TrackCircuit({ className = "" }: { className?: string }) {
         x2={START_X + 40}
         y2={320}
         stroke="white"
-        strokeOpacity={0.1}
+        strokeOpacity={0.22}
         strokeWidth={1.5}
         strokeDasharray="3 5"
       />
+      {/* Same fix as the accent lane, and it matters more here: this is the
+          only thing in the drawing that moves, and at --gold/0.9 it resolved
+          to 1.24:1 -- a runner nobody could see. 4.02:1 now. */}
       <g className="track-circuit-marker" style={{ offsetPath: `path('${markerLaneD}')` }}>
-        <circle r={5} fill="var(--gold)" opacity={0.9} />
-        <circle r={9} fill="var(--gold)" opacity={0.18} />
+        <circle r={9} fill="var(--gold-light)" opacity={0.28} />
+        <circle r={5} fill="var(--gold-on-canvas)" opacity={0.9} />
       </g>
     </svg>
   );

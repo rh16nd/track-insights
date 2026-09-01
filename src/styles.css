@@ -245,7 +245,11 @@ select:focus-visible,
      each surface (measured 2.69:1 on canvas, 1.05:1 on a card), so the
      guarantee has to come from a fixed colour. */
   box-shadow: 0 0 0 5px oklch(0.19 0.03 40);
-  border-radius: inherit;
+  /* `border-radius: inherit` used to sit here and it OVERRODE the element's
+     own radius: a `rounded-full` pill inherits its parent's 0 and measured
+     3.35e7px unfocused -> 0px focused. Every pill on the site squared off
+     under keyboard focus. Both `outline` and `box-shadow` already follow the
+     element's own border-radius, so nothing is needed here. */
 }
 
 /* Themed text selection -- otherwise falls back to the browser's default
@@ -335,6 +339,17 @@ html {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+/* The display face as a utility. `dg` is used in 6 files -- the podium's
+   rank numerals and percentages, the dashboard head figures, the schedule's
+   date caps, the athlete dossier chip -- and was NEVER DEFINED. Every one of
+   them silently rendered in Barlow, the body face, including the podium
+   block: the page's single most important claim was set in the wrong
+   typeface. Caught by a critique measuring computed font-family rather than
+   reading the class list. */
+@utility dg {
+  font-family: var(--font-display);
 }
 
 @utility nums {
@@ -584,6 +599,17 @@ html {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
 }
 
+/* The grain out of `track-surface`, on its own.
+   That utility bundles three things -- hard white bars every 200px, a dark
+   vignette, and this noise tile -- and the landing hero only ever wanted
+   the third. Same tile and the same 0.9/0.4 turbulence, so the texture is
+   identical to what the hero used to carry; the layer it is painted on
+   sets the strength (0.12, which is what the old 88% scrim left of it). */
+@utility track-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
 /* Athletics track surface for the sidebar */
 @utility track-surface {
   background-color: #8b3a1a;
@@ -670,15 +696,24 @@ html {
   }
 }
 
-/* ── Lane textures: two of them, deliberately ────────────────────────
-   `.lanes` is v0's drifting version and is what every APP page uses --
-   dashboard, track, field, qualifying, stats, schedule, discipline,
-   athlete. `.lanes-track` is the landing hero only. They are separate
-   classes because a change to the landing should stay on the landing;
-   sharing one class is how a landing-only request last changed all nine
-   pages at once.
+/* ── Lane texture ────────────────────────────────────────────────────
+   v0's drifting version, used by every page including the landing hero.
 
-   Both translate an oversized pseudo-element rather than animating
+   There used to be a second class here, `.lanes-track`, for the landing
+   alone: horizontal lanes running the direction of travel, plus a band of
+   light sweeping along them. It was built to read as "a real running
+   track" -- but the landing already HAS a real running track in the
+   foreground (`TrackCircuit`, the 400m outline with the marker lapping
+   it), and a second, differently-angled set of lanes behind it read as
+   two tracks at right angles rather than one. v0's own landing runs this
+   texture, and it is what the hero is supposed to look like.
+
+   The split existed so a landing-only change could not reach the other
+   eight pages. That still holds in the other direction, which is what
+   matters: this file is the only definition, and the landing is the only
+   page that also draws the circuit on top of it.
+
+   It translates an oversized pseudo-element rather than animating
    `background-position` the way v0 does. That is the one thing kept from
    the rewrite: background-position repaints the whole layer every frame,
    which is exactly what this file's ambient-glow note warns against,
@@ -707,8 +742,7 @@ html {
   }
 }
 
-.lanes,
-.lanes-track {
+.lanes {
   position: absolute;
   inset: 0;
   overflow: hidden;
@@ -751,55 +785,148 @@ html {
   }
 }
 
-/* ── The landing hero only: an actual running track ──────────────────
-   Lanes running the direction of travel, evenly spaced, one width, and
-   STILL -- a track does not slide. Spacing is set from the hero itself:
-   at ~950px tall a 104px period draws 9 lanes, which is what a real track
-   has.
+/* ── The landing hero's headline ─────────────────────────────────────
+   Three lines that step DOWN to the payoff rather than running at one
+   size. The last line holds the display ceiling and the two setup lines
+   scale back from it by a fixed ratio, so the headline reads as a
+   crescendo instead of a uniform slab.
 
-   The motion is the thing that really moves on a track: a soft band of
-   light travelling ALONG the lanes. */
-.lanes-track::before {
-  content: "";
-  position: absolute;
-  inset: -12% -6%;
-  transform: rotate(-1deg);
-  background: repeating-linear-gradient(
-    180deg,
-    transparent 0 102px,
-    oklch(0.97 0.012 75 / 0.12) 102px 104px
-  );
+   The ratio is baked at 0.72 from an impeccable `bolder` round. It is
+   the amplification this element could actually take: the type cannot
+   get bigger (the craft floor caps display at 6rem and it is already
+   there) and the block cannot get taller (it sits inside the track
+   circuit's infield, which leaves 14px of clearance at 1274px). Stepping
+   the setup lines down widens the scale RANGE instead, and takes the
+   block from 259px to ~193px, further clear of the lanes than before.
+
+   Sized in `em` off the h1's own clamp so the peak is declared once, in
+   the markup, rather than duplicated here. */
+.hero-headline {
+  --step: 0.72;
 }
 
-@keyframes lane-sweep {
+.hero-headline > span {
+  display: block;
+}
+
+.hero-headline .headline-setup-a {
+  font-size: calc(1em * var(--step) * var(--step));
+}
+
+.hero-headline .headline-setup-b {
+  font-size: calc(1em * var(--step));
+}
+
+/* ── The landing hero's small print ──────────────────────────────────
+   Micro-corrections accepted from an impeccable `polish` round. None of
+   them moves anything structurally; they exist because the measurements
+   were off by amounts you feel rather than see.
+
+   The stat label was the widest type step on the page: 11px at 0.12em
+   sitting directly under a 40px figure. It comes up 12% with the tracking
+   eased and a little more air above it, so the jump reads as a pair
+   rather than a caption stranded under a number.
+
+   The gold unit rode the figure's baseline, which puts a 0.55em glyph
+   optically low against 40px digits; it lifts by its own 0.04em. And the
+   two glyphs whose boxes are centred but whose strokes are not - the
+   arrow in the primary button, the pulsing dot in the badge - each take a
+   half pixel in the direction their weight actually sits. */
+.hero-ribbon .label-caps {
+  font-size: 0.77rem;
+  letter-spacing: 0.1em;
+  margin-top: 0.65rem;
+}
+
+.hero-ribbon .nums {
+  letter-spacing: -0.02em;
+}
+
+.hero-ribbon .nums > span {
+  transform: translateY(-0.04em);
+}
+
+.hero-col a svg {
+  transform: translateY(0.5px);
+}
+
+.hero-col .kicker-dot {
+  transform: translateY(-0.5px);
+}
+
+/* ── The landing hero's arrival ──────────────────────────────────────
+   v0's own hero motion (`design/v0/index.html` + `system.css`), which the
+   port took the layout and copy from but not the movement. The hero was
+   the only band on the page with no entrance at all -- everything under it
+   already had one via `.stagger-item` and `useInView` -- so the page began
+   at its most static exactly where it should be at its most alive.
+
+   The delays are v0's and are deliberately not evenly spaced: .05 / .14 /
+   .24 / .36 / .5 accelerates away from the badge and lands the stat ribbon
+   last, after the buttons. `backwards` holds each row at opacity 0 through
+   its own delay, so nothing is briefly visible before its turn. */
+@keyframes hero-rise {
   from {
-    transform: rotate(-1deg) translate3d(-60%, 0, 0);
+    opacity: 0;
+    transform: translateY(20px);
   }
   to {
-    transform: rotate(-1deg) translate3d(160%, 0, 0);
+    opacity: 1;
+    transform: none;
   }
 }
 
-.lanes-track::after {
-  content: "";
-  position: absolute;
-  inset: -12% 0;
-  width: 42%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    oklch(0.97 0.012 75 / 0.07) 50%,
-    transparent 100%
-  );
-  animation: lane-sweep 13s linear infinite;
+.hero-reveal {
+  animation: hero-rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  animation-delay: var(--reveal-d, 0ms);
 }
 
-/* The lanes are the picture and never moved, so reduced motion only has to
-   stop the sweep -- removed rather than parked mid-track, where a static
-   bright band would read as a rendering artefact. */
+/* A ring that breathes outward and fades, rather than a dot that changes
+   size: the dot sits in a flex row beside the badge text, so scaling the
+   element itself would nudge that text every cycle. box-shadow paints
+   outside the box and moves nothing. */
+@keyframes kicker-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px oklch(0.8 0.11 68 / 0.28);
+  }
+  50% {
+    box-shadow: 0 0 0 7px oklch(0.8 0.11 68 / 0.08);
+  }
+}
+
+.kicker-dot {
+  animation: kicker-pulse 2.4s ease-in-out infinite;
+}
+
+/* The gold on "gun." drifts across the letters. The gradient is painted at
+   200% of the text's width and slid exactly one width, so the highlight
+   travels through the word and arrives back where it started with no seam.
+   Only background-position animates -- the type never reflows. */
+@keyframes gold-shine {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+
+.gold-shine {
+  background-size: 200% auto;
+  animation: gold-shine 6s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .lanes-track::after {
-    display: none;
+  .hero-reveal,
+  .kicker-dot {
+    animation: none;
+  }
+  /* Parked at the start rather than mid-sweep, where a highlight stopped
+     halfway through a word reads as a rendering fault. */
+  .gold-shine {
+    animation: none;
+    background-position: 0% 50%;
   }
 }
 
