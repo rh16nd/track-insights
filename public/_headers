@@ -1,0 +1,32 @@
+# Security + caching headers for the Cloudflare deployment.
+#
+# Cloudflare Pages/Workers applies this file at the edge. The security headers
+# below are origin-independent, so they ship as-is. The Content-Security-Policy
+# is deliberately left COMMENTED until the site has a real domain and a fixed
+# public API origin -- a guessed CSP would break the app's own fonts, athlete
+# photos, or API calls. See the note on it below.
+#
+# The API sets its own headers separately (athletics-predictor/api.py's
+# after_request), since it is a different origin.
+
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+  # --- Content-Security-Policy: enable once you have a domain ---------------
+  # 1. Replace API_ORIGIN with your deployed Flask API origin -- the same value
+  #    you set as VITE_API_BASE_URL, e.g. https://api.podiumcall.com
+  # 2. Uncomment the Content-Security-Policy line below.
+  # The other sources are already correct for this app: Google Fonts (the
+  # stylesheet host + the font-file host) and World Athletics' asset CDN, which
+  # is where athlete photos load from.
+  # NOTE: script-src is 'self' 'unsafe-inline' because TanStack Start injects an
+  # inline hydration script during SSR; test hydration after enabling, and if
+  # you want to drop 'unsafe-inline', move to per-response nonces.
+  # Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://assets.aws.worldathletics.org; connect-src 'self' API_ORIGIN; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+
+# (The long-cache rule for /assets/* is appended automatically by the nitro
+# build, so it is intentionally not repeated here.)
