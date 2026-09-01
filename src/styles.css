@@ -210,7 +210,21 @@
   /* Kept in lockstep with :root's --background (see the note there), including
      the 2026-09-01 drop to 0.52 for the grain composite. */
   --landing-bg: oklch(0.52 0.105 40);
-  --landing-bg-2: oklch(0.47 0.095 40);
+  /* The confidence ticker's band, and the ONLY thing that makes it read as a
+     band: it is defined purely by being darker than the page behind it, plus
+     a hairline border. So it has to move whenever the canvas moves, and on
+     2026-09-01 it did not -- the canvas went 0.54 -> 0.52 for the AA fix and
+     this stayed at 0.47, closing the gap between them by 22% (luminance gap
+     0.0652 -> 0.0509, contrast 1.442 -> 1.345). Reported as "the bar with all
+     32 disciplines is not there any more", which is exactly right: the chips
+     were still rendering and animating, the band around them had stopped
+     being visible as a band.
+
+     0.45 is the canvas's own -0.02 applied here, so the designed relationship
+     is preserved in the same colour space rather than re-guessed: gap back to
+     0.0621, contrast 1.456. KEEP THESE IN LOCKSTEP -- same rule as
+     --background and --landing-bg. */
+  --landing-bg-2: oklch(0.45 0.095 40);
   --landing-fg: oklch(0.97 0.01 80);
   /* 2026-08-24, measured not guessed: on the lighter canvas the old
      oklch(0.85 0.03 60) fell to 3.16:1 (needs 4.5:1). This background sits
