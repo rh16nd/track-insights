@@ -155,39 +155,14 @@ const NUMBER_WORDS = [
   "ten",
 ];
 const spellOut = (n: number) => NUMBER_WORDS[n] ?? String(n);
-/** Same, for the start of a sentence. */
-const spellOutCap = (n: number) => {
-  const word = spellOut(n);
-  return word.charAt(0).toUpperCase() + word.slice(1);
-};
 
-const FEATURES = [
-  {
-    title: "Real results, not hand-typed",
-    body: "Every mark comes straight from World Athletics' own API — the Diamond League circuit, Olympics, World Championships, Continental Tour Gold and European Championships.",
-  },
-  {
-    title: "Validated honestly",
-    body: "Walk-forward tested across five independent seasons — trained only on years strictly before each test year, never peeking at the future.",
-  },
-  {
-    title: "Injury & withdrawal aware",
-    body: "News and meet recaps are scanned automatically. Flagged athletes get a watch badge; confirmed withdrawals are dropped from the field entirely.",
-  },
-  {
-    title: "Wind & venue adjusted",
-    body: "Sprint, hurdle and jump marks are corrected for following wind; results at bigger meets carry more weight than a small regional invitational.",
-  },
-  {
-    title: "Head-to-head history",
-    body: "Who actually beat whom, race by race, read from published results and compared only within the same heat or final. It feeds the model directly, not as an adjustment bolted on afterward.",
-  },
-  {
-    title: "Live all season",
-    body: "Every refresh re-scrapes the season and re-scores every field, right up to the Brussels Final.",
-  },
-];
-
+/* One section, not two. The commitments grid and this pipeline said roughly
+   the same six things across ~1,400px: commitment "Validated honestly" was
+   near-verbatim step 03, "Live all season" was step 04, and "Real results,
+   not hand-typed" was step 01. Wind adjustment and head-to-head were already
+   inside step 02's feature list. The one claim that existed nowhere here --
+   the injury and withdrawal check -- is now step 04, in the place it
+   actually runs: after the model is trained, before the field is scored. */
 const STEPS = [
   {
     n: "01",
@@ -206,6 +181,11 @@ const STEPS = [
   },
   {
     n: "04",
+    title: "Check who is actually racing",
+    body: "News and meet recaps are scanned automatically before anything is scored. Flagged athletes carry a watch badge with a link to the source; confirmed withdrawals are dropped from the field entirely.",
+  },
+  {
+    n: "05",
     title: "Predict live",
     body: "The model re-scores the whole field from fresh World Athletics data on every refresh, right up to Brussels.",
   },
@@ -253,7 +233,17 @@ function Landing() {
   // what the dashboard shows.
   const preview = state.status === "ok" ? state.data.topWinners : [];
   const topPick = preview[0];
-  const ticker = state.status === "ok" ? state.data.confidence.slice(0, 10) : [];
+  // ALL of them, not slice(0, 10). The caption reads as complete coverage,
+  // and the top ten run 69-78% while the full set spans 24-78% -- so the
+  // page was showing the flattering decile under a total-sounding label, on
+  // the one surface whose pitch is that nothing here is dressed up. The
+  // marquee already duplicates its own content to loop, so length is free.
+  const ticker = state.status === "ok" ? state.data.confidence : [];
+  // Derived, never typed: the range is the interesting fact and it moves.
+  const tickerRange =
+    ticker.length > 0
+      ? { lo: Math.min(...ticker.map((t) => t.value)), hi: Math.max(...ticker.map((t) => t.value)) }
+      : null;
   const demoInView = useInView<HTMLElement>();
   const marksScored =
     stats.status === "ok" && stats.data.scoreScale ? stats.data.scoreScale.rows : null;
@@ -473,8 +463,13 @@ function Landing() {
                 page's content column with everything else -- it was hanging
                 118px to the left of every other line on the landing. */}
             <div className="mx-auto max-w-5xl px-6 sm:px-10">
-              <div className="label-caps mb-3 text-[var(--landing-muted)]">
-                Live from the model — each discipline&apos;s top pick, chance of a podium
+              {/* Not label-caps any more. It was a 6-word label and is now a
+                  95-character sentence, and uppercase at that length is the
+                  detector's `all-caps-body` finding earned honestly. */}
+              <div className="mb-3 text-[13px] text-[var(--landing-muted)]">
+                {tickerRange
+                  ? `Live from the model — all ${ticker.length} disciplines, ${tickerRange.lo}–${tickerRange.hi}% — it is far surer about some finals than others`
+                  : "Live from the model — each discipline's top pick, chance of a podium"}
               </div>
             </div>
             {ticker.length > 0 ? (
@@ -650,69 +645,37 @@ function Landing() {
           </div>
         </section>
 
-        {/* ── The six commitments (cream band) ──────────────────────── */}
-        {/* v0 dropped the icons for numbered claims on a cream ground, which
-            reads as a stated list rather than six feature tiles -- the right
-            move for copy whose whole point is that it is a commitment. The
-            WORDS are the app's existing ones, not v0's: its card 04 claimed
-            "altitude, wind and indoor vs outdoor are all part of the feature
-            set", and only wind is (`wind_adj_season_best`). Altitude was
-            measured and dropped; indoor is labelled, never fed to the model.
-            A false claim under a "no fabricated data" heading is the one
-            thing this section cannot carry. */}
-        <section className="bg-card">
+        {/* ── How it works ─────────────────────────────────────────── */}
+        {/* Cream, because the commitments band it absorbed was cream and the
+            page alternates terracotta and cream: without the swap this and
+            the two sections after it run three deep in terracotta. */}
+        <section id="how-it-works" className="bg-card">
           <div className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
             <SectionHead
               eyebrow="No fabricated data, anywhere in the pipeline."
-              title={`${spellOutCap(FEATURES.length)} commitments that separate a model from a guess.`}
+              title={`Real data in, honest predictions out — in ${spellOut(STEPS.length)} steps.`}
               tone="cream"
             />
 
-            <div className="mt-10 grid grid-cols-1 gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
-              {FEATURES.map((f) => (
-                <div key={f.title}>
-                  {/* No 01-06 here. These are six independent commitments in
-                      no order, and numbering them implied a sequence the
-                      reader then tried to follow. STEPS keeps its numbers
-                      because a pipeline genuinely has an order. */}
-                  <h3 className="text-[17px] font-semibold text-foreground">{f.title}</h3>
-                  <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{f.body}</p>
+            <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {STEPS.map((step) => (
+                <div key={step.n} className="rounded-2xl border border-border bg-popover p-6">
+                  <span
+                    className="nums inline-flex size-9 items-center justify-center rounded-full text-[13px] font-semibold text-primary-foreground"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
+                    }}
+                  >
+                    {step.n}
+                  </span>
+                  <h3 className="mt-4 text-[15px] font-semibold text-foreground">{step.title}</h3>
+                  <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
+                    {step.body}
+                  </p>
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* ── How it works ─────────────────────────────────────────── */}
-        <section id="how-it-works" className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
-          <SectionHead
-            eyebrow="Real data in. Honest predictions out."
-            title={`The pipeline, in ${spellOut(STEPS.length)} steps.`}
-          />
-
-          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {STEPS.map((step) => (
-              <div
-                key={step.n}
-                className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6"
-              >
-                <span
-                  className="nums inline-flex size-9 items-center justify-center rounded-full text-[13px] font-semibold text-[var(--landing-fg)]"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
-                  }}
-                >
-                  {step.n}
-                </span>
-                <h3 className="mt-4 text-[15px] font-semibold text-[var(--landing-fg)]">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--landing-muted)]">
-                  {step.body}
-                </p>
-              </div>
-            ))}
           </div>
         </section>
 
