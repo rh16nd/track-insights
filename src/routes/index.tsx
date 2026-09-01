@@ -332,11 +332,16 @@ function Landing() {
           <div className="lanes" aria-hidden="true" />
           {/* Width, not height, is what sizes this: the viewBox is 900x340
               against a much taller box, so `meet` fits it by width and the
-              height only sets the letterbox. At `w-full` the circuit ran
-              from edge to edge with no margin either side; 80% gives it the
-              breathing room the design reference has. Full width on mobile,
-              where a percentage of 375px would leave a token oval. */}
-          <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 mx-auto -mt-6 h-[140%] w-full max-w-none -translate-y-1/2 sm:h-[120%] sm:w-[92%]" />
+              height only sets the letterbox — which means a percentage
+              width grows the oval in BOTH directions as the window widens.
+
+              Hence the cap, which is the whole point. A bare percentage
+              measured 1589px across at a 1823px viewport, 87% of the
+              screen, and swallowed the stat ribbon; the design reference
+              is 970px at 1274px, narrower than the 1024px content column
+              the copy sits in. Capped just above that, the circuit frames
+              the headline at every width instead of racing the window. */}
+          <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 mx-auto -mt-6 h-[140%] w-full max-w-[1040px] -translate-y-1/2 sm:h-[120%] sm:w-[88%]" />
           <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
             {/* v0's kicker: brand plus a live countdown, gold-ringed, with a
                 dot that pulses. The five hero rows carry v0's own reveal
