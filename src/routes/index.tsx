@@ -340,10 +340,17 @@ function Landing() {
               screen, and swallowed the stat ribbon; the design reference
               is 970px at 1274px, narrower than the 1024px content column
               the copy sits in. Capped, the circuit frames the headline at
-              every width instead of racing the window — 1200px, set by eye
-              against a wide monitor rather than by the reference, which
-              leaves the ribbon 70px of clearance below the oval. */}
-          <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 mx-auto -mt-6 h-[140%] w-full max-w-[1200px] -translate-y-1/2 sm:h-[120%] sm:w-[88%]" />
+              every width instead of racing the window.
+
+              1400px is set against a wide monitor rather than against the
+              reference, and the vertical offset goes with it: the badge
+              above the oval and the stat ribbon below it share a fixed
+              amount of slack, so shifting the circuit trades one for the
+              other and cannot make room for both. Growing the oval eats the
+              badge's side first — at a 1500px cap it is down to 8px, which
+              is where this last looked congested. -mt-2 splits what is
+              left evenly rather than favouring the ribbon. */}
+          <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 mx-auto -mt-2 h-[140%] w-full max-w-[1400px] -translate-y-1/2 sm:h-[120%] sm:w-[88%]" />
           <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
             {/* v0's kicker: brand plus a live countdown, gold-ringed, with a
                 dot that pulses. The five hero rows carry v0's own reveal
