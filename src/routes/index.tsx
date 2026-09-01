@@ -289,6 +289,13 @@ function Landing() {
             What is left is what the reference actually shows: flat canvas,
             one faint drifting lane texture, and the track circuit. */}
         <section className="relative overflow-hidden pt-16">
+          {/* The grain, kept back from track-surface without the bars or the
+              vignette. 0.12 is what the old 88% scrim left of it, so the
+              texture is the same weight it always was. */}
+          <div
+            className="track-grain pointer-events-none absolute inset-0 opacity-[0.12]"
+            aria-hidden="true"
+          />
           {/* v0's drifting lane texture, the same one every app page uses.
               The landing used to have its own horizontal version plus a
               sweeping light band, which put a second set of lanes at right
@@ -300,8 +307,8 @@ function Landing() {
               height only sets the letterbox. At `w-full` the circuit ran
               from edge to edge with no margin either side; 80% gives it the
               breathing room the design reference has. Full width on mobile,
-              where 80% of 375px would leave a token oval. */}
-          <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 mx-auto -mt-6 h-[140%] w-full max-w-none -translate-y-1/2 sm:h-[120%] sm:w-[80%]" />
+              where a percentage of 375px would leave a token oval. */}
+          <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 mx-auto -mt-6 h-[140%] w-full max-w-none -translate-y-1/2 sm:h-[120%] sm:w-[92%]" />
           <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
             {/* v0's kicker: brand plus a live countdown, gold-ringed, with a
                 dot that pulses. The five hero rows carry v0's own reveal
