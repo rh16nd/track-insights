@@ -15,7 +15,7 @@ import os
 import urllib.parse
 import urllib.request
 
-API = "http://localhost:5000/api"
+API = os.environ.get("PODIUMCALL_API", "http://localhost:5000/api").rstrip("/")
 # REQUIRED, with no default. No domain is registered or deployed yet
 # (PRODUCT.md records podiumcall.com/.io only as "appeared unregistered"), and
 # a sitemap is 276 absolute URLs -- inventing a plausible-looking host would
@@ -66,7 +66,26 @@ def build():
         f.write("\n".join(lines) + "\n")
     print(f"wrote {os.path.abspath(out)}: {len(urls)} urls "
           f"({len(FIXED)} fixed, {len(discs)} disciplines, {len(seen)} athletes)")
+    _update_robots()
 
+
+def _update_robots():
+    """Point robots.txt at the sitemap, using the same real BASE. Kept here
+    rather than hand-edited so the absolute URL cannot be a stale guess --
+    robots.txt ships with no Sitemap line and gets the correct one written at
+    generation time. Idempotent: any prior Sitemap line is replaced."""
+    robots = os.path.join(os.path.dirname(__file__), "..", "public", "robots.txt")
+    line = f"Sitemap: {BASE}/sitemap.xml"
+    nl = chr(10)
+    if os.path.exists(robots):
+        with open(robots, encoding="utf-8") as f:
+            kept = [ln for ln in f.read().splitlines() if not ln.lower().startswith("sitemap:")]
+        body = nl.join(kept).rstrip() + nl + nl + line + nl
+    else:
+        body = line + nl
+    with open(robots, "w", encoding="utf-8") as f:
+        f.write(body)
+    print(f"updated robots.txt -> {line}")
 
 if __name__ == "__main__":
     build()
