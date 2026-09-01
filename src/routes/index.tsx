@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useStats } from "@/hooks/useStats";
 import { useInView } from "@/hooks/useInView";
+import { useCountUp } from "@/hooks/useCountUp";
 import { PodiumCallMark } from "@/components/dl/logo";
 import { AthleteAvatar, ProbabilityBar, WatchBadge } from "@/components/dl/shell";
 import { Podium } from "@/components/dl/podium";
@@ -18,14 +19,50 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-function Stat({ value, label }: { value: string; label: string }) {
+/** One figure in the hero's stat ribbon.
+ *
+ * Two things here come from v0's ribbon rather than the old flat string:
+ * the unit is a separate, smaller, gold span (`.ribbon .stat b .u`), which
+ * is why the hit rate reads "71.9" with the "%" hung off it rather than as
+ * one undifferentiated "72%"; and the number counts up from zero on
+ * arrival, which is what `reveal.js` does to every `.stat b` it reveals.
+ *
+ * `value` is a number, not a pre-formatted string, because a counter cannot
+ * animate a string -- and the decimal place matters: the shipped figure is
+ * 71.9%, and rounding it to 72% was quietly claiming a tenth of a point the
+ * model has not earned. `null` while the API is still answering; the
+ * counter still runs on a real value arriving. */
+function Stat({
+  value,
+  unit = "",
+  label,
+  decimals = 0,
+  delayMs = 0,
+}: {
+  value: number | null;
+  unit?: string;
+  label: string;
+  decimals?: number;
+  delayMs?: number;
+}) {
+  const counted = useCountUp(value ?? 0, 1050, { from: 0, delayMs });
+  const shown =
+    value === null
+      ? "—"
+      : counted.toLocaleString(undefined, {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+        });
   return (
     <div className="min-w-[110px]">
       <div
-        className="nums text-[32px] font-semibold leading-none text-[var(--landing-fg)] sm:text-[40px]"
+        className="nums flex items-baseline justify-center gap-px text-[32px] font-semibold leading-none text-[var(--landing-fg)] sm:text-[40px]"
         style={{ fontFamily: "var(--font-display)" }}
       >
-        {value}
+        {shown}
+        {value !== null && unit ? (
+          <span className="text-[0.55em] text-[var(--gold-light)]">{unit}</span>
+        ) : null}
       </div>
       <div className="label-caps mt-2 text-[var(--landing-muted)]">{label}</div>
     </div>
@@ -168,12 +205,22 @@ function Landing() {
   // were being read 500 deep instead of 100, which had the site quoting
   // 4,000 when the uniform figure is 3,200.
   const stats = useStats();
-  const accuracy = state.status === "ok" ? `${Math.round(state.data.modelAccuracy)}%` : "—";
-  const daysToFinal = state.status === "ok" ? String(state.data.daysToFinal) : "—";
+  const accuracy = state.status === "ok" ? state.data.modelAccuracy : null;
+  const daysToFinal = state.status === "ok" ? state.data.daysToFinal : null;
   const disciplineCount =
     state.status === "ok"
-      ? String(state.data.trackDisciplines.length + state.data.fieldDisciplines.length)
-      : "32";
+      ? state.data.trackDisciplines.length + state.data.fieldDisciplines.length
+      : 32;
+  // v0's badge is a live countdown, not a fixed date. Written out rather
+  // than templated because the tail has to stay true on the last three
+  // days it will ever be read: "1 day", then the Final itself, then a
+  // negative number if anyone loads the page afterwards.
+  const countdownLabel =
+    daysToFinal === null || daysToFinal < 0
+      ? "PodiumCall · Brussels Final"
+      : daysToFinal === 0
+        ? "PodiumCall · Final day in Brussels"
+        : `PodiumCall · ${daysToFinal} day${daysToFinal === 1 ? "" : "s"} to Brussels`;
   // All six, same as the dashboard panel -- the old slice(0, 5) quietly
   // dropped one real discipline from a list whose whole job is to preview
   // what the dashboard shows.
@@ -182,9 +229,7 @@ function Landing() {
   const ticker = state.status === "ok" ? state.data.confidence.slice(0, 10) : [];
   const demoInView = useInView<HTMLElement>();
   const marksScored =
-    stats.status === "ok" && stats.data.scoreScale
-      ? stats.data.scoreScale.rows.toLocaleString()
-      : "—";
+    stats.status === "ok" && stats.data.scoreScale ? stats.data.scoreScale.rows : null;
   // Counted from the schedule rather than written down. v0's mockup said
   // "Fourteen finals of real racing" -- wrong twice over: they are meetings,
   // not finals, and the number goes stale the moment another one is run.
@@ -237,62 +282,98 @@ function Landing() {
           <div className="lanes-track" aria-hidden="true" />
           <TrackCircuit className="pointer-events-none absolute inset-x-0 top-1/2 h-[140%] w-full max-w-none -translate-y-1/2 opacity-90 sm:h-[120%]" />
           <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
-            <span className="label-caps inline-flex items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-3.5 py-2 text-[var(--landing-muted)]">
-              <span className="size-1.5 rounded-full bg-terracotta" />
-              Brussels Final — Sep 4–5, 2026
+            {/* v0's kicker: brand plus a live countdown, gold-ringed, with a
+                dot that pulses. The five hero rows carry v0's own reveal
+                delays (.05/.14/.24/.36/.5) via --reveal-d. */}
+            <span
+              className="hero-reveal label-caps inline-flex items-center gap-2.5 rounded-full border border-[var(--gold-light)]/50 bg-[oklch(0.97_0.012_75_/_0.14)] px-4 py-2 text-[var(--landing-fg)]"
+              style={{ "--reveal-d": "50ms" } as CSSProperties}
+            >
+              <span className="kicker-dot size-2 rounded-full bg-[var(--gold-light)]" />
+              {countdownLabel}
             </span>
 
             {/* The v0 direction's display headline. Deliberately much larger
                 than the old one (clamped 44px→96px rather than a flat 56px):
                 it is the only piece of type on the site allowed to be this
-                loud, and "the gun." carries the gold gradient so the accent
-                lands on the moment the page is about. */}
+                loud. The line breaks are hard, as v0 writes them — three
+                short lines stack into a block, where letting it balance
+                across two made a wide banner of it. Only "gun." takes the
+                gold, so the accent lands on the one word the page is about,
+                and the gradient drifts through it (`.gold-shine`). */}
             <h1
-              className="mx-auto mt-6 max-w-4xl text-[clamp(44px,11vw,96px)] font-bold leading-[0.92] tracking-[-0.03em] text-balance"
-              style={{ fontFamily: "var(--font-display)" }}
+              className="hero-reveal mt-7 text-[clamp(44px,11vw,96px)] font-bold leading-[0.9] tracking-[-0.035em]"
+              style={{ fontFamily: "var(--font-display)", "--reveal-d": "140ms" } as CSSProperties}
             >
-              We make the call before{" "}
+              We make the
+              <br />
+              call before
+              <br />
+              the{" "}
               <span
-                className="bg-clip-text text-transparent"
+                className="gold-shine bg-clip-text text-transparent"
                 style={{
                   backgroundImage:
                     "linear-gradient(96deg, var(--gold-light) 0%, oklch(0.88 0.09 78) 45%, var(--gold-light) 90%)",
                 }}
               >
-                the gun.
+                gun.
               </span>
             </h1>
 
-            <p className="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-[var(--landing-muted)] sm:text-base">
-              A model trained on real results, not gut feeling. Every World Athletics mark across
-              all 32 Diamond League disciplines, scraped and scored — so you know who reaches the
-              podium in Brussels before a single race is run.
+            {/* v0's lede, with one word changed and it is load-bearing: it
+                writes "name who wins in Brussels", and the model's target is
+                `dl_top3` — top-three membership, not the winner. That
+                wording has been corrected out of this site once already. */}
+            <p
+              className="hero-reveal mx-auto mt-6 max-w-[56ch] text-[clamp(16px,1.5vw,19px)] leading-relaxed text-[var(--landing-muted)]"
+              style={{ "--reveal-d": "240ms" } as CSSProperties}
+            >
+              A model trained on real results, not gut feeling. We scrape every World Athletics mark
+              across all 32 Diamond League disciplines and call the podium in Brussels — before a
+              single race is run.
             </p>
 
-            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div
+              className="hero-reveal mt-9 flex flex-col items-center justify-center gap-3.5 sm:flex-row"
+              style={{ "--reveal-d": "360ms" } as CSSProperties}
+            >
               <Link
                 to="/dashboard"
-                className="label-caps rounded-full px-6 py-3.5 text-[var(--landing-fg)] shadow-[0_10px_40px_-12px_oklch(0.545_0.164_38.5/0.6)] transition-transform hover:scale-[1.02]"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
-                }}
+                className="inline-flex items-center gap-2 rounded-full bg-card px-6 py-3.5 text-[15px] font-semibold text-terracotta-strong shadow-[0_8px_22px_oklch(0.3_0.08_40/0.28)] transition-transform hover:-translate-y-0.5"
+                style={{ fontFamily: "var(--font-display)" }}
               >
                 View live predictions
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2.2}
+                  className="size-[18px]"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
               </Link>
-              <a
-                href="#how-it-works"
-                className="label-caps rounded-full border border-[var(--landing-border)] px-6 py-3.5 text-[var(--landing-fg)] transition-colors hover:bg-[var(--landing-card)]"
+              <Link
+                to="/stats"
+                className="rounded-full border border-[oklch(0.97_0.012_75_/_0.4)] px-6 py-3.5 text-[15px] font-semibold text-[var(--landing-fg)] transition-colors hover:bg-[oklch(0.97_0.012_75_/_0.1)]"
+                style={{ fontFamily: "var(--font-display)" }}
               >
-                How it works
-              </a>
+                Browse all 32 events
+              </Link>
             </div>
 
-            <div className="mt-16 flex flex-wrap items-start justify-center gap-x-12 gap-y-8">
-              <Stat value={accuracy} label="Podium hit rate" />
-              <Stat value={daysToFinal} label="Days to Brussels" />
-              <Stat value={disciplineCount} label="Disciplines tracked" />
-              <Stat value={marksScored} label="Marks scored" />
+            <div
+              className="hero-reveal mt-14 flex flex-wrap items-start justify-center gap-x-12 gap-y-8"
+              style={{ "--reveal-d": "500ms" } as CSSProperties}
+            >
+              {/* The count-ups start after the ribbon itself has risen, so a
+                  number is never spinning while its own row is still moving. */}
+              <Stat value={accuracy} unit="%" decimals={1} delayMs={620} label="Podium hit rate" />
+              <Stat value={daysToFinal} delayMs={700} label="Days to Brussels" />
+              <Stat value={disciplineCount} delayMs={780} label="Disciplines tracked" />
+              <Stat value={marksScored} delayMs={860} label="Marks scored" />
             </div>
             {state.status !== "ok" && (
               <p className="mt-4 text-[12.5px] text-[var(--landing-muted)]">

@@ -803,6 +803,82 @@ html {
   }
 }
 
+/* ── The landing hero's arrival ──────────────────────────────────────
+   v0's own hero motion (`design/v0/index.html` + `system.css`), which the
+   port took the layout and copy from but not the movement. The hero was
+   the only band on the page with no entrance at all -- everything under it
+   already had one via `.stagger-item` and `useInView` -- so the page began
+   at its most static exactly where it should be at its most alive.
+
+   The delays are v0's and are deliberately not evenly spaced: .05 / .14 /
+   .24 / .36 / .5 accelerates away from the badge and lands the stat ribbon
+   last, after the buttons. `backwards` holds each row at opacity 0 through
+   its own delay, so nothing is briefly visible before its turn. */
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hero-reveal {
+  animation: hero-rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+  animation-delay: var(--reveal-d, 0ms);
+}
+
+/* A ring that breathes outward and fades, rather than a dot that changes
+   size: the dot sits in a flex row beside the badge text, so scaling the
+   element itself would nudge that text every cycle. box-shadow paints
+   outside the box and moves nothing. */
+@keyframes kicker-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px oklch(0.8 0.11 68 / 0.28);
+  }
+  50% {
+    box-shadow: 0 0 0 7px oklch(0.8 0.11 68 / 0.08);
+  }
+}
+
+.kicker-dot {
+  animation: kicker-pulse 2.4s ease-in-out infinite;
+}
+
+/* The gold on "gun." drifts across the letters. The gradient is painted at
+   200% of the text's width and slid exactly one width, so the highlight
+   travels through the word and arrives back where it started with no seam.
+   Only background-position animates -- the type never reflows. */
+@keyframes gold-shine {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+
+.gold-shine {
+  background-size: 200% auto;
+  animation: gold-shine 6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal,
+  .kicker-dot {
+    animation: none;
+  }
+  /* Parked at the start rather than mid-sweep, where a highlight stopped
+     halfway through a word reads as a rendering fault. */
+  .gold-shine {
+    animation: none;
+    background-position: 0% 50%;
+  }
+}
+
 /* A slow breath on the page's ambient glow. 11s and a 5% scale is below the
    threshold where you would call it an animation -- it just stops the
    canvas reading as a flat fill behind everything. */
