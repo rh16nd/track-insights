@@ -186,7 +186,13 @@ export function AthleteAnalyticsBlock({
         </Panel>
       )}
 
-      <p className="mt-3 text-[11.5px] leading-snug text-muted-foreground">
+      {/* text-white/90, NOT text-muted-foreground. The <p> above looks
+          identical but sits inside a <Panel>, which is a light card, where
+          muted-foreground is the right token. This one is outside it, on the
+          terracotta canvas, where the same dark brown measured 1.63:1 -- the
+          worst contrast anywhere on the site, and invisible in practice. The
+          class was copied across a background change. white/90 gives 4.65. */}
+      <p className="mt-3 text-[11.5px] leading-snug text-white/90">
         Computed from {analytics.raceCount} scraped finals ({coverage.withPlace} with a recorded
         finishing position) across {coverage.seasons.length}{" "}
         {coverage.seasons.length === 1 ? "season" : "seasons"}: {coverage.seasons.join(", ")}. This

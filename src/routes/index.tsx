@@ -28,9 +28,11 @@ export const Route = createFileRoute("/")({
  * arrival, which is what `reveal.js` does to every `.stat b` it reveals.
  *
  * `value` is a number, not a pre-formatted string, because a counter cannot
- * animate a string -- and the decimal place matters: the shipped figure is
- * 71.9%, and rounding it to 72% was quietly claiming a tenth of a point the
- * model has not earned. `null` while the API is still answering; the
+ * animate a string -- and the decimal place matters: the figure carries a
+ * tenth (72.8% as of the 2026-09-01 retrain, 71.9% before it), and rounding
+ * it away was quietly claiming a tenth of a point the model has not earned.
+ * The value itself comes from `/api/stats`, never from a literal here, so a
+ * retrain moves it on its own. `null` while the API is still answering; the
  * counter still runs on a real value arriving. */
 function Stat({
   value,

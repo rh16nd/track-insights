@@ -146,7 +146,12 @@ export function Shell({
             so the two disagreed. Also the only place the site states what it
             is not: a source, and not affiliated with anyone. */}
         <footer className="relative z-[2] border-t border-border/40 px-6 pb-10 sm:px-8 lg:px-12">
-          <div className="mx-auto flex max-w-[1600px] flex-col gap-1.5 pt-6 text-[12px] text-white/80 sm:flex-row sm:items-center sm:justify-between">
+          {/* white/90, not /80: at 12px this is small text and needs 4.5:1.
+              Over the grain-composited canvas /80 measured 3.80 before the
+              2026-09-01 canvas change and 4.03 after -- failing either way, on
+              all nine pages. /90 clears it at 4.65 and is visually the same
+              line. Measured by compositing, not by eye; see styles.css. */}
+          <div className="mx-auto flex max-w-[1600px] flex-col gap-1.5 pt-6 text-[12px] text-white/90 sm:flex-row sm:items-center sm:justify-between">
             <p>
               Data scraped from World Athletics. Not affiliated with World Athletics or the Wanda
               Diamond League.
