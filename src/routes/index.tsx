@@ -330,10 +330,10 @@ function Landing() {
               angles to the track circuit drawn on top of it — two tracks,
               not one. */}
           <div className="lanes" aria-hidden="true" />
-          <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
+          <div className="hero-col relative mx-auto max-w-5xl px-6 pb-16 pt-24 text-center sm:px-10 sm:pt-32">
             {/* v0's kicker: brand plus a live countdown, gold-ringed, with a
-                dot that pulses. The five hero rows carry v0's own reveal
-                delays (.05/.14/.24/.36/.5) via --reveal-d. */}
+                    dot that pulses. The five hero rows carry v0's own reveal
+                    delays (.05/.14/.24/.36/.5) via --reveal-d. */}
             <span
               className="hero-reveal label-caps inline-flex items-center gap-2.5 rounded-full border border-[var(--gold-light)]/50 bg-[oklch(0.97_0.012_75_/_0.14)] px-4 py-2 text-[var(--landing-fg)]"
               style={{ "--reveal-d": "50ms" } as CSSProperties}
@@ -343,57 +343,57 @@ function Landing() {
             </span>
 
             {/* The v0 direction's display headline. Deliberately much larger
-                than the old one (clamped 44px→96px rather than a flat 56px):
-                it is the only piece of type on the site allowed to be this
-                loud. The line breaks are hard, as v0 writes them — three
-                short lines stack into a block, where letting it balance
-                across two made a wide banner of it. Only "gun." takes the
-                gold, so the accent lands on the one word the page is about,
-                and the gradient drifts through it (`.gold-shine`). */}
+                    than the old one (clamped 44px→96px rather than a flat 56px):
+                    it is the only piece of type on the site allowed to be this
+                    loud. The line breaks are hard, as v0 writes them — three
+                    short lines stack into a block, where letting it balance
+                    across two made a wide banner of it. Only "gun." takes the
+                    gold, so the accent lands on the one word the page is about,
+                    and the gradient drifts through it (`.gold-shine`). */}
             {/* The circuit lives HERE, not at the section level, and that is
-                the whole point of the wrapper: centred on the hero it sat
-                low, so the headline crossed the upper lanes instead of
-                sitting in the infield. Centred on the headline, the lines
-                run around the type rather than through it.
+                    the whole point of the wrapper: centred on the hero it sat
+                    low, so the headline crossed the upper lanes instead of
+                    sitting in the infield. Centred on the headline, the lines
+                    run around the type rather than through it.
 
-                It has to escape this max-w-5xl column to stay big, hence
-                left-1/2 + a translate and a viewport-relative width rather
-                than `inset-x-0`. On phones it goes to 175vw and lets the
-                bends clip off both edges: the infield of an oval that fits a
-                375px screen is 81px tall against a 135px headline, so there
-                is no size at which both fit — running the straights past the
-                edges is the only way the type sits inside the track there. The h1 is `relative` so it paints above the
-                absolutely-positioned svg — without it the svg wins on
-                painting order and the lanes draw over the letters. */}
+                    It has to escape this max-w-5xl column to stay big, hence
+                    left-1/2 + a translate and a viewport-relative width rather
+                    than `inset-x-0`. On phones it goes to 175vw and lets the
+                    bends clip off both edges: the infield of an oval that fits a
+                    375px screen is 81px tall against a 135px headline, so there
+                    is no size at which both fit — running the straights past the
+                    edges is the only way the type sits inside the track there. The h1 is `relative` so it paints above the
+                    absolutely-positioned svg — without it the svg wins on
+                    painting order and the lanes draw over the letters. */}
             <div className="relative mt-7 sm:mt-36">
               <TrackCircuit className="pointer-events-none absolute left-1/2 top-1/2 h-[300%] w-[175vw] max-w-none -translate-x-1/2 -translate-y-1/2 sm:w-[min(1400px,92vw)]" />
               <h1
-                className="hero-reveal relative text-[clamp(44px,11vw,96px)] font-bold leading-[0.9] tracking-[-0.035em]"
+                className="hero-reveal hero-headline relative text-[clamp(44px,11vw,96px)] font-bold leading-[0.9] tracking-[-0.035em]"
                 style={
                   { fontFamily: "var(--font-display)", "--reveal-d": "140ms" } as CSSProperties
                 }
               >
-                We make the
-                <br />
-                call before
-                <br />
-                the{" "}
-                <span
-                  className="gold-shine bg-clip-text text-transparent"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(96deg, var(--gold-light) 0%, oklch(0.88 0.09 78) 45%, var(--gold-light) 90%)",
-                  }}
-                >
-                  gun.
+                <span className="headline-setup-a">We make the</span>
+                <span className="headline-setup-b">call before</span>
+                <span className="headline-payoff">
+                  the{" "}
+                  <span
+                    className="gold-shine bg-clip-text text-transparent"
+                    style={{
+                      backgroundImage:
+                        "linear-gradient(96deg, var(--gold-light) 0%, oklch(0.88 0.09 78) 45%, var(--gold-light) 90%)",
+                    }}
+                  >
+                    gun.
+                  </span>
                 </span>
               </h1>
             </div>
 
             {/* v0's lede, with one word changed and it is load-bearing: it
-                writes "name who wins in Brussels", and the model's target is
-                `dl_top3` — top-three membership, not the winner. That
-                wording has been corrected out of this site once already. */}
+                    writes "name who wins in Brussels", and the model's target is
+                    `dl_top3` — top-three membership, not the winner. That
+                    wording has been corrected out of this site once already. */}
             <p
               className="hero-reveal mx-auto mt-6 max-w-[56ch] sm:mt-36 text-[clamp(16px,1.5vw,19px)] leading-relaxed text-[var(--landing-muted)]"
               style={{ "--reveal-d": "240ms" } as CSSProperties}
@@ -434,11 +434,11 @@ function Landing() {
             </div>
 
             <div
-              className="hero-reveal mt-14 flex flex-wrap items-start justify-center gap-x-12 gap-y-8"
+              className="hero-ribbon hero-reveal mt-14 flex flex-wrap items-start justify-center gap-x-12 gap-y-8"
               style={{ "--reveal-d": "500ms" } as CSSProperties}
             >
               {/* The count-ups start after the ribbon itself has risen, so a
-                  number is never spinning while its own row is still moving. */}
+                      number is never spinning while its own row is still moving. */}
               <Stat value={accuracy} unit="%" decimals={1} delayMs={620} label="Podium hit rate" />
               <Stat value={daysToFinal} delayMs={700} label="Days to Brussels" />
               <Stat value={disciplineCount} delayMs={780} label="Disciplines tracked" />

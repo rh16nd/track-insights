@@ -770,6 +770,75 @@ html {
   }
 }
 
+/* ── The landing hero's headline ─────────────────────────────────────
+   Three lines that step DOWN to the payoff rather than running at one
+   size. The last line holds the display ceiling and the two setup lines
+   scale back from it by a fixed ratio, so the headline reads as a
+   crescendo instead of a uniform slab.
+
+   The ratio is baked at 0.72 from an impeccable `bolder` round. It is
+   the amplification this element could actually take: the type cannot
+   get bigger (the craft floor caps display at 6rem and it is already
+   there) and the block cannot get taller (it sits inside the track
+   circuit's infield, which leaves 14px of clearance at 1274px). Stepping
+   the setup lines down widens the scale RANGE instead, and takes the
+   block from 259px to ~193px, further clear of the lanes than before.
+
+   Sized in `em` off the h1's own clamp so the peak is declared once, in
+   the markup, rather than duplicated here. */
+.hero-headline {
+  --step: 0.72;
+}
+
+.hero-headline > span {
+  display: block;
+}
+
+.hero-headline .headline-setup-a {
+  font-size: calc(1em * var(--step) * var(--step));
+}
+
+.hero-headline .headline-setup-b {
+  font-size: calc(1em * var(--step));
+}
+
+/* ── The landing hero's small print ──────────────────────────────────
+   Micro-corrections accepted from an impeccable `polish` round. None of
+   them moves anything structurally; they exist because the measurements
+   were off by amounts you feel rather than see.
+
+   The stat label was the widest type step on the page: 11px at 0.12em
+   sitting directly under a 40px figure. It comes up 12% with the tracking
+   eased and a little more air above it, so the jump reads as a pair
+   rather than a caption stranded under a number.
+
+   The gold unit rode the figure's baseline, which puts a 0.55em glyph
+   optically low against 40px digits; it lifts by its own 0.04em. And the
+   two glyphs whose boxes are centred but whose strokes are not - the
+   arrow in the primary button, the pulsing dot in the badge - each take a
+   half pixel in the direction their weight actually sits. */
+.hero-ribbon .label-caps {
+  font-size: 0.77rem;
+  letter-spacing: 0.1em;
+  margin-top: 0.65rem;
+}
+
+.hero-ribbon .nums {
+  letter-spacing: -0.02em;
+}
+
+.hero-ribbon .nums > span {
+  transform: translateY(-0.04em);
+}
+
+.hero-col a svg {
+  transform: translateY(0.5px);
+}
+
+.hero-col .kicker-dot {
+  transform: translateY(-0.5px);
+}
+
 /* ── The landing hero's arrival ──────────────────────────────────────
    v0's own hero motion (`design/v0/index.html` + `system.css`), which the
    port took the layout and copy from but not the movement. The hero was
