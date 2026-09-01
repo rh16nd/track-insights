@@ -61,7 +61,7 @@ function Stat({
       >
         {shown}
         {value !== null && unit ? (
-          <span className="text-[0.55em] text-[var(--gold-light)]">{unit}</span>
+          <span className="text-[0.55em] text-[var(--gold-on-canvas)]">{unit}</span>
         ) : null}
       </div>
       <div className="label-caps mt-2 text-[var(--landing-muted)]">{label}</div>
@@ -241,11 +241,13 @@ function Landing() {
   // days it will ever be read: "1 day", then the Final itself, then a
   // negative number if anyone loads the page afterwards.
   const countdownLabel =
-    daysToFinal === null || daysToFinal < 0
-      ? "PodiumCall · Brussels Final"
-      : daysToFinal === 0
-        ? "PodiumCall · Final day in Brussels"
-        : `PodiumCall · ${daysToFinal} day${daysToFinal === 1 ? "" : "s"} to Brussels`;
+    daysToFinal === null
+      ? "PodiumCall · The Brussels Final"
+      : daysToFinal < 0
+        ? "PodiumCall · Brussels Final complete"
+        : daysToFinal === 0
+          ? "PodiumCall · Final day in Brussels"
+          : `PodiumCall · ${daysToFinal} day${daysToFinal === 1 ? "" : "s"} to Brussels`;
   // All six, same as the dashboard panel -- the old slice(0, 5) quietly
   // dropped one real discipline from a list whose whole job is to preview
   // what the dashboard shows.
@@ -273,23 +275,34 @@ function Landing() {
           the rest of the app already uses (see shell.tsx), so the landing
           page picks up a touch of the same off-white lift instead of
           reading flatter than the app it leads into. */}
-      <div
-        className="ambient-glow ambient-grain pointer-events-none fixed inset-0 z-0"
-        aria-hidden="true"
-      />
-      <div className="relative z-10">
+      {/* Two divs, not one. Both utilities set `background-image`, so stacking
+          them on a single element let the grain win and the glow never
+          painted at all -- shell.tsx already splits them for this reason. */}
+      <div className="ambient-grain pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
+      <div className="ambient-glow pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
+      {/* The landing renders straight under <Outlet /> rather than through
+          Shell, so it inherited neither the skip link nor the <main>
+          landmark: a screen-reader user got banner and contentinfo with no
+          way to reach the content between them. */}
+      <a
+        href="#content"
+        className="skip-link label-caps rounded-full bg-card px-4 py-2.5 text-foreground shadow-lg"
+      >
+        Skip to content
+      </a>
+      <main id="content" tabIndex={-1} className="relative z-10">
         {/* ── Nav ───────────────────────────────────────────────────── */}
         {/* Cream bar rather than translucent terracotta. Every text colour
             in here flips with it -- the landing's --landing-fg/-muted are
             near-white, tuned for the dark canvas, and would be invisible on
             cream. The CTA inverts the other way: a terracotta-to-gold pill,
             which is also the only saturated thing in the bar. */}
-        <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-card/92 px-6 backdrop-blur-md sm:px-10">
-          <div className="flex items-center gap-2.5">
+        <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-border bg-card/92 px-6 backdrop-blur-md sm:px-10">
+          <div className="flex min-w-0 items-center gap-2.5">
             <PodiumCallMark className="size-6" />
             <div className="label-caps text-muted-foreground">
               <span className="font-semibold text-foreground">PodiumCall</span>
-              <span className="ml-2">2026 Diamond League Predictor</span>
+              <span className="ml-2 hidden sm:inline">2026 Diamond League Predictor</span>
             </div>
           </div>
           <Link
@@ -335,7 +348,7 @@ function Landing() {
                     dot that pulses. The five hero rows carry v0's own reveal
                     delays (.05/.14/.24/.36/.5) via --reveal-d. */}
             <span
-              className="hero-reveal label-caps inline-flex items-center gap-2.5 rounded-full border border-[var(--gold-light)]/50 bg-[oklch(0.97_0.012_75_/_0.14)] px-4 py-2 text-[var(--landing-fg)]"
+              className="hero-reveal label-caps relative inline-flex items-center gap-2.5 rounded-full border border-[var(--gold-light)]/50 bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
               style={{ "--reveal-d": "50ms" } as CSSProperties}
             >
               <span className="kicker-dot size-2 rounded-full bg-[var(--gold-light)]" />
@@ -381,7 +394,7 @@ function Landing() {
                     className="gold-shine bg-clip-text text-transparent"
                     style={{
                       backgroundImage:
-                        "linear-gradient(96deg, var(--gold-light) 0%, oklch(0.88 0.09 78) 45%, var(--gold-light) 90%)",
+                        "linear-gradient(96deg, oklch(0.86 0.09 72) 0%, oklch(0.92 0.09 78) 45%, oklch(0.86 0.09 72) 90%)",
                     }}
                   >
                     gun.
@@ -535,7 +548,7 @@ function Landing() {
             {/* Load-bearing, not a disclaimer: a podium shape implies these
                 three raced each other. They didn't -- each is the strongest
                 call in a different discipline. */}
-            <p className="mx-auto mt-8 max-w-2xl text-center text-[12px] leading-relaxed text-muted-foreground">
+            <p className="mx-auto mt-8 max-w-[62ch] text-center text-[12px] leading-relaxed text-muted-foreground">
               Each of these is the model&apos;s strongest call in a <em>different</em> discipline,
               so they are not racing each other — the steps rank the model&apos;s confidence, not
               the athletes. The percentage is a chance of finishing top three, not of winning; marks
@@ -656,12 +669,13 @@ function Landing() {
             />
 
             <div className="mt-10 grid grid-cols-1 gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
-              {FEATURES.map((f, i) => (
+              {FEATURES.map((f) => (
                 <div key={f.title}>
-                  <div className="dg nums text-[13px] font-bold tracking-[0.1em] text-gold-strong">
-                    {String(i + 1).padStart(2, "0")}
-                  </div>
-                  <h3 className="mt-2 text-[17px] font-semibold text-foreground">{f.title}</h3>
+                  {/* No 01-06 here. These are six independent commitments in
+                      no order, and numbering them implied a sequence the
+                      reader then tried to follow. STEPS keeps its numbers
+                      because a pipeline genuinely has an order. */}
+                  <h3 className="text-[17px] font-semibold text-foreground">{f.title}</h3>
                   <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{f.body}</p>
                 </div>
               ))}
@@ -741,7 +755,7 @@ function Landing() {
                 </div>
                 <Link
                   to="/dashboard"
-                  className="label-caps hidden shrink-0 text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)] sm:block"
+                  className="label-caps hidden shrink-0 py-1.5 text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)] sm:block"
                 >
                   See all {disciplineCount} disciplines →
                 </Link>
@@ -814,13 +828,13 @@ function Landing() {
             </p>
             <Link
               to="/dashboard"
-              className="label-caps text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)]"
+              className="label-caps inline-block py-1.5 text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)]"
             >
               View live predictions →
             </Link>
           </div>
         </footer>
-      </div>
+      </main>
     </div>
   );
 }

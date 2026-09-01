@@ -245,7 +245,11 @@ select:focus-visible,
      each surface (measured 2.69:1 on canvas, 1.05:1 on a card), so the
      guarantee has to come from a fixed colour. */
   box-shadow: 0 0 0 5px oklch(0.19 0.03 40);
-  border-radius: inherit;
+  /* `border-radius: inherit` used to sit here and it OVERRODE the element's
+     own radius: a `rounded-full` pill inherits its parent's 0 and measured
+     3.35e7px unfocused -> 0px focused. Every pill on the site squared off
+     under keyboard focus. Both `outline` and `box-shadow` already follow the
+     element's own border-radius, so nothing is needed here. */
 }
 
 /* Themed text selection -- otherwise falls back to the browser's default
@@ -335,6 +339,17 @@ html {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+/* The display face as a utility. `dg` is used in 6 files -- the podium's
+   rank numerals and percentages, the dashboard head figures, the schedule's
+   date caps, the athlete dossier chip -- and was NEVER DEFINED. Every one of
+   them silently rendered in Barlow, the body face, including the podium
+   block: the page's single most important claim was set in the wrong
+   typeface. Caught by a critique measuring computed font-family rather than
+   reading the class list. */
+@utility dg {
+  font-family: var(--font-display);
 }
 
 @utility nums {
