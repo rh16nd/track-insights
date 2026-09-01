@@ -84,10 +84,21 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+/** Google Search Console verification. Env-gated so the token is set as a
+ * build var (VITE_GOOGLE_SITE_VERIFICATION) at deploy time rather than
+ * committed -- the meta tag renders only when it is present, and Search
+ * Console just needs it somewhere in <head>. Same env-gated pattern as
+ * VITE_SITE_URL / VITE_API_BASE_URL. */
+const GOOGLE_SITE_VERIFICATION = import.meta.env["VITE_GOOGLE_SITE_VERIFICATION"];
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
+      // Rendered only when the env var is set (see GOOGLE_SITE_VERIFICATION).
+      ...(GOOGLE_SITE_VERIFICATION
+        ? [{ name: "google-site-verification", content: GOOGLE_SITE_VERIFICATION }]
+        : []),
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "PodiumCall — 2026 Diamond League Predictions" },
       {
