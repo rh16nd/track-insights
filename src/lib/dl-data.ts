@@ -310,6 +310,19 @@ export type StatsData = {
   disciplineDepth: DisciplineDepth[];
   scoreScale: { min: number; max: number; median: number; rows: number } | null;
   indoor: { rows: number; total: number; share: number } | null;
+  /** What the model was trained on, counted off the training files rather
+   * than described in prose. `competitions` is distinct (venue, date) pairs:
+   * the raw rows carry where and when but no meeting id, so a two-day
+   * meeting counts twice -- it is a count of competition days, which is why
+   * `venues` is reported beside it. Null when no training files are present. */
+  corpus: {
+    marks: number;
+    seasons: number;
+    firstSeason: number | null;
+    lastSeason: number | null;
+    venues: number;
+    competitions: number;
+  } | null;
 };
 
 /** One season's best for an athlete, assembled across every source that

@@ -136,6 +136,31 @@ function Icon({ path, className = "size-5" }: { path: string; className?: string
   );
 }
 
+/** Small numbers read better spelled out in a heading, but the NUMBER has to
+ * come from the list it describes. "Six commitments" and "four steps" were
+ * both typed next to the arrays they count -- correct today, silently wrong
+ * the first time anyone adds an item. This project has found that exact
+ * mistake eight times now, always in the plumbing rather than the model. */
+const NUMBER_WORDS = [
+  "zero",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+  "ten",
+];
+const spellOut = (n: number) => NUMBER_WORDS[n] ?? String(n);
+/** Same, for the start of a sentence. */
+const spellOutCap = (n: number) => {
+  const word = spellOut(n);
+  return word.charAt(0).toUpperCase() + word.slice(1);
+};
+
 const FEATURES = [
   {
     title: "Real results, not hand-typed",
@@ -155,11 +180,11 @@ const FEATURES = [
   },
   {
     title: "Head-to-head history",
-    body: "Real matchup win rates between rivals feed the model directly — not a manual post-hoc adjustment bolted on afterward.",
+    body: "Who actually beat whom, race by race, read from published results and compared only within the same heat or final. It feeds the model directly, not as an adjustment bolted on afterward.",
   },
   {
     title: "Live all season",
-    body: "Every refresh re-scrapes the season and re-scores all 32 fields, right up to the Brussels Final.",
+    body: "Every refresh re-scrapes the season and re-scores every field, right up to the Brussels Final.",
   },
 ];
 
@@ -172,7 +197,7 @@ const STEPS = [
   {
     n: "02",
     title: "Engineer real features",
-    body: "Season form, consistency across meets, recency, schedule pacing, head-to-head history, wind adjustment — 15 features, every one measured against a shuffled control before it ships.",
+    body: "Season form, consistency across meets, recency, schedule pacing, head-to-head history, wind adjustment — 15 in all. Every candidate since is scored across ten random seeds against a shuffled control, and dropped when it can't beat one. Several have been.",
   },
   {
     n: "03",
@@ -230,6 +255,9 @@ function Landing() {
   const demoInView = useInView<HTMLElement>();
   const marksScored =
     stats.status === "ok" && stats.data.scoreScale ? stats.data.scoreScale.rows : null;
+  // What the model was trained on, counted off the training files by the API
+  // rather than described in prose. See build_training_corpus in api.py.
+  const corpus = stats.status === "ok" ? stats.data.corpus : null;
   // Counted from the schedule rather than written down. v0's mockup said
   // "Fourteen finals of real racing" -- wrong twice over: they are meetings,
   // not finals, and the number goes stale the moment another one is run.
@@ -358,8 +386,8 @@ function Landing() {
               style={{ "--reveal-d": "240ms" } as CSSProperties}
             >
               A model trained on real results, not gut feeling. We scrape every World Athletics mark
-              across all 32 Diamond League disciplines and call the podium in Brussels — before a
-              single race is run.
+              across all {disciplineCount} Diamond League disciplines and call the podium in
+              Brussels — before a single race is run.
             </p>
 
             <div
@@ -388,7 +416,7 @@ function Landing() {
                 className="rounded-full border border-[oklch(0.97_0.012_75_/_0.4)] px-6 py-3.5 text-[15px] font-semibold text-[var(--landing-fg)] transition-colors hover:bg-[oklch(0.97_0.012_75_/_0.1)]"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Browse all 32 events
+                Browse all {disciplineCount} events
               </Link>
             </div>
 
@@ -414,8 +442,14 @@ function Landing() {
 
           {/* ── Live confidence ticker ─────────────────────────────── */}
           <div className="relative mt-14 border-y border-[var(--landing-border)] bg-[var(--landing-bg-2)] py-4">
-            <div className="label-caps mb-3 px-6 text-[var(--landing-muted)] sm:px-10">
-              Live from the model — each discipline&apos;s top pick, chance of a podium
+            {/* The band is full-bleed on purpose (the marquee has to run off
+                both edges), but its caption is page copy and belongs on the
+                page's content column with everything else -- it was hanging
+                118px to the left of every other line on the landing. */}
+            <div className="mx-auto max-w-5xl px-6 sm:px-10">
+              <div className="label-caps mb-3 text-[var(--landing-muted)]">
+                Live from the model — each discipline&apos;s top pick, chance of a podium
+              </div>
             </div>
             {ticker.length > 0 ? (
               <div
@@ -451,7 +485,7 @@ function Landing() {
                 </div>
               </div>
             ) : (
-              <p className="px-6 text-[13px] text-[var(--landing-muted)] sm:px-10">
+              <p className="mx-auto max-w-5xl px-6 text-[13px] text-[var(--landing-muted)] sm:px-10">
                 Confidence feed loads once the live model is running.
               </p>
             )}
@@ -465,7 +499,7 @@ function Landing() {
             the hero with a large top radius so the seam reads as a deliberate
             edge rather than a colour change. */}
         <section className="relative z-[2] -mt-8 rounded-t-[44px] bg-card sm:-mt-13">
-          <div className="mx-auto max-w-5xl px-6 pb-20 pt-14 sm:px-10 sm:pb-24 sm:pt-[74px]">
+          <div className="mx-auto max-w-5xl px-6 pb-20 pt-14 sm:px-10 sm:pb-28 sm:pt-[74px]">
             <SectionHead
               eyebrow="The projected podium"
               title="The three the model backs hardest in Brussels."
@@ -530,8 +564,14 @@ function Landing() {
                   </li>
                 ))}
               </ul>
+              {/* Was "+ dozens more meetings, 7 seasons" — wrong twice, and
+                  hand-typed beside six real meeting names. It is thousands of
+                  competitions across eight seasons, and both numbers now come
+                  from /api/stats, counted off the training files themselves. */}
               <div className="mt-4 text-[12px] text-[var(--landing-muted)]">
-                + dozens more meetings, 7 seasons, scraped directly from World Athletics.
+                {corpus
+                  ? `+ ${(corpus.competitions - FEED.length).toLocaleString()} more competitions across ${corpus.seasons} seasons (${corpus.firstSeason}–${corpus.lastSeason}), scraped directly from World Athletics.`
+                  : "…and every other competition in the model's training data, scraped directly from World Athletics."}
               </div>
             </div>
 
@@ -595,10 +635,10 @@ function Landing() {
             A false claim under a "no fabricated data" heading is the one
             thing this section cannot carry. */}
         <section className="bg-card">
-          <div className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-24">
+          <div className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
             <SectionHead
               eyebrow="No fabricated data, anywhere in the pipeline."
-              title="Six commitments that separate a model from a guess."
+              title={`${spellOutCap(FEATURES.length)} commitments that separate a model from a guess.`}
               tone="cream"
             />
 
@@ -620,7 +660,7 @@ function Landing() {
         <section id="how-it-works" className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
           <SectionHead
             eyebrow="Real data in. Honest predictions out."
-            title="The pipeline, in four steps."
+            title={`The pipeline, in ${spellOut(STEPS.length)} steps.`}
           />
 
           <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -650,7 +690,7 @@ function Landing() {
         </section>
 
         {/* ── Live app preview (browser-chrome framed) ─────────────── */}
-        <section className="mx-auto max-w-5xl px-6 pb-24 sm:px-10 sm:pb-32">
+        <section className="mx-auto max-w-5xl px-6 py-20 pb-24 sm:px-10 sm:py-28 sm:pb-32">
           <SectionHead
             eyebrow="Straight from the running model"
             title="A live look at the model's current picks."
@@ -690,7 +730,7 @@ function Landing() {
                   to="/dashboard"
                   className="label-caps hidden shrink-0 text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)] sm:block"
                 >
-                  See all 32 disciplines →
+                  See all {disciplineCount} disciplines →
                 </Link>
               </div>
 
@@ -750,8 +790,12 @@ function Landing() {
         </section>
 
         {/* ── Footer ───────────────────────────────────────────────── */}
-        <footer className="border-t border-[var(--landing-border)] px-6 py-8 sm:px-10">
-          <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 sm:flex-row">
+        {/* The gutters go INSIDE the max-width box, as every section above
+            does. With them on the <footer> the row measured 1024px starting
+            at x=118, i.e. 40px left of the 158px content column the rest of
+            the page sits on. */}
+        <footer className="border-t border-[var(--landing-border)] py-8">
+          <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 sm:flex-row sm:px-10">
             <p className="text-[12px] text-[var(--landing-muted)]">
               Not affiliated with World Athletics or the Wanda Diamond League.
             </p>
