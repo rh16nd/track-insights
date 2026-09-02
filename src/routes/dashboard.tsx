@@ -321,6 +321,11 @@ function Dashboard() {
           // used to read only "walk-forward '23-'25", which was true of
           // both and identified neither.
           sub: data.modelAccuracyBasis,
+          // The bare "72%" is opaque without saying WHAT it measures. Copy
+          // kept in step with the How-it-works page's vetted framing ("podium
+          // hit rate among the athletes who actually contest the Final") and
+          // the anti-"winner" rule: the target is top-three membership.
+          hint: "How often the model's projected top three includes the athletes who actually make the podium, among the real Final field — measured by walk-forward backtest, never on the season shown.",
           icon: "target" as const,
           accent: "text-terracotta-light",
         },
@@ -357,6 +362,7 @@ function Dashboard() {
         value={<CountUpValue value={s.value} />}
         unit={s.suffix}
         label={s.label}
+        hint={s.hint}
       />
     ))
   ) : (

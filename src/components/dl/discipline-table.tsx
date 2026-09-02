@@ -2,7 +2,8 @@
 import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Athlete, Discipline } from "@/lib/dl-data";
-import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
+import { InfoGlyph, Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
+import { NatFlag } from "./nat-flag";
 
 /** Which column the table is ordered by. "rank" is the API's own ordering
  * (season-best mark, ascending = fastest/furthest first); "prob" is the
@@ -30,6 +31,22 @@ const SUBTITLE: Record<SortKey, string> = {
   rank: "Ranked by season best. Podium chance is the model's separate call and can disagree.",
   prob: "Sorted by the model's podium chance. The # column still ranks by season best, so it reads out of sequence.",
 };
+
+/** Tint for the podium-chance number, RELATIVE to the strongest chance in the
+ * field currently on screen. It must be relative, not a fixed % cut: the model's
+ * per-discipline probabilities do not sum to a constant (across events the totals
+ * run ~30–320), so a fixed "≥30% = gold" rule would paint a whole flat field gold
+ * and leave a top-heavy one grey — reading as a cross-event comparison the numbers
+ * cannot support. Scaling to this field's own leader keeps "who stands out" honest
+ * within the one event the reader is looking at. Gold echoes the bar's own gradient
+ * tip; gold-strong measured 5.89:1 on the card, past the 4.5 floor for this 12.5px
+ * semibold number. Long shots recede to muted; the middle stays plain. */
+function probTone(prob: number, maxProb: number): string {
+  const r = prob / maxProb;
+  if (r >= 0.6) return "text-gold-strong";
+  if (r <= 0.25) return "text-muted-foreground";
+  return "text-foreground";
+}
 
 function sortAthletes(athletes: Athlete[], { key, dir }: Sort): Athlete[] {
   const sign = dir === "asc" ? 1 : -1;
@@ -69,12 +86,21 @@ function SortHeader({
   sort,
   onSort,
   className,
+  hint,
 }: {
   label: string;
   columnKey: SortKey;
   sort: Sort;
   onSort: (key: SortKey) => void;
   className: string;
+  /** A one-line definition of the column. Carried on the button's `title`
+   * (hover) and its `sr-only` text (assistive tech), with a drawn info glyph
+   * as the visible cue. A native title rather than a styled popover on
+   * purpose: this header lives inside the table's `overflow-x-auto` wrapper,
+   * where an absolutely-positioned popover gets clipped (and can force a
+   * vertical scrollbar); `title` never clips. The glyph sits inside the sort
+   * button, so hovering anywhere on the header shows the definition. */
+  hint?: string;
 }) {
   const active = sort.key === columnKey;
   const dir = active ? sort.dir : FIRST_DIR[columnKey];
@@ -87,6 +113,7 @@ function SortHeader({
       <button
         type="button"
         onClick={() => onSort(columnKey)}
+        title={hint}
         // The label alone is a 17px-tall hit target. `py-2 -my-2` grows it
         // past the 24px WCAG 2.2 minimum without moving the header text or
         // changing the row's height -- the extra area reaches into padding
@@ -97,8 +124,10 @@ function SortHeader({
       >
         <span>{label}</span>
         <SortArrow dir={dir} active={active} />
+        {hint && <InfoGlyph className="opacity-45 transition-opacity group-hover:opacity-80" />}
         <span className="sr-only">
           {active ? " — sorted, activate to reverse" : " — activate to sort by this column"}
+          {hint ? `. ${hint}` : ""}
         </span>
       </button>
     </th>
@@ -136,6 +165,15 @@ export function DisciplineTable({
     () => (current?.nearMiss ? sortAthletes(current.nearMiss, sort) : []),
     [current, sort],
   );
+  // The field's strongest podium chance, the reference every row's tint is
+  // scaled against. Includes the near-miss athletes so both groups read on one
+  // shared scale — a near-miss athlete "what-if" is measured against the same
+  // leader as the real field. Guarded to >=1 so an all-zero field never divides
+  // by zero.
+  const maxProb = useMemo(() => {
+    const all = current ? [...current.athletes, ...(current.nearMiss ?? [])] : [];
+    return Math.max(1, ...all.map((a) => a.prob));
+  }, [current]);
 
   if (!current) return null;
 
@@ -246,6 +284,7 @@ export function DisciplineTable({
                   sort={sort}
                   onSort={onSort}
                   className="w-28 pb-3 pl-6 text-right"
+                  hint="Projected finishing order, ranked by season best — the fastest or furthest mark this year. A verifiable fact, separate from the model's podium chance."
                 />
                 <SortHeader
                   label="Podium chance"
@@ -253,6 +292,7 @@ export function DisciplineTable({
                   sort={sort}
                   onSort={onSort}
                   className="w-56 pb-3 pl-8 text-right"
+                  hint="The model's estimate of each athlete's chance of finishing in the top three — not of winning. It can disagree with the season-best order."
                 />
               </tr>
             </thead>
@@ -278,7 +318,9 @@ export function DisciplineTable({
                       <WatchBadge reason={a.injuryReason} url={a.injuryUrl} className="ml-2" />
                     )}
                   </td>
-                  <td className="nums py-3 pl-4 text-[12px] text-muted-foreground">{a.nat}</td>
+                  <td className="py-3 pl-4">
+                    <NatFlag nat={a.nat} />
+                  </td>
                   <td className="py-3 pl-4">
                     {/* "Q" per the user's preference over a check glyph. It
                         previously rendered at 10px with heavy label-caps
@@ -307,7 +349,9 @@ export function DisciplineTable({
                   <td className="py-3 pl-8">
                     <div className="flex items-center justify-end gap-3">
                       <ProbabilityBar value={a.prob} className="w-28" trackHeight="h-1.5" />
-                      <span className="nums w-9 text-right text-[12.5px] font-semibold text-foreground">
+                      <span
+                        className={`nums w-9 text-right text-[12.5px] font-semibold ${probTone(a.prob, maxProb)}`}
+                      >
                         {a.prob}%
                       </span>
                     </div>
@@ -372,7 +416,9 @@ export function DisciplineTable({
                       <WatchBadge reason={a.injuryReason} url={a.injuryUrl} className="ml-2" />
                     )}
                   </td>
-                  <td className="nums py-3 pl-4 text-[12px] text-muted-foreground">{a.nat}</td>
+                  <td className="py-3 pl-4">
+                    <NatFlag nat={a.nat} />
+                  </td>
                   <td className="py-3 pl-4">
                     <span className="label-caps whitespace-nowrap text-muted-foreground">
                       Not qualified
@@ -384,7 +430,9 @@ export function DisciplineTable({
                   <td className="py-3 pl-8">
                     <div className="flex items-center justify-end gap-3 opacity-70">
                       <ProbabilityBar value={a.prob} className="w-28" trackHeight="h-1.5" />
-                      <span className="nums w-9 text-right text-[12.5px] font-semibold text-foreground">
+                      <span
+                        className={`nums w-9 text-right text-[12.5px] font-semibold ${probTone(a.prob, maxProb)}`}
+                      >
                         {a.prob}%
                       </span>
                     </div>

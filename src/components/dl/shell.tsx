@@ -214,6 +214,26 @@ export function Shell({
   );
 }
 
+/** A drawn info "i", not a Unicode glyph — the craft floor bans emoji/unicode
+ * standing in for an icon. One consistent 1.3px stroke, sized to sit beside
+ * a label-caps line. `aria-hidden` because the definition it marks travels in
+ * a `title` (sighted hover) and an `sr-only` sentence (assistive tech); the
+ * glyph is only the visible cue that the definition exists. */
+export function InfoGlyph({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      aria-hidden="true"
+      fill="none"
+      className={`size-[13px] shrink-0 ${className}`}
+    >
+      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
+      <circle cx="8" cy="5.15" r="0.95" fill="currentColor" />
+      <path d="M8 7.4v3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 /** A figure on the head band — v0's `.stat` inside `.figrow`. Big number,
  * small caps label under it, no icon and no card: on a coloured band the
  * band is already the container, and boxing each stat again was what made
@@ -223,6 +243,7 @@ export function HeadFigure({
   value,
   unit,
   label,
+  hint,
   gold = false,
 }: {
   /** The app's own hand-drawn glyph. v0's figrow has none; ours reads
@@ -231,6 +252,13 @@ export function HeadFigure({
   value: ReactNode;
   unit?: string | undefined;
   label: string;
+  /** An optional one-line definition of what the figure measures. Rendered
+   * as a `title` for hover and an `sr-only` sentence for assistive tech, with
+   * a visible info glyph as the cue. Deliberately not a styled popover: this
+   * band is not a scroll container, but the same mechanism is shared with the
+   * discipline table's headers (which are), and one consistent hover treatment
+   * beats a rich tooltip here and a plain one there. */
+  hint?: string | undefined;
   /** v0's `.stat.gold` — the one figure on a band that is the point of the
    * page (the Final's date on the schedule). */
   gold?: boolean;
@@ -245,9 +273,15 @@ export function HeadFigure({
         {value}
         {unit && <span className="ml-px text-[0.5em] font-semibold text-white/92">{unit}</span>}
       </b>
-      <span className="label-caps mt-2.5 flex items-center gap-1.5 text-white/92">
+      <span className="label-caps mt-2.5 flex items-center gap-1.5 text-white/92" title={hint}>
         {icon}
         {label}
+        {hint && (
+          <>
+            <InfoGlyph className="text-white/55" />
+            <span className="sr-only"> — {hint}</span>
+          </>
+        )}
       </span>
     </div>
   );
