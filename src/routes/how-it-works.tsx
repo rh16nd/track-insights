@@ -77,7 +77,7 @@ function HowItWorksPage() {
 
         <Panel
           title="How accurate it is"
-          subtitle="Two honest numbers from the same predictions, read live from the model."
+          subtitle="Two different accuracy numbers, both from these same predictions, read live from the model."
         >
           <div className="flex flex-col gap-5">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -145,7 +145,10 @@ function HowItWorksPage() {
           </div>
         </Panel>
 
-        <Panel title="What it can't do" subtitle="A forecast worth trusting says what it can't do.">
+        <Panel
+          title="What it can't do"
+          subtitle="What the model can't do, and what it doesn't claim."
+        >
           <ul className="flex flex-col gap-2.5 text-[15px] leading-relaxed text-foreground">
             <li className="flex gap-3">
               <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-terracotta" />

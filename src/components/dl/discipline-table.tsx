@@ -281,7 +281,7 @@ export function DisciplineTable({
                   sort={sort}
                   onSort={onSort}
                   className="w-28 pb-3 pl-6 text-right"
-                  hint="Projected finishing order, ranked by season best, the fastest or furthest mark this year. It's a verifiable fact, separate from the model's podium chance."
+                  hint="Projected finishing order, ranked by each athlete's season best: their fastest or furthest mark this year. A real result you can look up, separate from the model's podium chance."
                 />
                 <SortHeader
                   label="Podium chance"
@@ -289,7 +289,7 @@ export function DisciplineTable({
                   sort={sort}
                   onSort={onSort}
                   className="w-56 pb-3 pl-8 text-right"
-                  hint="The model's estimate of each athlete's chance of finishing in the top three, not of winning. It can disagree with the season-best order."
+                  hint="The model's estimate of how likely this athlete is to finish in the top three, not to win. Higher means a stronger podium threat, which is why this can rank athletes differently from their season-best mark."
                 />
               </tr>
             </thead>

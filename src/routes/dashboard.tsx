@@ -326,7 +326,7 @@ function Dashboard() {
           // kept in step with the How-it-works page's vetted framing ("podium
           // hit rate among the athletes who actually contest the Final") and
           // the anti-"winner" rule: the target is top-three membership.
-          hint: "How often the model's projected top three includes the athletes who actually make the podium, among the real Final field — measured by walk-forward backtest, never on the season shown.",
+          hint: "Among the athletes who actually contest a Final, how often the model's projected top three matches who really medals. It's scored only on seasons the model never trained on, so the figure isn't inflated.",
           icon: "target" as const,
           accent: "text-terracotta-light",
         },

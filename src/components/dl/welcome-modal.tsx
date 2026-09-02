@@ -9,7 +9,7 @@ const SEEN_KEY = "podiumcall:welcome:v1";
 
 const POINTS = [
   "Every number is a real, scraped stat from World Athletics. Nothing is typed in by hand or made up.",
-  "Browse by event under Track and Field, check who's qualified in Qualifying, or open any athlete for their form and rivalries.",
+  "Browse by event under Track and Field, see who's qualified in Qualifying, or open any athlete for their 2026 results, head-to-head record and career bests.",
   "Tap the small ⓘ next to a stat to read exactly what it means.",
 ];
 
