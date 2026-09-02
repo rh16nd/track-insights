@@ -10,3 +10,6 @@ dist/
 .codex/
 .impeccable/
 skills-lock.json
+
+# Local Vercel build output
+.vercel
