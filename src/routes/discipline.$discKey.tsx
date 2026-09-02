@@ -72,7 +72,7 @@ function DisciplinePage() {
           {data.trajectories && data.trajectories.length > 0 && (
             <Panel
               title={`Real season form — ${data.disc}`}
-              subtitle="Every mark each contender actually recorded this season, on a real calendar. Not a smoothed trend — the dots are the meetings they turned up to."
+              subtitle="Every mark each contender actually recorded this season, on a real calendar. These aren't a smoothed trend; the dots are the meetings they turned up to."
               className="mt-6"
             >
               <TrajectoryOverlayChart trajectories={data.trajectories} discKey={data.discKey} />

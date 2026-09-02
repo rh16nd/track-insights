@@ -9,7 +9,7 @@ export const Route = createFileRoute("/how-it-works")({
   head: () =>
     pageHead(
       "How it works",
-      "How PodiumCall predicts the podium — what the model learns, how accurate it is, and where the data comes from.",
+      "How PodiumCall predicts the podium: what the model learns, how accurate it is, and where the data comes from.",
     ),
   component: HowItWorksPage,
 });
@@ -35,49 +35,49 @@ function HowItWorksPage() {
       title="How it works"
       crumb="How it works"
       eyebrow="About the model"
-      description="PodiumCall calls the podium for every event at the 2026 Diamond League Final — from real results, before a single race is run. Here is exactly how, and how well."
+      description="PodiumCall calls the podium for every event at the 2026 Diamond League Final, from real results, before anyone races. Here's exactly how it does that, and how well it works."
     >
       <div className="mx-auto flex max-w-[820px] flex-col gap-5 py-2">
         <Panel
           title="What it predicts"
-          subtitle="The podium, not the winner — and that is a deliberate choice."
+          subtitle="It calls the podium, not the winner, and that's on purpose."
         >
           <p className="text-[15px] leading-relaxed text-foreground">
-            For each of the <b>32 disciplines</b> contested at the Final, the model estimates every
-            contender&apos;s chance of finishing <b>in the top three</b>. It does not name a single
-            winner: in a championship where several athletes can win on the day,
-            &ldquo;podium&rdquo; is the honest call — the one that can be made well and checked
-            against what actually happens.
+            For each of the <b>32 disciplines</b> at the Final, the model estimates every
+            contender&apos;s chance of finishing <b>in the top three</b>. It doesn&apos;t name a
+            single winner. In a championship where several athletes can win on the day, the
+            &ldquo;podium&rdquo; is the call you can actually make well and check against what
+            happens.
           </p>
         </Panel>
 
         <Panel
           title="How the model learns"
-          subtitle="Trained on what really happened, not on rankings or opinion."
+          subtitle="Trained on real past results, not on rankings or hunches."
         >
           <div className="flex flex-col gap-3 text-[15px] leading-relaxed text-foreground">
             <p>
-              The model is trained on the actual podiums of every Diamond League Final from{" "}
-              <b>2018 to 2025</b> — real ground truth, scraped from World Athletics&apos; own
-              results.
+              The model learns from the actual podiums of every Diamond League Final from{" "}
+              <b>2018 to 2025</b>. That&apos;s the ground truth, scraped straight from World
+              Athletics&apos; own results.
             </p>
             <p>
-              For everyone in contention it computes <b>14 signals</b> — season best and career
-              best, how consistent they are, how their form is trending, how they have done{" "}
-              <b>head-to-head against this exact field</b>, and more — and a <b>random forest</b>{" "}
-              weighs them into one number: the probability of a podium.
+              For everyone in contention it works out <b>14 signals</b>: season best and career
+              best, how consistent they are, which way their form is trending, how they&apos;ve done{" "}
+              <b>head-to-head against this exact field</b>, and more. A <b>random forest</b> weighs
+              all of it into one number, the probability of a podium.
             </p>
             <p>
-              It is tested honestly. Using <b>walk-forward validation</b>, it is trained only on
-              seasons <i>before</i> each year it is scored on — so the accuracy below is measured on
-              results the model never saw, the same way you would judge a real forecast.
+              And it&apos;s tested honestly. With <b>walk-forward validation</b> the model only
+              trains on seasons <i>before</i> the year it&apos;s scored on, so the accuracy below
+              comes from results it never saw. That&apos;s the only fair way to judge a forecast.
             </p>
           </div>
         </Panel>
 
         <Panel
           title="How accurate it is"
-          subtitle="Two honest numbers, from the same predictions. Read live from the model."
+          subtitle="Two honest numbers from the same predictions, read live from the model."
         >
           <div className="flex flex-col gap-5">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -94,8 +94,8 @@ function HowItWorksPage() {
                   {toplist == null ? "—" : `${toplist}%`}
                 </div>
                 <div className="mt-2 text-[13px] text-muted-foreground">
-                  The harder historical ruler: picking 3 from a discipline&apos;s whole ~101-athlete
-                  toplist — a task the site never actually performs
+                  The harder historical test: picking 3 from a discipline&apos;s whole ~101-athlete
+                  toplist, something the site never actually does
                 </div>
               </div>
             </div>
@@ -109,13 +109,13 @@ function HowItWorksPage() {
 
         <Panel
           title="Where the data comes from"
-          subtitle="Scraped from World Athletics — no hand-entry, no guesswork."
+          subtitle="Scraped straight from World Athletics, nothing typed in by hand."
         >
           <div className="flex flex-col gap-4 text-[15px] leading-relaxed text-foreground">
             <p>
-              Every mark, ranking and result is pulled directly from <WaSourceLink />
-              &apos;s own public data — the same source their broadcasts and profiles use. The
-              scraping runs off-site and the marks are never edited by hand.
+              Every mark, ranking and result comes straight from <WaSourceLink />
+              &apos;s own public data, the same source their broadcasts and profiles use. The
+              scraping runs off-site, and no mark is ever edited by hand.
             </p>
             {corpus && (
               <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-border bg-border sm:grid-cols-4">
@@ -145,22 +145,22 @@ function HowItWorksPage() {
           </div>
         </Panel>
 
-        <Panel title="What it can't do" subtitle="An honest forecast names its own blind spots.">
+        <Panel title="What it can't do" subtitle="A forecast worth trusting says what it can't do.">
           <ul className="flex flex-col gap-2.5 text-[15px] leading-relaxed text-foreground">
             <li className="flex gap-3">
               <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-terracotta" />
-              It reads <b>form, not the future</b> — it can&apos;t see a last-minute injury,
-              withdrawal, or a tactical, slow-then-kick race on the day.
+              It reads <b>form, not the future</b>. It can&apos;t see a last-minute injury, a
+              withdrawal, or a tactical slow-then-kick race on the day.
             </li>
             <li className="flex gap-3">
               <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-terracotta" />
-              It predicts <b>podium membership, not the exact order</b> — and never claims to know
+              It predicts <b>podium membership, not the exact order</b>, and it never claims to know
               the winner.
             </li>
             <li className="flex gap-3">
               <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-terracotta" />
-              It is <b>not affiliated with World Athletics</b> or the Wanda Diamond League — it only
-              reads their public data.
+              It&apos;s <b>not affiliated with World Athletics</b> or the Wanda Diamond League. It
+              just reads their public data.
             </li>
           </ul>
         </Panel>

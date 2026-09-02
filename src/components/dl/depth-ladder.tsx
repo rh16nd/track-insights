@@ -60,7 +60,7 @@ export function DepthLadder({ rows }: { rows: DisciplineDepth[] }) {
   return (
     <Panel
       title={`The depth ladder · ${rows.length} disciplines`}
-      subtitle="Each bar runs from that event's median score to its top score, all on one axis. Shorter is deeper — the leader is closer to the crowd. Longer means one athlete with daylight behind them."
+      subtitle="Each bar runs from that event's median score to its top score, all on one axis. Shorter is deeper: the leader is closer to the crowd. Longer means one athlete with daylight behind them."
       action={
         <div className="flex flex-wrap gap-1.5">
           {SORTS.map((s) => (

@@ -172,17 +172,17 @@ const STEPS = [
   {
     n: "01",
     title: "Scrape real results",
-    body: "Every Diamond League meet, plus the Olympics, World Championships, Continental Tour Gold meets, and the European Championships — pulled directly from World Athletics' own API, not hand-typed.",
+    body: "Every Diamond League meet, plus the Olympics, World Championships, Continental Tour Gold meets, and the European Championships. All of it pulled straight from World Athletics' own API, not hand-typed.",
   },
   {
     n: "02",
     title: "Engineer real features",
-    body: "Season form, consistency across meets, recency, schedule pacing, head-to-head history, wind adjustment — 15 in all. Every candidate since is scored across ten random seeds against a shuffled control, and dropped when it can't beat one. Several have been.",
+    body: "Season form, consistency across meets, recency, schedule pacing, head-to-head history, wind adjustment: 15 in all. Every candidate since gets scored across ten random seeds against a shuffled control, and dropped when it can't beat one. Several have been.",
   },
   {
     n: "03",
     title: "Validate honestly",
-    body: "Walk-forward validated across five independent seasons (2021–2025) — trained only on years strictly before each test year, never on the future.",
+    body: "Walk-forward validated across five independent seasons (2021–2025), training only on years strictly before each test year, never on the future.",
   },
   {
     n: "04",
@@ -408,7 +408,7 @@ function Landing() {
             >
               A model trained on real results, not gut feeling. We scrape every World Athletics mark
               across all {disciplineCount} Diamond League disciplines and call the podium in
-              Brussels — before a single race is run.
+              Brussels, before anyone races.
             </p>
 
             <div
@@ -456,7 +456,7 @@ function Landing() {
               <p className="mt-4 text-[12.5px] text-[var(--landing-muted)]">
                 {state.status === "loading"
                   ? "Loading live stats…"
-                  : "Live stats aren't reachable right now — the numbers above will fill in once the model is running."}
+                  : "Live stats aren't reachable right now. The numbers above will fill in once the model is running."}
               </p>
             )}
           </div>
@@ -485,8 +485,8 @@ function Landing() {
                   detector's `all-caps-body` finding earned honestly. */}
               <div className="mb-3 text-[13px] text-[var(--landing-muted)]">
                 {tickerRange
-                  ? `Live from the model — all ${ticker.length} disciplines, ${tickerRange.lo}–${tickerRange.hi}% — it is far surer about some finals than others`
-                  : "Live from the model — each discipline's top pick, chance of a podium"}
+                  ? `Live from the model: all ${ticker.length} disciplines, ${tickerRange.lo}–${tickerRange.hi}%, and it's far surer about some finals than others`
+                  : "Live from the model: each discipline's top pick, and its chance of a podium"}
               </div>
             </div>
             {ticker.length > 0 ? (
@@ -562,7 +562,7 @@ function Landing() {
                 call in a different discipline. */}
             <p className="mx-auto mt-8 max-w-[62ch] text-center text-[12px] leading-relaxed text-muted-foreground">
               Each of these is the model&apos;s strongest call in a <em>different</em> discipline,
-              so they are not racing each other — the steps rank the model&apos;s confidence, not
+              so they aren&apos;t racing each other. The steps rank the model&apos;s confidence, not
               the athletes. The percentage is a chance of finishing top three, not of winning; marks
               are 2026 season bests from World Athletics.
             </p>
@@ -670,7 +670,7 @@ function Landing() {
           <div className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
             <SectionHead
               eyebrow="No fabricated data, anywhere in the pipeline."
-              title={`Real data in, honest predictions out — in ${spellOut(STEPS.length)} steps.`}
+              title={`Real data in, honest predictions out, in ${spellOut(STEPS.length)} steps.`}
               tone="cream"
             />
 
@@ -729,7 +729,7 @@ function Landing() {
                     the top pick in a DIFFERENT discipline, and without saying
                     so the list reads as one ranking of six rivals. */}
                   <p className="mt-1 text-[12px] leading-snug text-[var(--landing-muted)]">
-                    The model&apos;s strongest pick in each discipline — chance of finishing top
+                    The model&apos;s strongest pick in each discipline: the chance of finishing top
                     three, not of winning
                   </p>
                 </div>

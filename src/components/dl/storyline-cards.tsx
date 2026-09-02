@@ -71,8 +71,7 @@ export function StorylineCards({
   if (storylines.length === 0) {
     return (
       <div className="text-[12.5px] text-muted-foreground">
-        No standout real storylines for this discipline right now — check back as the season
-        progresses.
+        No standout storylines for this discipline right now. Check back as the season progresses.
       </div>
     );
   }

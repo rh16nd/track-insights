@@ -153,7 +153,7 @@ function SchedulePage() {
       {data && (
         <Panel
           title="The road to the Final"
-          subtitle="The 2026 Diamond League circuit, in order. Gold marks the Final — the only meeting on this list that decides anything."
+          subtitle="The 2026 Diamond League circuit, in order. Gold marks the Final, the only meeting on this list that decides anything."
         >
           <Timeline meets={meets} />
         </Panel>

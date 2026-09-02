@@ -318,7 +318,7 @@ function NotInField({
 
         <Panel
           title="Real season form"
-          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its totals are higher — the two are different scopes, not different answers."
+          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its totals run higher. That's a difference in scope, not a contradiction."
         >
           {data.history.length > 0 ? (
             <SeasonTrendChart history={data.history} year={data.historyYear} />
@@ -742,7 +742,7 @@ function AthleteProfilePage() {
 
         <Panel
           title="Real season form"
-          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its totals are higher — the two are different scopes, not different answers."
+          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its totals run higher. That's a difference in scope, not a contradiction."
         >
           {a.history.length > 0 ? (
             <SeasonTrendChart history={a.history} year={a.historyYear} />

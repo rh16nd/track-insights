@@ -18,7 +18,7 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
   return (
     <Panel
       title="Record and ranking"
-      subtitle="World Athletics' own honours and current world ranking — stated by them, not computed here."
+      subtitle="World Athletics' own honours and current world ranking, stated by them and not computed here."
       className="mt-4"
     >
       {/* The one line worth reading if you read nothing else here. Built

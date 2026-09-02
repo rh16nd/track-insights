@@ -284,7 +284,7 @@ export function DisciplineTable({
                   sort={sort}
                   onSort={onSort}
                   className="w-28 pb-3 pl-6 text-right"
-                  hint="Projected finishing order, ranked by season best — the fastest or furthest mark this year. A verifiable fact, separate from the model's podium chance."
+                  hint="Projected finishing order, ranked by season best, the fastest or furthest mark this year. It's a verifiable fact, separate from the model's podium chance."
                 />
                 <SortHeader
                   label="Podium chance"
@@ -292,7 +292,7 @@ export function DisciplineTable({
                   sort={sort}
                   onSort={onSort}
                   className="w-56 pb-3 pl-8 text-right"
-                  hint="The model's estimate of each athlete's chance of finishing in the top three — not of winning. It can disagree with the season-best order."
+                  hint="The model's estimate of each athlete's chance of finishing in the top three, not of winning. It can disagree with the season-best order."
                 />
               </tr>
             </thead>
@@ -372,7 +372,7 @@ export function DisciplineTable({
                 <tr>
                   <td colSpan={6} className="pb-2 pt-6">
                     <div className="label-caps text-muted-foreground">
-                      Not qualified — below the top {current.qualLimit} on Diamond League points
+                      Not qualified: below the top {current.qualLimit} on Diamond League points
                     </div>
                     {/* Was "outside the Diamond League standings", which is
                         wrong for most of these athletes: they are IN the
@@ -382,9 +382,9 @@ export function DisciplineTable({
                         Same imprecision that made the athlete page tell
                         readers Noah Lyles had never scored. */}
                     <p className="mt-1 max-w-xl text-[12px] leading-snug text-muted-foreground">
-                      Fast enough to matter, but short of a qualifying place on points — either
-                      below the cut in the standings, or with no Diamond League points in this event
-                      at all. Scored by the same model so you can see who would be a threat if they
+                      Fast enough to matter, but short of a qualifying place on points, either below
+                      the cut in the standings or with no Diamond League points in this event at
+                      all. Scored by the same model, so you can see who would be a threat if they
                       got in.
                     </p>
                   </td>

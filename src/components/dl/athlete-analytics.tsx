@@ -122,7 +122,7 @@ export function AthleteAnalyticsBlock({
         {form.length > 0 && (
           <Panel
             title="Season by season"
-            subtitle="Season best against the average of that year's best three — one lucky afternoon next to the level actually held."
+            subtitle="Season best against the average of that year's best three, so one lucky afternoon sits next to the level actually held."
           >
             <FormTable form={form} isField={isField} bestByYear={bestByYear} />
           </Panel>

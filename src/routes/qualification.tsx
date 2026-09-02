@@ -41,12 +41,12 @@ function placesHeadline(limit: number, isField: boolean): string {
 }
 
 const DESCRIPTION =
-  "Who has actually earned a place at the Final. These are World Athletics' own Diamond League points — not a prediction — with the gap to the qualification cut worked out from what is still winnable.";
+  "Who has actually earned a place at the Final. These are World Athletics' own Diamond League points, not a prediction, with the gap to the qualification cut worked out from what's still winnable.";
 
 /* Nothing is winnable any more once the last scoring meeting is run, so the
  * clause explaining the gap that way has to go rather than quietly stay wrong. */
 const DESCRIPTION_DECIDED =
-  "Who has actually earned a place at the Final. These are World Athletics' own Diamond League points — not a prediction — with every scoring meeting of the 2026 season now run.";
+  "Who has actually earned a place at the Final. These are World Athletics' own Diamond League points, not a prediction, with every scoring meeting of the 2026 season now run.";
 
 const STATUS_LABEL: Record<QualStatus, string> = {
   safe: "Through",
@@ -65,7 +65,7 @@ const STATUS_CLASS: Record<QualStatus, string> = {
 };
 
 const STATUS_TITLE: Record<QualStatus, string> = {
-  safe: "Cannot be displaced — nobody below them can reach their total",
+  safe: "Can't be displaced: nobody below them can reach their total",
   in: "Above the cut line as it stands, but still catchable",
   chasing: "Below the line and still mathematically able to reach it",
   out: "Cannot reach the cut even by winning everything left",
@@ -96,9 +96,9 @@ const STATUS_CLASS_DECIDED: Record<QualStatus, string> = {
 
 const STATUS_TITLE_DECIDED: Record<QualStatus, string> = {
   ...STATUS_TITLE,
-  in: "Above the cut line, but level on points with an athlete below it — World Athletics' tie-break decides",
+  in: "Above the cut line, but level on points with an athlete below it; World Athletics' tie-break decides",
   chasing:
-    "Level on points with the last qualifying place, with no scoring meetings left — World Athletics' tie-break decides",
+    "Level on points with the last qualifying place and no scoring meetings left; World Athletics' tie-break decides",
 };
 
 /** Points behind the cut, phrased so the sign never has to be decoded. A
@@ -157,7 +157,7 @@ function QualificationPage() {
         data
           ? meetingsLeft > 0
             ? `${meetingsLeft} scoring meeting${meetingsLeft === 1 ? "" : "s"} left · a win is worth ${data.pointsForAWin} points`
-            : "Every scoring meeting is run — the standings are final"
+            : "Every scoring meeting is run, so the standings are final"
           : "2026 Diamond League standings"
       }
       description={decided ? DESCRIPTION_DECIDED : DESCRIPTION}
@@ -188,8 +188,8 @@ function QualificationPage() {
               }
               subtitle={
                 decided
-                  ? "Every scoring meeting is run, and in these disciplines the athlete below the cut finished level on points with the athlete on it — World Athletics' tie-break decides them, not another race."
-                  : "The smallest gap between the qualification cut and the first athlete below it — the disciplines the last meeting actually decides."
+                  ? "Every scoring meeting is run, and in these disciplines the athlete below the cut finished level on points with the athlete on it. World Athletics' tie-break decides them, not another race."
+                  : "The smallest gap between the qualification cut and the first athlete below it, the disciplines the last meeting actually decides."
               }
             >
               <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -346,8 +346,8 @@ function QualificationPage() {
                   &ldquo;Out&rdquo; means the athlete cannot reach the cut even by winning
                   everything left; &ldquo;Through&rdquo; means nobody can displace them even if they
                   never score again. Anything in between is still open. This assumes the discipline
-                  is on the remaining programme — if it is not contested again, these standings are
-                  already final, which only makes &ldquo;Out&rdquo; more certain.
+                  is on the remaining programme. If it isn&apos;t contested again, these standings
+                  are already final, which only makes &ldquo;Out&rdquo; more certain.
                 </>
               ) : (
                 <>

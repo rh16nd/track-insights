@@ -127,9 +127,9 @@ export function NewsFeed() {
       )}
 
       <p className="mt-4 text-[11.5px] leading-relaxed text-muted-foreground">
-        These are automatically matched headlines, not verified injury reports. A match can be wrong
-        — the matched keyword is shown so you can judge it yourself, and every removed athlete keeps
-        a full profile you can{" "}
+        These are automatically matched headlines, not verified injury reports. A match can be
+        wrong, so the matched keyword is shown for you to judge it yourself, and every removed
+        athlete keeps a full profile you can{" "}
         <Link to="/dashboard" className="underline decoration-border underline-offset-2">
           search for
         </Link>

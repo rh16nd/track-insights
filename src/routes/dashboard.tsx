@@ -213,7 +213,7 @@ function LeastSurePanel({ confidence }: { confidence: ConfidenceRow[] }) {
   return (
     <Panel
       title="Where the model is least sure"
-      subtitle="The eight events whose strongest pick is weakest — the most open fields at the Final, and the ones most likely to surprise."
+      subtitle="The eight events whose strongest pick is weakest. These are the most open fields at the Final, and the ones most likely to surprise."
     >
       <ul className="divide-y divide-border">
         {least.map((c, i) => {
@@ -414,7 +414,7 @@ function Dashboard() {
               athlete. */}
           <Panel
             title="The surest calls"
-            subtitle="The model's strongest pick in each discipline — chance of finishing top three, not of winning. Each card is a different event, so these six are not racing each other."
+            subtitle="The model's strongest pick in each discipline: the chance of finishing top three, not of winning. Each card is a different event, so these six aren't racing each other."
             className="mt-6"
           >
             <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
