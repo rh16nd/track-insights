@@ -21,7 +21,16 @@ export type SearchHit = {
  * swallowing. The profile page explains the actual reason (see the API's
  * athlete_field_status, which mirrors run.py's real selection order).
  */
-export function AthleteSearch() {
+export function AthleteSearch({
+  autoFocus = false,
+  onDone,
+}: {
+  /** Focus the input on mount — used by the mobile search row, which only
+   * appears once the user has tapped to open it. */
+  autoFocus?: boolean;
+  /** Called after a result is chosen, so the mobile row can collapse itself. */
+  onDone?: () => void;
+} = {}) {
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<SearchHit[]>([]);
   const [open, setOpen] = useState(false);
@@ -87,9 +96,15 @@ export function AthleteSearch() {
     };
   }, [open]);
 
+  // Focus on mount when asked (the mobile search row opens on demand).
+  useEffect(() => {
+    if (autoFocus) inputRef.current?.focus();
+  }, [autoFocus]);
+
   function go(hit: SearchHit) {
     setOpen(false);
     setQuery("");
+    onDone?.();
     navigate({
       to: "/athlete/$discKey/$name",
       params: { discKey: hit.discKey, name: hit.name },

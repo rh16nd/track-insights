@@ -1,8 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PodiumCallMark } from "./logo";
 import { AthleteSearch } from "./athlete-search";
 
+// "How it works" is deliberately NOT here — it's an explainer, not a section
+// of the board, so it lives in the footer and the welcome dialog instead of
+// taking a slot in the primary nav (which was also crowding the mobile row).
 const nav = [
   { to: "/dashboard", label: "Dashboard" },
   { to: "/track", label: "Track" },
@@ -10,8 +13,21 @@ const nav = [
   { to: "/qualification", label: "Qualifying" },
   { to: "/stats", label: "Stats" },
   { to: "/schedule", label: "Schedule" },
-  { to: "/how-it-works", label: "How it works" },
 ] as const;
+
+function SearchIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true" className={`size-[18px] ${className}`}>
+      <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M13.5 13.5 17.5 17.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
 /** Replaced the old fixed left Sidebar per the user's request: the same
  * sections now live as a single horizontal bar on top, so pages get
@@ -46,8 +62,11 @@ export function TopNav({
   // Scroll the current page's own link into view on every route change.
   const activeRef = useRef<HTMLAnchorElement>(null);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [searchOpen, setSearchOpen] = useState(false);
   useEffect(() => {
     activeRef.current?.scrollIntoView({ inline: "center", block: "nearest" });
+    // Collapse the mobile search row whenever the route changes.
+    setSearchOpen(false);
   }, [pathname]);
 
   return (
@@ -105,6 +124,17 @@ export function TopNav({
           <div className="hidden min-w-0 sm:block">
             <AthleteSearch />
           </div>
+          {/* Mobile: no room for the field inline, so a magnifier toggles a
+              full-width search row that drops down under the bar. */}
+          <button
+            type="button"
+            aria-label="Search athletes"
+            aria-expanded={searchOpen}
+            onClick={() => setSearchOpen((o) => !o)}
+            className="-m-1.5 flex min-h-11 items-center rounded-full p-1.5 text-muted-foreground transition-colors hover:text-foreground active:scale-90 sm:hidden"
+          >
+            <SearchIcon />
+          </button>
           {lastUpdated && (
             <span className="nums hidden text-[11.5px] text-muted-foreground lg:block">
               Updated {lastUpdated} · {daysToFinal}d to Brussels
@@ -119,6 +149,12 @@ export function TopNav({
           </span>
         </div>
       </div>
+
+      {searchOpen && (
+        <div className="border-t border-border px-6 pb-3 pt-2 sm:hidden">
+          <AthleteSearch autoFocus onDone={() => setSearchOpen(false)} />
+        </div>
+      )}
     </header>
   );
 }
