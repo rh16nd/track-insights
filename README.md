@@ -1,9 +1,6 @@
-# PodiumCall — Web App
+# PodiumCall — web app
 
-The frontend of **PodiumCall**: a website that predicts the podium for every
-discipline at the 2026 Wanda Diamond League Final. It renders the predictions,
-standings, and athlete analytics served by the Python API in a separate repo,
-[**athletics-predictor**](https://github.com/rh16nd/athletics-predictor).
+The frontend of **PodiumCall**: a website that predicts the podium for every discipline at the 2026 Wanda Diamond League Final. It draws the predictions, standings, and athlete analytics that come from the Python API in a separate repo, [athletics-predictor](https://github.com/rh16nd/athletics-predictor).
 
 **Live:** https://podiumcall.vercel.app
 
@@ -11,10 +8,7 @@ standings, and athlete analytics served by the Python API in a separate repo,
 
 ## What it is
 
-A read-only React app. Every number on it — podium probabilities, qualifying
-standings, head-to-head records, season form — is fetched live from the API; the
-frontend computes nothing itself and stores no data. It predicts *podium
-membership* (top 3), not who wins.
+A read-only React app. Every number on it (podium probabilities, qualifying standings, head-to-head records, season form) is fetched live from the API. The frontend works nothing out for itself and stores no data of its own. It predicts *podium membership* (top 3), not the winner.
 
 ## Tech stack
 
@@ -25,45 +19,35 @@ membership* (top 3), not who wins.
 
 ## Pages
 
-Landing · Dashboard (the surest calls) · Track & Field (per-discipline tables) ·
-Discipline detail (field depth + head-to-head) · Athlete profile (career, form,
-rivalries) · Qualifying (DL standings vs the cut) · Stats (performance index) ·
-Projections · Schedule.
+Landing · Dashboard (the surest calls) · Track & Field (per-discipline tables) · Discipline detail (field depth + head-to-head) · Athlete profile (career, form, rivalries) · Qualifying (DL standings vs the cut) · Stats (performance index) · Projections · Schedule.
 
 ## Run locally
 
-Needs Node.js and the API running (see the athletics-predictor repo).
+You'll need Node.js and the API running (see the athletics-predictor repo).
 
 ```bash
 npm install
 npm run dev        # http://localhost:8080
 ```
 
-By default the app calls the API at `http://localhost:5000`. Point it elsewhere
-with an env var (see below).
+By default the app calls the API at `http://localhost:5000`. To point it somewhere else, use an env var (below).
 
 ## Environment variables
 
-All are optional and injected at **build time** (`VITE_*`), so a change needs a
-redeploy. Copy `.env.example` to `.env.local` to set them locally.
+All of these are optional and get baked in at **build time** (`VITE_*`), so changing one means a redeploy. Copy `.env.example` to `.env.local` to set them locally.
 
 | Var | Purpose |
 |-----|---------|
 | `VITE_API_BASE_URL` | Where the API lives (default `http://localhost:5000`) |
-| `VITE_SITE_URL` | The site's public origin — enables canonical URLs, JSON-LD, sitemap |
+| `VITE_SITE_URL` | The site's public origin. Turns on canonical URLs, JSON-LD, and the sitemap |
 | `VITE_GOOGLE_SITE_VERIFICATION` | Renders the Search Console verification tag |
 
 ## Deployment (Vercel)
 
-Auto-deploys from `main`. Two things are Vercel-specific:
+Auto-deploys from `main`. Two things here are specific to Vercel:
 
-- **`NITRO_PRESET=vercel`** must be set as an env var — the nitro build target in
-  `vite.config.ts` is overridden by the platform, and this is what actually
-  selects the Vercel output.
-- **`vercel.json`** carries the security headers and the Content-Security-Policy.
-  (`public/_headers` is Cloudflare-only and Vercel ignores it.) The CSP is a
-  whitelist: any new external origin — a new font, image host, analytics, or a
-  moved API — must be added there or the browser blocks it.
+- **`NITRO_PRESET=vercel`** has to be set as an env var. The platform overrides the nitro build target in `vite.config.ts`, and this env var is what actually picks the Vercel output.
+- **`vercel.json`** holds the security headers and the Content-Security-Policy. (`public/_headers` is Cloudflare-only, and Vercel ignores it.) The CSP is a whitelist, so any new external origin (a new font, an image host, analytics, a moved API) has to be added there or the browser blocks it.
 
 ## Related
 
