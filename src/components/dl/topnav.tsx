@@ -10,6 +10,7 @@ const nav = [
   { to: "/qualification", label: "Qualifying" },
   { to: "/stats", label: "Stats" },
   { to: "/schedule", label: "Schedule" },
+  { to: "/how-it-works", label: "How it works" },
 ] as const;
 
 /** Replaced the old fixed left Sidebar per the user's request: the same

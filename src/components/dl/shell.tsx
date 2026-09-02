@@ -196,7 +196,17 @@ export function Shell({
               Data scraped from <WaSourceLink tone="canvas" />. Not affiliated with World Athletics
               or the Wanda Diamond League.
             </p>
-            <p>Predictions are model estimates, not betting advice.</p>
+            <div className="flex items-center gap-4">
+              <Link
+                to="/how-it-works"
+                className="underline decoration-white/40 underline-offset-2 transition-colors hover:decoration-white"
+              >
+                How it works
+              </Link>
+              <span className="text-white/70">
+                Predictions are model estimates, not betting advice.
+              </span>
+            </div>
           </div>
         </footer>
       </div>

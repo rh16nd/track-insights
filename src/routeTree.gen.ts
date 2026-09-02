@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as FieldRouteImport } from './routes/field'
+import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ProjectionsRouteImport } from './routes/projections'
 import { Route as QualificationRouteImport } from './routes/qualification'
 import { Route as ScheduleRouteImport } from './routes/schedule'
@@ -33,6 +34,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const FieldRoute = FieldRouteImport.update({
   id: '/field',
   path: '/field',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HowItWorksRoute = HowItWorksRouteImport.update({
+  id: '/how-it-works',
+  path: '/how-it-works',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectionsRoute = ProjectionsRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/field': typeof FieldRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/projections': typeof ProjectionsRoute
   '/qualification': typeof QualificationRoute
   '/schedule': typeof ScheduleRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/field': typeof FieldRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/projections': typeof ProjectionsRoute
   '/qualification': typeof QualificationRoute
   '/schedule': typeof ScheduleRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/field': typeof FieldRoute
+  '/how-it-works': typeof HowItWorksRoute
   '/projections': typeof ProjectionsRoute
   '/qualification': typeof QualificationRoute
   '/schedule': typeof ScheduleRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/field'
+    | '/how-it-works'
     | '/projections'
     | '/qualification'
     | '/schedule'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/field'
+    | '/how-it-works'
     | '/projections'
     | '/qualification'
     | '/schedule'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/field'
+    | '/how-it-works'
     | '/projections'
     | '/qualification'
     | '/schedule'
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   FieldRoute: typeof FieldRoute
+  HowItWorksRoute: typeof HowItWorksRoute
   ProjectionsRoute: typeof ProjectionsRoute
   QualificationRoute: typeof QualificationRoute
   ScheduleRoute: typeof ScheduleRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/field'
       fullPath: '/field'
       preLoaderRoute: typeof FieldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/how-it-works': {
+      id: '/how-it-works'
+      path: '/how-it-works'
+      fullPath: '/how-it-works'
+      preLoaderRoute: typeof HowItWorksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projections': {
@@ -239,6 +259,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   FieldRoute: FieldRoute,
+  HowItWorksRoute: HowItWorksRoute,
   ProjectionsRoute: ProjectionsRoute,
   QualificationRoute: QualificationRoute,
   ScheduleRoute: ScheduleRoute,
