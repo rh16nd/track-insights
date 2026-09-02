@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { JsonLd } from "@/components/dl/json-ld";
+import { Analytics } from "@vercel/analytics/react";
 import { websiteSchema } from "@/lib/seo";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -169,6 +170,11 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      {/* Vercel Web Analytics: cookieless page-view + referrer counts. Renders
+          nothing on the server and injects its first-party script on the
+          client (same-origin /_vercel/insights, so the CSP's 'self' covers
+          it). No-op off Vercel, so local dev is unaffected. */}
+      <Analytics />
     </QueryClientProvider>
   );
 }
