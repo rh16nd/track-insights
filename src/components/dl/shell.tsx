@@ -7,6 +7,7 @@ import { API_IS_LOCAL } from "@/lib/api";
 import { WaSourceLink } from "./wa-link";
 import { JsonLd } from "./json-ld";
 import { breadcrumbSchema } from "@/lib/seo";
+import { InfoTip } from "./info-tip";
 
 export const dotClass: Record<MeetStatus, string> = {
   done: "bg-muted-foreground/40",
@@ -214,26 +215,6 @@ export function Shell({
   );
 }
 
-/** A drawn info "i", not a Unicode glyph — the craft floor bans emoji/unicode
- * standing in for an icon. One consistent 1.3px stroke, sized to sit beside
- * a label-caps line. `aria-hidden` because the definition it marks travels in
- * a `title` (sighted hover) and an `sr-only` sentence (assistive tech); the
- * glyph is only the visible cue that the definition exists. */
-export function InfoGlyph({ className = "" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 16 16"
-      aria-hidden="true"
-      fill="none"
-      className={`size-[13px] shrink-0 ${className}`}
-    >
-      <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
-      <circle cx="8" cy="5.15" r="0.95" fill="currentColor" />
-      <path d="M8 7.4v3.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 /** A figure on the head band — v0's `.stat` inside `.figrow`. Big number,
  * small caps label under it, no icon and no card: on a coloured band the
  * band is already the container, and boxing each stat again was what made
@@ -252,12 +233,8 @@ export function HeadFigure({
   value: ReactNode;
   unit?: string | undefined;
   label: string;
-  /** An optional one-line definition of what the figure measures. Rendered
-   * as a `title` for hover and an `sr-only` sentence for assistive tech, with
-   * a visible info glyph as the cue. Deliberately not a styled popover: this
-   * band is not a scroll container, but the same mechanism is shared with the
-   * discipline table's headers (which are), and one consistent hover treatment
-   * beats a rich tooltip here and a plain one there. */
+  /** An optional one-line definition of what the figure measures, shown in a
+   * tap-and-hover InfoTip so it works on a phone as well as a mouse. */
   hint?: string | undefined;
   /** v0's `.stat.gold` — the one figure on a band that is the point of the
    * page (the Final's date on the schedule). */
@@ -273,14 +250,13 @@ export function HeadFigure({
         {value}
         {unit && <span className="ml-px text-[0.5em] font-semibold text-white/92">{unit}</span>}
       </b>
-      <span className="label-caps mt-2.5 flex items-center gap-1.5 text-white/92" title={hint}>
+      <span className="label-caps mt-2.5 flex items-center gap-1.5 text-white/92">
         {icon}
         {label}
         {hint && (
-          <>
-            <InfoGlyph className="text-white/55" />
-            <span className="sr-only"> — {hint}</span>
-          </>
+          <InfoTip label={`About ${label}`} tone="canvas">
+            {hint}
+          </InfoTip>
         )}
       </span>
     </div>
@@ -628,7 +604,11 @@ export function Panel({
       {/* 28px is right on a desktop panel and too much on a 375px phone,
           where it would spend 15% of the screen on gutters -- v0 steps its
           own band padding down on mobile for the same reason. */}
-      <div className="flex items-start justify-between gap-4 px-5 pt-5 sm:px-7 sm:pt-6">
+      {/* Stacks on mobile: with an action button (e.g. "How level is this
+          field?") sharing the row, the title got squeezed into a narrow column
+          and wrapped to three lines on a phone. On sm+ the title and action sit
+          on one row again. */}
+      <div className="flex flex-col gap-3 px-5 pt-5 sm:flex-row sm:items-start sm:justify-between sm:gap-4 sm:px-7 sm:pt-6">
         <div className="min-w-0">
           <h2 className="label-caps text-muted-foreground">{title}</h2>
           {subtitle && (

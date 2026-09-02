@@ -17,7 +17,7 @@ export const Route = createFileRoute("/field")({
 });
 
 const DESCRIPTION =
-  "Jumps and throws — every field discipline contested at the Final. Pick an event to see each qualified athlete's chance of finishing on the podium.";
+  "Jumps and throws, every field discipline contested at the Final. Pick an event to see each qualified athlete's chance of finishing on the podium.";
 
 function FieldPage() {
   const state = usePredictions();

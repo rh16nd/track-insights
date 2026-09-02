@@ -52,7 +52,13 @@ export function TopNav({
 
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-card/90 backdrop-blur-md">
-      <div className="grid h-16 grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-2 px-6 sm:px-8">
+      {/* On mobile the center column is `minmax(0,1fr)`, bounded between the
+          brand and the Live badge, so the scrolling nav strip stays inside its
+          own lane instead of overrunning the badge (measured live: the "Live"
+          pill was sitting on top of the "Stats" link). On sm+ everything fits,
+          so it goes back to `1fr auto 1fr`, which centres the nav in the
+          viewport rather than between two unequal ends. */}
+      <div className="grid h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-6 sm:grid-cols-[1fr_minmax(0,auto)_1fr] sm:px-8">
         {/* -m-2 p-2 expands the real hit area to 44x44 without growing the
             mark visually -- the 2026-08-24 critique measured this link at a
             bare 24x24px on mobile, the single element every visitor taps to

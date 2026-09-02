@@ -16,6 +16,7 @@ import { statusLabel, type ConfidenceRow, type TopWinner } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useCountUp } from "@/hooks/useCountUp";
 import { NewsFeed } from "@/components/dl/news-feed";
+import { WelcomeLauncher } from "@/components/dl/welcome-modal";
 
 const LAST_PROBS_KEY = "podiumcall:lastProbs";
 
@@ -482,6 +483,10 @@ function Dashboard() {
           every athlete missing from the field. Previously this only existed
           as a tooltip on a badge. */}
       {data && <NewsFeed />}
+
+      {/* First-run onboarding + a persistent "About" button to reopen it.
+          Self-contained: manages its own open state and localStorage. */}
+      <WelcomeLauncher />
     </Shell>
   );
 }

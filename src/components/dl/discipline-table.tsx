@@ -2,7 +2,8 @@
 import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Athlete, Discipline } from "@/lib/dl-data";
-import { InfoGlyph, Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
+import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
+import { InfoTip } from "./info-tip";
 import { NatFlag } from "./nat-flag";
 
 /** Which column the table is ordered by. "rank" is the API's own ordering
@@ -93,13 +94,10 @@ function SortHeader({
   sort: Sort;
   onSort: (key: SortKey) => void;
   className: string;
-  /** A one-line definition of the column. Carried on the button's `title`
-   * (hover) and its `sr-only` text (assistive tech), with a drawn info glyph
-   * as the visible cue. A native title rather than a styled popover on
-   * purpose: this header lives inside the table's `overflow-x-auto` wrapper,
-   * where an absolutely-positioned popover gets clipped (and can force a
-   * vertical scrollbar); `title` never clips. The glyph sits inside the sort
-   * button, so hovering anywhere on the header shows the definition. */
+  /** A one-line definition of the column, shown in a tap-and-hover InfoTip
+   * sitting beside the sort control. It's a real popover (portalled out of the
+   * table's `overflow-x-auto` wrapper so it doesn't clip) rather than a native
+   * `title`, because `title` never appears on a phone, where there's no hover. */
   hint?: string;
 }) {
   const active = sort.key === columnKey;
@@ -110,26 +108,25 @@ function SortHeader({
       aria-sort={active ? (dir === "asc" ? "ascending" : "descending") : "none"}
       className={className}
     >
-      <button
-        type="button"
-        onClick={() => onSort(columnKey)}
-        title={hint}
-        // The label alone is a 17px-tall hit target. `py-2 -my-2` grows it
-        // past the 24px WCAG 2.2 minimum without moving the header text or
-        // changing the row's height -- the extra area reaches into padding
-        // that was already empty.
-        className={`group -my-2 ml-auto flex items-center gap-1.5 py-2 font-semibold transition-colors ${
-          active ? "text-foreground" : "hover:text-foreground"
-        }`}
-      >
-        <span>{label}</span>
-        <SortArrow dir={dir} active={active} />
-        {hint && <InfoGlyph className="opacity-45 transition-opacity group-hover:opacity-80" />}
-        <span className="sr-only">
-          {active ? " — sorted, activate to reverse" : " — activate to sort by this column"}
-          {hint ? `. ${hint}` : ""}
-        </span>
-      </button>
+      {/* -my-2 pulls the taller tap targets back into the header's own
+          padding so the row height doesn't change. */}
+      <div className="-my-2 flex items-center justify-end gap-1">
+        <button
+          type="button"
+          onClick={() => onSort(columnKey)}
+          // py-2 grows the hit area past the 24px WCAG 2.2 minimum.
+          className={`group flex items-center gap-1.5 py-2 font-semibold transition-colors ${
+            active ? "text-foreground" : "hover:text-foreground"
+          }`}
+        >
+          <span>{label}</span>
+          <SortArrow dir={dir} active={active} />
+          <span className="sr-only">
+            {active ? " — sorted, activate to reverse" : " — activate to sort by this column"}
+          </span>
+        </button>
+        {hint && <InfoTip label={`About ${label}`}>{hint}</InfoTip>}
+      </div>
     </th>
   );
 }
