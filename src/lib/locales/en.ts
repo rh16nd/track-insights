@@ -222,21 +222,21 @@ export const en: Record<string, string> = {
   "howItWorks.s1.p1":
     "For every one of the **32 events** at the Brussels Final, the model gives each contender a single number: their chance of finishing **in the top three**. It never names one winner.",
   "howItWorks.s1.p2":
-    "That's on purpose. On the day, the fastest qualifier can false-start, get boxed in, or be caught on the line, so “who wins” is close to a coin toss between three or four names. “Who makes the podium” is the harder question to dodge, and the one you can actually check against the result afterwards. So every figure on the site is about the top three, never the gold medal on its own.",
+    "That's deliberate. On the day, the fastest qualifier can false-start, get blocked in, or be caught on the line, so picking the exact winner is close to a coin toss between three or four names. Picking who makes the podium is a fairer question, and one you can check against the result afterwards. So every number on the site is about the top three, never the gold medal alone.",
   "howItWorks.s2.title": "How the model learns",
   "howItWorks.s2.p1":
-    "It learns from the actual podiums of every Diamond League Final from **2018 to 2025** (2020 was cancelled). That's real ground truth, scraped straight from World Athletics' own results, not anyone's ranking of who “should” win.",
+    "The model learns from the real podiums of every Diamond League Final from **2018 to 2025** (2020 was cancelled). These are actual results, taken straight from World Athletics, not anyone's opinion of who should have won.",
   "howItWorks.s2.p2":
-    "For each athlete in contention it works out **14 signals** from their real season: their season best and career best, how consistent they've been meet to meet, which way their form is trending, how many times they've raced, and how they've done **head-to-head against this exact field**. A **random forest** weighs all of it into one number, the probability of a podium. A forest is used because these signals pull on each other in ways a single straight-line formula misses: a blazing season best counts for less, for instance, if the athlete has barely raced all year.",
+    "For each athlete in the running, the model works out **14 signals** from their real season: their best mark this year and their career best, how steady they've been from meeting to meeting, which way their form is heading, how often they've raced, and their record **head-to-head against this exact field**. A **random forest**, a model that weighs many signals together, turns all of it into one number: the chance of a podium. It weighs them together because the signals affect each other. A superb season best counts for less, for example, if the athlete has barely raced all year.",
   "howItWorks.s2.p3":
-    "And it's graded the honest way. Under **walk-forward validation** the model only ever trains on seasons *before* the year it's being scored on, so the accuracy below comes entirely from Finals it had never seen. That's the difference between a real forecast and a model that has just memorised the answers.",
+    "And it's tested honestly, using **walk-forward validation**: the model is only ever trained on seasons *before* the year it's scored on, so the accuracy below comes entirely from Finals it had never seen. That's the difference between a real forecast and a model that has simply memorised the answers.",
   "howItWorks.s3.title": "How accurate it is",
   "howItWorks.s3.basisFallback":
-    "Podium hit rate among the athletes who actually contest the Final",
+    "Podium hit rate among the athletes who actually reach the Final",
   "howItWorks.s3.toplistCaption":
-    "The brutal stress test: picking the 3 medallists out of a discipline's whole ~101-name toplist, which the site never actually asks of it",
+    "A much harder test: picking the 3 medallists out of a discipline's full ranking list of about 100 athletes, which the site never actually does.",
   "howItWorks.s3.note":
-    "Both numbers come off the exact same predictions; they just ask different questions. The first is the real job, and the one the site does: given the eight-to-ten athletes who actually make a Final, how often is the model's projected top three right? The second is a deliberately harder task it never has to perform. They sit about twelve points apart, and neither is rounded up or picked from a flattering season.",
+    "Both numbers come from the same predictions; they just ask different questions. The first is the real job the site does: given the eight to ten athletes who actually make a Final, how often is the model's projected top three correct? The second is a deliberately harder test it never faces in practice. The two sit about twelve points apart, and neither is rounded up or taken from a flattering season.",
   "howItWorks.s4.title": "Where the data comes from",
   "howItWorks.s4.pBefore": "Every mark, ranking and result comes straight from ",
   "howItWorks.s4.pAfter":
@@ -248,7 +248,7 @@ export const en: Record<string, string> = {
   "howItWorks.s4.seasonsDeep": "Seasons deep",
   "howItWorks.s5.title": "What it can't do",
   "howItWorks.s5.b1":
-    "It reads **form, not the future**. A last-minute injury, a withdrawal announced the morning of, or a tactical sit-and-kick race can all beat the numbers on the day.",
+    "It reads **form, not the future**. A last-minute injury, a withdrawal announced on the morning, or a slow tactical race decided by a final sprint can all beat the numbers on the day.",
   "howItWorks.s5.b2":
     "It predicts **who makes the podium, not the exact 1-2-3**, and it never claims to know who wins.",
   "howItWorks.s5.b3":

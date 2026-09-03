@@ -221,21 +221,21 @@ export const fr: Record<string, string> = {
   "howItWorks.s1.p1":
     "Pour chacune des **32 épreuves** de la finale de Bruxelles, le modèle donne à chaque prétendant un seul chiffre : sa chance de finir **dans le top trois**. Il ne désigne jamais un vainqueur unique.",
   "howItWorks.s1.p2":
-    "C'est délibéré. Le jour J, le qualifié le plus rapide peut faire un faux départ, se retrouver enfermé ou être repris sur la ligne : « qui gagne » tient donc presque du pile ou face entre trois ou quatre noms. « Qui monte sur le podium » est la question la plus difficile à esquiver, et celle que l'on peut réellement vérifier après coup. Chaque chiffre du site porte donc sur le top trois, jamais sur la seule médaille d'or.",
+    "C'est délibéré. Le jour J, le qualifié le plus rapide peut faire un faux départ, se faire enfermer ou être repris sur la ligne : prédire le vainqueur exact tient donc presque du pile ou face entre trois ou quatre noms. Prédire qui monte sur le podium est une question plus juste, et que l'on peut vérifier face au résultat ensuite. Chaque chiffre du site porte donc sur le top trois, jamais sur la seule médaille d'or.",
   "howItWorks.s2.title": "Comment le modèle apprend",
   "howItWorks.s2.p1":
-    "Il apprend des podiums réels de chaque finale de Diamond League de **2018 à 2025** (2020 a été annulée). C'est une vérité de terrain, extraite directement des résultats de World Athletics, et non le classement de qui « devrait » gagner selon quelqu'un.",
+    "Le modèle apprend des podiums réels de chaque finale de Diamond League de **2018 à 2025** (2020 a été annulée). Ce sont de vrais résultats, tirés directement de World Athletics, pas l'avis de quiconque sur qui aurait dû gagner.",
   "howItWorks.s2.p2":
-    "Pour chaque athlète en lice, il calcule **14 signaux** à partir de sa vraie saison : sa meilleure performance de la saison et son record personnel, sa régularité d'une réunion à l'autre, la tendance de sa forme, son nombre de courses, et son bilan en **confrontation directe avec ce plateau précis**. Une **forêt aléatoire** pèse le tout en un seul chiffre, la probabilité de podium. On utilise une forêt parce que ces signaux se tirent mutuellement dessus d'une façon qu'une simple formule linéaire manque : une meilleure performance éclatante compte moins, par exemple, si l'athlète n'a presque pas couru de l'année.",
+    "Pour chaque athlète en lice, le modèle calcule **14 signaux** à partir de sa vraie saison : sa meilleure marque de l'année et son record en carrière, sa régularité d'une réunion à l'autre, la tendance de sa forme, son nombre de courses, et son bilan **en confrontation directe avec ce plateau précis**. Une **forêt aléatoire**, un modèle qui pèse de nombreux signaux ensemble, transforme le tout en un seul chiffre : la chance de podium. Elle les pèse ensemble parce que les signaux s'influencent les uns les autres. Une superbe meilleure performance compte moins, par exemple, si l'athlète n'a presque pas couru de l'année.",
   "howItWorks.s2.p3":
-    "Et il est noté honnêtement. En **validation glissante**, le modèle ne s'entraîne jamais que sur des saisons *antérieures* à l'année sur laquelle il est évalué : la précision ci-dessous provient donc entièrement de finales qu'il n'avait jamais vues. C'est toute la différence entre une vraie prévision et un modèle qui a simplement appris les réponses par cœur.",
+    "Et il est testé honnêtement, par **validation glissante** : le modèle n'est entraîné que sur des saisons *antérieures* à l'année sur laquelle il est évalué, la précision ci-dessous provient donc entièrement de finales qu'il n'avait jamais vues. C'est toute la différence entre une vraie prévision et un modèle qui a simplement appris les réponses par cœur.",
   "howItWorks.s3.title": "Sa précision",
   "howItWorks.s3.basisFallback":
-    "Taux de réussite du podium parmi les athlètes qui disputent réellement la finale, en validation glissante",
+    "Taux de réussite du podium parmi les athlètes qui atteignent réellement la finale",
   "howItWorks.s3.toplistCaption":
-    "Le test de résistance brutal : choisir les 3 médaillés dans l'ensemble de la liste d'environ 101 noms d'une discipline, ce que le site ne lui demande jamais en pratique",
+    "Un test bien plus difficile : choisir les 3 médaillés dans la liste de classement complète d'environ 100 athlètes d'une discipline, ce que le site ne fait jamais en pratique.",
   "howItWorks.s3.note":
-    "Les deux chiffres proviennent exactement des mêmes prédictions ; ils posent simplement des questions différentes. Le premier correspond au vrai travail, celui que fait le site : étant donné les huit à dix athlètes qui disputent réellement une finale, à quelle fréquence le top trois projeté par le modèle est-il juste ? Le second est une tâche volontairement plus dure qu'il n'a jamais à accomplir. Ils sont séparés d'une douzaine de points, et ni l'un ni l'autre n'est arrondi vers le haut ou choisi dans une saison flatteuse.",
+    "Les deux chiffres proviennent des mêmes prédictions ; ils posent simplement des questions différentes. Le premier est le vrai travail que fait le site : étant donné les huit à dix athlètes qui atteignent réellement une finale, à quelle fréquence le top trois projeté par le modèle est-il correct ? Le second est un test volontairement plus difficile qu'il n'a jamais à passer en pratique. Les deux sont séparés d'une douzaine de points, et ni l'un ni l'autre n'est arrondi vers le haut ni choisi dans une saison flatteuse.",
   "howItWorks.s4.title": "D'où viennent les données",
   "howItWorks.s4.pBefore":
     "Chaque performance, classement et résultat provient directement de l'API publique de ",
@@ -248,7 +248,7 @@ export const fr: Record<string, string> = {
   "howItWorks.s4.seasonsDeep": "Saisons d'historique",
   "howItWorks.s5.title": "Ce qu'il ne peut pas faire",
   "howItWorks.s5.b1":
-    "Il lit **la forme, pas l'avenir**. Une blessure de dernière minute, un forfait annoncé le matin même ou une course tactique jouée au sprint final peuvent tous démentir les chiffres le jour J.",
+    "Il lit **la forme, pas l'avenir**. Une blessure de dernière minute, un forfait annoncé le matin même, ou une course tactique lente décidée au sprint final peuvent tous démentir les chiffres le jour J.",
   "howItWorks.s5.b2":
     "Il prédit **qui monte sur le podium, pas le 1-2-3 exact**, et il ne prétend jamais savoir qui gagne.",
   "howItWorks.s5.b3":
