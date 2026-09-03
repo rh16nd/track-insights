@@ -22,7 +22,7 @@ export function usePredictions(): State {
         if (ac.signal.aborted) return;
         setState({
           status: "error",
-          message: describeApiError(e, "No predictions yet — run python run.py to build them."),
+          message: describeApiError(e, "No predictions yet. Run python run.py to build them."),
           retry,
         });
       });

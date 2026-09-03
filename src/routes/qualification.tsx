@@ -282,7 +282,7 @@ function QualificationPage() {
           </div>
 
           <Panel
-            title={`Diamond League standings — ${current.disc}`}
+            title={`Diamond League standings · ${current.disc}`}
             subtitle={
               current.cutPoints === null
                 ? `The top ${current.qualLimit} on points qualify for the Final.`

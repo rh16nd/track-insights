@@ -276,8 +276,8 @@ function LeastSurePanel({ confidence }: { confidence: ConfidenceRow[] }) {
       </ul>
       <p className="mt-4 text-[12px] leading-relaxed text-muted-foreground">
         This is the favourite&apos;s own chance of a podium, not a margin over the next athlete. A
-        low number means no one in that field stands out — follow a row through to see how level it
-        really is.
+        low number means no one in that field stands out, so follow a row through to see how level
+        it really is.
       </p>
     </Panel>
   );

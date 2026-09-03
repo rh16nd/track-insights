@@ -91,7 +91,7 @@ export function StorylineCards({
           </div>
           <p className="mt-1 max-w-lg text-[13.5px] leading-relaxed text-foreground">
             <AthleteLinks discKey={discKey} names={featured.athletes} />
-            {" — "}
+            {": "}
             {featured.text}
           </p>
         </div>
@@ -116,8 +116,8 @@ export function StorylineCards({
                 <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
                   <span className="text-foreground">
                     <AthleteLinks discKey={discKey} names={s.athletes} />
-                  </span>{" "}
-                  — {s.text}
+                  </span>
+                  : {s.text}
                 </p>
               </div>
             </li>

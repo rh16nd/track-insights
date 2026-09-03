@@ -25,10 +25,7 @@ export function useStats(): State {
         if (ac.signal.aborted) return;
         setState({
           status: "error",
-          message: describeApiError(
-            e,
-            "No season toplists yet — run python run.py to scrape them.",
-          ),
+          message: describeApiError(e, "No season toplists yet. Run python run.py to scrape them."),
           retry,
         });
       });

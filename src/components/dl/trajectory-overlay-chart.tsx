@@ -134,7 +134,7 @@ export function TrajectoryOverlayChart({
     <div>
       <div className="flex items-baseline justify-between gap-3">
         <div className="label-caps text-muted-foreground">
-          Real {currentYear} form — top {comparable.length}
+          Real {currentYear} form · top {comparable.length}
         </div>
         <div className="flex items-center gap-3">
           <div className="text-[11px] text-muted-foreground">
@@ -356,7 +356,7 @@ export function TrajectoryOverlayChart({
       {excluded.length > 0 && (
         <div className="mt-2 text-[11px] text-muted-foreground/85">
           {excluded.map((t) => t.name).join(", ")} {excluded.length === 1 ? "has" : "have"} no{" "}
-          {currentYear} meeting data on record yet — see their profile for their most recent season.
+          {currentYear} meeting data on record yet. See their profile for their most recent season.
         </div>
       )}
     </div>

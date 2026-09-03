@@ -27,7 +27,7 @@ export function useQualification(): State {
           status: "error",
           message: describeApiError(
             e,
-            "No standings data yet — run python src/live_fetcher.py to scrape it.",
+            "No standings data yet. Run python src/live_fetcher.py to scrape it.",
           ),
           retry,
         });

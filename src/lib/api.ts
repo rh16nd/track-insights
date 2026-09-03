@@ -42,7 +42,7 @@ export class ApiError extends Error {
 
 const OFFLINE_MESSAGE = API_IS_LOCAL
   ? "Could not reach the prediction API."
-  : "Could not reach the prediction API. It may be restarting — try again in a moment.";
+  : "Could not reach the prediction API. It may be restarting, so try again in a moment.";
 
 /** Wording used by every surface, so the site says one thing rather than
  * five. `notFound` lets a caller explain what is specifically missing,

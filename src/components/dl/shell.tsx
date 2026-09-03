@@ -493,7 +493,7 @@ export function WatchBadge({
   const [open, setOpen] = useState(false);
   const detail = reason
     ? `Flagged from: ${reason}`
-    : "Recent injury or DNF mention — flagged for review";
+    : "Recent injury or DNF mention, flagged for review";
   const toneClass =
     tone === "dark"
       ? "bg-[oklch(0.7_0.19_27_/_0.16)] text-[oklch(0.93_0.09_27)]"

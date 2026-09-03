@@ -72,7 +72,7 @@ function DisciplinePage() {
               closing centrepiece. */}
           {data.trajectories && data.trajectories.length > 0 && (
             <Panel
-              title={`Real season form — ${data.disc}`}
+              title={`Real season form · ${data.disc}`}
               subtitle="Every mark each contender actually recorded this season, on a real calendar. These aren't a smoothed trend; the dots are the meetings they turned up to."
               className="mt-6"
             >
@@ -82,7 +82,7 @@ function DisciplinePage() {
 
           {data.storylines && data.storylines.length > 0 && (
             <Panel
-              title={`Storylines — ${data.disc}`}
+              title={`Storylines · ${data.disc}`}
               subtitle="Computed from the data, not written: each one is anchored on a real number, and the featured card is whichever most contradicts the model's own pick."
               className="mt-6"
             >
@@ -252,7 +252,7 @@ function ScoreSpread({ scores }: { scores: FieldScore[] }) {
           return (
             <span
               key={s.name}
-              title={`${s.name} — ${s.score}`}
+              title={`${s.name} · ${s.score}`}
               className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-card"
               style={{
                 left: `calc(${pct}% * 0.9 + 5%)`,

@@ -200,12 +200,12 @@ const STEPS = [
 // meeting names from the pipeline (see major_meets_scraper.py/
 // season_results_scraper.py), not fabricated data.
 const FEED = [
-  "Wanda Diamond League — Lausanne",
-  "Prefontaine Classic — Eugene",
-  "FBK Games — Hengelo",
-  "IAAF World Championships in Athletics — 2019",
+  "Wanda Diamond League · Lausanne",
+  "Prefontaine Classic · Eugene",
+  "FBK Games · Hengelo",
+  "IAAF World Championships in Athletics · 2019",
   "European Athletics Championships",
-  "Paavo Nurmi Games — Turku",
+  "Paavo Nurmi Games · Turku",
 ];
 
 function Landing() {

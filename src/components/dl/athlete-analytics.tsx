@@ -348,11 +348,19 @@ function SeasonShapeChart({
             <div key={m.month} className="flex flex-1 flex-col items-center justify-end gap-1.5">
               <span className="nums text-[11px] text-muted-foreground">{m.races}</span>
               <div
-                className="w-full rounded-t-[4px] transition-[height] duration-500 ease-out"
+                className={`w-full rounded-t-[4px] transition-[height] duration-500 ease-out ${
+                  isBest ? "ring-2 ring-gold-strong ring-offset-1 ring-offset-card" : ""
+                }`}
                 style={{
+                  // The season-best bar is a bright, clearly LIGHTER gold; the
+                  // rest are dark terracotta. It used to be a gold->terracotta
+                  // gradient sitting at almost the same lightness as the normal
+                  // terracotta->brick bars, so nobody could pick it out. A
+                  // lightness gap reads even in greyscale / for colour-blind
+                  // viewers, and the ring adds a non-colour cue on top.
                   height: `${Math.max(6, (m.races / peak) * 84)}px`,
                   backgroundImage: isBest
-                    ? "linear-gradient(180deg, var(--gold-strong), var(--terracotta))"
+                    ? "linear-gradient(180deg, var(--gold-light), var(--gold-strong))"
                     : "linear-gradient(180deg, var(--terracotta), var(--brick))",
                 }}
                 title={`${m.month}: ${m.races} ${startNoun(isField, m.races)}${isBest ? ", season best set here" : ""}`}

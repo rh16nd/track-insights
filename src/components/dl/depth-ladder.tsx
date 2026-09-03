@@ -162,8 +162,8 @@ export function DepthLadder({ rows }: { rows: DisciplineDepth[] }) {
         clear of its own median; the most top-heavy is{" "}
         <span className="font-medium text-foreground">{widest?.disc}</span> at{" "}
         <span className="nums">{widest ? widest.topScore - widest.medianScore : 0}</span>. This is
-        the spread across everyone World Athletics ranks in the event — a different question from
-        how level the eight-strong Final field is, which each discipline&apos;s own page answers.
+        the spread across everyone World Athletics ranks in the event, a different question from how
+        level the eight-strong Final field is, which each discipline&apos;s own page answers.
       </p>
     </Panel>
   );

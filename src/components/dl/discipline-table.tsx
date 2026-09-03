@@ -243,7 +243,7 @@ export function DisciplineTable({
           the long-distance races 10, so the men's shot put page promised a
           top 8 of a 6-man final. qualLimit is the real number. */}
       <Panel
-        title={`Projected top ${current.qualLimit} — ${current.label}`}
+        title={`Projected top ${current.qualLimit} · ${current.label}`}
         subtitle={SUBTITLE[sort.key]}
         className="mt-4"
         action={
