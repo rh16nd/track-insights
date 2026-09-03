@@ -254,6 +254,92 @@ export const en: Record<string, string> = {
   "howItWorks.s5.b3":
     "It's **not affiliated with World Athletics** or the Wanda Diamond League. It just reads their public data.",
 
+  // Qualifying
+  "qual.num.6": "Six",
+  "qual.num.8": "Eight",
+  "qual.num.10": "Ten",
+  "qual.places": "places",
+  "qual.lanes": "lanes",
+  "qual.headline": "{{word}} {{noun}}. The race to make the race.",
+  "qual.headlineFallback": "Race for the Final",
+  "qual.description":
+    "Who has actually earned a place at the Final. These are World Athletics' own Diamond League points, not a prediction, with the gap to the qualification cut worked out from what's still winnable.",
+  "qual.descriptionDecided":
+    "Who has actually earned a place at the Final. These are World Athletics' own Diamond League points, not a prediction, with every scoring meeting of the 2026 season now run.",
+  "qual.eyebrowOne": "1 scoring meeting left · a win is worth {{pts}} points",
+  "qual.eyebrowMany": "{{n}} scoring meetings left · a win is worth {{pts}} points",
+  "qual.eyebrowDecided": "Every scoring meeting is run, so the standings are final",
+  "qual.eyebrowBare": "2026 Diamond League standings",
+  "qual.figQualify": "Qualify for the Final",
+  "qual.figPoints": "Points to make it",
+  "qual.figMeetingsLeft": "Meetings left",
+  "qual.figPointsForWin": "Points for a win",
+  "qual.standingsSkeleton": "Diamond League standings",
+  "qual.tightTitleDecided": "Level at the cut line",
+  "qual.tightTitleNext": "Closest to the line going into {{city}}",
+  "qual.tightTitle": "Closest to the line",
+  "qual.tightSubtitleDecided":
+    "Every scoring meeting is run, and in these disciplines the athlete below the cut finished level on points with the athlete on it. World Athletics' tie-break decides them, not another race.",
+  "qual.tightSubtitle":
+    "The smallest gap between the qualification cut and the first athlete below it, the disciplines the last meeting actually decides.",
+  "qual.levelOnPoints": "Level on points",
+  "qual.behind": "behind",
+  "qual.disciplineLabel": "Discipline",
+  "qual.standingsTitle": "Diamond League standings · {{disc}}",
+  "qual.standingsSubtitle": "The top {{n}} on points qualify for the Final.",
+  "qual.standingsSubtitleCut":
+    "The top {{n}} on points qualify for the Final. The cut currently sits at {{pts}} points.",
+  "qual.caption":
+    "Diamond League standings for the {{disc}}: rank, athlete, points, meetings contested, gap to the qualifying cut and status",
+  "qual.colMeets": "Meets",
+  "qual.colPoints": "Points",
+  "qual.colGap": "Gap to cut",
+  "qual.colStatus": "Status",
+  "qual.status.safe": "Through",
+  "qual.status.in": "In",
+  "qual.status.chasing": "Chasing",
+  "qual.status.out": "Out",
+  "qual.status.unknown": "No points",
+  "qual.statusDecided.in": "Tie-break",
+  "qual.statusDecided.chasing": "Tie-break",
+  "qual.statusTitle.safe": "Can't be displaced: nobody below them can reach their total",
+  "qual.statusTitle.in": "Above the cut line as it stands, but still catchable",
+  "qual.statusTitle.chasing": "Below the line and still mathematically able to reach it",
+  "qual.statusTitle.out": "Cannot reach the cut even by winning everything left",
+  "qual.statusTitle.unknown": "World Athletics lists no points for this athlete",
+  "qual.statusTitleDecided.in":
+    "Above the cut line, but level on points with an athlete below it; World Athletics' tie-break decides",
+  "qual.statusTitleDecided.chasing":
+    "Level on points with the last qualifying place and no scoring meetings left; World Athletics' tie-break decides",
+  "qual.gapBehind": "{{n}} behind",
+  "qual.gapOnLine": "on the line",
+  "qual.gapLevel": "level with the cut",
+  "qual.gapClear": "{{n}} clear",
+  "qual.footBefore":
+    "Points are World Athletics' own, scraped from the 2026 Diamond League standings. ",
+  "qual.footOpen":
+    "“Out” means the athlete cannot reach the cut even by winning everything left; “Through” means nobody can displace them even if they never score again. Anything in between is still open. This assumes the discipline is on the remaining programme. If it isn't contested again, these standings are already final, which only makes “Out” more certain.",
+  "qual.footDecided":
+    "No scoring meetings remain, so these standings are the result. “Tie-break” marks the one thing points alone cannot settle: two athletes level on points either side of the cut, separated by World Athletics' own tie-break rules, which are not in this data.",
+  "qual.footScraped": " Scraped {{when}}.",
+  "qual.howToRead.title": "How to read it",
+  "qual.howToRead.subtitle": "The margin, not the medal.",
+  "qual.howToRead.p1Before":
+    "Points come from finishing position at each Diamond League meeting an athlete actually contested — ",
+  "qual.howToRead.p1After":
+    " for a win, scaling down from there. Nothing here is a projection: it is the arithmetic of who has scored what.",
+  "qual.howToRead.holdsBefore": " holds the {{n}}th and final place on ",
+  "qual.howToRead.holdsAfter": " points",
+  "qual.howToRead.exactlyLevel": ", exactly level with the cut",
+  "qual.howToRead.firstOutBefore": " is first out, ",
+  "qual.howToRead.point": "point",
+  "qual.howToRead.points": "points",
+  "qual.howToRead.short": " short",
+  "qual.howToRead.decidedTail": " with no meetings left to change it",
+  "qual.howToRead.openTail": " with racing still to come",
+
+  "qual.cutLine": "Qualification cut · top {{n}}",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Predicting the podium in Brussels.",

@@ -254,6 +254,92 @@ export const fr: Record<string, string> = {
   "howItWorks.s5.b3":
     "Il n'est **pas affilié à World Athletics** ni à la Wanda Diamond League. Il se contente de lire leurs données publiques.",
 
+  // Qualifying
+  "qual.num.6": "Six",
+  "qual.num.8": "Huit",
+  "qual.num.10": "Dix",
+  "qual.places": "places",
+  "qual.lanes": "couloirs",
+  "qual.headline": "{{word}} {{noun}}. La course pour disputer la course.",
+  "qual.headlineFallback": "La course pour la finale",
+  "qual.description":
+    "Qui a réellement gagné sa place en finale. Ce sont les points Diamond League de World Athletics eux-mêmes, pas une prédiction, avec l'écart jusqu'à la barre de qualification calculé sur ce qui reste à gagner.",
+  "qual.descriptionDecided":
+    "Qui a réellement gagné sa place en finale. Ce sont les points Diamond League de World Athletics eux-mêmes, pas une prédiction, toutes les réunions comptant pour le classement 2026 étant désormais disputées.",
+  "qual.eyebrowOne": "1 réunion comptante restante · une victoire vaut {{pts}} points",
+  "qual.eyebrowMany": "{{n}} réunions comptantes restantes · une victoire vaut {{pts}} points",
+  "qual.eyebrowDecided": "Toutes les réunions comptantes sont disputées, le classement est définitif",
+  "qual.eyebrowBare": "Classement Diamond League 2026",
+  "qual.figQualify": "Qualifiés pour la finale",
+  "qual.figPoints": "Points pour se qualifier",
+  "qual.figMeetingsLeft": "Réunions restantes",
+  "qual.figPointsForWin": "Points pour une victoire",
+  "qual.standingsSkeleton": "Classement Diamond League",
+  "qual.tightTitleDecided": "À égalité sur la barre",
+  "qual.tightTitleNext": "Au plus près de la barre avant {{city}}",
+  "qual.tightTitle": "Au plus près de la barre",
+  "qual.tightSubtitleDecided":
+    "Toutes les réunions comptantes sont disputées, et dans ces disciplines l'athlète sous la barre a terminé à égalité de points avec celui qui l'occupe. C'est le départage de World Athletics qui tranche, pas une autre course.",
+  "qual.tightSubtitle":
+    "Le plus petit écart entre la barre de qualification et le premier athlète en dessous : les disciplines que la dernière réunion décide vraiment.",
+  "qual.levelOnPoints": "À égalité de points",
+  "qual.behind": "de retard",
+  "qual.disciplineLabel": "Discipline",
+  "qual.standingsTitle": "Classement Diamond League · {{disc}}",
+  "qual.standingsSubtitle": "Les {{n}} premiers aux points se qualifient pour la finale.",
+  "qual.standingsSubtitleCut":
+    "Les {{n}} premiers aux points se qualifient pour la finale. La barre se situe actuellement à {{pts}} points.",
+  "qual.caption":
+    "Classement Diamond League du {{disc}} : rang, athlète, points, réunions disputées, écart à la barre de qualification et statut",
+  "qual.colMeets": "Réunions",
+  "qual.colPoints": "Points",
+  "qual.colGap": "Écart à la barre",
+  "qual.colStatus": "Statut",
+  "qual.status.safe": "Qualifié",
+  "qual.status.in": "Dedans",
+  "qual.status.chasing": "En chasse",
+  "qual.status.out": "Éliminé",
+  "qual.status.unknown": "Aucun point",
+  "qual.statusDecided.in": "Départage",
+  "qual.statusDecided.chasing": "Départage",
+  "qual.statusTitle.safe": "Indéboulonnable : personne en dessous ne peut atteindre son total",
+  "qual.statusTitle.in": "Au-dessus de la barre en l'état, mais encore rattrapable",
+  "qual.statusTitle.chasing": "Sous la barre et encore mathématiquement capable de l'atteindre",
+  "qual.statusTitle.out": "Ne peut pas atteindre la barre, même en gagnant tout ce qui reste",
+  "qual.statusTitle.unknown": "World Athletics ne recense aucun point pour cet athlète",
+  "qual.statusTitleDecided.in":
+    "Au-dessus de la barre, mais à égalité de points avec un athlète en dessous ; le départage de World Athletics tranche",
+  "qual.statusTitleDecided.chasing":
+    "À égalité de points avec la dernière place qualificative et plus aucune réunion comptante ; le départage de World Athletics tranche",
+  "qual.gapBehind": "{{n}} de retard",
+  "qual.gapOnLine": "sur la barre",
+  "qual.gapLevel": "à égalité avec la barre",
+  "qual.gapClear": "{{n}} d'avance",
+  "qual.footBefore":
+    "Les points sont ceux de World Athletics, extraits du classement Diamond League 2026. ",
+  "qual.footOpen":
+    "« Éliminé » signifie que l'athlète ne peut pas atteindre la barre, même en gagnant tout ce qui reste ; « Qualifié » signifie que personne ne peut le déloger, même s'il ne marque plus jamais. Tout ce qui se situe entre les deux reste ouvert. Cela suppose que la discipline figure au programme restant. Si elle n'est plus disputée, ce classement est déjà définitif, ce qui ne fait que rendre « Éliminé » plus certain encore.",
+  "qual.footDecided":
+    "Il ne reste aucune réunion comptante : ce classement est donc le résultat. « Départage » signale la seule chose que les points seuls ne peuvent trancher : deux athlètes à égalité de points de part et d'autre de la barre, séparés par les règles de départage de World Athletics, qui ne figurent pas dans ces données.",
+  "qual.footScraped": " Extrait le {{when}}.",
+  "qual.howToRead.title": "Comment le lire",
+  "qual.howToRead.subtitle": "La marge, pas la médaille.",
+  "qual.howToRead.p1Before":
+    "Les points viennent de la place obtenue à chaque réunion Diamond League réellement disputée — ",
+  "qual.howToRead.p1After":
+    " pour une victoire, en dégressif ensuite. Rien ici n'est une projection : c'est l'arithmétique de qui a marqué quoi.",
+  "qual.howToRead.holdsBefore": " occupe la {{n}}e et dernière place avec ",
+  "qual.howToRead.holdsAfter": " points",
+  "qual.howToRead.exactlyLevel": ", exactement à égalité avec la barre",
+  "qual.howToRead.firstOutBefore": " est le premier éliminé, à ",
+  "qual.howToRead.point": "point",
+  "qual.howToRead.points": "points",
+  "qual.howToRead.short": "",
+  "qual.howToRead.decidedTail": ", sans aucune réunion restante pour y changer quoi que ce soit",
+  "qual.howToRead.openTail": ", avec des courses encore à venir",
+
+  "qual.cutLine": "Barre de qualification · top {{n}}",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Prédire le podium à Bruxelles.",

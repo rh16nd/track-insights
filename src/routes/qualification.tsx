@@ -5,6 +5,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, HeadFigure } from "@/components/dl/shell";
 import type { QualificationDiscipline, QualificationRow, QualStatus } from "@/lib/dl-data";
 import { useQualification } from "@/hooks/useQualification";
+import { useT, type TFunc } from "@/lib/i18n";
 
 export const Route = createFileRoute("/qualification")({
   head: () =>
@@ -28,32 +29,21 @@ export const Route = createFileRoute("/qualification")({
  * distances, so both the number and the noun are read from the data. This is
  * the same hardcoded-count family that put "Projected top 8" on a six-man
  * shot put final. */
-const NUMBER_WORD: Record<number, string> = {
-  6: "Six",
-  8: "Eight",
-  10: "Ten",
-};
-
-function placesHeadline(limit: number, isField: boolean): string {
-  const word = NUMBER_WORD[limit] ?? String(limit);
+function placesHeadline(limit: number, isField: boolean, t: TFunc): string {
+  // t() returns the key itself when a string is missing, which is the signal
+  // that this count has no spelled-out word -- fall back to digits.
+  const numKey = `qual.num.${limit}`;
+  const word = t(numKey) === numKey ? String(limit) : t(numKey);
   // A thrower does not have a lane.
-  return `${word} ${isField ? "places" : "lanes"}. The race to make the race.`;
+  return t("qual.headline", { word, noun: t(isField ? "qual.places" : "qual.lanes") });
 }
 
-const DESCRIPTION =
-  "Who has actually earned a place at the Final. These are World Athletics' own Diamond League points, not a prediction, with the gap to the qualification cut worked out from what's still winnable.";
-
-/* Nothing is winnable any more once the last scoring meeting is run, so the
- * clause explaining the gap that way has to go rather than quietly stay wrong. */
-const DESCRIPTION_DECIDED =
-  "Who has actually earned a place at the Final. These are World Athletics' own Diamond League points, not a prediction, with every scoring meeting of the 2026 season now run.";
-
-const STATUS_LABEL: Record<QualStatus, string> = {
-  safe: "Through",
-  in: "In",
-  chasing: "Chasing",
-  out: "Out",
-  unknown: "No points",
+const STATUS_LABEL_KEY: Record<QualStatus, string> = {
+  safe: "qual.status.safe",
+  in: "qual.status.in",
+  chasing: "qual.status.chasing",
+  out: "qual.status.out",
+  unknown: "qual.status.unknown",
 };
 
 const STATUS_CLASS: Record<QualStatus, string> = {
@@ -64,12 +54,12 @@ const STATUS_CLASS: Record<QualStatus, string> = {
   unknown: "bg-secondary text-muted-foreground",
 };
 
-const STATUS_TITLE: Record<QualStatus, string> = {
-  safe: "Can't be displaced: nobody below them can reach their total",
-  in: "Above the cut line as it stands, but still catchable",
-  chasing: "Below the line and still mathematically able to reach it",
-  out: "Cannot reach the cut even by winning everything left",
-  unknown: "World Athletics lists no points for this athlete",
+const STATUS_TITLE_KEY: Record<QualStatus, string> = {
+  safe: "qual.statusTitle.safe",
+  in: "qual.statusTitle.in",
+  chasing: "qual.statusTitle.chasing",
+  out: "qual.statusTitle.out",
+  unknown: "qual.statusTitle.unknown",
 };
 
 /* Once the last scoring meeting is run, "in" and "chasing" can only be
@@ -81,10 +71,10 @@ const STATUS_TITLE: Record<QualStatus, string> = {
  * with World Athletics' tie-break. Zurich (27 Aug) made this the live state:
  * 18 athletes across 7 disciplines. "safe"/"out"/"unknown" are unaffected —
  * those verdicts were already final by construction. */
-const STATUS_LABEL_DECIDED: Record<QualStatus, string> = {
-  ...STATUS_LABEL,
-  in: "Tie-break",
-  chasing: "Tie-break",
+const STATUS_LABEL_DECIDED_KEY: Record<QualStatus, string> = {
+  ...STATUS_LABEL_KEY,
+  in: "qual.statusDecided.in",
+  chasing: "qual.statusDecided.chasing",
 };
 
 const STATUS_CLASS_DECIDED: Record<QualStatus, string> = {
@@ -94,22 +84,21 @@ const STATUS_CLASS_DECIDED: Record<QualStatus, string> = {
   chasing: STATUS_CLASS.in,
 };
 
-const STATUS_TITLE_DECIDED: Record<QualStatus, string> = {
-  ...STATUS_TITLE,
-  in: "Above the cut line, but level on points with an athlete below it; World Athletics' tie-break decides",
-  chasing:
-    "Level on points with the last qualifying place and no scoring meetings left; World Athletics' tie-break decides",
+const STATUS_TITLE_DECIDED_KEY: Record<QualStatus, string> = {
+  ...STATUS_TITLE_KEY,
+  in: "qual.statusTitleDecided.in",
+  chasing: "qual.statusTitleDecided.chasing",
 };
 
 /** Points behind the cut, phrased so the sign never has to be decoded. A
  * gap of zero means two different things either side of the line: the last
  * qualifier IS the cut, while the athlete below it is level on points and
  * separated only by World Athletics' tie-break. */
-function gapLabel(row: QualificationRow, qualLimit: number): string {
+function gapLabel(row: QualificationRow, qualLimit: number, t: TFunc): string {
   if (row.gap === null) return "—";
-  if (row.gap > 0) return `${row.gap} behind`;
-  if (row.gap === 0) return row.rank <= qualLimit ? "on the line" : "level with the cut";
-  return `${Math.abs(row.gap)} clear`;
+  if (row.gap > 0) return t("qual.gapBehind", { n: row.gap });
+  if (row.gap === 0) return row.rank <= qualLimit ? t("qual.gapOnLine") : t("qual.gapLevel");
+  return t("qual.gapClear", { n: Math.abs(row.gap) });
 }
 
 /** The closest race in each discipline: how far the first athlete below the
@@ -132,6 +121,7 @@ function tightestRaces(disciplines: QualificationDiscipline[]) {
 }
 
 function QualificationPage() {
+  const { t, lang } = useT();
   const state = useQualification();
   const { disc } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
@@ -151,28 +141,35 @@ function QualificationPage() {
 
   return (
     <Shell
-      title={current ? placesHeadline(current.qualLimit, current.isField) : "Race for the Final"}
-      crumb="Qualifying"
+      title={
+        current
+          ? placesHeadline(current.qualLimit, current.isField, t)
+          : t("qual.headlineFallback")
+      }
+      crumb={t("nav.qualifying")}
       eyebrow={
         data
           ? meetingsLeft > 0
-            ? `${meetingsLeft} scoring meeting${meetingsLeft === 1 ? "" : "s"} left · a win is worth ${data.pointsForAWin} points`
-            : "Every scoring meeting is run, so the standings are final"
-          : "2026 Diamond League standings"
+            ? t(meetingsLeft === 1 ? "qual.eyebrowOne" : "qual.eyebrowMany", {
+                n: meetingsLeft,
+                pts: data.pointsForAWin,
+              })
+            : t("qual.eyebrowDecided")
+          : t("qual.eyebrowBare")
       }
-      description={decided ? DESCRIPTION_DECIDED : DESCRIPTION}
+      description={t(decided ? "qual.descriptionDecided" : "qual.description")}
       figures={
         data && current ? (
           <>
-            <HeadFigure value={current.qualLimit} label="Qualify for the Final" />
-            <HeadFigure value={current.cutPoints ?? "—"} label="Points to make it" />
-            <HeadFigure value={meetingsLeft} label="Meetings left" />
-            <HeadFigure value={data.pointsForAWin} label="Points for a win" />
+            <HeadFigure value={current.qualLimit} label={t("qual.figQualify")} />
+            <HeadFigure value={current.cutPoints ?? "—"} label={t("qual.figPoints")} />
+            <HeadFigure value={meetingsLeft} label={t("qual.figMeetingsLeft")} />
+            <HeadFigure value={data.pointsForAWin} label={t("qual.figPointsForWin")} />
           </>
         ) : undefined
       }
     >
-      {state.status === "loading" && <PanelSkeleton title="Diamond League standings" rows={10} />}
+      {state.status === "loading" && <PanelSkeleton title={t("qual.standingsSkeleton")} rows={10} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
 
       {data && current && (
@@ -181,15 +178,13 @@ function QualificationPage() {
             <Panel
               title={
                 decided
-                  ? "Level at the cut line"
+                  ? t("qual.tightTitleDecided")
                   : nextMeet
-                    ? `Closest to the line going into ${nextMeet.city}`
-                    : "Closest to the line"
+                    ? t("qual.tightTitleNext", { city: nextMeet.city })
+                    : t("qual.tightTitle")
               }
               subtitle={
-                decided
-                  ? "Every scoring meeting is run, and in these disciplines the athlete below the cut finished level on points with the athlete on it. World Athletics' tie-break decides them, not another race."
-                  : "The smallest gap between the qualification cut and the first athlete below it, the disciplines the last meeting actually decides."
+                decided ? t("qual.tightSubtitleDecided") : t("qual.tightSubtitle")
               }
             >
               <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -220,14 +215,16 @@ function QualificationPage() {
                       <span className="shrink-0 text-right">
                         {chaser.gap === 0 ? (
                           <span className="label-caps block text-terracotta-strong">
-                            Level on points
+                            {t("qual.levelOnPoints")}
                           </span>
                         ) : (
                           <>
                             <span className="nums block text-[15px] font-semibold text-terracotta-strong">
                               {chaser.gap}
                             </span>
-                            <span className="label-caps block text-muted-foreground">behind</span>
+                            <span className="label-caps block text-muted-foreground">
+                              {t("qual.behind")}
+                            </span>
                           </>
                         )}
                       </span>
@@ -240,7 +237,7 @@ function QualificationPage() {
 
           <div className="mt-5 sm:hidden">
             <label className="label-caps mb-1.5 block text-white/90" htmlFor="qual-discipline">
-              Discipline
+              {t("qual.disciplineLabel")}
             </label>
             <select
               id="qual-discipline"
@@ -282,18 +279,21 @@ function QualificationPage() {
           </div>
 
           <Panel
-            title={`Diamond League standings · ${current.disc}`}
+            title={t("qual.standingsTitle", { disc: current.disc })}
             subtitle={
               current.cutPoints === null
-                ? `The top ${current.qualLimit} on points qualify for the Final.`
-                : `The top ${current.qualLimit} on points qualify for the Final. The cut currently sits at ${current.cutPoints} points.`
+                ? t("qual.standingsSubtitle", { n: current.qualLimit })
+                : t("qual.standingsSubtitleCut", {
+                    n: current.qualLimit,
+                    pts: current.cutPoints,
+                  })
             }
             className="mt-6"
           >
             <div className="overflow-x-auto">
               <table className="w-full min-w-[680px]">
                 <caption className="sr-only">
-                  {`Diamond League standings for the ${current.disc}: rank, athlete, points, meetings contested, gap to the qualifying cut and status`}
+                  {t("qual.caption", { disc: current.disc })}
                 </caption>
                 <thead>
                   <tr className="label-caps text-muted-foreground">
@@ -301,22 +301,22 @@ function QualificationPage() {
                       #
                     </th>
                     <th scope="col" className="pb-3 pl-3 text-left font-semibold">
-                      Athlete
+                      {t("table.colAthlete")}
                     </th>
                     <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
-                      Nat
+                      {t("table.colNat")}
                     </th>
                     <th scope="col" className="w-20 pb-3 pl-4 text-right font-semibold">
-                      Meets
+                      {t("qual.colMeets")}
                     </th>
                     <th scope="col" className="w-20 pb-3 pl-4 text-right font-semibold">
-                      Points
+                      {t("qual.colPoints")}
                     </th>
                     <th scope="col" className="w-32 pb-3 pl-4 text-right font-semibold">
-                      Gap to cut
+                      {t("qual.colGap")}
                     </th>
                     <th scope="col" className="w-28 pb-3 pl-4 text-right font-semibold">
-                      Status
+                      {t("qual.colStatus")}
                     </th>
                   </tr>
                 </thead>
@@ -340,24 +340,12 @@ function QualificationPage() {
             </div>
 
             <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-              Points are World Athletics&apos; own, scraped from the 2026 Diamond League standings.{" "}
-              {meetingsLeft > 0 ? (
-                <>
-                  &ldquo;Out&rdquo; means the athlete cannot reach the cut even by winning
-                  everything left; &ldquo;Through&rdquo; means nobody can displace them even if they
-                  never score again. Anything in between is still open. This assumes the discipline
-                  is on the remaining programme. If it isn&apos;t contested again, these standings
-                  are already final, which only makes &ldquo;Out&rdquo; more certain.
-                </>
-              ) : (
-                <>
-                  No scoring meetings remain, so these standings are the result.
-                  &ldquo;Tie-break&rdquo; marks the one thing points alone cannot settle: two
-                  athletes level on points either side of the cut, separated by World
-                  Athletics&apos; own tie-break rules, which are not in this data.
-                </>
-              )}
-              {data.scrapedAt && <> Scraped {new Date(data.scrapedAt).toLocaleString()}.</>}
+              {t("qual.footBefore")}
+              {t(meetingsLeft > 0 ? "qual.footOpen" : "qual.footDecided")}
+              {data.scrapedAt &&
+                t("qual.footScraped", {
+                  when: new Date(data.scrapedAt).toLocaleString(lang),
+                })}
             </p>
           </Panel>
 
@@ -389,6 +377,7 @@ function QualRow({
   // rows that are still live stop standing out at all. This has to be set
   // on the cells themselves -- a color on the <tr> is overridden by every
   // child that carries its own, which is all of them.
+  const { t } = useT();
   const dim = row.status === "out";
   return (
     <>
@@ -418,14 +407,14 @@ function QualRow({
           {row.points ?? "—"}
         </td>
         <td className="nums py-3 pl-4 text-right text-[12.5px] text-muted-foreground">
-          {gapLabel(row, qualLimit)}
+          {gapLabel(row, qualLimit, t)}
         </td>
         <td className="py-3 pl-4 text-right">
           <span
-            title={(decided ? STATUS_TITLE_DECIDED : STATUS_TITLE)[row.status]}
+            title={t((decided ? STATUS_TITLE_DECIDED_KEY : STATUS_TITLE_KEY)[row.status]!)}
             className={`label-caps inline-flex items-center rounded-full px-2 py-1 ${(decided ? STATUS_CLASS_DECIDED : STATUS_CLASS)[row.status]}`}
           >
-            {(decided ? STATUS_LABEL_DECIDED : STATUS_LABEL)[row.status]}
+            {t((decided ? STATUS_LABEL_DECIDED_KEY : STATUS_LABEL_KEY)[row.status]!)}
           </span>
         </td>
       </tr>
@@ -434,7 +423,7 @@ function QualRow({
           <td colSpan={7} className="px-0 py-0">
             <div className="flex items-center gap-3 py-2">
               <span className="label-caps whitespace-nowrap text-terracotta-strong">
-                Qualification cut · top {qualLimit}
+                {t("qual.cutLine", { n: qualLimit })}
               </span>
               <span
                 aria-hidden="true"
@@ -464,17 +453,22 @@ function HowToRead({
   decided: boolean;
   pointsForAWin: number;
 }) {
+  const { t } = useT();
   const rows = current.standings ?? [];
   const onLine = rows.find((r) => r.rank === current.qualLimit);
   const firstOut = rows.find((r) => r.rank != null && r.rank > current.qualLimit);
   if (!onLine && !firstOut) return null;
 
   return (
-    <Panel title="How to read it" subtitle="The margin, not the medal." className="mt-6">
+    <Panel
+      title={t("qual.howToRead.title")}
+      subtitle={t("qual.howToRead.subtitle")}
+      className="mt-6"
+    >
       <p className="max-w-3xl text-[14px] leading-relaxed text-muted-foreground">
-        Points come from finishing position at each Diamond League meeting an athlete actually
-        contested — <span className="nums">{pointsForAWin}</span> for a win, scaling down from
-        there. Nothing here is a projection: it is the arithmetic of who has scored what.
+        {t("qual.howToRead.p1Before")}
+        <span className="nums">{pointsForAWin}</span>
+        {t("qual.howToRead.p1After")}
         {onLine && (
           <>
             {" "}
@@ -485,9 +479,10 @@ function HowToRead({
             >
               {onLine.name}
             </Link>{" "}
-            holds the {current.qualLimit}th and final place on{" "}
-            <span className="nums">{onLine.points}</span> points
-            {onLine.gap === 0 ? ", exactly level with the cut" : ""}.
+            {t("qual.howToRead.holdsBefore", { n: current.qualLimit })}
+            <span className="nums">{onLine.points}</span>
+            {t("qual.howToRead.holdsAfter")}
+            {onLine.gap === 0 ? t("qual.howToRead.exactlyLevel") : ""}.
           </>
         )}
         {firstOut && (
@@ -500,9 +495,15 @@ function HowToRead({
             >
               {firstOut.name}
             </Link>{" "}
-            is first out, <span className="nums">{Math.abs(firstOut.gap ?? 0)}</span>{" "}
-            {Math.abs(firstOut.gap ?? 0) === 1 ? "point" : "points"} short
-            {decided ? " with no meetings left to change it" : " with racing still to come"}.
+            {t("qual.howToRead.firstOutBefore")}
+            <span className="nums">{Math.abs(firstOut.gap ?? 0)}</span>{" "}
+            {t(
+              Math.abs(firstOut.gap ?? 0) === 1
+                ? "qual.howToRead.point"
+                : "qual.howToRead.points",
+            )}
+            {t("qual.howToRead.short")}
+            {t(decided ? "qual.howToRead.decidedTail" : "qual.howToRead.openTail")}.
           </>
         )}
       </p>
