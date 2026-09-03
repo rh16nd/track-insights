@@ -9,6 +9,7 @@ import { PodiumCallMark } from "@/components/dl/logo";
 import { AthleteAvatar, ProbabilityBar, WatchBadge } from "@/components/dl/shell";
 import { Podium } from "@/components/dl/podium";
 import { WaSourceLink } from "@/components/dl/wa-link";
+import { useT, type TFunc } from "@/lib/i18n";
 import { TrackCircuit } from "@/components/dl/track-circuit";
 
 export const Route = createFileRoute("/")({
@@ -146,20 +147,10 @@ function Icon({ path, className = "size-5" }: { path: string; className?: string
  * both typed next to the arrays they count -- correct today, silently wrong
  * the first time anyone adds an item. This project has found that exact
  * mistake eight times now, always in the plumbing rather than the model. */
-const NUMBER_WORDS = [
-  "zero",
-  "one",
-  "two",
-  "three",
-  "four",
-  "five",
-  "six",
-  "seven",
-  "eight",
-  "nine",
-  "ten",
-];
-const spellOut = (n: number) => NUMBER_WORDS[n] ?? String(n);
+const spellOut = (n: number, t: TFunc) => {
+  const key = `landing.spell.${n}`;
+  return t(key) === key ? String(n) : t(key);
+};
 
 /* One section, not two. The commitments grid and this pipeline said roughly
    the same six things across ~1,400px: commitment "Validated honestly" was
@@ -169,31 +160,11 @@ const spellOut = (n: number) => NUMBER_WORDS[n] ?? String(n);
    the injury and withdrawal check -- is now step 04, in the place it
    actually runs: after the model is trained, before the field is scored. */
 const STEPS = [
-  {
-    n: "01",
-    title: "Scrape real results",
-    body: "Every Diamond League meet, plus the Olympics, World Championships, Continental Tour Gold meets, and the European Championships. All of it pulled straight from World Athletics' own API, not hand-typed.",
-  },
-  {
-    n: "02",
-    title: "Engineer real features",
-    body: "Season form, consistency across meets, recency, schedule pacing, head-to-head history, wind adjustment: 15 in all. Every candidate since gets scored across ten random seeds against a shuffled control, and dropped when it can't beat one. Several have been.",
-  },
-  {
-    n: "03",
-    title: "Validate honestly",
-    body: "Walk-forward validated across five independent seasons (2021–2025), training only on years strictly before each test year, never on the future.",
-  },
-  {
-    n: "04",
-    title: "Check who is actually racing",
-    body: "News and meet recaps are scanned automatically before anything is scored. Flagged athletes carry a watch badge with a link to the source; confirmed withdrawals are dropped from the field entirely.",
-  },
-  {
-    n: "05",
-    title: "Predict live",
-    body: "The model re-scores the whole field from fresh World Athletics data on every refresh, right up to Brussels.",
-  },
+  { n: "01", titleKey: "landing.step1Title", bodyKey: "landing.step1Body" },
+  { n: "02", titleKey: "landing.step2Title", bodyKey: "landing.step2Body" },
+  { n: "03", titleKey: "landing.step3Title", bodyKey: "landing.step3Body" },
+  { n: "04", titleKey: "landing.step4Title", bodyKey: "landing.step4Body" },
+  { n: "05", titleKey: "landing.step5Title", bodyKey: "landing.step5Body" },
 ];
 
 // A real, illustrative slice of what actually feeds the model -- genuine
@@ -209,6 +180,7 @@ const FEED = [
 ];
 
 function Landing() {
+  const { t } = useT();
   const state = usePredictions();
   // Second fetch, for one number: the total marks scored. Worth it because
   // the alternative is hand-typing it, and it just moved -- two toplists
@@ -227,12 +199,14 @@ function Landing() {
   // negative number if anyone loads the page afterwards.
   const countdownLabel =
     daysToFinal === null
-      ? "PodiumCall · The Brussels Final"
+      ? t("landing.badgeFinal")
       : daysToFinal < 0
-        ? "PodiumCall · Brussels Final complete"
+        ? t("landing.badgeComplete")
         : daysToFinal === 0
-          ? "PodiumCall · Final day in Brussels"
-          : `PodiumCall · ${daysToFinal} day${daysToFinal === 1 ? "" : "s"} to Brussels`;
+          ? t("landing.badgeFinalDay")
+          : daysToFinal === 1
+            ? t("landing.badgeOneDay")
+            : t("landing.badgeDays", { n: daysToFinal });
   // All six, same as the dashboard panel -- the old slice(0, 5) quietly
   // dropped one real discipline from a list whose whole job is to preview
   // what the dashboard shows.
@@ -297,7 +271,7 @@ function Landing() {
             <PodiumCallMark className="size-6" />
             <div className="label-caps text-muted-foreground">
               <span className="font-semibold text-foreground">PodiumCall</span>
-              <span className="ml-2 hidden sm:inline">2026 Diamond League Predictor</span>
+              <span className="ml-2 hidden sm:inline">{t("landing.tagline")}</span>
             </div>
           </div>
           <Link
@@ -381,10 +355,10 @@ function Landing() {
                   { fontFamily: "var(--font-display)", "--reveal-d": "140ms" } as CSSProperties
                 }
               >
-                <span className="headline-setup-a">We make the</span>
-                <span className="headline-setup-b">call before</span>
+                <span className="headline-setup-a">{t("landing.h1a")}</span>
+                <span className="headline-setup-b">{t("landing.h1b")}</span>
                 <span className="headline-payoff">
-                  the{" "}
+                  {t("landing.h1c")}{" "}
                   <span
                     className="gold-shine bg-clip-text text-transparent"
                     style={{
@@ -392,7 +366,7 @@ function Landing() {
                         "linear-gradient(96deg, oklch(0.86 0.09 72) 0%, oklch(0.92 0.09 78) 45%, oklch(0.86 0.09 72) 90%)",
                     }}
                   >
-                    gun.
+                    {t("landing.h1gun")}
                   </span>
                 </span>
               </h1>
@@ -406,9 +380,7 @@ function Landing() {
               className="hero-reveal mx-auto mt-6 max-w-[56ch] sm:mt-36 text-[clamp(16px,1.5vw,19px)] leading-relaxed text-[var(--landing-muted)]"
               style={{ "--reveal-d": "240ms" } as CSSProperties}
             >
-              A model trained on real results, not gut feeling. We scrape every World Athletics mark
-              across all {disciplineCount} Diamond League disciplines and call the podium in
-              Brussels, before anyone races.
+              {t("landing.lede", { n: disciplineCount })}
             </p>
 
             <div
@@ -420,7 +392,7 @@ function Landing() {
                 className="inline-flex items-center gap-2 rounded-full bg-card px-6 py-3.5 text-[15px] font-semibold text-terracotta-strong shadow-[0_8px_22px_oklch(0.3_0.08_40/0.28)] transition-transform hover:-translate-y-0.5"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                View live predictions
+                {t("landing.ctaPrimary")}
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -437,7 +409,7 @@ function Landing() {
                 className="rounded-full border border-[oklch(0.97_0.012_75_/_0.4)] px-6 py-3.5 text-[15px] font-semibold text-[var(--landing-fg)] transition-colors hover:bg-[oklch(0.97_0.012_75_/_0.1)]"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Browse all {disciplineCount} events
+                {t("landing.ctaSecondary", { n: disciplineCount })}
               </Link>
             </div>
 
@@ -447,16 +419,22 @@ function Landing() {
             >
               {/* The count-ups start after the ribbon itself has risen, so a
                       number is never spinning while its own row is still moving. */}
-              <Stat value={accuracy} unit="%" decimals={1} delayMs={620} label="Podium hit rate" />
-              <Stat value={daysToFinal} delayMs={700} label="Days to Brussels" />
-              <Stat value={disciplineCount} delayMs={780} label="Disciplines tracked" />
-              <Stat value={marksScored} delayMs={860} label="Marks scored" />
+              <Stat
+                value={accuracy}
+                unit="%"
+                decimals={1}
+                delayMs={620}
+                label={t("landing.statHitRate")}
+              />
+              <Stat value={daysToFinal} delayMs={700} label={t("landing.statDays")} />
+              <Stat value={disciplineCount} delayMs={780} label={t("landing.statDisciplines")} />
+              <Stat value={marksScored} delayMs={860} label={t("landing.statMarks")} />
             </div>
             {state.status !== "ok" && (
               <p className="mt-4 text-[12.5px] text-[var(--landing-muted)]">
                 {state.status === "loading"
-                  ? "Loading live stats…"
-                  : "Live stats aren't reachable right now. The numbers above will fill in once the model is running."}
+                  ? t("landing.statsLoading")
+                  : t("landing.statsError")}
               </p>
             )}
           </div>
@@ -485,15 +463,19 @@ function Landing() {
                   detector's `all-caps-body` finding earned honestly. */}
               <div className="mb-3 text-[13px] text-[var(--landing-muted)]">
                 {tickerRange
-                  ? `Live from the model: all ${ticker.length} disciplines, ${tickerRange.lo}–${tickerRange.hi}%, and it's far surer about some finals than others`
-                  : "Live from the model: each discipline's top pick, and its chance of a podium"}
+                  ? t("landing.tickerWithRange", {
+                      n: ticker.length,
+                      lo: tickerRange.lo,
+                      hi: tickerRange.hi,
+                    })
+                  : t("landing.ticker")}
               </div>
             </div>
             {ticker.length > 0 ? (
               <div
                 className="marquee-mask overflow-hidden"
                 role="list"
-                aria-label="Live model confidence by discipline"
+                aria-label={t("landing.tickerAria")}
               >
                 <div className="marquee-track flex w-max gap-3">
                   {ticker.map((t) => (
@@ -524,7 +506,7 @@ function Landing() {
               </div>
             ) : (
               <p className="mx-auto max-w-5xl px-6 text-[13px] text-[var(--landing-muted)] sm:px-10">
-                Confidence feed loads once the live model is running.
+                {t("landing.confidenceFeedLoads")}
               </p>
             )}
           </div>
@@ -539,12 +521,12 @@ function Landing() {
         <section className="relative z-[2] -mt-8 rounded-t-[44px] bg-card sm:-mt-13">
           <div className="mx-auto max-w-5xl px-6 pb-20 pt-14 sm:px-10 sm:pb-28 sm:pt-[74px]">
             <SectionHead
-              eyebrow="The projected podium"
-              title="The three the model backs hardest in Brussels."
+              eyebrow={t("landing.podiumEyebrow")}
+              title={t("landing.podiumTitle")}
               tone="cream"
               center
             >
-              Ranked by each athlete&apos;s chance of finishing in the top three.
+              {t("landing.podiumRankedBy")}
             </SectionHead>
 
             {preview.length >= 3 ? (
@@ -552,8 +534,8 @@ function Landing() {
             ) : (
               <p className="mt-10 text-center text-[13.5px] text-muted-foreground">
                 {state.status === "error"
-                  ? "The podium fills in once the live model is reachable."
-                  : "Loading the model's strongest calls…"}
+                  ? t("landing.podiumError")
+                  : t("landing.podiumLoading")}
               </p>
             )}
 
@@ -561,10 +543,9 @@ function Landing() {
                 three raced each other. They didn't -- each is the strongest
                 call in a different discipline. */}
             <p className="mx-auto mt-8 max-w-[62ch] text-center text-[12px] leading-relaxed text-muted-foreground">
-              Each of these is the model&apos;s strongest call in a <em>different</em> discipline,
-              so they aren&apos;t racing each other. The steps rank the model&apos;s confidence, not
-              the athletes. The percentage is a chance of finishing top three, not of winning; marks
-              are 2026 season bests from World Athletics.
+              {t("landing.podiumNoteBefore")}
+              <em>{t("landing.podiumNoteDifferent")}</em>
+              {t("landing.podiumNoteAfter")}
             </p>
           </div>
         </section>
@@ -572,20 +553,23 @@ function Landing() {
         {/* ── Raw signal → ranked prediction demo ──────────────────── */}
         <section ref={demoInView.ref} className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
           <SectionHead
-            eyebrow="Real results in. A ranked field out."
+            eyebrow={t("landing.demoEyebrow")}
             title={
               meetingsDone > 0
-                ? `${meetingsDone} meetings of real racing, resolved into one call.`
-                : "A season of real racing, resolved into one call."
+                ? t("landing.demoTitleWithCount", { n: meetingsDone })
+                : t("landing.demoTitle")
             }
           >
-            Every Diamond League meeting this season is scraped from <WaSourceLink tone="canvas" />,
-            then reduced to the model&apos;s single strongest prediction for the Final.
+            {t("landing.demoBodyBefore")}
+            <WaSourceLink tone="canvas" />
+            {t("landing.demoBodyAfter")}
           </SectionHead>
 
           <div className="mt-10 grid grid-cols-1 items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
             <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6">
-              <div className="label-caps text-[var(--landing-muted)]">Raw signal</div>
+              <div className="label-caps text-[var(--landing-muted)]">
+                {t("landing.rawSignal")}
+              </div>
               <ul className="mt-4 space-y-3">
                 {FEED.map((m, i) => (
                   <li
@@ -608,8 +592,13 @@ function Landing() {
                   from /api/stats, counted off the training files themselves. */}
               <div className="mt-4 text-[12px] text-[var(--landing-muted)]">
                 {corpus
-                  ? `+ ${(corpus.competitions - FEED.length).toLocaleString()} more competitions across ${corpus.seasons} seasons (${corpus.firstSeason}–${corpus.lastSeason}), scraped directly from World Athletics.`
-                  : "…and every other competition in the model's training data, scraped directly from World Athletics."}
+                  ? t("landing.corpusMore", {
+                      n: (corpus.competitions - FEED.length).toLocaleString(),
+                      seasons: corpus.seasons,
+                      first: corpus.firstSeason ?? "",
+                      last: corpus.lastSeason ?? "",
+                    })
+                  : t("landing.corpusFallback")}
               </div>
             </div>
 
@@ -623,7 +612,7 @@ function Landing() {
             {topPick ? (
               <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6">
                 <div className="label-caps text-[var(--landing-muted)]">
-                  Model&apos;s strongest call
+                  {t("landing.strongestCall")}
                 </div>
                 <div className="mt-4 flex items-center gap-3">
                   <AthleteAvatar name={topPick.name} highlight />
@@ -656,7 +645,7 @@ function Landing() {
               </div>
             ) : (
               <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6 text-[13.5px] text-[var(--landing-muted)]">
-                Ranked predictions load once the live model is running.
+                {t("landing.rankedLoad")}
               </div>
             )}
           </div>
@@ -669,8 +658,8 @@ function Landing() {
         <section id="how-it-works" className="bg-card">
           <div className="mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28">
             <SectionHead
-              eyebrow="No fabricated data, anywhere in the pipeline."
-              title={`Real data in, honest predictions out, in ${spellOut(STEPS.length)} steps.`}
+              eyebrow={t("landing.stepsEyebrow")}
+              title={t("landing.stepsTitle", { n: spellOut(STEPS.length, t) })}
               tone="cream"
             />
 
@@ -686,9 +675,11 @@ function Landing() {
                   >
                     {step.n}
                   </span>
-                  <h3 className="mt-4 text-[15px] font-semibold text-foreground">{step.title}</h3>
+                  <h3 className="mt-4 text-[15px] font-semibold text-foreground">
+                    {t(step.titleKey)}
+                  </h3>
                   <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
-                    {step.body}
+                    {t(step.bodyKey)}
                   </p>
                 </div>
               ))}
@@ -699,8 +690,8 @@ function Landing() {
         {/* ── Live app preview (browser-chrome framed) ─────────────── */}
         <section className="mx-auto max-w-5xl px-6 py-20 pb-24 sm:px-10 sm:py-28 sm:pb-32">
           <SectionHead
-            eyebrow="Straight from the running model"
-            title="A live look at the model's current picks."
+            eyebrow={t("landing.previewEyebrow")}
+            title={t("landing.previewTitle")}
           />
 
           <div className="mt-10 overflow-hidden rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow">
@@ -711,7 +702,7 @@ function Landing() {
                 <span className="size-2.5 rounded-full bg-[var(--landing-border)]" />
               </span>
               <span className="label-caps ml-2 rounded-md bg-[var(--landing-bg)] px-2.5 py-1 text-[var(--landing-muted)]">
-                PodiumCall / Dashboard
+                {t("landing.previewCrumb")}
               </span>
             </div>
 
@@ -722,29 +713,28 @@ function Landing() {
                     className="text-[17px] font-semibold text-[var(--landing-fg)]"
                     style={{ fontFamily: "var(--font-display)" }}
                   >
-                    Most likely to reach the podium
+                    {t("landing.previewHeading")}
                   </h3>
                   {/* The same clarifying line the dashboard panel carries. It is
                     load-bearing, not decoration: these six athletes are each
                     the top pick in a DIFFERENT discipline, and without saying
                     so the list reads as one ranking of six rivals. */}
                   <p className="mt-1 text-[12px] leading-snug text-[var(--landing-muted)]">
-                    The model&apos;s strongest pick in each discipline: the chance of finishing top
-                    three, not of winning
+                    {t("landing.previewSub")}
                   </p>
                 </div>
                 <Link
                   to="/dashboard"
                   className="label-caps hidden shrink-0 py-1.5 text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)] sm:block"
                 >
-                  See all {disciplineCount} disciplines →
+                  {t("landing.seeAll", { n: disciplineCount })}
                 </Link>
               </div>
 
               <div className="mt-6 divide-y divide-[var(--landing-border)]">
                 {state.status === "loading" && (
                   <p className="py-6 text-[13.5px] text-[var(--landing-muted)]">
-                    Loading live predictions…
+                    {t("landing.previewLoading")}
                   </p>
                 )}
                 {state.status === "error" && (
@@ -760,7 +750,7 @@ function Landing() {
                       onClick={state.retry}
                       className="mt-3 inline-flex min-h-[44px] items-center rounded-full border border-[var(--landing-border)] px-4 text-[12.5px] font-semibold text-[var(--landing-fg)] transition-colors hover:bg-[var(--landing-fg)]/10"
                     >
-                      Try again
+                      {t("common.tryAgain")}
                     </button>
                   </div>
                 )}
@@ -819,14 +809,14 @@ function Landing() {
                 It is the page that argues hardest that the data is real, and
                 it was the one with nothing to click. */}
             <p className="text-[12px] text-[var(--landing-muted)]">
-              Data scraped from <WaSourceLink tone="canvas" />. Not affiliated with World Athletics
-              or the Wanda Diamond League.
+              {t("footer.scrapedFrom")} <WaSourceLink tone="canvas" />.{" "}
+              {t("footer.notAffiliated")}
             </p>
             <Link
               to="/dashboard"
               className="label-caps inline-block py-1.5 text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)]"
             >
-              View live predictions →
+              {t("landing.footerLink")}
             </Link>
           </div>
         </footer>

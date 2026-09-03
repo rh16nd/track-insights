@@ -635,6 +635,85 @@ export const en: Record<string, string> = {
   "car.pbRange": " (a range, not a single specialism)",
   "car.pbAfter": ". Marks set indoors are included in that count and are labelled wherever they are shown; World Athletics lists them alongside outdoor ones.",
 
+  // Landing page
+  "landing.tagline": "2026 Diamond League Predictor",
+  "landing.badgeFinal": "PodiumCall · The Brussels Final",
+  "landing.badgeComplete": "PodiumCall · Brussels Final complete",
+  "landing.badgeFinalDay": "PodiumCall · Final day in Brussels",
+  "landing.badgeOneDay": "PodiumCall · 1 day to Brussels",
+  "landing.badgeDays": "PodiumCall · {{n}} days to Brussels",
+  "landing.h1a": "We make the",
+  "landing.h1b": "call before",
+  "landing.h1c": "the",
+  "landing.h1gun": "gun.",
+  "landing.lede":
+    "A model trained on real results, not gut feeling. We scrape every World Athletics mark across all {{n}} Diamond League disciplines and call the podium in Brussels, before anyone races.",
+  "landing.ctaPrimary": "View live predictions",
+  "landing.ctaSecondary": "Browse all {{n}} events",
+  "landing.statHitRate": "Podium hit rate",
+  "landing.statDays": "Days to Brussels",
+  "landing.statDisciplines": "Disciplines tracked",
+  "landing.statMarks": "Marks scored",
+  "landing.statsLoading": "Loading live stats…",
+  "landing.statsError":
+    "Live stats aren't reachable right now. The numbers above will fill in once the model is running.",
+  "landing.tickerWithRange":
+    "Live from the model: all {{n}} disciplines, {{lo}}–{{hi}}%, and it's far surer about some finals than others",
+  "landing.ticker": "Live from the model: each discipline's top pick, and its chance of a podium",
+  "landing.tickerAria": "Live model confidence by discipline",
+  "landing.podiumEyebrow": "The projected podium",
+  "landing.podiumTitle": "The three the model backs hardest in Brussels.",
+  "landing.podiumError": "The podium fills in once the live model is reachable.",
+  "landing.podiumLoading": "Loading the model's strongest calls…",
+  "landing.podiumNoteBefore": "Each of these is the model's strongest call in a ",
+  "landing.podiumNoteDifferent": "different",
+  "landing.podiumNoteAfter":
+    " discipline, so they aren't racing each other. The steps rank the model's confidence, not the athletes. The percentage is a chance of finishing top three, not of winning; marks are 2026 season bests from World Athletics.",
+  "landing.demoEyebrow": "Real results in. A ranked field out.",
+  "landing.demoTitleWithCount": "{{n}} meetings of real racing, resolved into one call.",
+  "landing.demoTitle": "A season of real racing, resolved into one call.",
+  "landing.demoBodyBefore": "Every Diamond League meeting this season is scraped from ",
+  "landing.demoBodyAfter":
+    ", then reduced to the model's single strongest prediction for the Final.",
+  "landing.rawSignal": "Raw signal",
+  "landing.strongestCall": "Model's strongest call",
+  "landing.rankedLoad": "Ranked predictions load once the live model is running.",
+  "landing.stepsEyebrow": "No fabricated data, anywhere in the pipeline.",
+  "landing.stepsTitle": "Real data in, honest predictions out, in {{n}} steps.",
+  "landing.previewEyebrow": "Straight from the running model",
+  "landing.previewTitle": "A live look at the model's current picks.",
+  "landing.previewCrumb": "PodiumCall / Dashboard",
+  "landing.previewHeading": "Most likely to reach the podium",
+  "landing.previewSub":
+    "The model's strongest pick in each discipline: the chance of finishing top three, not of winning",
+  "landing.seeAll": "See all {{n}} disciplines →",
+  "landing.previewLoading": "Loading live predictions…",
+  "landing.footerLink": "View live predictions →",
+  "landing.step1Title": "Scrape real results",
+  "landing.step1Body":
+    "Every Diamond League meet, plus the Olympics, World Championships, Continental Tour Gold meets, and the European Championships. All of it pulled straight from World Athletics' own API, not hand-typed.",
+  "landing.step2Title": "Engineer real features",
+  "landing.step2Body":
+    "Season form, consistency across meets, recency, schedule pacing, head-to-head history, wind adjustment: 15 in all. Every candidate since gets scored across ten random seeds against a shuffled control, and dropped when it can't beat one. Several have been.",
+  "landing.step3Title": "Validate honestly",
+  "landing.step3Body":
+    "Walk-forward validated across five independent seasons (2021–2025), training only on years strictly before each test year, never on the future.",
+  "landing.step4Title": "Check who is actually racing",
+  "landing.step4Body":
+    "News and meet recaps are scanned automatically before anything is scored. Flagged athletes carry a watch badge with a link to the source; confirmed withdrawals are dropped from the field entirely.",
+  "landing.step5Title": "Predict live",
+  "landing.step5Body":
+    "The model re-scores the whole field from fresh World Athletics data on every refresh, right up to Brussels.",
+  "landing.spell.3": "three",
+  "landing.spell.4": "four",
+  "landing.spell.5": "five",
+  "landing.spell.6": "six",
+
+  "landing.confidenceFeedLoads": "Confidence feed loads once the live model is running.",
+  "landing.podiumRankedBy": "Ranked by each athlete’s chance of finishing in the top three.",
+  "landing.corpusMore": "+ {{n}} more competitions across {{seasons}} seasons ({{first}}–{{last}}), scraped directly from World Athletics.",
+  "landing.corpusFallback": "…and every other competition in the model’s training data, scraped directly from World Athletics.",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Predicting the podium in Brussels.",

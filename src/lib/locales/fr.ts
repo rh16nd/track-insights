@@ -636,6 +636,86 @@ export const fr: Record<string, string> = {
   "car.pbRange": " (une palette, pas une seule spécialité)",
   "car.pbAfter": ". Les performances réalisées en salle sont comprises dans ce total et signalées partout où elles apparaissent ; World Athletics les répertorie aux côtés de celles en plein air.",
 
+  // Landing page
+  "landing.tagline": "Prédicteur Diamond League 2026",
+  "landing.badgeFinal": "PodiumCall · La finale de Bruxelles",
+  "landing.badgeComplete": "PodiumCall · Finale de Bruxelles terminée",
+  "landing.badgeFinalDay": "PodiumCall · Jour de finale à Bruxelles",
+  "landing.badgeOneDay": "PodiumCall · J-1 avant Bruxelles",
+  "landing.badgeDays": "PodiumCall · J-{{n}} avant Bruxelles",
+  "landing.h1a": "Nous faisons le",
+  "landing.h1b": "pronostic avant",
+  "landing.h1c": "le",
+  "landing.h1gun": "départ.",
+  "landing.lede":
+    "Un modèle entraîné sur de vrais résultats, pas sur l'intuition. Nous extrayons chaque performance World Athletics des {{n}} disciplines de la Diamond League et pronostiquons le podium de Bruxelles, avant la moindre course.",
+  "landing.ctaPrimary": "Voir les prédictions en direct",
+  "landing.ctaSecondary": "Parcourir les {{n}} épreuves",
+  "landing.statHitRate": "Taux de réussite du podium",
+  "landing.statDays": "Jours avant Bruxelles",
+  "landing.statDisciplines": "Disciplines suivies",
+  "landing.statMarks": "Performances cotées",
+  "landing.statsLoading": "Chargement des statistiques en direct…",
+  "landing.statsError":
+    "Les statistiques en direct sont injoignables pour le moment. Les chiffres ci-dessus se rempliront dès que le modèle tournera.",
+  "landing.tickerWithRange":
+    "En direct du modèle : les {{n}} disciplines, de {{lo}} à {{hi}} %, et il est bien plus sûr de certaines finales que d'autres",
+  "landing.ticker":
+    "En direct du modèle : le meilleur pronostic de chaque discipline, et sa chance de podium",
+  "landing.tickerAria": "Confiance du modèle en direct, par discipline",
+  "landing.podiumEyebrow": "Le podium projeté",
+  "landing.podiumTitle": "Les trois sur lesquels le modèle mise le plus à Bruxelles.",
+  "landing.podiumError": "Le podium se remplira dès que le modèle en direct sera joignable.",
+  "landing.podiumLoading": "Chargement des pronostics les plus sûrs du modèle…",
+  "landing.podiumNoteBefore": "Chacun d'eux est le pronostic le plus sûr du modèle dans une discipline ",
+  "landing.podiumNoteDifferent": "différente",
+  "landing.podiumNoteAfter":
+    ", ils ne courent donc pas les uns contre les autres. Les marches classent la confiance du modèle, pas les athlètes. Le pourcentage est une chance de finir dans le top trois, pas de gagner ; les performances sont les meilleures de la saison 2026 selon World Athletics.",
+  "landing.demoEyebrow": "De vrais résultats en entrée. Un plateau classé en sortie.",
+  "landing.demoTitleWithCount": "{{n}} réunions de vraies courses, ramenées à un seul pronostic.",
+  "landing.demoTitle": "Une saison de vraies courses, ramenée à un seul pronostic.",
+  "landing.demoBodyBefore": "Chaque réunion Diamond League de la saison est extraite de ",
+  "landing.demoBodyAfter":
+    ", puis réduite à la prédiction la plus forte du modèle pour la finale.",
+  "landing.rawSignal": "Signal brut",
+  "landing.strongestCall": "Le pronostic le plus sûr du modèle",
+  "landing.rankedLoad": "Les prédictions classées se chargeront dès que le modèle en direct tournera.",
+  "landing.stepsEyebrow": "Aucune donnée inventée, nulle part dans le pipeline.",
+  "landing.stepsTitle": "De vraies données en entrée, des prédictions honnêtes en sortie, en {{n}} étapes.",
+  "landing.previewEyebrow": "Directement du modèle en fonctionnement",
+  "landing.previewTitle": "Un aperçu en direct des pronostics actuels du modèle.",
+  "landing.previewCrumb": "PodiumCall / Tableau de bord",
+  "landing.previewHeading": "Les plus susceptibles d'atteindre le podium",
+  "landing.previewSub":
+    "Le meilleur pronostic du modèle dans chaque discipline : la chance de finir dans le top trois, pas de gagner",
+  "landing.seeAll": "Voir les {{n}} disciplines →",
+  "landing.previewLoading": "Chargement des prédictions en direct…",
+  "landing.footerLink": "Voir les prédictions en direct →",
+  "landing.step1Title": "Extraire de vrais résultats",
+  "landing.step1Body":
+    "Chaque meeting de la Diamond League, plus les Jeux olympiques, les Championnats du monde, les meetings du Continental Tour Gold et les Championnats d'Europe. Le tout tiré directement de l'API de World Athletics, jamais saisi à la main.",
+  "landing.step2Title": "Construire de vraies variables",
+  "landing.step2Body":
+    "Forme de la saison, régularité d'une réunion à l'autre, fraîcheur, rythme du calendrier, historique des confrontations directes, correction du vent : 15 en tout. Chaque candidate est depuis évaluée sur dix graines aléatoires face à un contrôle mélangé, et écartée si elle ne le bat pas. Plusieurs l'ont été.",
+  "landing.step3Title": "Valider honnêtement",
+  "landing.step3Body":
+    "Validation glissante sur cinq saisons indépendantes (2021-2025), en n'entraînant que sur des années strictement antérieures à l'année testée, jamais sur le futur.",
+  "landing.step4Title": "Vérifier qui court vraiment",
+  "landing.step4Body":
+    "Les actualités et les comptes rendus de réunions sont analysés automatiquement avant tout calcul. Les athlètes signalés portent un badge de vigilance avec un lien vers la source ; les forfaits confirmés sont entièrement retirés du plateau.",
+  "landing.step5Title": "Prédire en direct",
+  "landing.step5Body":
+    "Le modèle réévalue tout le plateau à partir de données World Athletics fraîches à chaque actualisation, jusqu'à Bruxelles.",
+  "landing.spell.3": "trois",
+  "landing.spell.4": "quatre",
+  "landing.spell.5": "cinq",
+  "landing.spell.6": "six",
+
+  "landing.confidenceFeedLoads": "Le flux de confiance se chargera dès que le modèle en direct tournera.",
+  "landing.podiumRankedBy": "Classés selon la chance de chaque athlète de finir dans le top trois.",
+  "landing.corpusMore": "+ {{n}} autres compétitions sur {{seasons}} saisons ({{first}}-{{last}}), extraites directement de World Athletics.",
+  "landing.corpusFallback": "…et toutes les autres compétitions des données d’entraînement du modèle, extraites directement de World Athletics.",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Prédire le podium à Bruxelles.",
