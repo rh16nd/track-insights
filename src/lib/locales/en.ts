@@ -214,6 +214,46 @@ export const en: Record<string, string> = {
   "depth.noteEnd":
     ". This is the spread across everyone World Athletics ranks in the event, a different question from how level the eight-strong Final field is, which each discipline's own page answers.",
 
+  // How it works (inline emphasis uses **bold** / *italic*, see lib/rich-text)
+  "howItWorks.eyebrow": "About the model",
+  "howItWorks.description":
+    "PodiumCall calls the podium for every event at the 2026 Diamond League Final, from real World Athletics results, before anyone races. Here's exactly how it does that, and how well it works.",
+  "howItWorks.s1.title": "What it predicts",
+  "howItWorks.s1.p1":
+    "For every one of the **32 events** at the Brussels Final, the model gives each contender a single number: their chance of finishing **in the top three**. It never names one winner.",
+  "howItWorks.s1.p2":
+    "That's on purpose. On the day, the fastest qualifier can false-start, get boxed in, or be caught on the line, so “who wins” is close to a coin toss between three or four names. “Who makes the podium” is the harder question to dodge, and the one you can actually check against the result afterwards. So every figure on the site is about the top three, never the gold medal on its own.",
+  "howItWorks.s2.title": "How the model learns",
+  "howItWorks.s2.p1":
+    "It learns from the actual podiums of every Diamond League Final from **2018 to 2025** (2020 was cancelled). That's real ground truth, scraped straight from World Athletics' own results, not anyone's ranking of who “should” win.",
+  "howItWorks.s2.p2":
+    "For each athlete in contention it works out **14 signals** from their real season: their season best and career best, how consistent they've been meet to meet, which way their form is trending, how many times they've raced, and how they've done **head-to-head against this exact field**. A **random forest** weighs all of it into one number, the probability of a podium. A forest is used because these signals pull on each other in ways a single straight-line formula misses: a blazing season best counts for less, for instance, if the athlete has barely raced all year.",
+  "howItWorks.s2.p3":
+    "And it's graded the honest way. Under **walk-forward validation** the model only ever trains on seasons *before* the year it's being scored on, so the accuracy below comes entirely from Finals it had never seen. That's the difference between a real forecast and a model that has just memorised the answers.",
+  "howItWorks.s3.title": "How accurate it is",
+  "howItWorks.s3.basisFallback":
+    "Podium hit rate among the athletes who actually contest the Final",
+  "howItWorks.s3.toplistCaption":
+    "The brutal stress test: picking the 3 medallists out of a discipline's whole ~101-name toplist, which the site never actually asks of it",
+  "howItWorks.s3.note":
+    "Both numbers come off the exact same predictions; they just ask different questions. The first is the real job, and the one the site does: given the eight-to-ten athletes who actually make a Final, how often is the model's projected top three right? The second is a deliberately harder task it never has to perform. They sit about twelve points apart, and neither is rounded up or picked from a flattering season.",
+  "howItWorks.s4.title": "Where the data comes from",
+  "howItWorks.s4.pBefore": "Every mark, ranking and result comes straight from ",
+  "howItWorks.s4.pAfter":
+    "'s own public API, the same data behind their broadcasts and athlete profiles. The scraping runs on a separate machine, and no mark is ever typed in or edited by hand, so what you read here is exactly what they published.",
+  "howItWorks.s4.competitions": "Competitions",
+  "howItWorks.s4.marks": "Marks",
+  "howItWorks.s4.venues": "Venues",
+  "howItWorks.s4.seasons": "Seasons",
+  "howItWorks.s4.seasonsDeep": "Seasons deep",
+  "howItWorks.s5.title": "What it can't do",
+  "howItWorks.s5.b1":
+    "It reads **form, not the future**. A last-minute injury, a withdrawal announced the morning of, or a tactical sit-and-kick race can all beat the numbers on the day.",
+  "howItWorks.s5.b2":
+    "It predicts **who makes the podium, not the exact 1-2-3**, and it never claims to know who wins.",
+  "howItWorks.s5.b3":
+    "It's **not affiliated with World Athletics** or the Wanda Diamond League. It just reads their public data.",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Predicting the podium in Brussels.",
