@@ -20,6 +20,11 @@ const STORAGE_KEY = "podiumcall:lang";
 
 type Vars = Record<string, string | number>;
 
+/** The translate function's shape, exported so helpers that live outside a
+ * component (a headline builder, a date phrase) can take it as an argument
+ * rather than each re-declaring the signature. */
+export type TFunc = (key: string, vars?: Vars) => string;
+
 function interpolate(s: string, vars?: Vars): string {
   if (!vars) return s;
   return s.replace(/\{\{(\w+)\}\}/g, (_, k) => (vars[k] != null ? String(vars[k]) : ""));
@@ -31,7 +36,7 @@ type I18nValue = {
   setLang: (l: Lang) => void;
   /** Translate a key, falling back to English then to the key itself, with
    * `{{var}}` interpolation. */
-  t: (key: string, vars?: Vars) => string;
+  t: TFunc;
 };
 
 const I18nContext = createContext<I18nValue | null>(null);

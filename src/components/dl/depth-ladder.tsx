@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
+import { useT } from "@/lib/i18n";
 import { Panel } from "./shell";
 import type { DisciplineDepth } from "@/lib/dl-data";
 
@@ -25,10 +26,10 @@ import type { DisciplineDepth } from "@/lib/dl-data";
  * untruncated put women's 5000m 29th of 32 when it is really 15th. */
 type Sort = "depth" | "median" | "top";
 
-const SORTS: { id: Sort; label: string }[] = [
-  { id: "depth", label: "By depth" },
-  { id: "median", label: "By median" },
-  { id: "top", label: "By top score" },
+const SORTS: { id: Sort; labelKey: string }[] = [
+  { id: "depth", labelKey: "depth.sortDepth" },
+  { id: "median", labelKey: "depth.sortMedian" },
+  { id: "top", labelKey: "depth.sortTop" },
 ];
 
 function sortRows(rows: DisciplineDepth[], sort: Sort): DisciplineDepth[] {
@@ -40,6 +41,7 @@ function sortRows(rows: DisciplineDepth[], sort: Sort): DisciplineDepth[] {
 }
 
 export function DepthLadder({ rows }: { rows: DisciplineDepth[] }) {
+  const { t } = useT();
   const [sort, setSort] = useState<Sort>("depth");
   const sorted = useMemo(() => sortRows(rows, sort), [rows, sort]);
 
@@ -59,8 +61,8 @@ export function DepthLadder({ rows }: { rows: DisciplineDepth[] }) {
 
   return (
     <Panel
-      title={`The depth ladder · ${rows.length} disciplines`}
-      subtitle="Each bar runs from that event's median score to its top score, all on one axis. Shorter is deeper: the leader is closer to the crowd. Longer means one athlete with daylight behind them."
+      title={t("depth.title", { n: rows.length })}
+      subtitle={t("depth.subtitle")}
       action={
         <div className="flex flex-wrap gap-1.5">
           {SORTS.map((s) => (
@@ -75,7 +77,7 @@ export function DepthLadder({ rows }: { rows: DisciplineDepth[] }) {
                   : "border-border text-muted-foreground hover:border-terracotta/40 hover:text-foreground"
               }`}
             >
-              {s.label}
+              {t(s.labelKey)}
             </button>
           ))}
         </div>
@@ -84,15 +86,15 @@ export function DepthLadder({ rows }: { rows: DisciplineDepth[] }) {
       <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] text-muted-foreground">
         <span className="flex items-center gap-2">
           <span className="size-2 rounded-full bg-terracotta" />
-          Field median
+          {t("depth.legendMedian")}
         </span>
         <span className="flex items-center gap-2">
           <span className="size-2 rounded-full bg-gold-strong" />
-          Discipline top
+          {t("depth.legendTop")}
         </span>
         <span className="flex items-center gap-2">
           <span className="h-1.5 w-8 rounded-full bg-[linear-gradient(90deg,var(--terracotta),var(--gold-strong))]" />
-          Spread (top − median)
+          {t("depth.legendSpread")}
         </span>
       </div>
 
@@ -102,9 +104,9 @@ export function DepthLadder({ rows }: { rows: DisciplineDepth[] }) {
         aria-hidden="true"
         className="label-caps mb-1.5 hidden justify-between border-b border-border pb-2 sm:flex"
       >
-        {ticks.map((t) => (
-          <span key={t} className="nums text-muted-foreground">
-            {t}
+        {ticks.map((tick) => (
+          <span key={tick} className="nums text-muted-foreground">
+            {tick}
           </span>
         ))}
       </div>
@@ -156,14 +158,15 @@ export function DepthLadder({ rows }: { rows: DisciplineDepth[] }) {
       </ol>
 
       <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-        Deepest by this measure is{" "}
-        <span className="font-medium text-foreground">{deepest?.disc}</span>, whose leader is only{" "}
-        <span className="nums">{deepest ? deepest.topScore - deepest.medianScore : 0}</span> points
-        clear of its own median; the most top-heavy is{" "}
-        <span className="font-medium text-foreground">{widest?.disc}</span> at{" "}
-        <span className="nums">{widest ? widest.topScore - widest.medianScore : 0}</span>. This is
-        the spread across everyone World Athletics ranks in the event, a different question from how
-        level the eight-strong Final field is, which each discipline&apos;s own page answers.
+        {t("depth.noteBefore")}
+        <span className="font-medium text-foreground">{deepest?.disc}</span>
+        {t("depth.noteMid")}
+        <span className="nums">{deepest ? deepest.topScore - deepest.medianScore : 0}</span>
+        {t("depth.notePointsClear")}
+        <span className="font-medium text-foreground">{widest?.disc}</span>
+        {t("depth.noteAt")}
+        <span className="nums">{widest ? widest.topScore - widest.medianScore : 0}</span>
+        {t("depth.noteEnd")}
       </p>
     </Panel>
   );

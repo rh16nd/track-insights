@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Panel } from "./shell";
 import { apiFetch } from "@/lib/api";
+import { useT } from "@/lib/i18n";
 
 export type NewsItem = {
   headline: string;
@@ -30,6 +31,7 @@ type State =
  * The matched keywords are shown deliberately, for the same reason: "back"
  * sitting under a removal is the tell that the match is wrong. */
 export function NewsFeed() {
+  const { t, lang } = useT();
   const [state, setState] = useState<State>({ status: "loading" });
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export function NewsFeed() {
 
   const checked =
     state.status === "ok" && state.checkedAt
-      ? new Date(state.checkedAt).toLocaleDateString(undefined, {
+      ? new Date(state.checkedAt).toLocaleDateString(lang, {
           day: "2-digit",
           month: "short",
         })
@@ -60,22 +62,18 @@ export function NewsFeed() {
 
   return (
     <Panel
-      title="Injury & withdrawal news"
+      title={t("news.title")}
       subtitle={
-        checked
-          ? `Real headlines matched by the automatic injury check · last run ${checked}`
-          : "Real headlines matched by the automatic injury check"
+        checked ? t("news.subtitleWithDate", { date: checked }) : t("news.subtitle")
       }
       className="mt-4"
     >
       {state.status === "loading" && (
-        <p className="text-[13px] text-muted-foreground">Loading news…</p>
+        <p className="text-[13px] text-muted-foreground">{t("news.loading")}</p>
       )}
 
       {state.status === "ok" && state.items.length === 0 && (
-        <p className="text-[13px] text-muted-foreground">
-          No injury or withdrawal headlines matched any athlete in the projected field.
-        </p>
+        <p className="text-[13px] text-muted-foreground">{t("news.empty")}</p>
       )}
 
       {state.status === "ok" && state.items.length > 0 && (
@@ -90,7 +88,7 @@ export function NewsFeed() {
                       : "bg-gold/15 text-gold-strong"
                   }`}
                 >
-                  {n.status === "remove" ? "Removed from field" : "Watch"}
+                  {n.status === "remove" ? t("news.removed") : t("watch.badge")}
                 </span>
                 <span className="text-[13.5px] font-medium text-foreground">{n.athlete}</span>
                 {n.disciplines.length > 0 && (
@@ -118,7 +116,7 @@ export function NewsFeed() {
               <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] text-muted-foreground">
                 <span>{n.source}</span>
                 {n.keywords.length > 0 && (
-                  <span className="nums">matched on “{n.keywords.join("”, “")}”</span>
+                  <span className="nums">{t("news.matchedOn", { keywords: n.keywords.join(", ") })}</span>
                 )}
               </div>
             </li>
@@ -127,13 +125,11 @@ export function NewsFeed() {
       )}
 
       <p className="mt-4 text-[11.5px] leading-relaxed text-muted-foreground">
-        These are automatically matched headlines, not verified injury reports. A match can be
-        wrong, so the matched keyword is shown for you to judge it yourself, and every removed
-        athlete keeps a full profile you can{" "}
+        {t("news.disclaimerBefore")}
         <Link to="/dashboard" className="underline decoration-border underline-offset-2">
-          search for
+          {t("news.searchFor")}
         </Link>
-        .
+        {t("news.disclaimerAfter")}
       </p>
     </Panel>
   );

@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Athlete, Discipline } from "@/lib/dl-data";
 import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
+import { useT } from "@/lib/i18n";
 import { InfoTip } from "./info-tip";
 import { NatFlag } from "./nat-flag";
 
@@ -28,9 +29,11 @@ const DEFAULT_SORT: Sort = { key: "rank", dir: "asc" };
  * read best-first descending (27% before 16%). Clicking again reverses. */
 const FIRST_DIR: Record<SortKey, SortDir> = { rank: "asc", prob: "desc" };
 
-const SUBTITLE: Record<SortKey, string> = {
-  rank: "Ranked by season best. Podium chance is the model's separate call and can disagree.",
-  prob: "Sorted by the model's podium chance. The # column still ranks by season best, so it reads out of sequence.",
+/** Which sentence explains the current ordering. Keys, not prose: the copy
+ * itself lives in the locale tables. */
+const SUBTITLE_KEY: Record<SortKey, string> = {
+  rank: "table.subtitle.rank",
+  prob: "table.subtitle.prob",
 };
 
 /** Tint for the podium-chance number, RELATIVE to the strongest chance in the
@@ -100,6 +103,7 @@ function SortHeader({
    * `title`, because `title` never appears on a phone, where there's no hover. */
   hint?: string;
 }) {
+  const { t } = useT();
   const active = sort.key === columnKey;
   const dir = active ? sort.dir : FIRST_DIR[columnKey];
   return (
@@ -122,10 +126,10 @@ function SortHeader({
           <span>{label}</span>
           <SortArrow dir={dir} active={active} />
           <span className="sr-only">
-            {active ? " — sorted, activate to reverse" : " — activate to sort by this column"}
+            {active ? t("table.sortedActivateReverse") : t("table.activateToSort")}
           </span>
         </button>
-        {hint && <InfoTip label={`About ${label}`}>{hint}</InfoTip>}
+        {hint && <InfoTip label={t("figure.about", { label })}>{hint}</InfoTip>}
       </div>
     </th>
   );
@@ -144,6 +148,7 @@ export function DisciplineTable({
   activeId: string;
   onActiveChange: (id: string) => void;
 }) {
+  const { t } = useT();
   const current = disciplines.find((d) => d.id === activeId) ?? disciplines[0];
   // Sort is a view preference, so it deliberately survives a discipline
   // switch -- unlike `activeId`, which lives in the URL precisely so Back
@@ -243,8 +248,8 @@ export function DisciplineTable({
           the long-distance races 10, so the men's shot put page promised a
           top 8 of a 6-man final. qualLimit is the real number. */}
       <Panel
-        title={`Projected top ${current.qualLimit} · ${current.label}`}
-        subtitle={SUBTITLE[sort.key]}
+        title={t("table.projectedTop", { n: current.qualLimit, label: current.label })}
+        subtitle={t(SUBTITLE_KEY[sort.key]!)}
         className="mt-4"
         action={
           <Link
@@ -252,44 +257,44 @@ export function DisciplineTable({
             params={{ discKey: current.id }}
             className="label-caps shrink-0 rounded-full border border-border px-3 py-1.5 text-muted-foreground transition-colors hover:border-terracotta/40 hover:text-foreground"
           >
-            How level is this field?
+            {t("table.howLevel")}
           </Link>
         }
       >
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px]">
             <caption className="sr-only">
-              {`Projected field for the ${current.label}: rank by season best, athlete, nationality, mark and chance of a podium`}
+              {t("table.caption", { label: current.label })}
             </caption>
             <thead>
               <tr className="label-caps text-muted-foreground">
                 <th scope="col" className="w-10 pb-3 text-left font-semibold">
-                  #<span className="sr-only"> — rank by season best</span>
+                  #<span className="sr-only">{t("table.colRankSr")}</span>
                 </th>
                 <th scope="col" className="pb-3 pl-3 text-left font-semibold">
-                  Athlete
+                  {t("table.colAthlete")}
                 </th>
                 <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
-                  Nat
+                  {t("table.colNat")}
                 </th>
                 <th scope="col" className="w-20 pb-3 pl-4 text-left font-semibold">
-                  Qualified
+                  {t("table.colQualified")}
                 </th>
                 <SortHeader
-                  label="Projected"
+                  label={t("table.colProjected")}
                   columnKey="rank"
                   sort={sort}
                   onSort={onSort}
                   className="w-28 pb-3 pl-6 text-right"
-                  hint="Projected finishing order, ranked by each athlete's season best: their fastest or furthest mark this year. A real result you can look up, separate from the model's podium chance."
+                  hint={t("table.colProjectedHint")}
                 />
                 <SortHeader
-                  label="Podium chance"
+                  label={t("table.colPodiumChance")}
                   columnKey="prob"
                   sort={sort}
                   onSort={onSort}
                   className="w-56 pb-3 pl-8 text-right"
-                  hint="The model's estimate of how likely this athlete is to finish in the top three, not to win. Higher means a stronger podium threat, which is why this can rank athletes differently from their season-best mark."
+                  hint={t("table.colPodiumChanceHint")}
                 />
               </tr>
             </thead>
@@ -328,15 +333,12 @@ export function DisciplineTable({
                         the full definition. */}
                     {a.qualified && (
                       <span
-                        title="Confirmed in World Athletics' own 2026 Diamond League standings for this discipline"
+                        title={t("table.qTitle")}
                         className="inline-flex size-6 items-center justify-center rounded-md bg-terracotta/12 text-[13px] font-semibold leading-none text-terracotta-strong"
                         style={{ fontFamily: "var(--font-display)" }}
                       >
                         Q
-                        <span className="sr-only">
-                          ualified — confirmed in World Athletics&apos; 2026 Diamond League
-                          standings
-                        </span>
+                        <span className="sr-only">{t("table.qSr")}</span>
                       </span>
                     )}
                   </td>
@@ -369,7 +371,7 @@ export function DisciplineTable({
                 <tr>
                   <td colSpan={6} className="pb-2 pt-6">
                     <div className="label-caps text-muted-foreground">
-                      Not qualified: below the top {current.qualLimit} on Diamond League points
+                      {t("table.notQualifiedHeading", { n: current.qualLimit })}
                     </div>
                     {/* Was "outside the Diamond League standings", which is
                         wrong for most of these athletes: they are IN the
@@ -379,10 +381,7 @@ export function DisciplineTable({
                         Same imprecision that made the athlete page tell
                         readers Noah Lyles had never scored. */}
                     <p className="mt-1 max-w-xl text-[12px] leading-snug text-muted-foreground">
-                      Fast enough to matter, but short of a qualifying place on points, either below
-                      the cut in the standings or with no Diamond League points in this event at
-                      all. Scored by the same model, so you can see who would be a threat if they
-                      got in.
+                      {t("table.notQualifiedNote")}
                     </p>
                   </td>
                 </tr>
@@ -418,7 +417,7 @@ export function DisciplineTable({
                   </td>
                   <td className="py-3 pl-4">
                     <span className="label-caps whitespace-nowrap text-muted-foreground">
-                      Not qualified
+                      {t("table.notQualified")}
                     </span>
                   </td>
                   <td className="nums py-3 pl-6 text-right text-[13.5px] font-medium text-foreground">

@@ -14,9 +14,10 @@ import { JsonLd } from "@/components/dl/json-ld";
 import { Analytics } from "@vercel/analytics/react";
 import { websiteSchema } from "@/lib/seo";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { I18nProvider } from "@/lib/i18n";
+import { I18nProvider, useT } from "@/lib/i18n";
 
 function NotFoundComponent() {
+  const { t } = useT();
   return (
     /* <main>, not a bare <div>: every other page on the site exposes a main
        landmark through Shell, and this one renders outside it, so a screen
@@ -31,16 +32,14 @@ function NotFoundComponent() {
         <title>Page not found · PodiumCall</title>
         <meta name="robots" content="noindex" />
         <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">{t("notFound.title")}</h2>
+        <p className="mt-2 text-sm text-muted-foreground">{t("notFound.body")}</p>
         <div className="mt-6">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Go home
+            {t("notFound.goHome")}
           </Link>
         </div>
       </div>
@@ -48,6 +47,11 @@ function NotFoundComponent() {
   );
 }
 
+/* Deliberately NOT translated. This is the root error boundary: it renders in
+ * place of the root component, which is where I18nProvider is mounted, so it
+ * is on screen precisely when the provider may not be. useT() throws without
+ * a provider, and a translation lookup must never be the thing that takes
+ * down the screen whose whole job is to survive a failure. English it is. */
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();

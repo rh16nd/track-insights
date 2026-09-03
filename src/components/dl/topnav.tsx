@@ -74,13 +74,17 @@ export function TopNav({
 
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-card/90 backdrop-blur-md">
-      {/* On mobile the center column is `minmax(0,1fr)`, bounded between the
-          brand and the Live badge, so the scrolling nav strip stays inside its
-          own lane instead of overrunning the badge (measured live: the "Live"
-          pill was sitting on top of the "Stats" link). On sm+ everything fits,
-          so it goes back to `1fr auto 1fr`, which centres the nav in the
-          viewport rather than between two unequal ends. */}
-      <div className="grid h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-6 sm:grid-cols-[1fr_minmax(0,auto)_1fr] sm:px-8">
+      {/* One shape at every width: the ends size to their content and the nav
+          takes what is left, scrolling if it must. It used to switch to
+          `1fr auto 1fr` on sm+ to centre the nav in the VIEWPORT, but that
+          pins the right column to the same width as the logo -- roomy in
+          English, and not survivable in French, where the longer nav labels
+          widen the middle and the right cluster had nowhere to go. Measured
+          at 1440px in French: the search input rendered 224px inside a 139px
+          slot and sat on top of the EN/FR switcher. The nav is now centred
+          between the two ends rather than in the viewport, which is the
+          trade this bar can actually afford. */}
+      <div className="grid h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 px-6 sm:gap-3 sm:px-8">
         {/* -m-2 p-2 expands the real hit area to 44x44 without growing the
             mark visually -- the 2026-08-24 critique measured this link at a
             bare 24x24px on mobile, the single element every visitor taps to
@@ -120,11 +124,11 @@ export function TopNav({
           })}
         </nav>
 
-        <div className="flex min-w-0 shrink items-center gap-3 justify-self-end sm:gap-4">
+        <div className="flex min-w-0 shrink items-center gap-2.5 justify-self-end sm:gap-3">
           {/* Search sits in the nav rather than on one page because the
               question it answers ("why isn't X in the field?") arrives while
               you're looking at a table that doesn't contain X. */}
-          <div className="hidden min-w-0 sm:block">
+          <div className="hidden min-w-0 sm:block sm:w-40 lg:w-48 xl:w-56">
             <AthleteSearch />
           </div>
           {/* Mobile: no room for the field inline, so a magnifier toggles a
@@ -138,15 +142,15 @@ export function TopNav({
           >
             <SearchIcon />
           </button>
-          <LanguageSwitcher />
+          <LanguageSwitcher className="shrink-0" />
           {lastUpdated && (
-            <span className="nums hidden text-[11.5px] text-muted-foreground lg:block">
+            <span className="nums hidden shrink-0 whitespace-nowrap text-[11.5px] text-muted-foreground xl:block">
               {t("nav.updated", { date: lastUpdated, days: daysToFinal ?? 0 })}
             </span>
           )}
           {/* On a phone the switcher + search take the right side, so the Live
               badge shows just its pulsing dot; the word comes back at sm+. */}
-          <span className="label-caps flex items-center gap-1.5 rounded-full bg-secondary px-2 py-1.5 text-foreground sm:px-2.5">
+          <span className="label-caps flex shrink-0 items-center gap-1.5 rounded-full bg-secondary px-2 py-1.5 text-foreground sm:px-2.5">
             <span className="relative flex size-1.5" aria-hidden="true">
               <span className="live-ping-ring absolute inset-0 rounded-full bg-gold" />
               <span className="relative size-1.5 rounded-full bg-gold" />

@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import type { MeetMark } from "@/lib/dl-data";
 
@@ -15,6 +16,7 @@ const PAD_BOTTOM = 32;
  * already-plotted points; nothing is invented between them. */
 export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year: number | null }) {
   const [hover, setHover] = useState<number | null>(null);
+  const { t } = useT();
   const [tableView, setTableView] = useState(false);
 
   const first = history[0];
@@ -54,10 +56,12 @@ export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year:
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3">
-        <div className="label-caps text-muted-foreground">{year ?? "Last"} season form</div>
+        <div className="label-caps text-muted-foreground">
+          {year ? t("stc.header", { year }) : t("stc.headerLast")}
+        </div>
         <div className="flex items-center gap-3">
           <div className="text-[11px] text-muted-foreground">
-            {isField ? "Higher is farther" : "Higher is faster"}
+            {t(isField ? "traj.higherFarther" : "traj.higherFaster")}
           </div>
           <button
             type="button"
@@ -65,7 +69,7 @@ export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year:
             onClick={() => setTableView((v) => !v)}
             className="label-caps shrink-0 rounded-sm border border-border px-1.5 py-0.5 text-muted-foreground transition-colors hover:text-terracotta-strong"
           >
-            {tableView ? "Chart view" : "Table view"}
+            {t(tableView ? "traj.chartView" : "traj.tableView")}
           </button>
         </div>
       </div>
@@ -73,21 +77,21 @@ export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year:
         <div className="mt-3 overflow-x-auto">
           <table className="w-full text-left text-[12.5px]">
             <caption className="sr-only">
-              {year ?? "Last"} season marks for this athlete, one row per meet
+              {year ? t("stc.caption", { year }) : t("stc.captionLast")}
             </caption>
             <thead>
               <tr className="label-caps text-muted-foreground">
                 <th scope="col" className="py-1 pr-3 font-medium">
-                  Date
+                  {t("traj.colDate")}
                 </th>
                 <th scope="col" className="py-1 pr-3 font-medium">
-                  Mark
+                  {t("traj.colMark")}
                 </th>
                 <th scope="col" className="py-1 pr-3 font-medium">
-                  Venue
+                  {t("traj.colVenue")}
                 </th>
                 <th scope="col" className="py-1 font-medium">
-                  Score
+                  {t("stc.colScore")}
                 </th>
               </tr>
             </thead>
@@ -176,7 +180,9 @@ export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year:
               <div className="font-medium">{points[hover].mark}</div>
               <div className="text-muted-foreground">{points[hover].venue}</div>
               {points[hover].resultsScore != null && (
-                <div className="text-muted-foreground">{points[hover].resultsScore} pts</div>
+                <div className="text-muted-foreground">
+                  {t("stc.pts", { n: points[hover].resultsScore ?? 0 })}
+                </div>
               )}
             </div>
           )}

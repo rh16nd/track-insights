@@ -12,11 +12,12 @@ import {
   dotClass,
   badgeClass,
 } from "@/components/dl/shell";
-import { statusLabel, type ConfidenceRow, type TopWinner } from "@/lib/dl-data";
+import { type ConfidenceRow, type TopWinner } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useCountUp } from "@/hooks/useCountUp";
 import { NewsFeed } from "@/components/dl/news-feed";
 import { WelcomeLauncher } from "@/components/dl/welcome-modal";
+import { useT, type TFunc } from "@/lib/i18n";
 
 const LAST_PROBS_KEY = "podiumcall:lastProbs";
 
@@ -137,6 +138,7 @@ function CallCard({
   index: number;
   delta: number | undefined;
 }) {
+  const { t } = useT();
   const lead = index === 0;
   return (
     <Link
@@ -153,7 +155,7 @@ function CallCard({
             lead ? "text-gold-strong" : "text-muted-foreground"
           }`}
         >
-          #{index + 1} surest
+          {t("dashboard.surest", { n: index + 1 })}
         </span>
         {winner.injuryWatch && <WatchBadge reason={winner.injuryReason} url={winner.injuryUrl} />}
       </div>
@@ -163,7 +165,7 @@ function CallCard({
         {winner.name}
       </div>
       <div className="nums mt-1.5 text-[13.5px] text-muted-foreground">
-        Season best {winner.mark}
+        {t("dashboard.seasonBest", { mark: winner.mark })}
       </div>
 
       <div className="mt-4 flex items-baseline gap-1.5">
@@ -174,15 +176,15 @@ function CallCard({
         >
           {winner.prob}
         </span>
-        <span className="label-caps text-muted-foreground">% podium</span>
+        <span className="label-caps text-muted-foreground">{t("dashboard.pctPodium")}</span>
         {typeof delta === "number" && (
           <span
             className={`delta-chip nums ml-auto text-[10.5px] font-semibold ${
               delta > 0 ? "text-gold-strong" : "text-muted-foreground"
             }`}
-            title={`${delta > 0 ? "Up" : "Down"} ${Math.abs(delta)} pt${
-              Math.abs(delta) === 1 ? "" : "s"
-            } since your last visit`}
+            title={t(delta > 0 ? "dashboard.deltaUp" : "dashboard.deltaDown", {
+              pts: `${Math.abs(delta)} ${t(Math.abs(delta) === 1 ? "dashboard.pt" : "dashboard.pts")}`,
+            })}
           >
             {delta > 0 ? "▲" : "▼"}
             {Math.abs(delta)}
@@ -207,14 +209,15 @@ function CallCard({
  * useful half on a site whose stated principle is not overclaiming, and it
  * lands the reader on the discipline page built to explain exactly that. */
 function LeastSurePanel({ confidence }: { confidence: ConfidenceRow[] }) {
+  const { t } = useT();
   const least = [...confidence].sort((a, b) => a.value - b.value).slice(0, 8);
   if (least.length === 0) return null;
   const widest = least[least.length - 1]?.value || 1;
 
   return (
     <Panel
-      title="Where the model is least sure"
-      subtitle="The eight events whose strongest pick is weakest. These are the most open fields at the Final, and the ones most likely to surprise."
+      title={t("dashboard.leastSure.title")}
+      subtitle={t("dashboard.leastSure.subtitle")}
     >
       <ul className="divide-y divide-border">
         {least.map((c, i) => {
@@ -275,9 +278,7 @@ function LeastSurePanel({ confidence }: { confidence: ConfidenceRow[] }) {
         })}
       </ul>
       <p className="mt-4 text-[12px] leading-relaxed text-muted-foreground">
-        This is the favourite&apos;s own chance of a podium, not a margin over the next athlete. A
-        low number means no one in that field stands out, so follow a row through to see how level
-        it really is.
+        {t("dashboard.leastSure.note")}
       </p>
     </Panel>
   );
@@ -286,14 +287,15 @@ function LeastSurePanel({ confidence }: { confidence: ConfidenceRow[] }) {
 /** "six days out" / "tomorrow" / "today". The Final is a fixed date, so the
  * headline hits 0 and then goes negative if nobody refreshes the data — say
  * something true at each end rather than printing "-2 days out". */
-function dayPhrase(days: number): string {
-  if (days > 1) return `${days} days out`;
-  if (days === 1) return "one day out";
-  if (days === 0) return "race day";
-  return "under way";
+function dayPhrase(days: number, t: TFunc): string {
+  if (days > 1) return t("dashboard.daysOut", { days });
+  if (days === 1) return t("dashboard.oneDayOut");
+  if (days === 0) return t("dashboard.raceDay");
+  return t("dashboard.underway");
 }
 
 function Dashboard() {
+  const { t } = useT();
   const state = usePredictions();
   const data = state.status === "ok" ? state.data : undefined;
   const deltas = useProbabilityDeltas(data?.topWinners);
@@ -305,9 +307,8 @@ function Dashboard() {
   const stats = data
     ? [
         {
-          label: "Days to Brussels",
+          label: t("dashboard.stat.daysToBrussels"),
           value: data.daysToFinal,
-          sub: "Final, 04 Sep",
           icon: "calendar" as const,
           accent: "text-gold-light",
         },
@@ -315,32 +316,26 @@ function Dashboard() {
           // v0's label, and a better one than "Model accuracy": it names the
           // task the number measures rather than implying the model is right
           // 72% of the time about everything.
-          label: "Top-3 hit rate",
+          label: t("dashboard.stat.hitRate"),
           value: Math.round(data.modelAccuracy),
           suffix: "%",
-          // Says which of the two backtest numbers this is. The caption
-          // used to read only "walk-forward '23-'25", which was true of
-          // both and identified neither.
-          sub: data.modelAccuracyBasis,
           // The bare "72%" is opaque without saying WHAT it measures. Copy
           // kept in step with the How-it-works page's vetted framing ("podium
           // hit rate among the athletes who actually contest the Final") and
           // the anti-"winner" rule: the target is top-three membership.
-          hint: "Among the athletes who actually contest a Final, how often the model's projected top three matches who really medals. It's scored only on seasons the model never trained on, so the figure isn't inflated.",
+          hint: t("dashboard.stat.hitRateHint"),
           icon: "target" as const,
           accent: "text-terracotta-light",
         },
         {
-          label: "Disciplines",
+          label: t("dashboard.stat.disciplines"),
           value: data.trackDisciplines.length + data.fieldDisciplines.length,
-          sub: "tracked",
           icon: "grid" as const,
           accent: "text-gold-light",
         },
         {
-          label: "Meetings run",
+          label: t("dashboard.stat.meetingsRun"),
           value: doneCount,
-          sub: totalCount - doneCount === 1 ? "1 to go" : `${totalCount - doneCount} to go`,
           icon: "flag" as const,
           accent: "text-terracotta-light",
         },
@@ -379,17 +374,21 @@ function Dashboard() {
 
   return (
     <Shell
-      title={data ? `The board, ${dayPhrase(data.daysToFinal)}.` : "The board"}
-      crumb="Dashboard"
-      description="Every projection the model is most sure of, and the events it is least sure of, across all 32 disciplines of the 2026 Diamond League Final."
+      title={
+        data
+          ? t("dashboard.title", { phrase: dayPhrase(data.daysToFinal, t) })
+          : t("dashboard.titleBare")
+      }
+      crumb={t("nav.dashboard")}
+      description={t("dashboard.description")}
       figures={figures}
       lastUpdated={data?.lastUpdated}
       daysToFinal={data?.daysToFinal}
     >
       {state.status === "loading" && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.35fr_1fr]">
-          <PanelSkeleton title="Most likely to reach the podium" rows={6} />
-          <PanelSkeleton title="Season progress" rows={3} />
+          <PanelSkeleton title={t("dashboard.mostLikelyPodium")} rows={6} />
+          <PanelSkeleton title={t("dashboard.seasonProgress")} rows={3} />
         </div>
       )}
 
@@ -414,8 +413,8 @@ function Dashboard() {
               delta chip, the injury watch badge, and the link through to the
               athlete. */}
           <Panel
-            title="The surest calls"
-            subtitle="The model's strongest pick in each discipline: the chance of finishing top three, not of winning. Each card is a different event, so these six aren't racing each other."
+            title={t("dashboard.surestCalls.title")}
+            subtitle={t("dashboard.surestCalls.subtitle")}
             className="mt-6"
           >
             <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
@@ -429,26 +428,26 @@ function Dashboard() {
             <LeastSurePanel confidence={data.confidence} />
 
             <div className="space-y-6">
-              <Panel title="Season progress">
+              <Panel title={t("dashboard.seasonProgress")}>
                 <div className="flex items-baseline justify-between">
                   <span className="nums text-[28px] font-semibold leading-none text-foreground">
                     {progressPct}%
                   </span>
                   <span className="nums text-[12px] text-muted-foreground">
-                    {doneCount} of {totalCount} meets scored
+                    {t("dashboard.meetsScored", { done: doneCount, total: totalCount })}
                   </span>
                 </div>
                 <ProbabilityBar value={progressPct} className="mt-4" trackHeight="h-2" />
               </Panel>
 
               <Panel
-                title="Upcoming calendar"
+                title={t("dashboard.upcomingCalendar")}
                 action={
                   <Link
                     to="/schedule"
                     className="label-caps text-terracotta-strong hover:underline"
                   >
-                    View full schedule →
+                    {t("dashboard.viewFullSchedule")}
                   </Link>
                 }
               >
@@ -468,7 +467,7 @@ function Dashboard() {
                         {m.city}
                       </span>
                       <span className={`label-caps rounded-sm px-1.5 py-1 ${badgeClass[m.status]}`}>
-                        {statusLabel[m.status]}
+                        {t(`meet.status.${m.status}`)}
                       </span>
                     </li>
                   ))}

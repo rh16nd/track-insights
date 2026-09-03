@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { pageHead } from "@/lib/seo";
+import { useT } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Shell,
@@ -24,16 +25,13 @@ export const Route = createFileRoute("/stats")({
   component: StatsPage,
 });
 
-const DESCRIPTION =
-  "Which events are genuinely deep, and which are one athlete and a gap. Every 2026 mark is scored on World Athletics' points table, then read as a spread: how far a discipline's leader sits above the median of its own ranked field. A tight spread is a crowd; a long one is a soloist with daylight behind.";
-
 type Filter = "all" | "track" | "field" | "outdoor";
 
-const FILTERS: { id: Filter; label: string }[] = [
-  { id: "all", label: "All events" },
-  { id: "track", label: "Track" },
-  { id: "field", label: "Field" },
-  { id: "outdoor", label: "Outdoor only" },
+const FILTERS: { id: Filter; labelKey: string }[] = [
+  { id: "all", labelKey: "stats.filterAll" },
+  { id: "track", labelKey: "stats.filterTrack" },
+  { id: "field", labelKey: "stats.filterField" },
+  { id: "outdoor", labelKey: "stats.filterOutdoor" },
 ];
 
 function applyFilter(rows: Performance[], filter: Filter): Performance[] {
@@ -55,6 +53,7 @@ function scorePercent(score: number, min: number, max: number): number {
 }
 
 function StatsPage() {
+  const { t } = useT();
   const state = useStats();
   const data = state.status === "ok" ? state.data : undefined;
   const [filter, setFilter] = useState<Filter>("all");
@@ -69,26 +68,41 @@ function StatsPage() {
 
   return (
     <Shell
-      title="Performance Index"
+      title={t("stats.title")}
       eyebrow={
         data && scale
-          ? `${data.season} season · ${scale.rows.toLocaleString()} ranked marks · scores ${scale.min}–${scale.max}`
-          : "World Athletics scoring points"
+          ? t("stats.eyebrow", {
+              season: data.season,
+              rows: scale.rows.toLocaleString(),
+              min: scale.min,
+              max: scale.max,
+            })
+          : t("stats.eyebrowBare")
       }
-      description={DESCRIPTION}
+      description={t("stats.description")}
       figures={
         <>
-          <HeadFigure value={scale ? scale.rows.toLocaleString() : "—"} label="Marks scored" />
+          <HeadFigure
+            value={scale ? scale.rows.toLocaleString() : "—"}
+            label={t("stats.figMarksScored")}
+          />
           <HeadFigure
             value={scale ? scale.median.toLocaleString() : "—"}
-            label="Field median (WA pts)"
+            label={t("stats.figFieldMedian")}
           />
-          <HeadFigure value={scale ? `${scale.min}–${scale.max}` : "—"} label="Scoring range" />
-          <HeadFigure value={indoor ? indoor.share : "—"} unit="%" label="Set indoors" />
+          <HeadFigure
+            value={scale ? `${scale.min}–${scale.max}` : "—"}
+            label={t("stats.figScoringRange")}
+          />
+          <HeadFigure
+            value={indoor ? indoor.share : "—"}
+            unit="%"
+            label={t("stats.figSetIndoors")}
+          />
         </>
       }
     >
-      {state.status === "loading" && <PanelSkeleton title="Best of the season" rows={10} />}
+      {state.status === "loading" && <PanelSkeleton title={t("stats.bestOfSeason")} rows={10} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
 
       {data && scale && (
@@ -97,8 +111,8 @@ function StatsPage() {
 
           <Panel
             className="mt-6"
-            title={`Best of ${data.season}, any event`}
-            subtitle="Ranked by World Athletics points, so a discus throw and an 800m are directly comparable. The bar is scaled to the range this season actually covers, not to zero."
+            title={t("stats.bestOfYear", { season: data.season })}
+            subtitle={t("stats.bestSubtitle")}
           >
             <div className="mb-4 flex flex-wrap gap-2">
               {FILTERS.map((f) => (
@@ -121,13 +135,13 @@ function StatsPage() {
                       : undefined
                   }
                 >
-                  {f.label}
+                  {t(f.labelKey)}
                 </button>
               ))}
             </div>
 
             {performances.length === 0 ? (
-              <p className="py-6 text-[13px] text-muted-foreground">No marks match this filter.</p>
+              <p className="py-6 text-[13px] text-muted-foreground">{t("stats.noMarks")}</p>
             ) : (
               <ol className="divide-y divide-border">
                 {performances.map((p, i) => (
@@ -171,13 +185,15 @@ function StatsPage() {
 
             {indoor && (
               <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-                World Athletics lists indoor marks inside its outdoor season rankings, tagged only
-                by a <span className="nums">(i)</span> on the venue —{" "}
-                <span className="nums">{indoor.share}%</span> of the{" "}
-                <span className="nums">{indoor.total.toLocaleString()}</span> marks here, and close
-                to half of them in the vertical jumps. They are kept, because for a vault or a shot
-                put indoors is arguably the truer measure, but every one is labelled. Use{" "}
-                <em>Outdoor only</em> above to drop them.
+                {t("stats.indoorNoteBefore")}
+                <span className="nums">(i)</span>
+                {t("stats.indoorNoteMid")}
+                <span className="nums">{indoor.share}</span>
+                {t("stats.indoorNoteOf")}
+                <span className="nums">{indoor.total.toLocaleString()}</span>
+                {t("stats.indoorNoteAfter")}
+                <em>{t("stats.indoorNoteOutdoorOnly")}</em>
+                {t("stats.indoorNoteEnd")}
               </p>
             )}
           </Panel>
@@ -188,12 +204,13 @@ function StatsPage() {
 }
 
 function IndoorBadge() {
+  const { t } = useT();
   return (
     <span
-      title="Set indoors. World Athletics lists these inside the outdoor season rankings"
+      title={t("stats.indoorBadgeTitle")}
       className="label-caps inline-flex items-center rounded-full bg-secondary px-1.5 py-0.5 text-foreground/80"
     >
-      Indoor
+      {t("stats.indoorBadge")}
     </span>
   );
 }

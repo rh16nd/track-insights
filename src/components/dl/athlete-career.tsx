@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { Panel } from "@/components/dl/shell";
 import type { AthleteCareer, HonourGroup } from "@/lib/dl-data";
 
@@ -13,12 +14,13 @@ import type { AthleteCareer, HonourGroup } from "@/lib/dl-data";
 export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
   const { headline, honours, worldRanking, personalBests, eventCount } = career;
   const ranked = worldRanking.events.slice(0, 3);
+  const { t } = useT();
   const decorated = honours.filter((h) => h.podiums > 0);
 
   return (
     <Panel
-      title="Record and ranking"
-      subtitle="World Athletics' own honours and current world ranking, stated by them and not computed here."
+      title={t("car.title")}
+      subtitle={t("car.subtitle")}
       className="mt-4"
     >
       {/* The one line worth reading if you read nothing else here. Built
@@ -37,16 +39,16 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
               <div className="nums mt-1 text-[26px] font-semibold leading-none text-foreground">
                 #{r.place}
               </div>
-              <div className="mt-1 text-[11.5px] text-muted-foreground">world ranking</div>
+              <div className="mt-1 text-[11.5px] text-muted-foreground">{t("car.worldRanking")}</div>
             </div>
           ))}
           {worldRanking.overall !== null && (
             <div>
-              <div className="label-caps text-muted-foreground">Overall</div>
+              <div className="label-caps text-muted-foreground">{t("car.overall")}</div>
               <div className="nums mt-1 text-[26px] font-semibold leading-none text-muted-foreground">
                 #{worldRanking.overall}
               </div>
-              <div className="mt-1 text-[11.5px] text-muted-foreground">across all events</div>
+              <div className="mt-1 text-[11.5px] text-muted-foreground">{t("car.acrossAllEvents")}</div>
             </div>
           )}
         </div>
@@ -55,23 +57,25 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
       {decorated.length > 0 && (
         <div className="mt-6 overflow-x-auto">
           <table className="w-full min-w-[440px] border-collapse text-left">
-            <caption className="label-caps pb-2 text-left text-muted-foreground">Honours</caption>
+            <caption className="label-caps pb-2 text-left text-muted-foreground">
+              {t("car.honours")}
+            </caption>
             <thead>
               <tr className="label-caps border-b border-border text-muted-foreground">
                 <th scope="col" className="pb-2 pr-2 font-semibold">
-                  Championship
+                  {t("car.colChampionship")}
                 </th>
                 <th scope="col" className="w-14 pb-2 pl-3 text-right font-semibold">
-                  Gold
+                  {t("car.colGold")}
                 </th>
                 <th scope="col" className="w-14 pb-2 pl-3 text-right font-semibold">
-                  Silver
+                  {t("car.colSilver")}
                 </th>
                 <th scope="col" className="w-14 pb-2 pl-3 text-right font-semibold">
-                  Bronze
+                  {t("car.colBronze")}
                 </th>
                 <th scope="col" className="w-20 pb-2 pl-3 text-right font-semibold">
-                  Entries
+                  {t("car.colEntries")}
                 </th>
               </tr>
             </thead>
@@ -86,12 +90,11 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
 
       {personalBests.length > 0 && (
         <p className="mt-5 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-          World Athletics holds personal bests for this athlete in{" "}
+          {t("car.pbBefore")}
           <span className="nums font-medium text-foreground">{eventCount}</span>{" "}
-          {eventCount === 1 ? "event" : "events"}
-          {eventCount >= 4 && " (a range, not a single specialism)"}. Marks set indoors are included
-          in that count and are labelled wherever they are shown; World Athletics lists them
-          alongside outdoor ones.
+          {t(eventCount === 1 ? "car.event" : "car.events")}
+          {eventCount >= 4 && t("car.pbRange")}
+          {t("car.pbAfter")}
         </p>
       )}
     </Panel>

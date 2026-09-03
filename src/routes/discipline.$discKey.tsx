@@ -8,6 +8,8 @@ import { TrajectoryOverlayChart } from "@/components/dl/trajectory-overlay-chart
 import { StorylineCards } from "@/components/dl/storyline-cards";
 import { useDiscipline } from "@/hooks/useDiscipline";
 import type { DepthVerdict, DisciplineReport, FieldScore } from "@/lib/dl-data";
+import { ordinalIn } from "@/lib/dl-data";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/discipline/$discKey")({
   // head() runs before the data loads, so the label is derived from the
@@ -23,9 +25,6 @@ export const Route = createFileRoute("/discipline/$discKey")({
   component: DisciplinePage,
 });
 
-const DESCRIPTION =
-  "One event read as a field rather than a list. Is this a genuine contest all the way down, or one athlete and a gap? Measured on World Athletics' own scoring points, so the answer can be compared against the other 31 finals.";
-
 /** Why the verdict is not built on the model's probabilities.
  *
  * The model's target is top-three membership and each athlete is scored
@@ -35,9 +34,6 @@ const DESCRIPTION =
  * and nothing in the number tells the two apart. WA's score has neither
  * problem: it is scraped, present on every toplist row, and the one figure in
  * this data that compares a shot putter to a 1500m runner. */
-const WHY_SCORE =
-  "This is measured on World Athletics' scoring points, not the model's probabilities. Probabilities rank athletes inside one event, but each athlete is scored on their own, so a field's percentages can add up to anything from 31 to 320 across the 32 finals. That's why they can't rank one event against another. A scraped score can.";
-
 const VERDICT_TONE: Record<DepthVerdict["key"], string> = {
   level: "text-terracotta-strong",
   mixed: "text-foreground",
@@ -45,21 +41,25 @@ const VERDICT_TONE: Record<DepthVerdict["key"], string> = {
 };
 
 function DisciplinePage() {
+  const { t, lang } = useT();
   const { discKey } = Route.useParams();
   const state = useDiscipline(discKey);
   const data = state.status === "ok" ? state.data : undefined;
 
   return (
     <Shell
-      title={data ? data.disc : "Discipline"}
+      title={data ? data.disc : t("disc.titleFallback")}
       eyebrow={
         data?.depth
-          ? `Discipline vs discipline · ${ordinal(data.depth.spreadRank)} tightest of ${data.depth.of} finals`
-          : "Discipline vs discipline"
+          ? t("disc.eyebrow", {
+              rank: ordinalIn(lang, data.depth.spreadRank),
+              of: data.depth.of,
+            })
+          : t("disc.eyebrowBare")
       }
-      description={DESCRIPTION}
+      description={t("disc.description")}
     >
-      {state.status === "loading" && <PanelSkeleton title="Depth of the field" rows={6} />}
+      {state.status === "loading" && <PanelSkeleton title={t("disc.depthSkeleton")} rows={6} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
 
       {data && (
@@ -72,8 +72,8 @@ function DisciplinePage() {
               closing centrepiece. */}
           {data.trajectories && data.trajectories.length > 0 && (
             <Panel
-              title={`Real season form · ${data.disc}`}
-              subtitle="Every mark each contender actually recorded this season, on a real calendar. These aren't a smoothed trend; the dots are the meetings they turned up to."
+              title={t("disc.seasonForm", { disc: data.disc })}
+              subtitle={t("disc.seasonFormSubtitle")}
               className="mt-6"
             >
               <TrajectoryOverlayChart trajectories={data.trajectories} discKey={data.discKey} />
@@ -82,8 +82,8 @@ function DisciplinePage() {
 
           {data.storylines && data.storylines.length > 0 && (
             <Panel
-              title={`Storylines · ${data.disc}`}
-              subtitle="Computed from the data, not written: each one is anchored on a real number, and the featured card is whichever most contradicts the model's own pick."
+              title={t("disc.storylines", { disc: data.disc })}
+              subtitle={t("disc.storylinesSubtitle")}
               className="mt-6"
             >
               <StorylineCards storylines={data.storylines} discKey={data.discKey} />
@@ -105,18 +105,16 @@ function DisciplinePage() {
 }
 
 function DepthPanel({ data }: { data: DisciplineReport }) {
+  const { t, lang } = useT();
   const { depth, scores } = data;
 
   if (!depth || scores.length < 2) {
     return (
       <Panel
-        title="Depth of the field"
-        subtitle="Needs a World Athletics score for at least two of the field."
+        title={t("disc.depthTitle")}
+        subtitle={t("disc.depthNeeds")}
       >
-        <p className="py-6 text-[13px] text-muted-foreground">
-          Not enough of this field carries a World Athletics score this season to measure how level
-          it is. Nothing is estimated in its place.
-        </p>
+        <p className="py-6 text-[13px] text-muted-foreground">{t("disc.depthNotEnough")}</p>
       </Panel>
     );
   }
@@ -130,67 +128,81 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
   return (
     <>
       <Panel
-        title="How level this field is"
-        subtitle={`Every finalist's best score this season, strongest to weakest. The distance between the two ends is what ranks this event against the other ${depth.of}.`}
+        title={t("disc.levelTitle")}
+        subtitle={t("disc.levelSubtitle", { of: depth.of })}
       >
         <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
           {verdict && (
             <p className={`dg text-[30px] leading-none font-semibold ${VERDICT_TONE[verdict.key]}`}>
-              {verdict.label}
+              {t(`disc.verdict.${verdict.key}.label`)}
             </p>
           )}
           <p className="text-[13px] text-muted-foreground">
-            {verdict && <>{verdict.basis.charAt(0).toUpperCase() + verdict.basis.slice(1)}. </>}
-            <span className="nums font-medium text-foreground">{depth.spread}</span> points from{" "}
-            {shortName(depth.bestAthlete)} down to the weakest of the{" "}
-            <span className="nums">{depth.scored}</span> scored.
+            {verdict && (
+              <>
+                {(() => {
+                  const basis = t(`disc.verdict.${verdict.key}.basis`);
+                  return basis.charAt(0).toUpperCase() + basis.slice(1);
+                })()}
+                {". "}
+              </>
+            )}
+            <span className="nums font-medium text-foreground">{depth.spread}</span>
+            {t("disc.spreadSentenceMid")}
+            {shortName(depth.bestAthlete)}
+            {t("disc.spreadSentenceDown")}
+            <span className="nums">{depth.scored}</span>
+            {t("disc.spreadSentenceEnd")}
           </p>
         </div>
 
         <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
           <Stat
-            label="Spread across the field"
-            value={`${depth.spread} pts`}
-            note={`${ordinal(depth.spreadRank)} tightest of ${depth.of}`}
-            hint="The points gap from the strongest finalist's score down to the weakest. A small gap is a tight, level field; a big one means the leader has daylight."
+            label={t("disc.statSpread")}
+            value={t("disc.statSpreadValue", { n: depth.spread })}
+            note={t("disc.statSpreadNote", {
+              rank: ordinalIn(lang, depth.spreadRank),
+              of: depth.of,
+            })}
+            hint={t("disc.statSpreadHint")}
           />
           <Stat
-            label="Strongest finalist"
+            label={t("disc.statStrongest")}
             value={String(depth.bestScore)}
             note={shortName(depth.bestAthlete)}
           />
           <Stat
-            label="World top-100 median"
+            label={t("disc.statMedian")}
             value={depth.toplistMedian === null ? "—" : String(depth.toplistMedian)}
             note={
               headroom === null
-                ? "not scored this season"
-                : `strongest finalist is ${headroom} clear`
+                ? t("disc.statMedianNoScore")
+                : t("disc.statMedianClear", { n: headroom })
             }
-            hint="The middle score of the world's top 100 in this event this year, as a yardstick. It shows how the Final's field sits against the wider world, not just against itself."
+            hint={t("disc.statMedianHint")}
           />
           <Stat
-            label="Field scored"
+            label={t("disc.statScored")}
             value={`${depth.scored}/${depth.fieldSize}`}
             note={
               depth.scored === depth.fieldSize
-                ? "every finalist"
-                : "some carry no score this season"
+                ? t("disc.statScoredEvery")
+                : t("disc.statScoredSome")
             }
-            hint="How many of the finalists have a World Athletics score this season. A few events have one or two who don't, and nothing is estimated in their place."
+            hint={t("disc.statScoredHint")}
           />
         </dl>
 
         <ScoreSpread scores={scores} />
 
         <p className="mt-5 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-          {WHY_SCORE}
+          {t("disc.whyScore")}
         </p>
       </Panel>
 
       <Panel
-        title="Where the model disagrees with the marks"
-        subtitle={`Podium probability against measured ability, for the same ${scores.length} athletes. These two orderings are not the same, and where they diverge is the argument worth having.`}
+        title={t("disc.disagreeTitle")}
+        subtitle={t("disc.disagreeSubtitle", { n: scores.length })}
         className="mt-6"
       >
         <ol className="divide-y divide-border">
@@ -223,9 +235,7 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
           ))}
         </ol>
         <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-          Ordered by World Athletics score. The percentage is the model's chance of that athlete
-          finishing in the top three. It isn&apos;t a win probability, and the two columns are
-          allowed to disagree: a season best is one day, and the projection reads a whole season.
+          {t("disc.disagreeNote")}
         </p>
       </Panel>
     </>
@@ -237,13 +247,14 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
  * would render every field as one flat block and show nothing. */
 function ScoreSpread({ scores }: { scores: FieldScore[] }) {
   const top = scores[0]?.score ?? 0;
+  const { t } = useT();
   const bottom = scores[scores.length - 1]?.score ?? 0;
   const range = Math.max(top - bottom, 1);
 
   return (
     <figure className="mt-6">
       <figcaption className="label-caps mb-3 text-muted-foreground">
-        Each finalist&apos;s World Athletics score
+        {t("disc.spreadCaption")}
       </figcaption>
       <div className="relative h-14 rounded-[12px] bg-secondary/50">
         {scores.map((s) => {
@@ -271,8 +282,7 @@ function ScoreSpread({ scores }: { scores: FieldScore[] }) {
         </span>
       </div>
       <p className="mt-2 text-[12px] text-muted-foreground">
-        Gold marks the strongest score in the field. Dots that bunch mean a level field; a dot out
-        on its own means someone is clear of the rest.
+        {t("disc.spreadNote")}
       </p>
     </figure>
   );
@@ -289,11 +299,12 @@ function Stat({
   note: string;
   hint?: string;
 }) {
+  const { t } = useT();
   return (
     <div>
       <dt className="label-caps flex items-center gap-1 text-muted-foreground">
         {label}
-        {hint && <InfoTip label={`About ${label}`}>{hint}</InfoTip>}
+        {hint && <InfoTip label={t("figure.about", { label })}>{hint}</InfoTip>}
       </dt>
       <dd className="nums mt-1 text-[22px] leading-none font-semibold text-foreground">{value}</dd>
       <p className="mt-1 text-[12px] leading-snug text-muted-foreground">{note}</p>
@@ -307,10 +318,4 @@ function shortName(name: string): string {
   const parts = name.trim().split(/\s+/);
   const last = parts[parts.length - 1] ?? "";
   return last.length > 1 ? last.charAt(0) + last.slice(1).toLowerCase() : name;
-}
-
-function ordinal(n: number): string {
-  const suffix =
-    n % 100 >= 11 && n % 100 <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" }[n % 10] ?? "th");
-  return `${n}${suffix}`;
 }

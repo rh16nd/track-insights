@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Shell, PanelSkeleton, ErrorPanel } from "@/components/dl/shell";
 import { DisciplineTable } from "@/components/dl/discipline-table";
 import { usePredictions } from "@/hooks/usePredictions";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/track")({
   head: () =>
@@ -16,10 +17,8 @@ export const Route = createFileRoute("/track")({
   component: TrackPage,
 });
 
-const DESCRIPTION =
-  "Sprints through distance, every track discipline contested at the Final. Pick an event to see each qualified athlete's chance of finishing on the podium.";
-
 function TrackPage() {
+  const { t } = useT();
   const state = usePredictions();
   const { disc } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
@@ -32,15 +31,17 @@ function TrackPage() {
   // The discipline count is only shown once it's actually known.
   return (
     <Shell
-      title="Track events"
+      title={t("track.title")}
       eyebrow={
-        data ? `${data.trackDisciplines.length} track disciplines · 2026 Final` : "2026 Final"
+        data
+          ? t("track.eyebrow", { n: data.trackDisciplines.length })
+          : t("common.final2026")
       }
-      description={DESCRIPTION}
+      description={t("track.description")}
       lastUpdated={data?.lastUpdated}
       daysToFinal={data?.daysToFinal}
     >
-      {state.status === "loading" && <PanelSkeleton title="Projected field" rows={8} />}
+      {state.status === "loading" && <PanelSkeleton title={t("common.projectedField")} rows={8} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
       {data && (
         <DisciplineTable

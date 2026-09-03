@@ -8,7 +8,8 @@ import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
 import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
 import { AthleteCareerBlock } from "@/components/dl/athlete-career";
 import { InfoTip } from "@/components/dl/info-tip";
-import { ordinal } from "@/lib/dl-data";
+import { ordinalIn } from "@/lib/dl-data";
+import { useT, type TFunc } from "@/lib/i18n";
 
 const FIELD_EVENT_KEYS = new Set([
   "men_HJ",
@@ -40,6 +41,46 @@ const FIELD_EVENT_KEYS = new Set([
  * and "absent from that list" was read as "never scored". He is 9th on 15
  * points, two short of the cut. The API now answers from the full
  * standings table and this page shows the points and the gap. */
+/** The API sends both a finished English `reason` sentence and the parts it
+ * was built from (`reasonCode` plus the `dl` standings row). Rebuilding it
+ * here from the parts is what lets it be read in French without teaching the
+ * Python API a second language. Any reasonCode this does not recognise falls
+ * back to the API's own sentence rather than showing nothing. */
+function notInFieldReason(data: AthleteNotInField, t: TFunc, lang: string): string {
+  const { dl } = data;
+  if (data.reasonCode === "outside_points_cut" && dl) {
+    const head = t("reason.pointsCut", {
+      rank: ordinalIn(lang, dl.rank),
+      disc: data.disc,
+      points: dl.points ?? 0,
+      limit: dl.qualLimit,
+    });
+    if (dl.status === "out") return head + t("reason.tailOut");
+    if (dl.gap == null) return head;
+    if (dl.gap > 0) {
+      return (
+        head +
+        t(dl.gap === 1 ? "reason.tailShortOne" : "reason.tailShortMany", { gap: dl.gap })
+      );
+    }
+    return head + t("reason.tailTieBreak");
+  }
+  if (data.reasonCode === "not_in_standings") {
+    return t("reason.notInStandings", { disc: data.disc });
+  }
+  if (data.reasonCode === "injury_removed") return t("reason.injuryRemoved");
+  if (data.reasonCode === "outside_cut") {
+    return t("reason.outsideCut", {
+      limit: dl?.qualLimit ?? 8,
+      disc: data.disc,
+    });
+  }
+  if (data.reasonCode === "no_data") {
+    return t("reason.noData", { year: 2026, disc: data.disc });
+  }
+  return data.reason;
+}
+
 function NotInField({
   data,
   discKey,
@@ -51,6 +92,7 @@ function NotInField({
   canGoBack: boolean;
   router: { history: { back: () => void } };
 }) {
+  const { t, lang } = useT();
   const backTo = FIELD_EVENT_KEYS.has(discKey) ? "/field" : "/track";
 
   // Same real World Athletics photo the in-field profiles get, cropped by
@@ -111,10 +153,12 @@ function NotInField({
             to={backTo}
             className="label-caps -m-2 p-2 text-white/80 transition-colors hover:text-white"
           >
-            ← Back to {backTo === "/field" ? "field" : "track"} events
+            {t(backTo === "/field" ? "ath.backToField" : "ath.backToTrack")}
           </Link>
         )}
-        <div className="label-caps mt-3 text-gold-on-canvas">Athlete dossier · {data.disc}</div>
+        <div className="label-caps mt-3 text-gold-on-canvas">
+          {t("ath.dossier", { disc: data.disc })}
+        </div>
         <h1
           className="mt-3.5 text-[clamp(40px,7vw,92px)] leading-[0.92] font-bold tracking-[-0.03em] text-white"
           style={{ fontFamily: "var(--font-display)" }}
@@ -129,13 +173,18 @@ function NotInField({
         </h1>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <Tag>{data.nat}</Tag>
-          <Tag>Not in the projected field</Tag>
+          <Tag>{t("ath.notInField")}</Tag>
           {data.dl && (
             <Tag>
-              {ordinal(data.dl.rank)} on {data.dl.points} DL points
+              {t("ath.onDlPoints", {
+                rank: ordinalIn(lang, data.dl.rank),
+                points: data.dl.points ?? "—",
+              })}
             </Tag>
           )}
-          {data.worldRank != null && <Tag>World #{data.worldRank}</Tag>}
+          {data.worldRank != null && (
+            <Tag>{t("ath.worldRankTag", { n: data.worldRank })}</Tag>
+          )}
         </div>
       </div>
 
@@ -145,11 +194,10 @@ function NotInField({
           they are not in it. */}
       {data.hypotheticalProb != null && (
         <div className="rounded-[20px] border border-white/20 bg-white/10 px-6 py-5">
-          <div className="label-caps text-gold-on-canvas">If they had qualified</div>
+          <div className="label-caps text-gold-on-canvas">{t("ath.ifQualified")}</div>
           <p className="mt-2 text-[14px] leading-relaxed text-white/92">
-            <span className="nums font-semibold text-white">{data.hypotheticalProb}%</span> chance
-            of a podium, from the same model run over the near-miss group. This isn&apos;t a
-            projection about Brussels; they aren&apos;t in the field.
+            <span className="nums font-semibold text-white">{data.hypotheticalProb}</span>
+            {t("ath.ifQualifiedBefore")}
           </p>
         </div>
       )}
@@ -159,13 +207,15 @@ function NotInField({
   return (
     <Shell title={data.name} crumb={data.name} hero={hero} headTone="brick" headBackdrop={backdrop}>
       <Panel
-        title="Why they're not in the projected field"
-        subtitle="The same eligibility check the projections themselves use"
+        title={t("ath.whyNotTitle")}
+        subtitle={t("ath.whyNotSubtitle")}
       >
-        <p className="text-[13.5px] leading-relaxed text-foreground">{data.reason}</p>
+        <p className="text-[13.5px] leading-relaxed text-foreground">
+          {notInFieldReason(data, t, lang)}
+        </p>
         {data.injuryReason && (
           <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">
-            Flagged from: {data.injuryReason}{" "}
+            {t("ath.flaggedFrom", { reason: data.injuryReason })}{" "}
             {data.injuryUrl && (
               <a
                 href={data.injuryUrl}
@@ -173,7 +223,7 @@ function NotInField({
                 rel="noopener noreferrer"
                 className="text-terracotta-strong hover:underline"
               >
-                View source
+                {t("ath.viewSource")}
               </a>
             )}
           </p>
@@ -185,23 +235,23 @@ function NotInField({
         {data.dl && (
           <div className="mt-5 flex flex-wrap gap-x-10 gap-y-4">
             <div>
-              <div className="label-caps text-muted-foreground">Diamond League points</div>
+              <div className="label-caps text-muted-foreground">{t("ath.dlPoints")}</div>
               <div className="nums mt-1 text-[20px] font-semibold text-foreground">
                 {data.dl.points ?? "—"}
                 {/* Separated by a middot, not just whitespace: "15" beside
                     "9th" reads as "159th" at a glance. */}
                 <span className="ml-2 text-[13px] font-medium text-muted-foreground">
-                  · {ordinal(data.dl.rank)} in the standings
+                  {t("ath.inStandings", { rank: ordinalIn(lang, data.dl.rank) })}
                 </span>
               </div>
             </div>
             <div>
-              <div className="label-caps text-muted-foreground">Gap to the cut</div>
+              <div className="label-caps text-muted-foreground">{t("ath.gapToCut")}</div>
               <div className="nums mt-1 text-[20px] font-semibold text-foreground">
-                {data.dl.gap == null ? "—" : data.dl.gap > 0 ? `−${data.dl.gap}` : "level"}
+                {data.dl.gap == null ? "—" : data.dl.gap > 0 ? `−${data.dl.gap}` : t("ath.level")}
                 {data.dl.cutPoints != null && (
                   <span className="ml-2 text-[13px] font-medium text-muted-foreground">
-                    · cut at {data.dl.cutPoints}
+                    {t("ath.cutAt", { n: data.dl.cutPoints })}
                   </span>
                 )}
               </div>
@@ -214,13 +264,12 @@ function NotInField({
             search={{ disc: data.discKey }}
             className="mt-4 inline-block text-[12.5px] font-medium text-terracotta-strong hover:underline"
           >
-            See the full {data.disc} standings →
+            {t("ath.seeStandings", { disc: data.disc })}
           </Link>
         )}
         {data.worldRank === 1 && (
           <p className="mt-4 text-[12.5px] leading-relaxed text-muted-foreground">
-            Worth noting: this is the fastest mark in the world this season. Diamond League Final
-            eligibility is decided by points scored in the series, not by season best.
+            {t("ath.fastestNote")}
           </p>
         )}
       </Panel>
@@ -229,53 +278,57 @@ function NotInField({
           profile uses. None of these numbers stop being true because the
           athlete missed the cut, and the page read as a stub without them. */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
-        <Panel title="Season stats">
+        <Panel title={t("ath.seasonStats")}>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <StatBlock label="2026 season best" value={data.seasonBest ?? "—"} icon="target" />
+            <StatBlock label={t("ath.seasonBest2026")} value={data.seasonBest ?? "—"} icon="target" />
             <StatBlock
-              label="World rank"
+              label={t("ath.worldRank")}
               value={data.worldRank != null ? `#${data.worldRank}` : "—"}
-              sub="this season's toplist"
+              sub={t("ath.thisSeasonToplist")}
               icon="trophy"
             />
-            <StatBlock label="Career best" value={data.careerBest ?? "—"} icon="trophy" />
+            <StatBlock label={t("ath.careerBest")} value={data.careerBest ?? "—"} icon="trophy" />
             <StatBlock
-              label="PB gap"
+              label={t("ath.pbGap")}
               value={
                 data.pbGap != null
                   ? `${data.pbGap.toFixed(2)}${FIELD_EVENT_KEYS.has(data.discKey) ? "m" : "s"}`
                   : "—"
               }
-              sub="off their career best"
+              sub={t("ath.offCareerBest")}
               icon="ruler"
-              hint={`How far this season's best mark is from the athlete's all-time best, in ${
-                FIELD_EVENT_KEYS.has(data.discKey) ? "metres" : "seconds"
-              }. Zero means they've matched their personal best this year; a bigger number means they're still off it.`}
+              hint={t(
+                FIELD_EVENT_KEYS.has(data.discKey)
+                  ? "ath.pbGapHintMetres"
+                  : "ath.pbGapHintSeconds",
+              )}
             />
             <StatBlock
-              label="Age"
+              label={t("ath.ageLabel")}
               value={data.age != null ? String(Math.round(data.age)) : "—"}
               icon="calendar"
             />
             <StatBlock
-              label="Meets this season"
+              label={t("ath.meetsThisSeason")}
               value={data.meetsCount != null ? String(data.meetsCount) : "—"}
-              sub="Diamond League meetings"
+              sub={t("ath.dlMeetings")}
               icon="grid"
             />
             <StatBlock
               label={
                 FIELD_EVENT_KEYS.has(data.discKey)
-                  ? "Competitions this season"
-                  : "Races this season"
+                  ? t("ath.competitionsThisSeason")
+                  : t("ath.racesThisSeason")
               }
               value={String(data.racesThisSeason)}
-              sub="all competitions"
+              sub={t("ath.allCompetitions")}
               icon="grid"
             />
             <StatBlock
-              label="Last competed"
-              value={data.daysSinceLast != null ? `${data.daysSinceLast}d ago` : "—"}
+              label={t("ath.lastCompeted")}
+              value={
+                data.daysSinceLast != null ? t("ath.daysAgo", { n: data.daysSinceLast }) : "—"
+              }
               {...(data.lastRaceDate ? { sub: data.lastRaceDate } : {})}
               icon="clock"
             />
@@ -285,20 +338,25 @@ function NotInField({
                 why they are not in the field. */}
             {data.scoreContext && (
               <StatBlock
-                label="WA score"
+                label={t("ath.waScore")}
                 value={String(data.scoreContext.score)}
-                sub={`Top ${Math.max(0.1, 100 - data.scoreContext.percentile).toFixed(1)}% of all ranked marks`}
+                sub={t("ath.waScoreSub", {
+                  pct: Math.max(0.1, 100 - data.scoreContext.percentile).toFixed(1),
+                })}
                 icon="ruler"
-                hint="World Athletics' own points score for a mark. It puts every event on one scale, so a 9.9 hundred metres and a 2.30m high jump can be lined up and compared. Higher is better."
+                hint={t("ath.waScoreHint")}
               />
             )}
           </div>
           {data.scoreContext && (
             <p className="mt-4 max-w-md text-[11.5px] leading-snug text-muted-foreground">
-              {ordinal(Math.round(data.scoreContext.discPercentile))} percentile within{" "}
-              {data.disc.toLowerCase()}, where the median is{" "}
-              <span className="nums">{data.scoreContext.discMedian}</span>.
-              {data.scoreContext.indoor && " This mark was set indoors."}
+              {t("ath.percentileBefore", {
+                ord: ordinalIn(lang, Math.round(data.scoreContext.discPercentile)),
+                disc: data.disc.toLowerCase(),
+              })}
+              <span className="nums">{data.scoreContext.discMedian}</span>
+              {t("ath.percentileAfter")}
+              {data.scoreContext.indoor && t("ath.setIndoors")}
             </p>
           )}
           {/* Career best, PB gap, meets and last-competed come from run.py's
@@ -312,22 +370,21 @@ function NotInField({
               be said rather than left as a dash. */}
           {data.daysSinceLast == null && (
             <p className="mt-4 max-w-md text-[12px] leading-relaxed text-muted-foreground">
-              World Athletics lists a season best for this athlete but no dated results this season
-              {data.racesOnRecord > 0 ? " (their results on record are from earlier years)" : ""},
-              so meetings and last-competed are unknown here rather than zero.
+              {t("ath.noDatedResults", {
+                extra: data.racesOnRecord > 0 ? t("ath.noDatedResultsExtra") : "",
+              })}
             </p>
           )}
           {data.careerBest === null && (
             <p className="mt-4 text-[12px] leading-relaxed text-muted-foreground">
-              Career best, PB gap and activity aren&apos;t computed for athletes this far outside
-              the field. The model only scores the projected finalists and the closest challengers.
+              {t("ath.notComputed")}
             </p>
           )}
         </Panel>
 
         <Panel
-          title="Real season form"
-          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its totals run higher. That's a difference in scope, not a contradiction."
+          title={t("ath.realSeasonForm")}
+          subtitle={t("ath.realSeasonFormSubtitle")}
         >
           {data.history.length > 0 ? (
             <SeasonTrendChart history={data.history} year={data.historyYear} />
@@ -358,8 +415,8 @@ function NotInField({
         />
       ) : (
         <Panel
-          title="Head-to-head vs the projected field"
-          subtitle="Real meetings against the athletes who did qualify, from World Athletics results."
+          title={t("ath.h2hTitle")}
+          subtitle={t("ath.h2hSubtitle")}
           className="mt-6"
         >
           {data.h2h.length > 0 ? (
@@ -386,7 +443,7 @@ function NotInField({
             to={backTo}
             className="label-caps -m-2 p-2 text-muted-foreground transition-colors hover:text-foreground"
           >
-            ← Back to {backTo === "/field" ? "field" : "track"} events
+            {t(backTo === "/field" ? "ath.backToField" : "ath.backToTrack")}
           </Link>
         )}
         {data.waUrl && (
@@ -473,12 +530,13 @@ function StatBlock({
   /** Optional tap-and-hover explanation for a stat that isn't self-evident. */
   hint?: string;
 }) {
+  const { t } = useT();
   return (
     <div>
       <div className="flex items-center gap-1.5 text-terracotta-strong">
         <StatIcon kind={icon} />
         <span className="label-caps text-muted-foreground">{label}</span>
-        {hint && <InfoTip label={`About ${label}`}>{hint}</InfoTip>}
+        {hint && <InfoTip label={t("figure.about", { label })}>{hint}</InfoTip>}
       </div>
       <div className="nums mt-1.5 text-[20px] font-semibold text-foreground">{value}</div>
       {sub && <div className="text-[11.5px] text-muted-foreground">{sub}</div>}
@@ -521,6 +579,7 @@ function DossierFigure({
 }
 
 function AthleteProfilePage() {
+  const { t, lang } = useT();
   const { discKey, name } = Route.useParams();
   const state = useAthleteProfile(discKey, decodeURIComponent(name));
   const router = useRouter();
@@ -534,8 +593,8 @@ function AthleteProfilePage() {
     return (
       <Shell
         title={pendingName}
-        eyebrow="Athlete profile"
-        description="Loading real season form, head-to-head record and season stats…"
+        eyebrow={t("ath.profileEyebrow")}
+        description={t("ath.loadingDescription")}
       >
         <PanelSkeleton rows={6} />
       </Shell>
@@ -550,13 +609,13 @@ function AthleteProfilePage() {
     return (
       <Shell
         title={pendingName}
-        eyebrow="Athlete profile"
-        description="This athlete's profile could not be loaded."
+        eyebrow={t("ath.profileEyebrow")}
+        description={t("ath.errorDescription")}
       >
         <ErrorPanel
-          title="Could not load athlete profile"
+          title={t("ath.errorTitle")}
           message={state.message}
-          hint="This athlete may not be in the current predictions file. Withdrawn athletes are filtered out before profiles are built."
+          hint={t("ath.errorHint")}
           onRetry={state.retry}
         />
       </Shell>
@@ -641,34 +700,36 @@ function AthleteProfilePage() {
         </h1>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <Tag>{a.nat}</Tag>
-          {a.age != null && <Tag>Age {Math.round(a.age)}</Tag>}
-          <Tag>#{a.rank} in the projected field</Tag>
+          {a.age != null && <Tag>{t("ath.age", { n: Math.round(a.age) })}</Tag>}
+          <Tag>{t("ath.rankInField", { n: a.rank })}</Tag>
           {a.injuryWatch && <WatchBadge reason={a.injuryReason} url={a.injuryUrl} tone="dark" />}
         </div>
         <div className="mt-6 flex flex-wrap gap-x-7 gap-y-5">
-          <DossierFigure label="Season best" value={a.mark} />
-          {a.careerBest && <DossierFigure label="Personal best" value={a.careerBest} />}
-          {a.lastRaceDate && <DossierFigure label="Last competed" value={a.lastRaceDate} />}
+          <DossierFigure label={t("ath.figSeasonBest")} value={a.mark} />
+          {a.careerBest && <DossierFigure label={t("ath.figPersonalBest")} value={a.careerBest} />}
+          {a.lastRaceDate && <DossierFigure label={t("ath.lastCompeted")} value={a.lastRaceDate} />}
           <DossierFigure
-            label={`Races in ${a.historyYear ?? ""}`.trim()}
+            label={t("ath.figRacesIn", { year: a.historyYear ?? "" }).trim()}
             value={String(a.racesThisSeason)}
           />
-          <DossierFigure label="PodiumCall model" value={`${a.prob}%`} gold />
+          <DossierFigure label={t("ath.model")} value={`${a.prob}%`} gold />
         </div>
       </div>
 
       <div className="rounded-[20px] border border-white/20 bg-white/10 px-6 py-5">
-        <div className="label-caps text-gold-on-canvas">PodiumCall model</div>
+        <div className="label-caps text-gold-on-canvas">{t("ath.model")}</div>
         <p className="mt-2 text-[14px] leading-relaxed text-white/92">
-          <span className="nums font-semibold text-white">{a.prob}%</span> chance of finishing on
-          the podium in Brussels, not of winning. The model predicts top-three membership.
+          <span className="nums font-semibold text-white">{a.prob}</span>
+          {t("ath.modelBefore")}
           {a.scoreContext && (
             <>
-              {" "}
-              The <span className="nums">{a.mark}</span> scores{" "}
-              <span className="nums">{a.scoreContext.score}</span> World Athletics points, the{" "}
-              <span className="nums">{a.scoreContext.discPercentile}th</span> percentile of this
-              discipline.
+              {t("ath.modelScoreBefore")}
+              <span className="nums">{a.mark}</span>
+              {t("ath.modelScoreMid")}
+              <span className="nums">{a.scoreContext.score}</span>
+              {t("ath.modelScoreAfter")}
+              <span className="nums">{ordinalIn(lang, a.scoreContext.discPercentile)}</span>
+              {t("ath.modelScoreEnd")}
             </>
           )}
         </p>
@@ -679,25 +740,25 @@ function AthleteProfilePage() {
   return (
     <Shell title={a.name} crumb={a.name} hero={hero} headTone="brick" headBackdrop={backdrop}>
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
-        <Panel title="Season stats">
+        <Panel title={t("ath.seasonStats")}>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <StatBlock label="2026 season best" value={a.mark} icon="target" />
-            <StatBlock label="Career best" value={a.careerBest ?? "—"} icon="trophy" />
+            <StatBlock label={t("ath.seasonBest2026")} value={a.mark} icon="target" />
+            <StatBlock label={t("ath.careerBest")} value={a.careerBest ?? "—"} icon="trophy" />
             <StatBlock
-              label="PB gap"
+              label={t("ath.pbGap")}
               value={
                 a.pbGap != null
                   ? `${a.pbGap.toFixed(2)}${FIELD_EVENT_KEYS.has(a.discKey) ? "m" : "s"}`
                   : "—"
               }
-              sub="off their career best"
+              sub={t("ath.offCareerBest")}
               icon="ruler"
-              hint={`How far this season's best mark is from the athlete's all-time best, in ${
-                FIELD_EVENT_KEYS.has(a.discKey) ? "metres" : "seconds"
-              }. Zero means they've matched their personal best this year; a bigger number means they're still off it.`}
+              hint={t(
+                FIELD_EVENT_KEYS.has(a.discKey) ? "ath.pbGapHintMetres" : "ath.pbGapHintSeconds",
+              )}
             />
             <StatBlock
-              label="Age"
+              label={t("ath.ageLabel")}
               value={a.age != null ? String(Math.round(a.age)) : "—"}
               icon="calendar"
             />
@@ -708,22 +769,24 @@ function AthleteProfilePage() {
                 that came from his toplist mark. Same situation for anyone who
                 switches events mid-season. */}
             <StatBlock
-              label="Meets this season"
+              label={t("ath.meetsThisSeason")}
               value={a.meetsCount != null ? String(a.meetsCount) : "—"}
-              sub="Diamond League meetings"
+              sub={t("ath.dlMeetings")}
               icon="grid"
             />
             <StatBlock
               label={
-                FIELD_EVENT_KEYS.has(a.discKey) ? "Competitions this season" : "Races this season"
+                FIELD_EVENT_KEYS.has(a.discKey)
+                  ? t("ath.competitionsThisSeason")
+                  : t("ath.racesThisSeason")
               }
               value={String(a.racesThisSeason)}
-              sub="all competitions"
+              sub={t("ath.allCompetitions")}
               icon="grid"
             />
             <StatBlock
-              label="Last competed"
-              value={a.daysSinceLast != null ? `${a.daysSinceLast}d ago` : "—"}
+              label={t("ath.lastCompeted")}
+              value={a.daysSinceLast != null ? t("ath.daysAgo", { n: a.daysSinceLast }) : "—"}
               {...(a.lastRaceDate ? { sub: a.lastRaceDate } : {})}
               icon="clock"
             />
@@ -734,20 +797,25 @@ function AthleteProfilePage() {
                 actually good" for a reader who does not know the event. */}
             {a.scoreContext && (
               <StatBlock
-                label="WA score"
+                label={t("ath.waScore")}
                 value={String(a.scoreContext.score)}
-                sub={`Top ${Math.max(0.1, 100 - a.scoreContext.percentile).toFixed(1)}% of all ranked marks`}
+                sub={t("ath.waScoreSub", {
+                  pct: Math.max(0.1, 100 - a.scoreContext.percentile).toFixed(1),
+                })}
                 icon="ruler"
               />
             )}
           </div>
           {a.scoreContext && (
             <p className="mt-4 max-w-md text-[11.5px] leading-snug text-muted-foreground">
-              {ordinal(Math.round(a.scoreContext.discPercentile))} percentile within{" "}
-              {a.disc.toLowerCase()}, where the median is{" "}
-              <span className="nums">{a.scoreContext.discMedian}</span>. The two readings differ
-              because events differ in depth.
-              {a.scoreContext.indoor && " This mark was set indoors."}
+              {t("ath.percentileBefore", {
+                ord: ordinalIn(lang, Math.round(a.scoreContext.discPercentile)),
+                disc: a.disc.toLowerCase(),
+              })}
+              <span className="nums">{a.scoreContext.discMedian}</span>
+              {t("ath.percentileAfter")}
+              {t("ath.percentileDiffer")}
+              {a.scoreContext.indoor && t("ath.setIndoors")}
             </p>
           )}
           <a
@@ -756,13 +824,13 @@ function AthleteProfilePage() {
             rel="noopener noreferrer"
             className="mt-5 inline-block text-[12px] text-muted-foreground transition-colors hover:text-terracotta-strong hover:underline"
           >
-            View full profile on World Athletics →
+            {t("ath.viewFullProfile")}
           </a>
         </Panel>
 
         <Panel
-          title="Real season form"
-          subtitle="Diamond League meetings only. The competition record below counts every scraped final, so its totals run higher. That's a difference in scope, not a contradiction."
+          title={t("ath.realSeasonForm")}
+          subtitle={t("ath.realSeasonFormSubtitle")}
         >
           {a.history.length > 0 ? (
             <SeasonTrendChart history={a.history} year={a.historyYear} />

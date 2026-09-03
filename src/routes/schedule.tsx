@@ -2,9 +2,9 @@ import type { CSSProperties } from "react";
 import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, HeadFigure } from "@/components/dl/shell";
-import { statusLabel } from "@/lib/dl-data";
 import type { Meet } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
+import { useT, type TFunc } from "@/lib/i18n";
 
 export const Route = createFileRoute("/schedule")({
   head: () =>
@@ -33,24 +33,19 @@ function meetDate(meet: Meet): string {
  * meetings that are not the Final. Spelled out to the point where a word
  * still reads better than a numeral, then it falls back to digits rather
  * than inventing vocabulary. */
-const NUMBER_WORD: Record<number, string> = {
-  10: "Ten",
-  11: "Eleven",
-  12: "Twelve",
-  13: "Thirteen",
-  14: "Fourteen",
-  15: "Fifteen",
-  16: "Sixteen",
-};
-
-function headline(meets: Meet[]): string {
+function headline(meets: Meet[], t: TFunc): string {
   const final = meets.find((m) => m.status === "final");
   const others = meets.length - (final ? 1 : 0);
-  if (others < 1) return "The road to the Final.";
-  const word = NUMBER_WORD[others] ?? String(others);
+  if (others < 1) return t("schedule.headlineRoad");
+  // t() falls back to the key itself when a string is missing, which is the
+  // signal that this count has no spelled-out word -- use digits then.
+  const numKey = `schedule.num.${others}`;
+  const word = t(numKey) === numKey ? String(others) : t(numKey);
   const host = final?.city.split("—")[0]?.trim().split("/")[0]?.trim();
   // Only promise a destination the data actually names.
-  return host ? `${word} cities, then ${host}.` : `${word} cities, then the Final.`;
+  return host
+    ? t("schedule.headlineCities", { word, host })
+    : t("schedule.headlineCitiesFinal", { word });
 }
 
 /** v0's timeline: a single rail with one node per meeting, rather than the
@@ -59,6 +54,7 @@ function headline(meets: Meet[]): string {
  * bigger, haloed gold node so the thing everything leads to is visible at a
  * glance rather than being the row that happens to be last. */
 function Timeline({ meets }: { meets: Meet[] }) {
+  const { t } = useT();
   return (
     <ol className="relative pl-9">
       {/* Inset top and bottom so the rail starts and ends at the first and
@@ -99,7 +95,7 @@ function Timeline({ meets }: { meets: Meet[] }) {
                 {m.city}
               </span>
               <span className="dg block text-[12px] tracking-[0.06em] text-muted-foreground">
-                Meeting {m.n} of {meets.length}
+                {t("schedule.meetingOf", { n: m.n, total: meets.length })}
               </span>
             </span>
             <span
@@ -109,7 +105,7 @@ function Timeline({ meets }: { meets: Meet[] }) {
                   : "bg-secondary text-muted-foreground"
               }`}
             >
-              {statusLabel[m.status]}
+              {t(`meet.status.${m.status}`)}
             </span>
           </li>
         );
@@ -119,6 +115,7 @@ function Timeline({ meets }: { meets: Meet[] }) {
 }
 
 function SchedulePage() {
+  const { t } = useT();
   const state = usePredictions();
   const data = state.status === "ok" ? state.data : undefined;
   const meets = data?.meets ?? [];
@@ -128,32 +125,34 @@ function SchedulePage() {
   // Header persists through loading/error -- see the note in track.tsx.
   return (
     <Shell
-      title={data ? headline(meets) : "Schedule"}
-      crumb="Schedule"
-      eyebrow={data ? `2026 season · ${meets.length} meetings` : "2026 season"}
+      title={data ? headline(meets, t) : t("nav.schedule")}
+      crumb={t("nav.schedule")}
+      eyebrow={
+        data ? t("schedule.eyebrow", { n: meets.length }) : t("schedule.eyebrowBare")
+      }
       description={
         data
-          ? `The full Wanda Diamond League season, from the opener to the Final in Brussels. ${doneCount} of ${meets.length} meetings are scored.`
-          : "The full Wanda Diamond League season, from the opener to the Final in Brussels."
+          ? t("schedule.descriptionWithCount", { done: doneCount, total: meets.length })
+          : t("schedule.description")
       }
       figures={
         data ? (
           <>
-            <HeadFigure value={meets.length} label="Meetings in the series" />
-            <HeadFigure value={doneCount} label="Already run" />
-            {final && <HeadFigure value={meetDate(final)} label="The Final" gold />}
+            <HeadFigure value={meets.length} label={t("schedule.figMeetings")} />
+            <HeadFigure value={doneCount} label={t("schedule.figAlreadyRun")} />
+            {final && <HeadFigure value={meetDate(final)} label={t("schedule.figTheFinal")} gold />}
           </>
         ) : undefined
       }
       lastUpdated={data?.lastUpdated}
       daysToFinal={data?.daysToFinal}
     >
-      {state.status === "loading" && <PanelSkeleton title="The road to the Final" rows={8} />}
+      {state.status === "loading" && <PanelSkeleton title={t("schedule.panelTitle")} rows={8} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
       {data && (
         <Panel
-          title="The road to the Final"
-          subtitle="The 2026 Diamond League circuit, in order. Gold marks the Final, the only meeting on this list that decides anything."
+          title={t("schedule.panelTitle")}
+          subtitle={t("schedule.panelSubtitle")}
         >
           <Timeline meets={meets} />
         </Panel>
