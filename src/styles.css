@@ -408,7 +408,10 @@ html {
 }
 
 .marquee-track {
-  animation: landing-marquee 32s linear infinite;
+  /* 32s -> 80s: readers reported the discipline strip scrolled too fast to
+     read. One full set of 32 chips now takes 80s to pass, roughly 2.5s a chip,
+     slow enough to read a name as it goes by without the strip looking frozen. */
+  animation: landing-marquee 80s linear infinite;
 }
 
 .marquee-mask {
@@ -476,7 +479,11 @@ html {
 
 .track-circuit-marker {
   offset-rotate: 0deg;
-  animation: track-circuit-run 14s linear infinite;
+  /* `reverse`: athletics tracks are run counterclockwise (the infield stays on
+     the athlete's left). The lane path is drawn clockwise, so running the
+     animation in reverse sends the marker the correct way round, and down the
+     home straight toward the finish line rather than away from it. */
+  animation: track-circuit-run 14s linear infinite reverse;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -51,9 +51,35 @@ function sprintLaneD(index: number) {
   return `M${SPRINT_X},${y} L${START_X},${y}`;
 }
 
+// The finish line sits at the end of the home straight, which is the bottom
+// straight here: the 100m spur feeds into its left end, runners cross the
+// finish at the right end, and the lap marker (running counterclockwise) comes
+// down this straight toward it. Pulled a touch in from END_X so it reads as
+// on the straight rather than on the bend.
+const FINISH_X = END_X - 8;
+// The bottom straight's five lanes span these y's (outer lane 0 at 320, inner
+// lane 4 at 280); the finish and the lane numbers are laid out against them.
+const BOTTOM_TOP_Y = 320 - (LANE_COUNT - 1) * LANE_GAP;
+const BOTTOM_BOTTOM_Y = 320;
+
 export function TrackCircuit({ className = "" }: { className?: string }) {
   const lanes = Array.from({ length: LANE_COUNT }, (_, i) => laneD(i));
   const markerLaneD = laneD(0);
+
+  // A checkered finish line across the home-straight lanes -- the one motif
+  // that reads instantly as "finish". Two columns of small squares, filled on
+  // alternating cells so the terracotta showing through the gaps makes the
+  // checkerboard, rather than needing a second colour.
+  const CELL = 4;
+  const rows = Math.round((BOTTOM_BOTTOM_Y - BOTTOM_TOP_Y) / CELL);
+  const finishCells: { x: number; y: number }[] = [];
+  for (let col = 0; col < 2; col++) {
+    for (let row = 0; row < rows; row++) {
+      if ((col + row) % 2 === 0) {
+        finishCells.push({ x: FINISH_X + col * CELL, y: BOTTOM_TOP_Y + row * CELL });
+      }
+    }
+  }
 
   return (
     <svg
@@ -113,19 +139,41 @@ export function TrackCircuit({ className = "" }: { className?: string }) {
         strokeWidth={2.5}
       />
 
-      {/* Straight-line "start" markers across all lanes, like real track
-          start/finish lines -- a small concrete detail, not just abstract
-          ovals. */}
-      <line
-        x1={START_X + 40}
-        y1={20}
-        x2={START_X + 40}
-        y2={320}
-        stroke="white"
-        strokeOpacity={0.22}
-        strokeWidth={1.5}
-        strokeDasharray="3 5"
-      />
+      {/* The finish line, across the home (bottom) straight. A checkered line
+          is the detail that turns the drawing from "an oval with lanes" into
+          "a track": it names where a race actually ends. Kept to the gold
+          accent's brightness so it reads on the terracotta without shouting. */}
+      {finishCells.map((c, i) => (
+        <rect
+          key={`finish-${i}`}
+          x={c.x}
+          y={c.y}
+          width={CELL}
+          height={CELL}
+          fill="white"
+          opacity={0.6}
+        />
+      ))}
+
+      {/* Lane numbers, 1 (innermost) to 5 (outermost), sitting just inside the
+          finish on each lane -- the "marked lanes" a real track carries.
+          Small and low-contrast on purpose; this is an ambient layer, not a
+          scoreboard. Set in the mono face the site already uses for figures. */}
+      {Array.from({ length: LANE_COUNT }, (_, i) => (
+        <text
+          key={`lane-num-${i}`}
+          x={FINISH_X - 7}
+          y={320 - i * LANE_GAP}
+          textAnchor="end"
+          dominantBaseline="middle"
+          fontSize={7}
+          fill={i === 0 ? "var(--gold-on-canvas)" : "white"}
+          opacity={i === 0 ? 0.7 : 0.45}
+          style={{ fontFamily: "var(--font-mono, ui-monospace, monospace)" }}
+        >
+          {LANE_COUNT - i}
+        </text>
+      ))}
       {/* Same fix as the accent lane, and it matters more here: this is the
           only thing in the drawing that moves, and at --gold/0.9 it resolved
           to 1.24:1 -- a runner nobody could see. 4.02:1 now. */}
