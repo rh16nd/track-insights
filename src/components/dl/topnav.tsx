@@ -144,12 +144,14 @@ export function TopNav({
               {t("nav.updated", { date: lastUpdated, days: daysToFinal ?? 0 })}
             </span>
           )}
-          <span className="label-caps flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1.5 text-foreground">
+          {/* On a phone the switcher + search take the right side, so the Live
+              badge shows just its pulsing dot; the word comes back at sm+. */}
+          <span className="label-caps flex items-center gap-1.5 rounded-full bg-secondary px-2 py-1.5 text-foreground sm:px-2.5">
             <span className="relative flex size-1.5" aria-hidden="true">
               <span className="live-ping-ring absolute inset-0 rounded-full bg-gold" />
               <span className="relative size-1.5 rounded-full bg-gold" />
             </span>
-            {t("nav.live")}
+            <span className="hidden sm:inline">{t("nav.live")}</span>
           </span>
         </div>
       </div>
