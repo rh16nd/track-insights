@@ -716,6 +716,30 @@ export const fr: Record<string, string> = {
   "landing.corpusMore": "+ {{n}} autres compétitions sur {{seasons}} saisons ({{first}}-{{last}}), extraites directement de World Athletics.",
   "landing.corpusFallback": "…et toutes les autres compétitions des données d’entraînement du modèle, extraites directement de World Athletics.",
 
+  "podium.chanceOfPodium": "Chance de podium",
+  "wa.ariaLabel": "World Athletics (ouvre un nouvel onglet)",
+  "notFound.title": "Page introuvable",
+  "notFound.body": "La page que vous cherchez n’existe pas ou a été déplacée.",
+  "notFound.goHome": "Retour à l’accueil",
+
+  // Why an athlete is not in the projected field. Mirrors api.py's
+  // points_cut_reason()/build_not_in_field() so the sentence can be rebuilt
+  // in the reader's language from the structured fields the API already
+  // sends (reasonCode + dl), rather than translating its English prose.
+  "reason.pointsCut":
+    "{{rank}} au classement Diamond League du {{disc}} avec {{points}} points, en dehors du top {{limit}} qui se qualifie pour la finale.",
+  "reason.tailOut": " Trop loin désormais pour revenir.",
+  "reason.tailShortOne": " À {{gap}} point de la barre.",
+  "reason.tailShortMany": " À {{gap}} points de la barre.",
+  "reason.tailTieBreak":
+    " À égalité de points avec la barre, mais derrière au départage de World Athletics.",
+  "reason.notInStandings":
+    "Absent du classement officiel Diamond League de World Athletics pour le {{disc}} : aucun point Diamond League marqué dans cette discipline cette saison. Ce sont les points qui donnent une place en finale, quelle que soit la vitesse réalisée ailleurs.",
+  "reason.injuryRemoved": "Retiré du plateau projeté par la vérification des blessures.",
+  "reason.outsideCut":
+    "Présent au classement Diamond League mais en dehors du top {{limit}} projeté à la meilleure performance de la saison pour le {{disc}}.",
+  "reason.noData": "Aucune performance enregistrée pour la saison {{year}} en {{disc}}.",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Prédire le podium à Bruxelles.",

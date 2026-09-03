@@ -714,6 +714,29 @@ export const en: Record<string, string> = {
   "landing.corpusMore": "+ {{n}} more competitions across {{seasons}} seasons ({{first}}–{{last}}), scraped directly from World Athletics.",
   "landing.corpusFallback": "…and every other competition in the model’s training data, scraped directly from World Athletics.",
 
+  "podium.chanceOfPodium": "Chance of a podium",
+  "wa.ariaLabel": "World Athletics (opens in a new tab)",
+  "notFound.title": "Page not found",
+  "notFound.body": "The page you’re looking for doesn’t exist or has been moved.",
+  "notFound.goHome": "Go home",
+
+  // Why an athlete is not in the projected field. Mirrors api.py's
+  // points_cut_reason()/build_not_in_field() so the sentence can be rebuilt
+  // in the reader's language from the structured fields the API already
+  // sends (reasonCode + dl), rather than translating its English prose.
+  "reason.pointsCut":
+    "{{rank}} in the {{disc}} Diamond League standings on {{points}} points, outside the top {{limit}} who qualify for the Final.",
+  "reason.tailOut": " Too far back to be caught up now.",
+  "reason.tailShortOne": " {{gap}} point short of the cut.",
+  "reason.tailShortMany": " {{gap}} points short of the cut.",
+  "reason.tailTieBreak": " Level on points with the cut, behind on World Athletics' tie-break.",
+  "reason.notInStandings":
+    "Not in World Athletics' official Diamond League standings for {{disc}} — no Diamond League points scored in this discipline this season. Points are what earns a place at the Final, regardless of how fast they have run elsewhere.",
+  "reason.injuryRemoved": "Removed from the projected field by the injury check.",
+  "reason.outsideCut":
+    "In the Diamond League standings but outside the projected top {{limit}} on season best for {{disc}}.",
+  "reason.noData": "No {{year}} season mark on record for {{disc}}.",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Predicting the podium in Brussels.",

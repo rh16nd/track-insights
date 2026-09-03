@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
+import { useT } from "@/lib/i18n";
 import { useCountUp } from "@/hooks/useCountUp";
 import { WatchBadge } from "./shell";
 import type { TopWinner } from "@/lib/dl-data";
@@ -133,6 +134,7 @@ function Plaque({
   delay: string;
   run: number;
 }) {
+  const { t } = useT();
   // From zero, staggered behind the block beneath it, and restarted by Replay.
   const pct = useCountUp(winner.prob, 950, {
     from: 0,
@@ -186,7 +188,7 @@ function Plaque({
       {/* v0 labelled this "Win probability". The model's target is dl_top3 —
           top-three membership, not the winner — so the label was corrected
           rather than ported. */}
-      <div className="label-caps mt-1 text-muted-foreground">Chance of a podium</div>
+      <div className="label-caps mt-1 text-muted-foreground">{t("podium.chanceOfPodium")}</div>
       {/* The page stakes its credibility on these three names and, before
           this, gave the reader nothing to check them against. The season
           best above is the claim most worth following up. */}

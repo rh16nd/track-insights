@@ -9,7 +9,7 @@ import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
 import { AthleteCareerBlock } from "@/components/dl/athlete-career";
 import { InfoTip } from "@/components/dl/info-tip";
 import { ordinalIn } from "@/lib/dl-data";
-import { useT } from "@/lib/i18n";
+import { useT, type TFunc } from "@/lib/i18n";
 
 const FIELD_EVENT_KEYS = new Set([
   "men_HJ",
@@ -41,6 +41,46 @@ const FIELD_EVENT_KEYS = new Set([
  * and "absent from that list" was read as "never scored". He is 9th on 15
  * points, two short of the cut. The API now answers from the full
  * standings table and this page shows the points and the gap. */
+/** The API sends both a finished English `reason` sentence and the parts it
+ * was built from (`reasonCode` plus the `dl` standings row). Rebuilding it
+ * here from the parts is what lets it be read in French without teaching the
+ * Python API a second language. Any reasonCode this does not recognise falls
+ * back to the API's own sentence rather than showing nothing. */
+function notInFieldReason(data: AthleteNotInField, t: TFunc, lang: string): string {
+  const { dl } = data;
+  if (data.reasonCode === "outside_points_cut" && dl) {
+    const head = t("reason.pointsCut", {
+      rank: ordinalIn(lang, dl.rank),
+      disc: data.disc,
+      points: dl.points ?? 0,
+      limit: dl.qualLimit,
+    });
+    if (dl.status === "out") return head + t("reason.tailOut");
+    if (dl.gap == null) return head;
+    if (dl.gap > 0) {
+      return (
+        head +
+        t(dl.gap === 1 ? "reason.tailShortOne" : "reason.tailShortMany", { gap: dl.gap })
+      );
+    }
+    return head + t("reason.tailTieBreak");
+  }
+  if (data.reasonCode === "not_in_standings") {
+    return t("reason.notInStandings", { disc: data.disc });
+  }
+  if (data.reasonCode === "injury_removed") return t("reason.injuryRemoved");
+  if (data.reasonCode === "outside_cut") {
+    return t("reason.outsideCut", {
+      limit: dl?.qualLimit ?? 8,
+      disc: data.disc,
+    });
+  }
+  if (data.reasonCode === "no_data") {
+    return t("reason.noData", { year: 2026, disc: data.disc });
+  }
+  return data.reason;
+}
+
 function NotInField({
   data,
   discKey,
@@ -170,7 +210,9 @@ function NotInField({
         title={t("ath.whyNotTitle")}
         subtitle={t("ath.whyNotSubtitle")}
       >
-        <p className="text-[13.5px] leading-relaxed text-foreground">{data.reason}</p>
+        <p className="text-[13.5px] leading-relaxed text-foreground">
+          {notInFieldReason(data, t, lang)}
+        </p>
         {data.injuryReason && (
           <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">
             {t("ath.flaggedFrom", { reason: data.injuryReason })}{" "}

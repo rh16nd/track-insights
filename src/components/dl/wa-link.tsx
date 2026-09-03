@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 /** Links out to World Athletics.
  *
  * This site's whole argument is that its numbers are real and scraped, and
@@ -68,13 +69,14 @@ export function WaSourceLink({
   tone?: "card" | "canvas";
   className?: string;
 }) {
+  const { t } = useT();
   const hover = tone === "canvas" ? "hover:text-white" : "hover:text-foreground";
   return (
     <a
       href={WA_HOME}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="World Athletics (opens in a new tab)"
+      aria-label={t("wa.ariaLabel")}
       className={`underline decoration-current/40 underline-offset-2 transition-colors hover:decoration-current ${hover} ${className}`}
     >
       World Athletics
