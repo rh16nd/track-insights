@@ -141,6 +141,78 @@ export const fr: Record<string, string> = {
     "Assez rapides pour compter, mais sans place qualificative aux points : soit sous la barre du classement, soit sans aucun point Diamond League dans cette épreuve. Évalués par le même modèle, pour que vous voyiez qui serait une menace s'ils y étaient.",
   "table.notQualified": "Non qualifié",
 
+  // Schedule
+  "schedule.headlineRoad": "La route vers la finale.",
+  "schedule.headlineCities": "{{word}} villes, puis {{host}}.",
+  "schedule.headlineCitiesFinal": "{{word}} villes, puis la finale.",
+  "schedule.eyebrow": "Saison 2026 · {{n}} réunions",
+  "schedule.eyebrowBare": "Saison 2026",
+  "schedule.description":
+    "Toute la saison de la Wanda Diamond League, de l'ouverture à la finale de Bruxelles.",
+  "schedule.descriptionWithCount":
+    "Toute la saison de la Wanda Diamond League, de l'ouverture à la finale de Bruxelles. {{done}} réunions sur {{total}} sont comptabilisées.",
+  "schedule.figMeetings": "Réunions au programme",
+  "schedule.figAlreadyRun": "Déjà disputées",
+  "schedule.figTheFinal": "La finale",
+  "schedule.panelTitle": "La route vers la finale",
+  "schedule.panelSubtitle":
+    "Le circuit Diamond League 2026, dans l'ordre. L'or marque la finale, la seule réunion de cette liste qui décide de quelque chose.",
+  "schedule.meetingOf": "Réunion {{n}} sur {{total}}",
+  "schedule.num.10": "Dix",
+  "schedule.num.11": "Onze",
+  "schedule.num.12": "Douze",
+  "schedule.num.13": "Treize",
+  "schedule.num.14": "Quatorze",
+  "schedule.num.15": "Quinze",
+  "schedule.num.16": "Seize",
+
+  // Stats / Performance Index
+  "stats.title": "Indice de performance",
+  "stats.eyebrow": "Saison {{season}} · {{rows}} performances classées · scores {{min}}–{{max}}",
+  "stats.eyebrowBare": "Points de cotation World Athletics",
+  "stats.description":
+    "Quelles épreuves sont vraiment denses, et lesquelles se résument à un athlète et un trou. Chaque performance 2026 est cotée sur la table de points de World Athletics, puis lue comme un écart : de combien le leader d'une discipline dépasse la médiane de son propre plateau classé. Un écart serré, c'est une foule ; un écart long, c'est un soliste avec le vide derrière lui.",
+  "stats.figMarksScored": "Performances cotées",
+  "stats.figFieldMedian": "Médiane du plateau (pts WA)",
+  "stats.figScoringRange": "Amplitude des scores",
+  "stats.figSetIndoors": "Réalisées en salle",
+  "stats.bestOfSeason": "Les meilleures de la saison",
+  "stats.bestOfYear": "Les meilleures de {{season}}, toutes épreuves",
+  "stats.bestSubtitle":
+    "Classées aux points World Athletics, pour qu'un lancer de disque et un 800 m soient directement comparables. La barre est calée sur l'amplitude réellement couverte cette saison, pas sur zéro.",
+  "stats.filterAll": "Toutes les épreuves",
+  "stats.filterTrack": "Piste",
+  "stats.filterField": "Concours",
+  "stats.filterOutdoor": "Plein air uniquement",
+  "stats.noMarks": "Aucune performance ne correspond à ce filtre.",
+  "stats.indoorNoteBefore": "World Athletics inclut les performances en salle dans son classement de la saison en plein air, signalées seulement par un ",
+  "stats.indoorNoteMid": " sur le lieu — ",
+  "stats.indoorNoteOf": " % des ",
+  "stats.indoorNoteAfter":
+    " performances présentes ici, et près de la moitié d'entre elles dans les sauts verticaux. Elles sont conservées, car pour une perche ou un poids la salle est sans doute la mesure la plus juste, mais chacune est signalée. Utilisez ",
+  "stats.indoorNoteOutdoorOnly": "Plein air uniquement",
+  "stats.indoorNoteEnd": " ci-dessus pour les retirer.",
+  "stats.indoorBadge": "Salle",
+  "stats.indoorBadgeTitle":
+    "Réalisée en salle. World Athletics inclut ces performances dans le classement de la saison en plein air",
+
+  // Depth ladder (Stats page)
+  "depth.sortDepth": "Par densité",
+  "depth.sortMedian": "Par médiane",
+  "depth.sortTop": "Par meilleur score",
+  "depth.title": "L'échelle de densité · {{n}} disciplines",
+  "depth.subtitle":
+    "Chaque barre va du score médian de l'épreuve à son meilleur score, sur un axe commun. Plus c'est court, plus c'est dense : le leader est proche du peloton. Plus c'est long, plus il s'agit d'un athlète seul avec le vide derrière lui.",
+  "depth.legendMedian": "Médiane du plateau",
+  "depth.legendTop": "Meilleur de la discipline",
+  "depth.legendSpread": "Écart (meilleur − médiane)",
+  "depth.noteBefore": "La plus dense selon cette mesure est ",
+  "depth.noteMid": ", dont le leader n'a que ",
+  "depth.notePointsClear": " points d'avance sur sa propre médiane ; la plus déséquilibrée est ",
+  "depth.noteAt": " avec ",
+  "depth.noteEnd":
+    ". Il s'agit de l'écart sur l'ensemble des athlètes classés par World Athletics dans l'épreuve, une question différente de celle du niveau du plateau de huit en finale, à laquelle répond la page de chaque discipline.",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Prédire le podium à Bruxelles.",

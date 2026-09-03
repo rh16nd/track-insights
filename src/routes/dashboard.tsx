@@ -17,7 +17,7 @@ import { usePredictions } from "@/hooks/usePredictions";
 import { useCountUp } from "@/hooks/useCountUp";
 import { NewsFeed } from "@/components/dl/news-feed";
 import { WelcomeLauncher } from "@/components/dl/welcome-modal";
-import { useT } from "@/lib/i18n";
+import { useT, type TFunc } from "@/lib/i18n";
 
 const LAST_PROBS_KEY = "podiumcall:lastProbs";
 
@@ -287,7 +287,7 @@ function LeastSurePanel({ confidence }: { confidence: ConfidenceRow[] }) {
 /** "six days out" / "tomorrow" / "today". The Final is a fixed date, so the
  * headline hits 0 and then goes negative if nobody refreshes the data — say
  * something true at each end rather than printing "-2 days out". */
-function dayPhrase(days: number, t: (key: string, vars?: Record<string, string | number>) => string): string {
+function dayPhrase(days: number, t: TFunc): string {
   if (days > 1) return t("dashboard.daysOut", { days });
   if (days === 1) return t("dashboard.oneDayOut");
   if (days === 0) return t("dashboard.raceDay");

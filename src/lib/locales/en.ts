@@ -142,6 +142,78 @@ export const en: Record<string, string> = {
     "Fast enough to matter, but short of a qualifying place on points, either below the cut in the standings or with no Diamond League points in this event at all. Scored by the same model, so you can see who would be a threat if they got in.",
   "table.notQualified": "Not qualified",
 
+  // Schedule
+  "schedule.headlineRoad": "The road to the Final.",
+  "schedule.headlineCities": "{{word}} cities, then {{host}}.",
+  "schedule.headlineCitiesFinal": "{{word}} cities, then the Final.",
+  "schedule.eyebrow": "2026 season · {{n}} meetings",
+  "schedule.eyebrowBare": "2026 season",
+  "schedule.description":
+    "The full Wanda Diamond League season, from the opener to the Final in Brussels.",
+  "schedule.descriptionWithCount":
+    "The full Wanda Diamond League season, from the opener to the Final in Brussels. {{done}} of {{total}} meetings are scored.",
+  "schedule.figMeetings": "Meetings in the series",
+  "schedule.figAlreadyRun": "Already run",
+  "schedule.figTheFinal": "The Final",
+  "schedule.panelTitle": "The road to the Final",
+  "schedule.panelSubtitle":
+    "The 2026 Diamond League circuit, in order. Gold marks the Final, the only meeting on this list that decides anything.",
+  "schedule.meetingOf": "Meeting {{n}} of {{total}}",
+  "schedule.num.10": "Ten",
+  "schedule.num.11": "Eleven",
+  "schedule.num.12": "Twelve",
+  "schedule.num.13": "Thirteen",
+  "schedule.num.14": "Fourteen",
+  "schedule.num.15": "Fifteen",
+  "schedule.num.16": "Sixteen",
+
+  // Stats / Performance Index
+  "stats.title": "Performance Index",
+  "stats.eyebrow": "{{season}} season · {{rows}} ranked marks · scores {{min}}–{{max}}",
+  "stats.eyebrowBare": "World Athletics scoring points",
+  "stats.description":
+    "Which events are genuinely deep, and which are one athlete and a gap. Every 2026 mark is scored on World Athletics' points table, then read as a spread: how far a discipline's leader sits above the median of its own ranked field. A tight spread is a crowd; a long one is a soloist with daylight behind.",
+  "stats.figMarksScored": "Marks scored",
+  "stats.figFieldMedian": "Field median (WA pts)",
+  "stats.figScoringRange": "Scoring range",
+  "stats.figSetIndoors": "Set indoors",
+  "stats.bestOfSeason": "Best of the season",
+  "stats.bestOfYear": "Best of {{season}}, any event",
+  "stats.bestSubtitle":
+    "Ranked by World Athletics points, so a discus throw and an 800m are directly comparable. The bar is scaled to the range this season actually covers, not to zero.",
+  "stats.filterAll": "All events",
+  "stats.filterTrack": "Track",
+  "stats.filterField": "Field",
+  "stats.filterOutdoor": "Outdoor only",
+  "stats.noMarks": "No marks match this filter.",
+  "stats.indoorNoteBefore": "World Athletics lists indoor marks inside its outdoor season rankings, tagged only by a ",
+  "stats.indoorNoteMid": " on the venue — ",
+  "stats.indoorNoteOf": "% of the ",
+  "stats.indoorNoteAfter":
+    " marks here, and close to half of them in the vertical jumps. They are kept, because for a vault or a shot put indoors is arguably the truer measure, but every one is labelled. Use ",
+  "stats.indoorNoteOutdoorOnly": "Outdoor only",
+  "stats.indoorNoteEnd": " above to drop them.",
+  "stats.indoorBadge": "Indoor",
+  "stats.indoorBadgeTitle":
+    "Set indoors. World Athletics lists these inside the outdoor season rankings",
+
+  // Depth ladder (Stats page)
+  "depth.sortDepth": "By depth",
+  "depth.sortMedian": "By median",
+  "depth.sortTop": "By top score",
+  "depth.title": "The depth ladder · {{n}} disciplines",
+  "depth.subtitle":
+    "Each bar runs from that event's median score to its top score, all on one axis. Shorter is deeper: the leader is closer to the crowd. Longer means one athlete with daylight behind them.",
+  "depth.legendMedian": "Field median",
+  "depth.legendTop": "Discipline top",
+  "depth.legendSpread": "Spread (top − median)",
+  "depth.noteBefore": "Deepest by this measure is ",
+  "depth.noteMid": ", whose leader is only ",
+  "depth.notePointsClear": " points clear of its own median; the most top-heavy is ",
+  "depth.noteAt": " at ",
+  "depth.noteEnd":
+    ". This is the spread across everyone World Athletics ranks in the event, a different question from how level the eight-strong Final field is, which each discipline's own page answers.",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Predicting the podium in Brussels.",
