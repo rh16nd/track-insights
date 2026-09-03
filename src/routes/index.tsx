@@ -10,6 +10,7 @@ import { AthleteAvatar, ProbabilityBar, WatchBadge } from "@/components/dl/shell
 import { Podium } from "@/components/dl/podium";
 import { WaSourceLink } from "@/components/dl/wa-link";
 import { useT, type TFunc } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/dl/language-switcher";
 import { TrackCircuit } from "@/components/dl/track-circuit";
 
 export const Route = createFileRoute("/")({
@@ -274,16 +275,19 @@ function Landing() {
               <span className="ml-2 hidden sm:inline">{t("landing.tagline")}</span>
             </div>
           </div>
-          <Link
-            to="/dashboard"
-            className="label-caps rounded-full px-4 py-2.5 text-primary-foreground transition-transform hover:scale-[1.02]"
-            style={{
-              backgroundImage:
-                "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
-            }}
-          >
-            View live predictions
-          </Link>
+          <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
+            <LanguageSwitcher className="shrink-0" />
+            <Link
+              to="/dashboard"
+              className="label-caps hidden shrink-0 rounded-full px-4 py-2.5 text-primary-foreground transition-transform hover:scale-[1.02] sm:inline-block"
+              style={{
+                backgroundImage:
+                  "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
+              }}
+            >
+              {t("landing.ctaPrimary")}
+            </Link>
+          </div>
         </header>
 
         {/* ── Hero ─────────────────────────────────────────────────────

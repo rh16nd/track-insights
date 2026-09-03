@@ -422,6 +422,16 @@ html {
    of clipping abruptly. */
 .nav-scroll-mask {
   mask-image: linear-gradient(90deg, transparent, black 12px, black calc(100% - 12px), transparent);
+  /* Centre the links only while they all fit. Plain `center` on a scrollable
+     flex row pushes the overflow past the START edge, into space scrollLeft
+     cannot reach: measured on a 375px Android viewport, 226px of this nav --
+     including the active page's own link -- sat at x=-170 with scrollLeft
+     already pinned at 0, and scrollIntoView could not recover it either. That
+     is the "top bar doesn't show everything" report. `safe` drops back to
+     start the moment it overflows, so every link stays reachable; a browser
+     that does not know the keyword ignores the declaration and gets
+     flex-start, which is reachable too. */
+  justify-content: safe center;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -104,7 +104,7 @@ export function TopNav({
             are indistinguishable in a screen reader's landmark list. */}
         <nav
           aria-label="Main"
-          className="nav-scroll-mask flex min-w-0 items-center justify-center gap-1 overflow-x-auto"
+          className="nav-scroll-mask flex min-w-0 items-center gap-1 overflow-x-auto"
         >
           {nav.map((item) => {
             const isActive = pathname === item.to;
