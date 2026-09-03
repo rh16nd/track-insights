@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Shell, PanelSkeleton, ErrorPanel } from "@/components/dl/shell";
 import { DisciplineTable } from "@/components/dl/discipline-table";
 import { usePredictions } from "@/hooks/usePredictions";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/field")({
   head: () =>
@@ -16,10 +17,8 @@ export const Route = createFileRoute("/field")({
   component: FieldPage,
 });
 
-const DESCRIPTION =
-  "Jumps and throws, every field discipline contested at the Final. Pick an event to see each qualified athlete's chance of finishing on the podium.";
-
 function FieldPage() {
+  const { t } = useT();
   const state = usePredictions();
   const { disc } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
@@ -28,15 +27,17 @@ function FieldPage() {
   // Header persists through loading/error -- see the note in track.tsx.
   return (
     <Shell
-      title="Field events"
+      title={t("field.title")}
       eyebrow={
-        data ? `${data.fieldDisciplines.length} field disciplines · 2026 Final` : "2026 Final"
+        data
+          ? t("field.eyebrow", { n: data.fieldDisciplines.length })
+          : t("common.final2026")
       }
-      description={DESCRIPTION}
+      description={t("field.description")}
       lastUpdated={data?.lastUpdated}
       daysToFinal={data?.daysToFinal}
     >
-      {state.status === "loading" && <PanelSkeleton title="Projected field" rows={8} />}
+      {state.status === "loading" && <PanelSkeleton title={t("common.projectedField")} rows={8} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
       {data && (
         <DisciplineTable

@@ -166,7 +166,7 @@ export function AthleteSearch({
           setOpen(true);
         }}
         onKeyDown={onKeyDown}
-        className="h-9 w-full min-w-0 rounded-full border border-border bg-card px-3.5 text-[13px] text-foreground placeholder:text-muted-foreground sm:w-56"
+        className="h-9 w-full min-w-0 rounded-full border border-border bg-card px-3.5 text-[13px] text-foreground placeholder:text-muted-foreground"
       />
 
       {showList && (

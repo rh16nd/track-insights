@@ -239,6 +239,7 @@ export function HeadFigure({
    * page (the Final's date on the schedule). */
   gold?: boolean;
 }) {
+  const { t } = useT();
   return (
     <div>
       <b
@@ -253,7 +254,7 @@ export function HeadFigure({
         {icon}
         {label}
         {hint && (
-          <InfoTip label={`About ${label}`} tone="canvas">
+          <InfoTip label={t("figure.about", { label })} tone="canvas">
             {hint}
           </InfoTip>
         )}
@@ -304,6 +305,7 @@ export function PanelSkeleton({
   rows?: number;
   className?: string;
 }) {
+  const { t } = useT();
   return (
     <section
       className={`card-shadow card-surface rounded-[26px] bg-card ${className}`}
@@ -316,7 +318,7 @@ export function PanelSkeleton({
         ) : (
           <span className="skeleton-pulse block h-2.5 w-32 rounded-full bg-foreground" />
         )}
-        <span className="sr-only">Loading…</span>
+        <span className="sr-only">{t("common.loading")}</span>
       </div>
       <div className="space-y-4 px-5 pt-4 pb-5 sm:px-7 sm:pt-5 sm:pb-7">
         {Array.from({ length: rows }).map((_, i) => (
@@ -346,7 +348,7 @@ export function PanelSkeleton({
 export function ErrorPanel({
   message,
   hint,
-  title = "Could not load predictions",
+  title,
   onRetry,
 }: {
   message: string;
@@ -354,17 +356,21 @@ export function ErrorPanel({
   title?: string;
   onRetry?: () => void;
 }) {
+  const { t } = useT();
   const fallbackHint = API_IS_LOCAL ? (
     <>
-      Make sure <code className="nums">python api.py</code> is running in your athletics-predictor
-      folder.
+      {t("error.apiHintBefore")}
+      <code className="nums">python api.py</code>
+      {t("error.apiHintAfter")}
     </>
   ) : null;
   const shownHint = hint ?? fallbackHint;
 
   return (
     <section className="card-shadow card-surface rounded-[26px] bg-card p-6 sm:p-7">
-      <div className="text-[14px] font-semibold text-destructive">{title}</div>
+      <div className="text-[14px] font-semibold text-destructive">
+        {title ?? t("error.couldNotLoad")}
+      </div>
       <p className="mt-1 text-[13.5px] text-foreground">{message}</p>
       {shownHint && <p className="mt-2 text-[12.5px] text-muted-foreground">{shownHint}</p>}
       {onRetry && (
@@ -373,7 +379,7 @@ export function ErrorPanel({
           onClick={onRetry}
           className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-primary px-5 text-[13px] font-semibold text-primary-foreground transition-colors hover:bg-terracotta-strong"
         >
-          Try again
+          {t("common.tryAgain")}
         </button>
       )}
     </section>
@@ -489,10 +495,9 @@ export function WatchBadge({
    * bold label with a little margin. */
   tone?: "light" | "dark";
 }) {
+  const { t } = useT();
   const [open, setOpen] = useState(false);
-  const detail = reason
-    ? `Flagged from: ${reason}`
-    : "Recent injury or DNF mention, flagged for review";
+  const detail = reason ? t("watch.flaggedFrom", { reason }) : t("watch.fallback");
   const toneClass =
     tone === "dark"
       ? "bg-[oklch(0.7_0.19_27_/_0.16)] text-[oklch(0.93_0.09_27)]"
@@ -539,13 +544,13 @@ export function WatchBadge({
         onClick={() => setOpen((v) => !v)}
         className={`${badgeClassName} transition-[background-color,transform] duration-150 hover:bg-destructive/20 active:scale-90`}
       >
-        Watch
+        {t("watch.badge")}
       </button>
       {open && (
         <span
           id={popoverId}
           role="group"
-          aria-label="Injury watch evidence"
+          aria-label={t("watch.ariaLabel")}
           className="nums absolute left-0 top-full z-30 mt-1.5 w-64 max-w-[80vw] origin-top-left animate-[popover-in_140ms_ease-out] rounded-md border border-border bg-popover p-2.5 text-[12px] font-normal leading-snug text-popover-foreground shadow-lg"
         >
           {detail}
@@ -556,7 +561,7 @@ export function WatchBadge({
               rel="noopener noreferrer"
               className="mt-1.5 block text-terracotta-strong hover:underline"
             >
-              View source →
+              {t("watch.viewSource")}
             </a>
           )}
         </span>
