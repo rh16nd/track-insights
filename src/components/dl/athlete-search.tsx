@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { apiFetch } from "@/lib/api";
+import { useT } from "@/lib/i18n";
 
 export type SearchHit = {
   name: string;
@@ -40,6 +41,7 @@ export function AthleteSearch({
   const inputRef = useRef<HTMLInputElement>(null);
   const listId = useId();
   const navigate = useNavigate();
+  const { t } = useT();
 
   // Debounced, and every in-flight request is abortable: typing quickly
   // otherwise lets an earlier, slower response land after a later one and
@@ -136,7 +138,7 @@ export function AthleteSearch({
   return (
     <div ref={wrapRef} className="relative">
       <label className="sr-only" htmlFor={`${listId}-input`}>
-        Search any athlete
+        {t("search.placeholder")}
       </label>
       <input
         id={`${listId}-input`}
@@ -157,7 +159,7 @@ export function AthleteSearch({
         aria-autocomplete="list"
         autoComplete="off"
         value={query}
-        placeholder="Search any athlete…"
+        placeholder={t("search.placeholder")}
         onFocus={() => setOpen(true)}
         onChange={(e) => {
           setQuery(e.target.value);
@@ -174,11 +176,13 @@ export function AthleteSearch({
           className="card-shadow absolute right-0 top-11 z-30 max-h-[60vh] w-[min(22rem,calc(100vw-3rem))] overflow-y-auto rounded-[14px] bg-card py-1"
         >
           {loading && hits.length === 0 && (
-            <li className="px-4 py-3 text-[12.5px] text-muted-foreground">Searching…</li>
+            <li className="px-4 py-3 text-[12.5px] text-muted-foreground">
+              {t("search.searching")}
+            </li>
           )}
           {!loading && hits.length === 0 && (
             <li className="px-4 py-3 text-[12.5px] text-muted-foreground">
-              No athlete matches “{query.trim()}”.
+              {t("search.noMatch", { query: query.trim() })}
             </li>
           )}
           {hits.map((h, i) => (
@@ -210,7 +214,7 @@ export function AthleteSearch({
                 <span className="block text-[12.5px] text-foreground">{h.mark ?? "—"}</span>
                 {h.worldRank != null && (
                   <span className="block text-[11px] text-muted-foreground">
-                    world #{h.worldRank}
+                    {t("search.worldRank", { rank: h.worldRank })}
                   </span>
                 )}
               </span>

@@ -3,15 +3,12 @@ import { createPortal } from "react-dom";
 import { Link } from "@tanstack/react-router";
 import { PodiumCallMark } from "./logo";
 import { InfoGlyph } from "./info-tip";
+import { useT } from "@/lib/i18n";
 
 /** Bumped if the intro copy changes enough to be worth re-showing everyone. */
 const SEEN_KEY = "podiumcall:welcome:v1";
 
-const POINTS = [
-  "Every number is a real, scraped stat from World Athletics. Nothing is typed in by hand or made up.",
-  "Browse by event under Track and Field, see who's qualified in Qualifying, or open any athlete for their 2026 results, head-to-head record and career bests.",
-  "Tap the small ⓘ next to a stat to read exactly what it means.",
-];
+const POINT_KEYS = ["welcome.point1", "welcome.point2", "welcome.point3"];
 
 /** First-run onboarding for the dashboard. It's a modal because the user asked
  * for one, so it's built to behave: it traps focus, closes on Escape or a
@@ -25,6 +22,7 @@ export function WelcomeModal({ open, onClose }: { open: boolean; onClose: () => 
   const prevFocus = useRef<HTMLElement | null>(null);
   const titleId = useId();
   const descId = useId();
+  const { t } = useT();
 
   useEffect(() => setMounted(true), []);
 
@@ -89,7 +87,7 @@ export function WelcomeModal({ open, onClose }: { open: boolean; onClose: () => 
       >
         <div className="flex items-center gap-2.5">
           <PodiumCallMark className="size-7" />
-          <span className="label-caps text-muted-foreground">PodiumCall</span>
+          <span className="label-caps text-muted-foreground">{t("welcome.eyebrow")}</span>
         </div>
 
         <h2
@@ -97,20 +95,18 @@ export function WelcomeModal({ open, onClose }: { open: boolean; onClose: () => 
           className="mt-4 text-[24px] font-bold leading-tight tracking-tight text-foreground sm:text-[28px]"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          Predicting the podium in Brussels.
+          {t("welcome.title")}
         </h2>
 
         <p id={descId} className="mt-3 text-[15px] leading-relaxed text-foreground">
-          PodiumCall calls the podium for every one of the 32 events at the 2026 Diamond League
-          Final, worked out from real World Athletics results before anyone races. It backs the top
-          three, not a single winner.
+          {t("welcome.intro")}
         </p>
 
         <ul className="mt-5 flex flex-col gap-3">
-          {POINTS.map((p) => (
-            <li key={p} className="flex gap-3 text-[14px] leading-relaxed text-foreground">
+          {POINT_KEYS.map((k) => (
+            <li key={k} className="flex gap-3 text-[14px] leading-relaxed text-foreground">
               <span className="mt-[7px] size-1.5 flex-none rounded-full bg-terracotta" />
-              <span>{p}</span>
+              <span>{t(k)}</span>
             </li>
           ))}
         </ul>
@@ -121,7 +117,7 @@ export function WelcomeModal({ open, onClose }: { open: boolean; onClose: () => 
             onClick={onClose}
             className="text-[13.5px] font-medium text-terracotta-strong underline decoration-terracotta/40 underline-offset-2 transition-colors hover:decoration-terracotta-strong"
           >
-            How it works, in full →
+            {t("welcome.howItWorks")}
           </Link>
           <button
             type="button"
@@ -129,7 +125,7 @@ export function WelcomeModal({ open, onClose }: { open: boolean; onClose: () => 
             onClick={onClose}
             className="inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-6 text-[14px] font-semibold text-primary-foreground transition-colors hover:bg-terracotta-strong"
           >
-            Explore the board
+            {t("welcome.explore")}
           </button>
         </div>
       </div>
@@ -146,6 +142,7 @@ export function WelcomeModal({ open, onClose }: { open: boolean; onClose: () => 
  * onboarding check should never take the page down. */
 export function WelcomeLauncher() {
   const [open, setOpen] = useState(false);
+  const { t } = useT();
 
   useEffect(() => {
     let seen = true;
@@ -175,7 +172,7 @@ export function WelcomeLauncher() {
         className="fixed bottom-4 right-4 z-40 inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-card/95 px-3.5 py-2 text-[12.5px] font-semibold text-foreground shadow-lg backdrop-blur transition-[transform,border-color] duration-150 hover:border-terracotta/50 active:scale-95 sm:bottom-6 sm:right-6"
       >
         <InfoGlyph className="text-terracotta-strong" />
-        About
+        {t("welcome.about")}
       </button>
     </>
   );

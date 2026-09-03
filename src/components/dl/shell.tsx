@@ -8,6 +8,7 @@ import { WaSourceLink } from "./wa-link";
 import { JsonLd } from "./json-ld";
 import { breadcrumbSchema } from "@/lib/seo";
 import { InfoTip } from "./info-tip";
+import { useT } from "@/lib/i18n";
 
 export const dotClass: Record<MeetStatus, string> = {
   done: "bg-muted-foreground/40",
@@ -70,6 +71,7 @@ export function Shell({
      the structured data updated with it. Returns null until VITE_SITE_URL
      exists -- see lib/seo.ts. */
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { t } = useT();
   return (
     <div className="relative min-h-screen bg-background">
       {/* Grain stays perfectly still -- it is a surface texture, and moving
@@ -90,7 +92,7 @@ export function Shell({
           href="#main"
           className="skip-link label-caps rounded-full bg-card px-4 py-2.5 text-foreground shadow-lg"
         >
-          Skip to content
+          {t("nav.skipToContent")}
         </a>
         <TopNav lastUpdated={lastUpdated} daysToFinal={daysToFinal} />
 
@@ -194,19 +196,16 @@ export function Shell({
             <p>
               {/* tone="canvas": this footer has no surface of its own, so it
                   sits on the terracotta like the landing's does. */}
-              Data scraped from <WaSourceLink tone="canvas" />. Not affiliated with World Athletics
-              or the Wanda Diamond League.
+              {t("footer.scrapedFrom")} <WaSourceLink tone="canvas" />. {t("footer.notAffiliated")}
             </p>
             <div className="flex items-center gap-4">
               <Link
                 to="/how-it-works"
                 className="underline decoration-white/40 underline-offset-2 transition-colors hover:decoration-white"
               >
-                How it works
+                {t("nav.howItWorks")}
               </Link>
-              <span className="text-white/70">
-                Predictions are model estimates, not betting advice.
-              </span>
+              <span className="text-white/70">{t("footer.disclaimer")}</span>
             </div>
           </div>
         </footer>

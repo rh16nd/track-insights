@@ -2,17 +2,19 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { PodiumCallMark } from "./logo";
 import { AthleteSearch } from "./athlete-search";
+import { LanguageSwitcher } from "./language-switcher";
+import { useT } from "@/lib/i18n";
 
 // "How it works" is deliberately NOT here — it's an explainer, not a section
 // of the board, so it lives in the footer and the welcome dialog instead of
 // taking a slot in the primary nav (which was also crowding the mobile row).
 const nav = [
-  { to: "/dashboard", label: "Dashboard" },
-  { to: "/track", label: "Track" },
-  { to: "/field", label: "Field" },
-  { to: "/qualification", label: "Qualifying" },
-  { to: "/stats", label: "Stats" },
-  { to: "/schedule", label: "Schedule" },
+  { to: "/dashboard", labelKey: "nav.dashboard" },
+  { to: "/track", labelKey: "nav.track" },
+  { to: "/field", labelKey: "nav.field" },
+  { to: "/qualification", labelKey: "nav.qualifying" },
+  { to: "/stats", labelKey: "nav.stats" },
+  { to: "/schedule", labelKey: "nav.schedule" },
 ] as const;
 
 function SearchIcon({ className = "" }: { className?: string }) {
@@ -60,6 +62,7 @@ export function TopNav({
   // visible window (confirmed live: Projections, the rightmost item, was
   // fully off-screen with no way to tell which page you were even on).
   // Scroll the current page's own link into view on every route change.
+  const { t } = useT();
   const activeRef = useRef<HTMLAnchorElement>(null);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [searchOpen, setSearchOpen] = useState(false);
@@ -111,7 +114,7 @@ export function TopNav({
                 className="label-caps flex min-h-11 items-center whitespace-nowrap rounded-full px-3.5 py-3.5 text-muted-foreground transition-[color,background-color,transform] duration-150 hover:bg-secondary hover:text-foreground active:scale-95 sm:min-h-0 sm:py-2"
                 activeProps={{ className: "!bg-secondary !text-foreground" }}
               >
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             );
           })}
@@ -128,16 +131,17 @@ export function TopNav({
               full-width search row that drops down under the bar. */}
           <button
             type="button"
-            aria-label="Search athletes"
+            aria-label={t("nav.searchAthletes")}
             aria-expanded={searchOpen}
             onClick={() => setSearchOpen((o) => !o)}
             className="-m-1.5 flex min-h-11 items-center rounded-full p-1.5 text-muted-foreground transition-colors hover:text-foreground active:scale-90 sm:hidden"
           >
             <SearchIcon />
           </button>
+          <LanguageSwitcher />
           {lastUpdated && (
             <span className="nums hidden text-[11.5px] text-muted-foreground lg:block">
-              Updated {lastUpdated} · {daysToFinal}d to Brussels
+              {t("nav.updated", { date: lastUpdated, days: daysToFinal ?? 0 })}
             </span>
           )}
           <span className="label-caps flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1.5 text-foreground">
@@ -145,7 +149,7 @@ export function TopNav({
               <span className="live-ping-ring absolute inset-0 rounded-full bg-gold" />
               <span className="relative size-1.5 rounded-full bg-gold" />
             </span>
-            Live
+            {t("nav.live")}
           </span>
         </div>
       </div>
