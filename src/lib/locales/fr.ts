@@ -776,6 +776,9 @@ export const fr: Record<string, string> = {
   "disc.name.men_JT": "Lancer du javelot hommes",
   "disc.name.women_JT": "Lancer du javelot femmes",
 
+  "podium.strongestCall": "Le plus sûr",
+  "podium.sb": "MPS {{mark}}",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Prédire le podium à Bruxelles.",

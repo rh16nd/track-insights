@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import { useT } from "@/lib/i18n";
+import { discName } from "@/lib/dl-data";
 import { useCountUp } from "@/hooks/useCountUp";
 import { WatchBadge } from "./shell";
 import type { TopWinner } from "@/lib/dl-data";
@@ -157,10 +158,12 @@ function Plaque({
               "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
           }}
         >
-          Strongest call
+          {t("podium.strongestCall")}
         </span>
       )}
-      <div className="label-caps text-muted-foreground">{winner.disc}</div>
+      <div className="label-caps text-muted-foreground">
+        {discName(t, winner.discKey, winner.disc)}
+      </div>
       <div className="mt-2 flex items-center justify-center gap-2">
         <Link
           to="/athlete/$discKey/$name"
@@ -174,7 +177,9 @@ function Plaque({
       {/* v0's mockup carried a nationality here. /api/predictions' topWinners
           rows don't have one, and inventing it is exactly what the porting
           rules forbid — so the plaque shows the real season best alone. */}
-      <div className="label-caps nums mt-1.5 text-muted-foreground">SB {winner.mark}</div>
+      <div className="label-caps nums mt-1.5 text-muted-foreground">
+        {t("podium.sb", { mark: winner.mark })}
+      </div>
       <div
         className={`dg nums mt-4 text-[44px] leading-none font-bold tracking-tight ${
           lead ? "text-gold-strong" : "text-terracotta-strong"

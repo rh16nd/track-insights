@@ -774,6 +774,9 @@ export const en: Record<string, string> = {
   "disc.name.men_JT": "Men's Javelin Throw",
   "disc.name.women_JT": "Women's Javelin Throw",
 
+  "podium.strongestCall": "Strongest call",
+  "podium.sb": "SB {{mark}}",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Predicting the podium in Brussels.",
