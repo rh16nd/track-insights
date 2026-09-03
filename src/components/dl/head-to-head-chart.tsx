@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import type { H2hMatchup } from "@/lib/dl-data";
 
@@ -11,11 +12,12 @@ export function HeadToHeadChart({
   /** Who the opponents are. Defaults to the in-field profile's wording;
    * the not-in-field profile passes its own, because there "top rivals" is
    * ambiguous when the athlete isn't in the field those rivals are in. */
-  opponentsLabel = "top rivals",
+  opponentsLabel,
 }: {
   matchups: H2hMatchup[];
   opponentsLabel?: string;
 }) {
+  const { t } = useT();
   const [tableView, setTableView] = useState(false);
   if (matchups.length === 0) return null;
   const maxMeetings = Math.max(...matchups.map((m) => m.meetings));
@@ -23,15 +25,17 @@ export function HeadToHeadChart({
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-y-2">
-        <div className="label-caps text-muted-foreground">Head-to-head vs. {opponentsLabel}</div>
+        <div className="label-caps text-muted-foreground">
+          {t("h2h.header", { opponents: opponentsLabel ?? t("h2h.topRivals") })}
+        </div>
         <div className="flex items-center gap-3">
           {!tableView && (
             <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
-                <span className="inline-block size-2 rounded-full bg-terracotta" /> Wins
+                <span className="inline-block size-2 rounded-full bg-terracotta" /> {t("h2h.wins")}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <span className="inline-block size-2 rounded-full bg-border" /> Losses
+                <span className="inline-block size-2 rounded-full bg-border" /> {t("h2h.losses")}
               </span>
             </div>
           )}
@@ -41,27 +45,29 @@ export function HeadToHeadChart({
             onClick={() => setTableView((v) => !v)}
             className="label-caps shrink-0 rounded-sm border border-border px-1.5 py-0.5 text-muted-foreground transition-colors hover:text-terracotta-strong"
           >
-            {tableView ? "Chart view" : "Table view"}
+            {t(tableView ? "traj.chartView" : "traj.tableView")}
           </button>
         </div>
       </div>
       {tableView ? (
         <div className="mt-3 overflow-x-auto">
           <table className="w-full text-left text-[12.5px]">
-            <caption className="sr-only">Head-to-head record vs. {opponentsLabel}</caption>
+            <caption className="sr-only">
+              {t("h2h.caption", { opponents: opponentsLabel ?? t("h2h.topRivals") })}
+            </caption>
             <thead>
               <tr className="label-caps text-muted-foreground">
                 <th scope="col" className="py-1 pr-3 font-medium">
-                  Opponent
+                  {t("h2h.colOpponent")}
                 </th>
                 <th scope="col" className="py-1 pr-3 font-medium">
-                  Wins
+                  {t("h2h.wins")}
                 </th>
                 <th scope="col" className="py-1 pr-3 font-medium">
-                  Losses
+                  {t("h2h.losses")}
                 </th>
                 <th scope="col" className="py-1 font-medium">
-                  Meetings
+                  {t("h2h.colMeetings")}
                 </th>
               </tr>
             </thead>
