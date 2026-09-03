@@ -1,0 +1,14 @@
+{
+  "name": "PodiumCall",
+  "short_name": "PodiumCall",
+  "description": "Real-data podium predictions for the 2026 Wanda Diamond League Final, trained on results scraped from World Athletics.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#160906",
+  "theme_color": "#160906",
+  "icons": [
+    { "src": "/favicon-192.png", "type": "image/png", "sizes": "192x192" },
+    { "src": "/favicon-512.png", "type": "image/png", "sizes": "512x512" },
+    { "src": "/favicon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
+  ]
+}

@@ -129,6 +129,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image:alt", content: "PodiumCall — We make the call before the gun." },
       { name: "twitter:image", content: "/og.png" },
       { property: "og:site_name", content: "PodiumCall" },
+      // Colours the browser chrome (Android address bar, iOS PWA) to the
+      // logo's dark ground rather than a default white.
+      { name: "theme-color", content: "#160906" },
+      { name: "application-name", content: "PodiumCall" },
+      { name: "apple-mobile-web-app-title", content: "PodiumCall" },
     ],
     links: [
       {
@@ -141,8 +146,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap",
       },
+      // A full icon set, not just the .svg + .ico: Google, iOS and Android
+      // each look for different sizes/formats, and giving each what it asks
+      // for is what makes them show the real PodiumCall mark rather than a
+      // stale or guessed one. The .ico stays first for the widest default
+      // support; the SVG is the crisp modern path; the sized PNGs and the
+      // apple-touch icon cover the rest.
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon-48.png", type: "image/png", sizes: "48x48" },
+      { rel: "icon", href: "/favicon-96.png", type: "image/png", sizes: "96x96" },
+      { rel: "icon", href: "/favicon-192.png", type: "image/png", sizes: "192x192" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+      { rel: "manifest", href: "/site.webmanifest" },
     ],
   }),
   shellComponent: RootShell,
