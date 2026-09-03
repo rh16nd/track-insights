@@ -26,7 +26,7 @@
   # NOTE: script-src is 'self' 'unsafe-inline' because TanStack Start injects an
   # inline hydration script during SSR; test hydration after enabling, and if
   # you want to drop 'unsafe-inline', move to per-response nonces.
-  # Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://assets.aws.worldathletics.org; connect-src 'self' API_ORIGIN; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+  # Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://assets.aws.worldathletics.org https://upload.wikimedia.org https://thumb.wikimedia.org; connect-src 'self' API_ORIGIN; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
 
 # (The long-cache rule for /assets/* is appended automatically by the nitro
 # build, so it is intentionally not repeated here.)

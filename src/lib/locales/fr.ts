@@ -779,6 +779,9 @@ export const fr: Record<string, string> = {
   "podium.strongestCall": "Le plus sûr",
   "podium.sb": "MPS {{mark}}",
 
+  "ath.photoCredit": "Photo : {{author}} · {{license}}",
+  "ath.photoCreditTitle": "Photo de {{author}}, {{license}}, via {{source}}. Ouvre la source.",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Prédire le podium à Bruxelles.",

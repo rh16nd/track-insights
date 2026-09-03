@@ -8,8 +8,33 @@ import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
 import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
 import { AthleteCareerBlock } from "@/components/dl/athlete-career";
 import { InfoTip } from "@/components/dl/info-tip";
-import { discName, ordinalIn } from "@/lib/dl-data";
+import { discName, ordinalIn, type PhotoCredit as PhotoCreditT } from "@/lib/dl-data";
 import { useT, type TFunc } from "@/lib/i18n";
+
+/** The attribution a Wikimedia Commons fallback photo requires, shown in the
+ * corner of the hero. World Athletics photos (their own asset) carry no credit,
+ * so this renders nothing for them. A real link to the Commons file page, where
+ * the full licence and source live -- NOT inside the aria-hidden photo backdrop,
+ * so assistive tech can reach it. */
+function PhotoCredit({ credit }: { credit: PhotoCreditT }) {
+  const { t } = useT();
+  if (!credit) return null;
+  return (
+    <a
+      href={credit.sourceUrl}
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      title={t("ath.photoCreditTitle", {
+        author: credit.author,
+        license: credit.license,
+        source: credit.source,
+      })}
+      className="absolute top-2 right-2.5 z-[3] max-w-[70%] truncate rounded bg-black/40 px-2 py-1 text-[10.5px] leading-none text-white/75 backdrop-blur-sm transition-colors hover:text-white"
+    >
+      {t("ath.photoCredit", { author: credit.author, license: credit.license })}
+    </a>
+  );
+}
 
 const FIELD_EVENT_KEYS = new Set([
   "men_HJ",
@@ -115,26 +140,29 @@ function NotInField({
   const forename = words.length > 1 ? words.slice(0, -1).map(tc).join(" ") : data.name;
 
   const backdrop = data.photoUrl ? (
-    <div aria-hidden="true" className="absolute inset-0">
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `url(${data.photoUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: data.photoFocus
-            ? `${data.photoFocus.x}% ${data.photoFocus.y}%`
-            : "center 15%",
-        }}
-      />
-      <div className="absolute inset-0 bg-brick/45" />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(to top, oklch(0.406 0.121 40 / 0.92) 0%, oklch(0.406 0.121 40 / 0.55) 38%, oklch(0.406 0.121 40 / 0.08) 72%, transparent 88%)",
-        }}
-      />
-    </div>
+    <>
+      <div aria-hidden="true" className="absolute inset-0">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${data.photoUrl})`,
+            backgroundSize: "cover",
+            backgroundPosition: data.photoFocus
+              ? `${data.photoFocus.x}% ${data.photoFocus.y}%`
+              : "center 15%",
+          }}
+        />
+        <div className="absolute inset-0 bg-brick/45" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, oklch(0.406 0.121 40 / 0.92) 0%, oklch(0.406 0.121 40 / 0.55) 38%, oklch(0.406 0.121 40 / 0.08) 72%, transparent 88%)",
+          }}
+        />
+      </div>
+      <PhotoCredit credit={data.photoCredit} />
+    </>
   ) : null;
 
   const hero = (
@@ -646,24 +674,29 @@ function AthleteProfilePage() {
   const forename = words.length > 1 ? words.slice(0, -1).map(titleCase).join(" ") : a.name;
 
   const backdrop = a.photoUrl ? (
-    <div aria-hidden="true" className="absolute inset-0">
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `url(${a.photoUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: a.photoFocus ? `${a.photoFocus.x}% ${a.photoFocus.y}%` : "center 15%",
-        }}
-      />
-      <div className="absolute inset-0 bg-brick/45" />
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(to top, oklch(0.406 0.121 40 / 0.92) 0%, oklch(0.406 0.121 40 / 0.55) 38%, oklch(0.406 0.121 40 / 0.08) 72%, transparent 88%)",
-        }}
-      />
-    </div>
+    <>
+      <div aria-hidden="true" className="absolute inset-0">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${a.photoUrl})`,
+            backgroundSize: "cover",
+            backgroundPosition: a.photoFocus
+              ? `${a.photoFocus.x}% ${a.photoFocus.y}%`
+              : "center 15%",
+          }}
+        />
+        <div className="absolute inset-0 bg-brick/45" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, oklch(0.406 0.121 40 / 0.92) 0%, oklch(0.406 0.121 40 / 0.55) 38%, oklch(0.406 0.121 40 / 0.08) 72%, transparent 88%)",
+          }}
+        />
+      </div>
+      <PhotoCredit credit={a.photoCredit} />
+    </>
   ) : null;
 
   const hero = (

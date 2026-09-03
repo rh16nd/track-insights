@@ -6,6 +6,7 @@ import type {
   CareerSeason,
   H2hMatchup,
   MeetMark,
+  PhotoCredit,
   ScoreContext,
   StandingsPosition,
 } from "@/lib/dl-data";
@@ -35,6 +36,7 @@ export type AthleteNotInField = {
   historyYear: number | null;
   photoUrl: string | null;
   photoFocus: { x: number; y: number } | null;
+  photoCredit: PhotoCredit;
   /** The same real season stats the in-field profile shows. Present for the
    * near-miss athletes run.py scores; `nat`/`age` still resolve from the
    * toplist scrape for anyone further down, the rest stay null. */

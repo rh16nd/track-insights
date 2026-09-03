@@ -84,6 +84,18 @@ export type TopWinner = {
 };
 
 // Full detail for one athlete's profile page, from /api/athlete/<discKey>/<name>.
+/** Attribution for a photo that isn't World Athletics' own asset. Present only
+ * on Wikimedia Commons fallback photos, which are freely licensed but require
+ * the author + licence to be shown. Null for WA photos (their asset, no credit
+ * needed) and when there is no photo at all. */
+export type PhotoCredit = {
+  author: string;
+  license: string;
+  licenseUrl: string | null;
+  sourceUrl: string;
+  source: string;
+} | null;
+
 export type AthleteProfile = {
   name: string;
   discKey: string;
@@ -109,6 +121,7 @@ export type AthleteProfile = {
   waUrl: string;
   photoUrl: string | null;
   photoFocus: { x: number; y: number } | null;
+  photoCredit: PhotoCredit;
   injuryWatch: boolean;
   injuryReason: string | null;
   injuryUrl: string | null;
