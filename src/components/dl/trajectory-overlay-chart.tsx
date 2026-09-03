@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useT } from "@/lib/i18n";
 import type { Trajectory } from "@/lib/dl-data";
 import { formatMark } from "@/lib/dl-data";
 
@@ -53,23 +54,24 @@ export function TrajectoryOverlayChart({
   trajectories: Trajectory[];
   discKey: string;
 }) {
+  const { t } = useT();
   const [hover, setHover] = useState<{ series: number; point: number } | null>(null);
   const [tableView, setTableView] = useState(false);
 
   if (trajectories.length === 0) return null;
 
-  const currentYear = Math.max(...trajectories.map((t) => t.historyYear ?? 0));
-  const comparable = trajectories.filter((t) => t.historyYear === currentYear);
-  const excluded = trajectories.filter((t) => t.historyYear !== currentYear);
+  const currentYear = Math.max(...trajectories.map((tr) => tr.historyYear ?? 0));
+  const comparable = trajectories.filter((tr) => tr.historyYear === currentYear);
+  const excluded = trajectories.filter((tr) => tr.historyYear !== currentYear);
   if (comparable.length === 0) return null;
 
   const first = comparable[0]?.history[0];
   const isField = first?.mark.endsWith("m") ?? false;
 
-  const allValues = comparable.flatMap((t) =>
-    t.history.map((h) => h.markValue).filter((v): v is number => v !== null),
+  const allValues = comparable.flatMap((tr) =>
+    tr.history.map((h) => h.markValue).filter((v): v is number => v !== null),
   );
-  const allDates = comparable.flatMap((t) => t.history.map((h) => parseDate(h.date)));
+  const allDates = comparable.flatMap((tr) => tr.history.map((h) => parseDate(h.date)));
   const minV = Math.min(...allValues);
   const maxV = Math.max(...allValues);
   const padV = (maxV - minV) * 0.25 || 1;
@@ -98,7 +100,7 @@ export function TrajectoryOverlayChart({
   // them: distances as metres, sprints as seconds, and anything the API
   // returns as m:ss.xx converted back from raw seconds rather than printed
   // as a bare "477.25".
-  const usesClockFormat = comparable.some((t) => t.history.some((h) => h.mark.includes(":")));
+  const usesClockFormat = comparable.some((tr) => tr.history.some((h) => h.mark.includes(":")));
   const formatValue = (v: number) => {
     if (usesClockFormat) {
       const mins = Math.floor(v / 60);
@@ -109,14 +111,14 @@ export function TrajectoryOverlayChart({
   };
   const valueTicks = Array.from({ length: 4 }, (_, i) => minV + ((maxV - minV) * i) / 3);
 
-  const series = comparable.map((t, i) => {
-    const pts = t.history.map((h) => ({
+  const series = comparable.map((tr, i) => {
+    const pts = tr.history.map((h) => ({
       ...h,
       x: xFor(parseDate(h.date)),
       y: yFor(h.markValue ?? minV),
     }));
     return {
-      trajectory: t,
+      trajectory: tr,
       color: SERIES_COLORS[i % SERIES_COLORS.length],
       dash: SERIES_DASH[i % SERIES_DASH.length],
       pts,
@@ -134,11 +136,11 @@ export function TrajectoryOverlayChart({
     <div>
       <div className="flex items-baseline justify-between gap-3">
         <div className="label-caps text-muted-foreground">
-          Real {currentYear} form · top {comparable.length}
+          {t("traj.header", { year: currentYear, n: comparable.length })}
         </div>
         <div className="flex items-center gap-3">
           <div className="text-[11px] text-muted-foreground">
-            {isField ? "Higher is farther" : "Higher is faster"}
+            {t(isField ? "traj.higherFarther" : "traj.higherFaster")}
           </div>
           <button
             type="button"
@@ -146,7 +148,7 @@ export function TrajectoryOverlayChart({
             onClick={() => setTableView((v) => !v)}
             className="label-caps shrink-0 rounded-sm border border-border px-1.5 py-0.5 text-muted-foreground transition-colors hover:text-terracotta-strong"
           >
-            {tableView ? "Chart view" : "Table view"}
+            {t(tableView ? "traj.chartView" : "traj.tableView")}
           </button>
         </div>
       </div>
@@ -155,22 +157,21 @@ export function TrajectoryOverlayChart({
         <div className="mt-3 overflow-x-auto">
           <table className="w-full text-left text-[12.5px]">
             <caption className="sr-only">
-              Real {currentYear} meet-by-meet marks for the top {comparable.length} contenders, one
-              row per meet
+              {t("traj.caption", { year: currentYear, n: comparable.length })}
             </caption>
             <thead>
               <tr className="label-caps text-muted-foreground">
                 <th scope="col" className="py-1 pr-3 font-medium">
-                  Athlete
+                  {t("table.colAthlete")}
                 </th>
                 <th scope="col" className="py-1 pr-3 font-medium">
-                  Date
+                  {t("traj.colDate")}
                 </th>
                 <th scope="col" className="py-1 pr-3 font-medium">
-                  Mark
+                  {t("traj.colMark")}
                 </th>
                 <th scope="col" className="py-1 font-medium">
-                  Venue
+                  {t("traj.colVenue")}
                 </th>
               </tr>
             </thead>
@@ -355,8 +356,10 @@ export function TrajectoryOverlayChart({
       </div>
       {excluded.length > 0 && (
         <div className="mt-2 text-[11px] text-muted-foreground/85">
-          {excluded.map((t) => t.name).join(", ")} {excluded.length === 1 ? "has" : "have"} no{" "}
-          {currentYear} meeting data on record yet. See their profile for their most recent season.
+          {t(excluded.length === 1 ? "traj.excludedOne" : "traj.excludedMany", {
+            names: excluded.map((tr) => tr.name).join(", "),
+            year: currentYear,
+          })}
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useT, type TFunc } from "@/lib/i18n";
 import type { Storyline } from "@/lib/dl-data";
 
 const ICONS: Record<string, string[]> = {
@@ -61,6 +62,15 @@ function AthleteLinks({ discKey, names }: { discKey: string; names: string[] }) 
  * number should never hide behind. The first (strongest) storyline gets a
  * featured treatment; the rest read as a plain divided list, not a grid of
  * same-size boxes -- rhythm comes from scale and spacing, not a border. */
+/** The API sends both a `type` and an English `title`. The types are a fixed
+ * set, so the title can be translated here; anything unrecognised falls back
+ * to whatever the API called it rather than showing a raw key. */
+function storylineTitle(t: TFunc, type: string, fallback: string): string {
+  const key = `storyline.${type}`;
+  const translated = t(key);
+  return translated === key ? fallback : translated;
+}
+
 export function StorylineCards({
   storylines,
   discKey,
@@ -68,11 +78,10 @@ export function StorylineCards({
   storylines: Storyline[];
   discKey: string;
 }) {
+  const { t } = useT();
   if (storylines.length === 0) {
     return (
-      <div className="text-[12.5px] text-muted-foreground">
-        No standout storylines for this discipline right now. Check back as the season progresses.
-      </div>
+      <div className="text-[12.5px] text-muted-foreground">{t("storyline.empty")}</div>
     );
   }
   const [featured, ...rest] = storylines;
@@ -87,7 +96,7 @@ export function StorylineCards({
         <div className="min-w-[220px] flex-1">
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <StorylineIcon type={featured.type} />
-            <span className="label-caps">{featured.title}</span>
+            <span className="label-caps">{storylineTitle(t, featured.type, featured.title)}</span>
           </div>
           <p className="mt-1 max-w-lg text-[13.5px] leading-relaxed text-foreground">
             <AthleteLinks discKey={discKey} names={featured.athletes} />
@@ -111,7 +120,7 @@ export function StorylineCards({
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 text-muted-foreground">
                   <StorylineIcon type={s.type} />
-                  <span className="label-caps">{s.title}</span>
+                  <span className="label-caps">{storylineTitle(t, s.type, s.title)}</span>
                 </div>
                 <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
                   <span className="text-foreground">

@@ -555,11 +555,24 @@ export type AthleteCareer = {
  * Discipline-aware rather than neutral-for-everyone: "competition" is
  * correct for a sprinter too, but "races" is what a sprinter's page should
  * say, and every component that renders these already knows `isField`. */
-export const startNoun = (isField: boolean, count = 2): string =>
-  isField ? (count === 1 ? "competition" : "competitions") : count === 1 ? "race" : "races";
+export const startNounKey = (isField: boolean, count = 2): string =>
+  isField
+    ? count === 1
+      ? "word.competition"
+      : "word.competitions"
+    : count === 1
+      ? "word.race"
+      : "word.races";
 
 /** Past tense, for "have never …ed each other". */
-export const startVerb = (isField: boolean): string => (isField ? "competed against" : "raced");
+export const startVerbKey = (isField: boolean): string =>
+  isField ? "word.competedAgainst" : "word.raced";
+
+/** English writes "5th"; French writes "5e", and "1er" for one. Ordinals are
+ * grammar rather than formatting, so they cannot come out of the number
+ * itself the same way in every language. */
+export const ordinalIn = (lang: string, n: number): string =>
+  lang === "fr" ? (n === 1 ? `${n}er` : `${n}e`) : ordinal(n);
 
 /** Discipline vs discipline — the third level of the site, after the field
  * and the athlete.
