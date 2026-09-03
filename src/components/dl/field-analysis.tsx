@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import { Panel, ProbabilityBar } from "@/components/dl/shell";
+import { InfoTip } from "@/components/dl/info-tip";
 import { ordinal, startNoun, startVerb } from "@/lib/dl-data";
 import type { FieldAnalysis, FormResult, H2hCell } from "@/lib/dl-data";
 
@@ -37,8 +38,16 @@ export function FieldAnalysisBlock({
     <>
       <Panel
         title={`Every pairing in the ${discLabel} field`}
-        subtitle={`Read a row across: that athlete's record against each rival, wins first. Built from ${startNoun(isField)} they actually shared — ${matrix.pairsMet} of ${matrix.pairsPossible} possible pairings have met.`}
+        subtitle={`Read a row across: that athlete's record against each rival, wins first. Built from ${startNoun(isField)} they actually shared. ${matrix.pairsMet} of ${matrix.pairsPossible} possible pairings have met.`}
         className="mt-6"
+        action={
+          <InfoTip label="How to read this grid">
+            Each row is one athlete, each column a rival. A cell reads wins then losses, so{" "}
+            <b>3–1</b> means the row athlete has beaten that rival three times and lost once,
+            counting only {startNoun(isField)} they both entered. Gold means the row athlete is
+            ahead; a blank means they&apos;ve never met.
+          </InfoTip>
+        }
       >
         <div className="overflow-x-auto">
           <table className="border-collapse text-left">
@@ -52,7 +61,7 @@ export function FieldAnalysisBlock({
               <tr>
                 <th
                   scope="col"
-                  className="label-caps sticky left-0 z-10 bg-card pb-2 pr-3 text-muted-foreground"
+                  className="label-caps sticky left-0 z-10 bg-card pb-2.5 pr-6 text-muted-foreground"
                 >
                   Athlete
                 </th>
@@ -60,7 +69,7 @@ export function FieldAnalysisBlock({
                   <th
                     key={n}
                     scope="col"
-                    className="label-caps w-14 pb-2 text-center font-semibold text-muted-foreground"
+                    className="label-caps w-16 px-2 pb-2.5 text-center font-semibold text-muted-foreground"
                     title={n}
                   >
                     {surname(n)}
@@ -83,7 +92,7 @@ export function FieldAnalysisBlock({
                 >
                   <th
                     scope="row"
-                    className="sticky left-0 z-10 whitespace-nowrap bg-card py-2 pr-3 text-left text-[13px] font-medium text-foreground"
+                    className="sticky left-0 z-10 whitespace-nowrap bg-card py-2.5 pr-6 text-left text-[13px] font-medium text-foreground"
                   >
                     <Link
                       to="/athlete/$discKey/$name"
@@ -126,7 +135,7 @@ export function FieldAnalysisBlock({
           </table>
         </div>
         <p className="mt-3 max-w-3xl text-[11.5px] leading-relaxed text-muted-foreground">
-          A blank cell means those two have genuinely never {startVerb(isField)} each other — shown
+          A blank cell means those two have genuinely never {startVerb(isField)} each other, shown
           as absent rather than as a nil-all draw. &ldquo;vs. this field&rdquo; totals a row, and is
           not the same number as a career win rate: an athlete can win often against everyone else
           and still be behind against the eight who will actually line up in Brussels.
@@ -148,20 +157,49 @@ export function FieldAnalysisBlock({
                 <th scope="col" className="pb-2 pr-2 font-semibold">
                   Athlete
                 </th>
-                <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
-                  Top-3 avg
+                <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                  <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                    Top-3 avg
+                    <InfoTip label="About Top-3 average">
+                      The average of this athlete&apos;s three best marks this season. It holds up
+                      to one lucky afternoon in a way a single season best doesn&apos;t.
+                    </InfoTip>
+                  </span>
                 </th>
-                <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
-                  Steadiness
+                <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                  <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                    Steadiness
+                    <InfoTip label="About Steadiness">
+                      How tightly a season&apos;s marks cluster, as a percentage of their average.
+                      Lower is more repeatable, and it reads the same for a sprinter and a thrower.
+                    </InfoTip>
+                  </span>
                 </th>
-                <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
-                  {isField ? "Comps" : "Races"}
+                <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                  <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                    {isField ? "Comps" : "Races"}
+                    <InfoTip label={isField ? "About Comps" : "About Races"}>
+                      How many times they&apos;ve competed this season, then their all-time total on
+                      record (this season / all-time).
+                    </InfoTip>
+                  </span>
                 </th>
-                <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
-                  Podium
+                <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                  <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                    Podium
+                    <InfoTip label="About Podium">
+                      How often this athlete has finished in the top three, across every final on
+                      their record.
+                    </InfoTip>
+                  </span>
                 </th>
-                <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
-                  Peaked
+                <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                  <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                    Peaked
+                    <InfoTip label="About Peaked">
+                      The month this season&apos;s best mark was set.
+                    </InfoTip>
+                  </span>
                 </th>
               </tr>
             </thead>
@@ -205,14 +243,6 @@ export function FieldAnalysisBlock({
             </tbody>
           </table>
         </div>
-        <p className="mt-3 max-w-3xl text-[11.5px] leading-relaxed text-muted-foreground">
-          Top-3 average is the mean of this season&apos;s three best marks, which survives one lucky
-          afternoon in a way a season best does not. Steadiness is the spread of a season&apos;s
-          marks as a percentage of their average — lower is more repeatable, and it reads the same
-          for a sprinter and a thrower. The {isField ? "Comps" : "Races"} column counts this season
-          against every scraped final on record. Peaked is the month the season&apos;s best mark
-          landed.
-        </p>
       </Panel>
     </>
   );
@@ -273,14 +303,14 @@ function MatrixCell({
 }) {
   if (self) {
     return (
-      <td aria-hidden className="py-2 text-center text-muted-foreground/30">
+      <td aria-hidden className="px-2 py-2.5 text-center text-muted-foreground/30">
         ·
       </td>
     );
   }
   if (!cell) {
     return (
-      <td className="py-2 text-center">
+      <td className="px-2 py-2.5 text-center">
         <span className="sr-only">{`${a} and ${b} have never ${startVerb(isField)} each other`}</span>
         <span aria-hidden className="text-[12px] text-muted-foreground/40">
           —

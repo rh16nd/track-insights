@@ -89,7 +89,7 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
           World Athletics holds personal bests for this athlete in{" "}
           <span className="nums font-medium text-foreground">{eventCount}</span>{" "}
           {eventCount === 1 ? "event" : "events"}
-          {eventCount >= 4 && " — a range, not a single specialism"}. Marks set indoors are included
+          {eventCount >= 4 && " (a range, not a single specialism)"}. Marks set indoors are included
           in that count and are labelled wherever they are shown; World Athletics lists them
           alongside outdoor ones.
         </p>

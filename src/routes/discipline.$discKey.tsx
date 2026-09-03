@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { disciplineLabel, pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, ProbabilityBar } from "@/components/dl/shell";
+import { InfoTip } from "@/components/dl/info-tip";
 import { FieldAnalysisBlock } from "@/components/dl/field-analysis";
 import { TrajectoryOverlayChart } from "@/components/dl/trajectory-overlay-chart";
 import { StorylineCards } from "@/components/dl/storyline-cards";
@@ -35,7 +36,7 @@ const DESCRIPTION =
  * problem: it is scraped, present on every toplist row, and the one figure in
  * this data that compares a shot putter to a 1500m runner. */
 const WHY_SCORE =
-  "World Athletics' scoring points, not the model's probabilities. Probabilities rank athletes inside one event, but each is scored on its own — a field's percentages add up to anything from 31 to 320 across the 32 finals — so they cannot rank one event against another. A scraped score can.";
+  "This is measured on World Athletics' scoring points, not the model's probabilities. Probabilities rank athletes inside one event, but each athlete is scored on their own, so a field's percentages can add up to anything from 31 to 320 across the 32 finals. That's why they can't rank one event against another. A scraped score can.";
 
 const VERDICT_TONE: Record<DepthVerdict["key"], string> = {
   level: "text-terracotta-strong",
@@ -139,7 +140,7 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
             </p>
           )}
           <p className="text-[13px] text-muted-foreground">
-            {verdict && <>{verdict.basis} — </>}
+            {verdict && <>{verdict.basis.charAt(0).toUpperCase() + verdict.basis.slice(1)}. </>}
             <span className="nums font-medium text-foreground">{depth.spread}</span> points from{" "}
             {shortName(depth.bestAthlete)} down to the weakest of the{" "}
             <span className="nums">{depth.scored}</span> scored.
@@ -151,6 +152,7 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
             label="Spread across the field"
             value={`${depth.spread} pts`}
             note={`${ordinal(depth.spreadRank)} tightest of ${depth.of}`}
+            hint="The points gap from the strongest finalist's score down to the weakest. A small gap is a tight, level field; a big one means the leader has daylight."
           />
           <Stat
             label="Strongest finalist"
@@ -165,6 +167,7 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
                 ? "not scored this season"
                 : `strongest finalist is ${headroom} clear`
             }
+            hint="The middle score of the world's top 100 in this event this year, as a yardstick. It shows how the Final's field sits against the wider world, not just against itself."
           />
           <Stat
             label="Field scored"
@@ -174,6 +177,7 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
                 ? "every finalist"
                 : "some carry no score this season"
             }
+            hint="How many of the finalists have a World Athletics score this season. A few events have one or two who don't, and nothing is estimated in their place."
           />
         </dl>
 
@@ -220,8 +224,8 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
         </ol>
         <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
           Ordered by World Athletics score. The percentage is the model's chance of that athlete
-          finishing in the top three — it is not a win probability, and the two columns are allowed
-          to disagree: a season best is one day, the projection reads a whole season.
+          finishing in the top three. It isn&apos;t a win probability, and the two columns are
+          allowed to disagree: a season best is one day, and the projection reads a whole season.
         </p>
       </Panel>
     </>
@@ -274,10 +278,23 @@ function ScoreSpread({ scores }: { scores: FieldScore[] }) {
   );
 }
 
-function Stat({ label, value, note }: { label: string; value: string; note: string }) {
+function Stat({
+  label,
+  value,
+  note,
+  hint,
+}: {
+  label: string;
+  value: string;
+  note: string;
+  hint?: string;
+}) {
   return (
     <div>
-      <dt className="label-caps text-muted-foreground">{label}</dt>
+      <dt className="label-caps flex items-center gap-1 text-muted-foreground">
+        {label}
+        {hint && <InfoTip label={`About ${label}`}>{hint}</InfoTip>}
+      </dt>
       <dd className="nums mt-1 text-[22px] leading-none font-semibold text-foreground">{value}</dd>
       <p className="mt-1 text-[12px] leading-snug text-muted-foreground">{note}</p>
     </div>

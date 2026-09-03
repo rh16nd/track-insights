@@ -25,7 +25,7 @@ export const Route = createFileRoute("/stats")({
 });
 
 const DESCRIPTION =
-  "Which events are genuinely deep — and which are one athlete and a gap. Every 2026 mark scored on World Athletics' points table, then read as a spread: how far a discipline's leader sits above the median of its own ranked field. A tight spread is a crowd; a long one is a soloist with daylight behind.";
+  "Which events are genuinely deep, and which are one athlete and a gap. Every 2026 mark is scored on World Athletics' points table, then read as a spread: how far a discipline's leader sits above the median of its own ranked field. A tight spread is a crowd; a long one is a soloist with daylight behind.";
 
 type Filter = "all" | "track" | "field" | "outdoor";
 
@@ -190,7 +190,7 @@ function StatsPage() {
 function IndoorBadge() {
   return (
     <span
-      title="Set indoors — World Athletics lists these inside the outdoor season rankings"
+      title="Set indoors. World Athletics lists these inside the outdoor season rankings"
       className="label-caps inline-flex items-center rounded-full bg-secondary px-1.5 py-0.5 text-foreground/80"
     >
       Indoor

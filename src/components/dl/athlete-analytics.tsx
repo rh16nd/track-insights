@@ -42,7 +42,7 @@ export function AthleteAnalyticsBlock({
       {record && (
         <Panel
           title="Competition record"
-          subtitle={`Every scraped final: ${record.races} ${startNoun(isField)} across ${record.seasons} seasons. A season best is one afternoon — this is what happened the rest of the time.`}
+          subtitle={`Every scraped final: ${record.races} ${startNoun(isField)} across ${record.seasons} seasons. A season best is one afternoon. This is what happened the rest of the time.`}
           className="mt-6"
         >
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -111,9 +111,9 @@ export function AthleteAnalyticsBlock({
           </div>
           <p className="mt-3 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
             Categories are World Athletics&apos; own ranking labels, listed in a fixed order and
-            deliberately not collapsed into a single quality score — a continental championship and
-            a Continental Tour Gold meeting are not comparable on one axis. Read the rows against
-            each other instead.
+            deliberately not collapsed into a single quality score, because a continental
+            championship and a Continental Tour Gold meeting aren&apos;t comparable on one axis.
+            Read the rows against each other instead.
           </p>
         </Panel>
       )}
@@ -141,7 +141,7 @@ export function AthleteAnalyticsBlock({
       {headToHead.length > 0 && (
         <Panel
           title="Head-to-head record"
-          subtitle={`Derived from actually sharing a ${startNoun(isField, 1)} — same meeting, same day, compared on finishing position. Nothing here is inferred.`}
+          subtitle={`Derived from actually sharing a ${startNoun(isField, 1)}: same meeting, same day, compared on finishing position. Nothing here is inferred.`}
           className="mt-6"
         >
           <ul className="divide-y divide-border">
@@ -178,7 +178,7 @@ export function AthleteAnalyticsBlock({
             ))}
           </ul>
           <p className="mt-3 text-[11.5px] leading-snug text-muted-foreground">
-            Sorted by how often they have met, not by record — the deepest rivalries are the
+            Sorted by how often they&apos;ve met, not by record, since the deepest rivalries are the
             informative ones. Losses are shown as plainly as wins. Opponents marked{" "}
             <span className="font-medium text-foreground">In field</span> are projected to line up
             in the Final.
@@ -197,8 +197,8 @@ export function AthleteAnalyticsBlock({
         finishing position) across {coverage.seasons.length}{" "}
         {coverage.seasons.length === 1 ? "season" : "seasons"}: {coverage.seasons.join(", ")}. This
         is every meeting World Athletics publishes results for in the senior outdoor competition
-        groups, not an athlete&apos;s complete career — a {startNoun(isField, 1)} outside those
-        groups is not counted.
+        groups, not an athlete&apos;s complete career; a {startNoun(isField, 1)} outside those
+        groups isn&apos;t counted.
       </p>
     </>
   );
@@ -355,7 +355,7 @@ function SeasonShapeChart({
                     ? "linear-gradient(180deg, var(--gold-strong), var(--terracotta))"
                     : "linear-gradient(180deg, var(--terracotta), var(--brick))",
                 }}
-                title={`${m.month}: ${m.races} ${startNoun(isField, m.races)}${isBest ? " — season best set here" : ""}`}
+                title={`${m.month}: ${m.races} ${startNoun(isField, m.races)}${isBest ? ", season best set here" : ""}`}
               />
               <span className="label-caps text-muted-foreground">{m.month}</span>
             </div>

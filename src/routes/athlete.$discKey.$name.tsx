@@ -7,6 +7,7 @@ import { SeasonTrendChart } from "@/components/dl/season-trend-chart";
 import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
 import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
 import { AthleteCareerBlock } from "@/components/dl/athlete-career";
+import { InfoTip } from "@/components/dl/info-tip";
 import { ordinal } from "@/lib/dl-data";
 
 const FIELD_EVENT_KEYS = new Set([
@@ -147,8 +148,8 @@ function NotInField({
           <div className="label-caps text-gold-on-canvas">If they had qualified</div>
           <p className="mt-2 text-[14px] leading-relaxed text-white/92">
             <span className="nums font-semibold text-white">{data.hypotheticalProb}%</span> chance
-            of a podium — the same model, run over the near-miss group. Not a projection about
-            Brussels: they are not in the field.
+            of a podium, from the same model run over the near-miss group. This isn&apos;t a
+            projection about Brussels; they aren&apos;t in the field.
           </p>
         </div>
       )}
@@ -240,9 +241,16 @@ function NotInField({
             <StatBlock label="Career best" value={data.careerBest ?? "—"} icon="trophy" />
             <StatBlock
               label="PB gap"
-              value={data.pbGap != null ? data.pbGap.toFixed(2) : "—"}
-              sub="vs. career best"
+              value={
+                data.pbGap != null
+                  ? `${data.pbGap.toFixed(2)}${FIELD_EVENT_KEYS.has(data.discKey) ? "m" : "s"}`
+                  : "—"
+              }
+              sub="off their career best"
               icon="ruler"
+              hint={`How far this season's best mark is from the athlete's all-time best, in ${
+                FIELD_EVENT_KEYS.has(data.discKey) ? "metres" : "seconds"
+              }. Zero means they've matched their personal best this year; a bigger number means they're still off it.`}
             />
             <StatBlock
               label="Age"
@@ -281,6 +289,7 @@ function NotInField({
                 value={String(data.scoreContext.score)}
                 sub={`Top ${Math.max(0.1, 100 - data.scoreContext.percentile).toFixed(1)}% of all ranked marks`}
                 icon="ruler"
+                hint="World Athletics' own points score for a mark. It puts every event on one scale, so a 9.9 hundred metres and a 2.30m high jump can be lined up and compared. Higher is better."
               />
             )}
           </div>
@@ -304,14 +313,14 @@ function NotInField({
           {data.daysSinceLast == null && (
             <p className="mt-4 max-w-md text-[12px] leading-relaxed text-muted-foreground">
               World Athletics lists a season best for this athlete but no dated results this season
-              {data.racesOnRecord > 0 ? " — their results on record are from earlier years" : ""},
+              {data.racesOnRecord > 0 ? " (their results on record are from earlier years)" : ""},
               so meetings and last-competed are unknown here rather than zero.
             </p>
           )}
           {data.careerBest === null && (
             <p className="mt-4 text-[12px] leading-relaxed text-muted-foreground">
               Career best, PB gap and activity aren&apos;t computed for athletes this far outside
-              the field — the model only scores the projected finalists and the closest challengers.
+              the field. The model only scores the projected finalists and the closest challengers.
             </p>
           )}
         </Panel>
@@ -455,17 +464,21 @@ function StatBlock({
   value,
   sub,
   icon,
+  hint,
 }: {
   label: string;
   value: string;
   sub?: string;
   icon: "target" | "trophy" | "ruler" | "calendar" | "grid" | "clock";
+  /** Optional tap-and-hover explanation for a stat that isn't self-evident. */
+  hint?: string;
 }) {
   return (
     <div>
       <div className="flex items-center gap-1.5 text-terracotta-strong">
         <StatIcon kind={icon} />
         <span className="label-caps text-muted-foreground">{label}</span>
+        {hint && <InfoTip label={`About ${label}`}>{hint}</InfoTip>}
       </div>
       <div className="nums mt-1.5 text-[20px] font-semibold text-foreground">{value}</div>
       {sub && <div className="text-[11.5px] text-muted-foreground">{sub}</div>}
@@ -543,7 +556,7 @@ function AthleteProfilePage() {
         <ErrorPanel
           title="Could not load athlete profile"
           message={state.message}
-          hint="This athlete may not be in the current predictions file — withdrawn athletes are filtered out before profiles are built."
+          hint="This athlete may not be in the current predictions file. Withdrawn athletes are filtered out before profiles are built."
           onRetry={state.retry}
         />
       </Shell>
@@ -628,7 +641,7 @@ function AthleteProfilePage() {
         </h1>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <Tag>{a.nat}</Tag>
-          {a.age != null && <Tag>Age {a.age}</Tag>}
+          {a.age != null && <Tag>Age {Math.round(a.age)}</Tag>}
           <Tag>#{a.rank} in the projected field</Tag>
           {a.injuryWatch && <WatchBadge reason={a.injuryReason} url={a.injuryUrl} tone="dark" />}
         </div>
@@ -648,7 +661,7 @@ function AthleteProfilePage() {
         <div className="label-caps text-gold-on-canvas">PodiumCall model</div>
         <p className="mt-2 text-[14px] leading-relaxed text-white/92">
           <span className="nums font-semibold text-white">{a.prob}%</span> chance of finishing on
-          the podium in Brussels — not of winning; the model predicts top-three membership.
+          the podium in Brussels, not of winning. The model predicts top-three membership.
           {a.scoreContext && (
             <>
               {" "}
@@ -672,9 +685,16 @@ function AthleteProfilePage() {
             <StatBlock label="Career best" value={a.careerBest ?? "—"} icon="trophy" />
             <StatBlock
               label="PB gap"
-              value={a.pbGap != null ? a.pbGap.toFixed(2) : "—"}
-              sub="vs. career best"
+              value={
+                a.pbGap != null
+                  ? `${a.pbGap.toFixed(2)}${FIELD_EVENT_KEYS.has(a.discKey) ? "m" : "s"}`
+                  : "—"
+              }
+              sub="off their career best"
               icon="ruler"
+              hint={`How far this season's best mark is from the athlete's all-time best, in ${
+                FIELD_EVENT_KEYS.has(a.discKey) ? "metres" : "seconds"
+              }. Zero means they've matched their personal best this year; a bigger number means they're still off it.`}
             />
             <StatBlock
               label="Age"
