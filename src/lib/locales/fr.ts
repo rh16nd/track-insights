@@ -62,7 +62,7 @@ export const fr: Record<string, string> = {
   "dashboard.stat.daysToBrussels": "Jours avant Bruxelles",
   "dashboard.stat.hitRate": "Taux de réussite top 3",
   "dashboard.stat.hitRateHint":
-    "Parmi les athlètes qui disputent réellement une finale, la fréquence à laquelle le top trois projeté par le modèle correspond aux vrais médaillés. Il n'est évalué que sur des saisons sur lesquelles le modèle ne s'est jamais entraîné, donc le chiffre n'est pas surévalué.",
+    "À quelle fréquence le top trois projeté par le modèle correspond aux vrais médaillés, en ne comptant que les athlètes qui atteignent une finale. Il est testé uniquement sur des années passées que le modèle n'a jamais apprises, donc le chiffre ne se flatte pas lui-même.",
   "dashboard.stat.disciplines": "Disciplines",
   "dashboard.stat.meetingsRun": "Réunions disputées",
   "dashboard.surest": "n°{{n}} le plus sûr",
@@ -75,9 +75,9 @@ export const fr: Record<string, string> = {
   "dashboard.mostLikelyPodium": "Les plus susceptibles d'atteindre le podium",
   "dashboard.leastSure.title": "Là où le modèle est le moins sûr",
   "dashboard.leastSure.subtitle":
-    "Les huit épreuves dont le meilleur pronostic est le plus faible. Ce sont les finales les plus ouvertes, et les plus susceptibles de surprendre.",
+    "Les huit épreuves où même le favori a peu de chances de podium. Ce sont les finales les plus ouvertes, et les plus susceptibles de créer la surprise.",
   "dashboard.leastSure.note":
-    "Il s'agit de la propre chance de podium du favori, pas d'un écart avec l'athlète suivant. Un chiffre faible signifie que personne ne se détache dans cette épreuve : suivez une ligne pour voir à quel point elle est serrée.",
+    "Chaque chiffre est la chance de podium du favori lui-même, pas son avance sur l'athlète suivant. Un chiffre faible signifie que personne ne se détache dans l'épreuve. Touchez une ligne pour voir tout le plateau.",
   "dashboard.surestCalls.title": "Les pronostics les plus sûrs",
   "dashboard.surestCalls.subtitle":
     "Le meilleur pronostic du modèle dans chaque discipline : la chance de finir dans le top trois, pas de gagner. Chaque carte est une épreuve différente, donc ces six-là ne courent pas les uns contre les autres.",
@@ -114,9 +114,9 @@ export const fr: Record<string, string> = {
 
   // Discipline table (shared by Track and Field)
   "table.subtitle.rank":
-    "Classé par meilleure performance de la saison. La chance de podium est le calcul distinct du modèle et peut diverger.",
+    "Classé par meilleure performance de la saison, la meilleure marque de chaque athlète cette année. La chance de podium est l'estimation propre du modèle et peut différer de ce classement.",
   "table.subtitle.prob":
-    "Trié par chance de podium selon le modèle. La colonne # classe toujours par meilleure performance de la saison, elle apparaît donc dans le désordre.",
+    "Classé par chance de podium selon le modèle. La colonne # compte toujours par meilleure performance de la saison, ses numéros semblent donc en désordre ici.",
   "table.projectedTop": "Top {{n}} projeté · {{label}}",
   "table.howLevel": "Ce plateau est-il serré ?",
   "table.caption":
@@ -127,10 +127,10 @@ export const fr: Record<string, string> = {
   "table.colQualified": "Qualifié",
   "table.colProjected": "Projeté",
   "table.colProjectedHint":
-    "Ordre d'arrivée projeté, classé par la meilleure performance de la saison de chaque athlète : sa marque la plus rapide ou la plus longue cette année. Un vrai résultat vérifiable, distinct de la chance de podium du modèle.",
+    "L'ordre d'arrivée obtenu en se basant uniquement sur la meilleure performance de la saison, la marque la plus rapide ou la plus longue de chaque athlète cette année. Un vrai résultat vérifiable, distinct de la chance de podium du modèle.",
   "table.colPodiumChance": "Chance de podium",
   "table.colPodiumChanceHint":
-    "L'estimation par le modèle de la probabilité que cet athlète finisse dans le top trois, pas qu'il gagne. Plus le chiffre est élevé, plus la menace de podium est forte, ce qui explique que ce classement puisse différer de celui des meilleures performances de la saison.",
+    "L'estimation par le modèle de la probabilité que cet athlète finisse dans le top trois, pas qu'il gagne. Un chiffre plus élevé est une menace de podium plus forte, ce qui explique qu'il puisse classer les athlètes autrement que leur meilleure performance de la saison.",
   "table.sortedActivateReverse": " — trié, activez pour inverser",
   "table.activateToSort": " — activez pour trier par cette colonne",
   "table.qTitle":
@@ -138,7 +138,7 @@ export const fr: Record<string, string> = {
   "table.qSr": "ualifié — confirmé dans le classement Diamond League 2026 de World Athletics",
   "table.notQualifiedHeading": "Non qualifiés : sous le top {{n}} aux points Diamond League",
   "table.notQualifiedNote":
-    "Assez rapides pour compter, mais sans place qualificative aux points : soit sous la barre du classement, soit sans aucun point Diamond League dans cette épreuve. Évalués par le même modèle, pour que vous voyiez qui serait une menace s'ils y étaient.",
+    "Assez rapides pour y figurer, mais sans place qualificative : soit sous la barre des points, soit sans aucun point Diamond League dans cette épreuve. Le modèle les évalue quand même, pour que vous voyiez qui serait une menace s'ils y étaient.",
   "table.notQualified": "Non qualifié",
 
   // Schedule
@@ -171,15 +171,15 @@ export const fr: Record<string, string> = {
   "stats.eyebrow": "Saison {{season}} · {{rows}} performances classées · scores {{min}}–{{max}}",
   "stats.eyebrowBare": "Points de cotation World Athletics",
   "stats.description":
-    "Quelles épreuves sont vraiment denses, et lesquelles se résument à un athlète et un trou. Chaque performance 2026 est cotée sur la table de points de World Athletics, puis lue comme un écart : de combien le leader d'une discipline dépasse la médiane de son propre plateau classé. Un écart serré, c'est une foule ; un écart long, c'est un soliste avec le vide derrière lui.",
+    "Quelles épreuves regorgent d'athlètes de haut niveau, et lesquelles se résument à une star loin devant les autres. Chaque performance 2026 est convertie en points World Athletics, puis nous mesurons l'écart entre le meilleur athlète de l'épreuve et celui du milieu de classement. Un petit écart signifie un plateau dense et disputé ; un grand écart, un athlète très détaché du reste.",
   "stats.figMarksScored": "Performances cotées",
-  "stats.figFieldMedian": "Médiane du plateau (pts WA)",
+  "stats.figFieldMedian": "Score du milieu (pts WA)",
   "stats.figScoringRange": "Amplitude des scores",
   "stats.figSetIndoors": "Réalisées en salle",
   "stats.bestOfSeason": "Les meilleures de la saison",
   "stats.bestOfYear": "Les meilleures de {{season}}, toutes épreuves",
   "stats.bestSubtitle":
-    "Classées aux points World Athletics, pour qu'un lancer de disque et un 800 m soient directement comparables. La barre est calée sur l'amplitude réellement couverte cette saison, pas sur zéro.",
+    "Classées aux points World Athletics, pour qu'un lancer de disque et un 800 m soient directement comparables. Les barres commencent au score le plus bas de la saison, pas à zéro, pour que les écarts soient plus visibles.",
   "stats.filterAll": "Toutes les épreuves",
   "stats.filterTrack": "Piste",
   "stats.filterField": "Concours",
@@ -198,20 +198,20 @@ export const fr: Record<string, string> = {
 
   // Depth ladder (Stats page)
   "depth.sortDepth": "Par densité",
-  "depth.sortMedian": "Par médiane",
+  "depth.sortMedian": "Par score du milieu",
   "depth.sortTop": "Par meilleur score",
   "depth.title": "L'échelle de densité · {{n}} disciplines",
   "depth.subtitle":
-    "Chaque barre va du score médian de l'épreuve à son meilleur score, sur un axe commun. Plus c'est court, plus c'est dense : le leader est proche du peloton. Plus c'est long, plus il s'agit d'un athlète seul avec le vide derrière lui.",
-  "depth.legendMedian": "Médiane du plateau",
-  "depth.legendTop": "Meilleur de la discipline",
-  "depth.legendSpread": "Écart (meilleur − médiane)",
-  "depth.noteBefore": "La plus dense selon cette mesure est le ",
-  "depth.noteMid": ", dont le leader n'a que ",
-  "depth.notePointsClear": " points d'avance sur sa propre médiane ; la plus déséquilibrée est le ",
+    "Chaque barre va du score de l'athlète en milieu de classement au meilleur score de l'épreuve. Une barre courte signifie un plateau dense, où le leader est proche du peloton. Une barre longue, un athlète nettement détaché du reste.",
+  "depth.legendMedian": "Milieu du plateau",
+  "depth.legendTop": "Meilleur de l'épreuve",
+  "depth.legendSpread": "Écart (meilleur − milieu)",
+  "depth.noteBefore": "L'épreuve la plus dense selon cette mesure est le ",
+  "depth.noteMid": ", où le leader n'a que ",
+  "depth.notePointsClear": " points d'avance sur l'athlète du milieu de classement. La plus déséquilibrée est le ",
   "depth.noteAt": " avec ",
   "depth.noteEnd":
-    ". Il s'agit de l'écart sur l'ensemble des athlètes classés par World Athletics dans l'épreuve, une question différente de celle du niveau du plateau de huit en finale, à laquelle répond la page de chaque discipline.",
+    " points. Cet écart couvre tous les athlètes classés par World Athletics dans l'épreuve, ce qui est une autre question que de savoir à quel point les huit finalistes sont proches, et la page de chaque épreuve y répond.",
 
   // How it works (inline emphasis uses **bold** / *italic*, see lib/rich-text)
   "howItWorks.eyebrow": "À propos du modèle",
@@ -355,7 +355,7 @@ export const fr: Record<string, string> = {
   "disc.description":
     "Une épreuve lue comme un plateau et non comme une liste. Est-ce un vrai combat de bout en bout, ou un athlète et un trou ? Mesuré sur les points de cotation de World Athletics, pour que la réponse soit comparable aux 31 autres finales.",
   "disc.whyScore":
-    "C'est mesuré sur les points de cotation de World Athletics, pas sur les probabilités du modèle. Les probabilités classent les athlètes au sein d'une même épreuve, mais chacun est évalué séparément : le total des pourcentages d'un plateau peut donc aller de 31 à 320 selon les 32 finales. Voilà pourquoi elles ne peuvent pas classer une épreuve par rapport à une autre. Un score extrait, si.",
+    "Ceci utilise les points World Athletics, pas les pourcentages du modèle. Un pourcentage ne compare que des athlètes d'une même épreuve : additionnez les pourcentages de tout un plateau et le total varie de 31 à 320 selon l'épreuve, ils ne peuvent donc pas classer une épreuve par rapport à une autre. Un score en points le peut, car chaque marque est cotée de la même façon.",
   "disc.depthSkeleton": "Densité du plateau",
   "disc.seasonForm": "Forme réelle de la saison · {{disc}}",
   "disc.seasonFormSubtitle":
@@ -369,7 +369,7 @@ export const fr: Record<string, string> = {
     "Trop peu d'athlètes de ce plateau ont un score World Athletics cette saison pour mesurer son homogénéité. Rien n'est estimé à la place.",
   "disc.levelTitle": "L'homogénéité de ce plateau",
   "disc.levelSubtitle":
-    "Le meilleur score de la saison de chaque finaliste, du plus fort au plus faible. C'est la distance entre les deux extrémités qui classe cette épreuve face aux {{of}} autres.",
+    "Le meilleur score de chaque finaliste cette saison, du plus fort au plus faible. C'est l'écart entre les deux extrémités qui classe cette épreuve face aux {{of}} autres.",
   "disc.verdict.level.label": "PLATEAU HOMOGÈNE",
   "disc.verdict.level.basis": "l'un des tiers les plus serrés des 32 finales",
   "disc.verdict.mixed.label": "UNE TÊTE ET UNE QUEUE",
@@ -383,13 +383,13 @@ export const fr: Record<string, string> = {
   "disc.statSpreadValue": "{{n}} pts",
   "disc.statSpreadNote": "{{rank}} plus serré sur {{of}}",
   "disc.statSpreadHint":
-    "L'écart de points entre le score du finaliste le plus fort et celui du plus faible. Un petit écart signifie un plateau serré et homogène ; un grand écart signifie que le leader a de la marge.",
+    "L'écart de points entre le finaliste le plus fort et le plus faible. Un petit écart signifie un plateau serré et homogène ; un grand écart, un leader nettement devant.",
   "disc.statStrongest": "Finaliste le plus fort",
   "disc.statMedian": "Médiane du top 100 mondial",
   "disc.statMedianNoScore": "non coté cette saison",
   "disc.statMedianClear": "le meilleur finaliste a {{n}} d'avance",
   "disc.statMedianHint":
-    "Le score médian du top 100 mondial de l'épreuve cette année, comme étalon. Il montre où se situe le plateau de la finale par rapport au reste du monde, et pas seulement par rapport à lui-même.",
+    "Le score du milieu parmi les 100 meilleurs mondiaux de l'épreuve cette année. Il montre comment le plateau de la finale se situe face au reste du monde, et pas seulement face à lui-même.",
   "disc.statScored": "Plateau coté",
   "disc.statScoredEvery": "tous les finalistes",
   "disc.statScoredSome": "certains n'ont aucun score cette saison",
@@ -397,9 +397,9 @@ export const fr: Record<string, string> = {
     "Combien de finalistes ont un score World Athletics cette saison. Quelques épreuves en comptent un ou deux qui n'en ont pas, et rien n'est estimé à leur place.",
   "disc.disagreeTitle": "Là où le modèle diverge des performances",
   "disc.disagreeSubtitle":
-    "Probabilité de podium face à la capacité mesurée, pour les mêmes {{n}} athlètes. Ces deux classements ne coïncident pas, et c'est là où ils divergent que le débat devient intéressant.",
+    "La chance de podium du modèle à côté du score de la saison de chaque athlète, pour les mêmes {{n}} athlètes. Les deux ne coïncident pas toujours, et les athlètes où ils divergent sont les plus intéressants à suivre.",
   "disc.disagreeNote":
-    "Classé par score World Athletics. Le pourcentage est la chance, selon le modèle, que cet athlète finisse dans le top trois. Ce n'est pas une probabilité de victoire, et les deux colonnes ont le droit de diverger : une meilleure performance, c'est un jour, alors que la projection lit toute une saison.",
+    "Classé par score World Athletics. Le pourcentage est la chance, selon le modèle, que cet athlète finisse dans le top trois, pas une chance de victoire. Les deux colonnes peuvent diverger : une meilleure performance de la saison est un seul résultat, alors que la projection pèse toute la saison.",
 
   // Storylines (titles are a fixed set keyed by type; the sentence itself is
   // generated by the API with real numbers and stays in its scraped English)
@@ -425,15 +425,15 @@ export const fr: Record<string, string> = {
     "Grille des confrontations directes du plateau du {{disc}}. Chaque ligne est le bilan d'un athlète face à celui nommé dans chaque colonne, victoires en premier, à partir des {{noun}} qu'ils ont réellement partagés.",
   "fa.separatesTitle": "Ce qui les sépare",
   "fa.separatesSubtitle":
-    "Les mêmes axes pour chaque prétendant, pour que deux athlètes aux meilleures performances quasi identiques cessent de ressembler au même pari.",
+    "Les mêmes mesures pour chaque prétendant, pour pouvoir distinguer deux athlètes aux meilleures performances de la saison quasi identiques.",
   "fa.separatesCaption":
     "Ce qui sépare le plateau du {{disc}} : les mêmes mesures pour chaque prétendant, pour pouvoir distinguer deux athlètes aux meilleures performances quasi identiques.",
   "fa.colTop3": "Moy. top 3",
   "fa.colTop3Hint":
-    "La moyenne des trois meilleures performances de cet athlète cette saison. Elle résiste à un après-midi de chance là où une seule meilleure performance ne le fait pas.",
+    "La moyenne des trois meilleures marques de cet athlète cette saison. Plus difficile à gonfler avec un seul résultat chanceux qu'une simple meilleure performance de la saison.",
   "fa.colSteadiness": "Régularité",
   "fa.colSteadinessHint":
-    "À quel point les performances d'une saison sont resserrées, en pourcentage de leur moyenne. Plus c'est bas, plus c'est reproductible, et cela se lit pareil pour un sprinteur et un lanceur.",
+    "À quel point les marques d'un athlète sont proches les unes des autres sur la saison, rapportées à sa moyenne. Plus c'est bas, plus c'est régulier, et cela vaut pareil pour un sprinteur et un lanceur.",
   "fa.colComps": "Concours",
   "fa.colRaces": "Courses",
   "fa.colStartsHint":
@@ -458,7 +458,7 @@ export const fr: Record<string, string> = {
   "traj.colMark": "Performance",
   "traj.colVenue": "Lieu",
 
-  "fa.blankCellNote": "Une case vide signifie que ces deux-là ne se sont réellement jamais {{verb}}, montré comme une absence plutôt que comme un nul zéro partout. « face à ce plateau » totalise une ligne, et ce n’est pas le même chiffre qu’un taux de victoire en carrière : un athlète peut souvent gagner contre tous les autres et rester en retard face aux huit qui s’aligneront vraiment à Bruxelles.",
+  "fa.blankCellNote": "Une case vide signifie que ces deux-là ne se sont réellement jamais {{verb}}, montré comme vide plutôt que comme un nul 0–0. La colonne « face à ce plateau » totalise le bilan de chaque athlète face à ce plateau uniquement, ce qui n'est pas son taux de victoire global : un athlète peut battre tous les autres et rester derrière les huit qui s'alignent à Bruxelles.",
   "fa.neverMet": "{{a}} et {{b}} ne se sont jamais {{verb}}",
 
   "fa.noResults": "aucun résultat",
@@ -469,7 +469,7 @@ export const fr: Record<string, string> = {
   // Athlete analytics
   "aa.recordTitle": "Bilan en compétition",
   "aa.recordSubtitle":
-    "Toutes les finales extraites : {{n}} {{noun}} sur {{seasons}} saisons. Une meilleure performance, c'est un après-midi. Voici ce qui s'est passé le reste du temps.",
+    "Toutes les finales enregistrées : {{n}} {{noun}} sur {{seasons}} saisons. Une meilleure performance de la saison est un seul résultat ; voici comment il ou elle a performé le reste du temps.",
   "aa.wins": "Victoires",
   "aa.ofStarts": "{{pct}} % des départs",
   "aa.podiums": "Podiums",
@@ -507,7 +507,7 @@ export const fr: Record<string, string> = {
   "aa.ofCount": "(sur {{n}})",
   "aa.tooFew": "trop peu de {{noun}}",
   "aa.consistencyNote":
-    "La régularité est la dispersion des performances d'une saison en pourcentage de leur moyenne : elle se lit donc pareil pour un sprinteur à 9,8 s et un lanceur à 74 mètres. Plus c'est bas, plus c'est régulier. La barre ne compare une saison qu'aux autres saisons de cet athlète.",
+    "La régularité mesure à quel point les marques d'un athlète sont proches sur une saison, rapportées à sa moyenne, donc cela vaut pareil pour un sprinteur à 9,8 s et un lanceur à 74 mètres. Plus c'est bas, plus c'est régulier. Chaque barre ne compare une saison qu'aux autres saisons de cet athlète.",
   "aa.monthTitle": "{{month}} : {{n}} {{noun}}",
   "aa.monthTitleBest": "{{month}} : {{n}} {{noun}}, meilleure performance de la saison ici",
   "aa.shapeNote": "{{n}} {{noun}} de {{first}} à {{last}}.",
@@ -670,7 +670,7 @@ export const fr: Record<string, string> = {
   "landing.podiumNoteBefore": "Chacun d'eux est le pronostic le plus sûr du modèle dans une discipline ",
   "landing.podiumNoteDifferent": "différente",
   "landing.podiumNoteAfter":
-    ", ils ne courent donc pas les uns contre les autres. Les marches classent la confiance du modèle, pas les athlètes. Le pourcentage est une chance de finir dans le top trois, pas de gagner ; les performances sont les meilleures de la saison 2026 selon World Athletics.",
+    " discipline, ils ne sont donc pas en concurrence les uns avec les autres. Leur place ici montre le degré de confiance du modèle, pas comment les athlètes finiraient. Chaque pourcentage est une chance de finir dans le top trois, pas de gagner ; les marques sont les meilleures performances de la saison 2026 selon World Athletics.",
   "landing.demoEyebrow": "De vrais résultats en entrée. Un plateau classé en sortie.",
   "landing.demoTitleWithCount": "{{n}} réunions de vraies courses, ramenées à un seul pronostic.",
   "landing.demoTitle": "Une saison de vraies courses, ramenée à un seul pronostic.",

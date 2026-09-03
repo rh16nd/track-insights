@@ -64,7 +64,7 @@ export const en: Record<string, string> = {
   "dashboard.stat.daysToBrussels": "Days to Brussels",
   "dashboard.stat.hitRate": "Top-3 hit rate",
   "dashboard.stat.hitRateHint":
-    "Among the athletes who actually contest a Final, how often the model's projected top three matches who really medals. It's scored only on seasons the model never trained on, so the figure isn't inflated.",
+    "How often the model's projected top three matches the real medallists, counting only the athletes who reach a Final. It's tested only on past years the model never learned from, so the number isn't flattering itself.",
   "dashboard.stat.disciplines": "Disciplines",
   "dashboard.stat.meetingsRun": "Meetings run",
   "dashboard.surest": "#{{n}} surest",
@@ -77,9 +77,9 @@ export const en: Record<string, string> = {
   "dashboard.mostLikelyPodium": "Most likely to reach the podium",
   "dashboard.leastSure.title": "Where the model is least sure",
   "dashboard.leastSure.subtitle":
-    "The eight events whose strongest pick is weakest. These are the most open fields at the Final, and the ones most likely to surprise.",
+    "The eight events where even the favourite has a low chance of a podium. These finals are the most wide open, and the most likely to surprise.",
   "dashboard.leastSure.note":
-    "This is the favourite's own chance of a podium, not a margin over the next athlete. A low number means no one in that field stands out, so follow a row through to see how level it really is.",
+    "Each number is the favourite's own chance of a podium, not how far ahead they are of the next athlete. A low number means no one in that event stands out. Tap a row to see the full field.",
   "dashboard.surestCalls.title": "The surest calls",
   "dashboard.surestCalls.subtitle":
     "The model's strongest pick in each discipline: the chance of finishing top three, not of winning. Each card is a different event, so these six aren't racing each other.",
@@ -115,9 +115,9 @@ export const en: Record<string, string> = {
 
   // Discipline table (shared by Track and Field)
   "table.subtitle.rank":
-    "Ranked by season best. Podium chance is the model's separate call and can disagree.",
+    "Ranked by season best, each athlete's top mark this year. The podium chance is the model's own estimate and can disagree with this order.",
   "table.subtitle.prob":
-    "Sorted by the model's podium chance. The # column still ranks by season best, so it reads out of sequence.",
+    "Ranked by the model's podium chance. The # column still counts by season best, so its numbers look out of order here.",
   "table.projectedTop": "Projected top {{n}} · {{label}}",
   "table.howLevel": "How level is this field?",
   "table.caption":
@@ -128,10 +128,10 @@ export const en: Record<string, string> = {
   "table.colQualified": "Qualified",
   "table.colProjected": "Projected",
   "table.colProjectedHint":
-    "Projected finishing order, ranked by each athlete's season best: their fastest or furthest mark this year. A real result you can look up, separate from the model's podium chance.",
+    "The finishing order you'd get by ranking on season best alone, each athlete's fastest or longest mark this year. A real result you can look up, separate from the model's podium chance.",
   "table.colPodiumChance": "Podium chance",
   "table.colPodiumChanceHint":
-    "The model's estimate of how likely this athlete is to finish in the top three, not to win. Higher means a stronger podium threat, which is why this can rank athletes differently from their season-best mark.",
+    "The model's estimate of how likely this athlete is to finish in the top three, not to win. A higher number is a stronger podium threat, which is why it can rank athletes differently from their season best.",
   "table.sortedActivateReverse": " — sorted, activate to reverse",
   "table.activateToSort": " — activate to sort by this column",
   "table.qTitle":
@@ -139,7 +139,7 @@ export const en: Record<string, string> = {
   "table.qSr": "ualified — confirmed in World Athletics' 2026 Diamond League standings",
   "table.notQualifiedHeading": "Not qualified: below the top {{n}} on Diamond League points",
   "table.notQualifiedNote":
-    "Fast enough to matter, but short of a qualifying place on points, either below the cut in the standings or with no Diamond League points in this event at all. Scored by the same model, so you can see who would be a threat if they got in.",
+    "Fast enough to belong here, but without a qualifying place: either below the points cut-off, or with no Diamond League points in this event at all. The model still scores them, so you can see who would be a threat if they got in.",
   "table.notQualified": "Not qualified",
 
   // Schedule
@@ -172,15 +172,15 @@ export const en: Record<string, string> = {
   "stats.eyebrow": "{{season}} season · {{rows}} ranked marks · scores {{min}}–{{max}}",
   "stats.eyebrowBare": "World Athletics scoring points",
   "stats.description":
-    "Which events are genuinely deep, and which are one athlete and a gap. Every 2026 mark is scored on World Athletics' points table, then read as a spread: how far a discipline's leader sits above the median of its own ranked field. A tight spread is a crowd; a long one is a soloist with daylight behind.",
+    "Which events are packed with strong athletes, and which come down to one star ahead of everyone else. Every 2026 mark is turned into World Athletics points, then we measure the gap between each event's best athlete and its middle-ranked one. A small gap means a deep, competitive field; a big gap means one athlete far clear of the rest.",
   "stats.figMarksScored": "Marks scored",
-  "stats.figFieldMedian": "Field median (WA pts)",
+  "stats.figFieldMedian": "Middle score (WA pts)",
   "stats.figScoringRange": "Scoring range",
   "stats.figSetIndoors": "Set indoors",
   "stats.bestOfSeason": "Best of the season",
   "stats.bestOfYear": "Best of {{season}}, any event",
   "stats.bestSubtitle":
-    "Ranked by World Athletics points, so a discus throw and an 800m are directly comparable. The bar is scaled to the range this season actually covers, not to zero.",
+    "Ranked by World Athletics points, so a discus throw and an 800m can be compared directly. The bars start at this season's lowest score, not at zero, so the differences are easier to see.",
   "stats.filterAll": "All events",
   "stats.filterTrack": "Track",
   "stats.filterField": "Field",
@@ -199,20 +199,20 @@ export const en: Record<string, string> = {
 
   // Depth ladder (Stats page)
   "depth.sortDepth": "By depth",
-  "depth.sortMedian": "By median",
-  "depth.sortTop": "By top score",
+  "depth.sortMedian": "By middle score",
+  "depth.sortTop": "By best score",
   "depth.title": "The depth ladder · {{n}} disciplines",
   "depth.subtitle":
-    "Each bar runs from that event's median score to its top score, all on one axis. Shorter is deeper: the leader is closer to the crowd. Longer means one athlete with daylight behind them.",
-  "depth.legendMedian": "Field median",
-  "depth.legendTop": "Discipline top",
-  "depth.legendSpread": "Spread (top − median)",
-  "depth.noteBefore": "Deepest by this measure is ",
-  "depth.noteMid": ", whose leader is only ",
-  "depth.notePointsClear": " points clear of its own median; the most top-heavy is ",
+    "Each bar runs from the middle-ranked athlete's score to the best score in that event. A short bar means a deep field, where the leader is close to the pack. A long bar means one athlete well clear of the rest.",
+  "depth.legendMedian": "Middle of the field",
+  "depth.legendTop": "Best in the event",
+  "depth.legendSpread": "Gap (best − middle)",
+  "depth.noteBefore": "The deepest event by this measure is the ",
+  "depth.noteMid": ", where the leader is just ",
+  "depth.notePointsClear": " points ahead of its middle-ranked athlete. The most one-sided is the ",
   "depth.noteAt": " at ",
   "depth.noteEnd":
-    ". This is the spread across everyone World Athletics ranks in the event, a different question from how level the eight-strong Final field is, which each discipline's own page answers.",
+    " points. This gap covers everyone World Athletics ranks in the event, which is a different question from how close the eight finalists are, and each event's own page answers that.",
 
   // How it works (inline emphasis uses **bold** / *italic*, see lib/rich-text)
   "howItWorks.eyebrow": "About the model",
@@ -355,7 +355,7 @@ export const en: Record<string, string> = {
   "disc.description":
     "One event read as a field rather than a list. Is this a genuine contest all the way down, or one athlete and a gap? Measured on World Athletics' own scoring points, so the answer can be compared against the other 31 finals.",
   "disc.whyScore":
-    "This is measured on World Athletics' scoring points, not the model's probabilities. Probabilities rank athletes inside one event, but each athlete is scored on their own, so a field's percentages can add up to anything from 31 to 320 across the 32 finals. That's why they can't rank one event against another. A scraped score can.",
+    "This uses World Athletics' points, not the model's percentages. A percentage only compares athletes within the same event: add up a whole field's percentages and the total swings anywhere from 31 to 320 depending on the event, so they can't rank one event against another. A points score can, because every mark is scored the same way.",
   "disc.depthSkeleton": "Depth of the field",
   "disc.seasonForm": "Real season form · {{disc}}",
   "disc.seasonFormSubtitle":
@@ -369,7 +369,7 @@ export const en: Record<string, string> = {
     "Not enough of this field carries a World Athletics score this season to measure how level it is. Nothing is estimated in its place.",
   "disc.levelTitle": "How level this field is",
   "disc.levelSubtitle":
-    "Every finalist's best score this season, strongest to weakest. The distance between the two ends is what ranks this event against the other {{of}}.",
+    "Every finalist's best score this season, strongest to weakest. The gap between the two ends is what ranks this event against the other {{of}}.",
   "disc.verdict.level.label": "LEVEL FIELD",
   "disc.verdict.level.basis": "one of the tightest thirds of the 32 finals",
   "disc.verdict.mixed.label": "A TOP AND A TAIL",
@@ -383,13 +383,13 @@ export const en: Record<string, string> = {
   "disc.statSpreadValue": "{{n}} pts",
   "disc.statSpreadNote": "{{rank}} tightest of {{of}}",
   "disc.statSpreadHint":
-    "The points gap from the strongest finalist's score down to the weakest. A small gap is a tight, level field; a big one means the leader has daylight.",
+    "The points gap between the strongest and weakest finalist. A small gap means a close, even field; a big gap means the leader is well ahead.",
   "disc.statStrongest": "Strongest finalist",
   "disc.statMedian": "World top-100 median",
   "disc.statMedianNoScore": "not scored this season",
   "disc.statMedianClear": "strongest finalist is {{n}} clear",
   "disc.statMedianHint":
-    "The middle score of the world's top 100 in this event this year, as a yardstick. It shows how the Final's field sits against the wider world, not just against itself.",
+    "The middle score among the world's top 100 in this event this year. It shows how the Final's field compares to the wider world, not just to itself.",
   "disc.statScored": "Field scored",
   "disc.statScoredEvery": "every finalist",
   "disc.statScoredSome": "some carry no score this season",
@@ -397,9 +397,9 @@ export const en: Record<string, string> = {
     "How many of the finalists have a World Athletics score this season. A few events have one or two who don't, and nothing is estimated in their place.",
   "disc.disagreeTitle": "Where the model disagrees with the marks",
   "disc.disagreeSubtitle":
-    "Podium probability against measured ability, for the same {{n}} athletes. These two orderings are not the same, and where they diverge is the argument worth having.",
+    "The model's podium chance next to each athlete's season score, for the same {{n}} athletes. The two don't always agree, and the athletes where they disagree are the most interesting to watch.",
   "disc.disagreeNote":
-    "Ordered by World Athletics score. The percentage is the model's chance of that athlete finishing in the top three. It isn't a win probability, and the two columns are allowed to disagree: a season best is one day, and the projection reads a whole season.",
+    "Ordered by World Athletics score. The percentage is the model's chance of that athlete finishing top three, not a chance of winning. The two columns can disagree: a season best is a single result, while the projection weighs the whole season.",
 
   // Storylines (titles are a fixed set keyed by type; the sentence itself is
   // generated by the API with real numbers and stays in its scraped English)
@@ -424,15 +424,15 @@ export const en: Record<string, string> = {
     "Head-to-head grid for the {{disc}} field. Each row is one athlete's record against the athlete named in each column, wins first, from {{noun}} they actually shared.",
   "fa.separatesTitle": "What separates them",
   "fa.separatesSubtitle":
-    "The same axes for every contender, so two athletes with near-identical season bests stop looking like the same bet.",
+    "The same measures for every contender, so two athletes with near-identical season bests can still be told apart.",
   "fa.separatesCaption":
     "What separates the {{disc}} field: the same measures for every contender, so two athletes with near-identical season bests can be told apart.",
   "fa.colTop3": "Top-3 avg",
   "fa.colTop3Hint":
-    "The average of this athlete's three best marks this season. It holds up to one lucky afternoon in a way a single season best doesn't.",
+    "The average of this athlete's three best marks this season. Harder to inflate with one lucky result than a single season best is.",
   "fa.colSteadiness": "Steadiness",
   "fa.colSteadinessHint":
-    "How tightly a season's marks cluster, as a percentage of their average. Lower is more repeatable, and it reads the same for a sprinter and a thrower.",
+    "How close together an athlete's marks are across the season, measured against their average. Lower means more consistent, and it works the same for a sprinter and a thrower.",
   "fa.colComps": "Comps",
   "fa.colRaces": "Races",
   "fa.colStartsHint":
@@ -457,7 +457,7 @@ export const en: Record<string, string> = {
   "traj.colMark": "Mark",
   "traj.colVenue": "Venue",
 
-  "fa.blankCellNote": "A blank cell means those two have genuinely never {{verb}} each other, shown as absent rather than as a nil-all draw. “vs. this field” totals a row, and is not the same number as a career win rate: an athlete can win often against everyone else and still be behind against the eight who will actually line up in Brussels.",
+  "fa.blankCellNote": "A blank cell means those two have genuinely never {{verb}} each other, shown as empty rather than as a 0–0 draw. The “vs. this field” column totals each athlete's record against this field only, which is not their overall win rate: an athlete can beat everyone else and still trail the eight who line up in Brussels.",
   "fa.neverMet": "{{a}} and {{b}} have never {{verb}} each other",
 
   "fa.noResults": "no results",
@@ -468,7 +468,7 @@ export const en: Record<string, string> = {
   // Athlete analytics
   "aa.recordTitle": "Competition record",
   "aa.recordSubtitle":
-    "Every scraped final: {{n}} {{noun}} across {{seasons}} seasons. A season best is one afternoon. This is what happened the rest of the time.",
+    "Every final on record: {{n}} {{noun}} across {{seasons}} seasons. A season best is a single result; this is how they performed the rest of the time.",
   "aa.wins": "Wins",
   "aa.ofStarts": "{{pct}}% of starts",
   "aa.podiums": "Podiums",
@@ -506,7 +506,7 @@ export const en: Record<string, string> = {
   "aa.ofCount": "(of {{n}})",
   "aa.tooFew": "too few {{noun}}",
   "aa.consistencyNote":
-    "Consistency is the spread of a season's marks as a percentage of their average, so it reads the same for a 9.8-second sprinter and a 74-metre thrower. Lower is steadier. The bar compares a season only against this athlete's own others.",
+    "Consistency measures how close an athlete's marks are across a season, against their average, so it works the same for a 9.8-second sprinter and a 74-metre thrower. Lower is steadier. Each bar compares one season only to this athlete's other seasons.",
   "aa.monthTitle": "{{month}}: {{n}} {{noun}}",
   "aa.monthTitleBest": "{{month}}: {{n}} {{noun}}, season best set here",
   "aa.shapeNote": "{{n}} {{noun}} from {{first}} to {{last}}.",
@@ -668,7 +668,7 @@ export const en: Record<string, string> = {
   "landing.podiumNoteBefore": "Each of these is the model's strongest call in a ",
   "landing.podiumNoteDifferent": "different",
   "landing.podiumNoteAfter":
-    " discipline, so they aren't racing each other. The steps rank the model's confidence, not the athletes. The percentage is a chance of finishing top three, not of winning; marks are 2026 season bests from World Athletics.",
+    " discipline, so they aren't competing against each other. Their places here show how confident the model is, not how the athletes would finish. Each percentage is a chance of a top-three finish, not of winning; marks are 2026 season bests from World Athletics.",
   "landing.demoEyebrow": "Real results in. A ranked field out.",
   "landing.demoTitleWithCount": "{{n}} meetings of real racing, resolved into one call.",
   "landing.demoTitle": "A season of real racing, resolved into one call.",
