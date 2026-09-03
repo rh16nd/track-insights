@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { apiFetch } from "@/lib/api";
 import { useT } from "@/lib/i18n";
+import { discName } from "@/lib/dl-data";
 
 export type SearchHit = {
   name: string;
@@ -208,7 +209,9 @@ export function AthleteSearch({
                 <span className="block truncate text-[13.5px] font-medium text-foreground">
                   {h.name}
                 </span>
-                <span className="block text-[11.5px] text-muted-foreground">{h.disc}</span>
+                <span className="block text-[11.5px] text-muted-foreground">
+                {discName(t, h.discKey, h.disc)}
+              </span>
               </span>
               <span className="nums shrink-0 text-right">
                 <span className="block text-[12.5px] text-foreground">{h.mark ?? "—"}</span>

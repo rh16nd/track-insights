@@ -737,6 +737,43 @@ export const en: Record<string, string> = {
     "In the Diamond League standings but outside the projected top {{limit}} on season best for {{disc}}.",
   "reason.noData": "No {{year}} season mark on record for {{disc}}.",
 
+  // Discipline names, keyed by discKey. A closed set of 32, so they can be
+  // translated on the key without the API having to know a language. The
+  // English here matches what the API already sends, so nothing changes for
+  // English readers; anything unrecognised falls back to the API's label.
+  "disc.name.men_100m": "Men's 100m",
+  "disc.name.women_100m": "Women's 100m",
+  "disc.name.men_200m": "Men's 200m",
+  "disc.name.women_200m": "Women's 200m",
+  "disc.name.men_400m": "Men's 400m",
+  "disc.name.women_400m": "Women's 400m",
+  "disc.name.men_110h": "Men's 110m Hurdles",
+  "disc.name.women_100h": "Women's 100m Hurdles",
+  "disc.name.men_400h": "Men's 400m Hurdles",
+  "disc.name.women_400h": "Women's 400m Hurdles",
+  "disc.name.men_800m": "Men's 800m",
+  "disc.name.women_800m": "Women's 800m",
+  "disc.name.men_1500m": "Men's 1500m",
+  "disc.name.women_1500m": "Women's 1500m",
+  "disc.name.men_5000m": "Men's 5000m",
+  "disc.name.women_5000m": "Women's 5000m",
+  "disc.name.men_3000sc": "Men's 3000m Steeplechase",
+  "disc.name.women_3000sc": "Women's 3000m Steeplechase",
+  "disc.name.men_HJ": "Men's High Jump",
+  "disc.name.women_HJ": "Women's High Jump",
+  "disc.name.men_PV": "Men's Pole Vault",
+  "disc.name.women_PV": "Women's Pole Vault",
+  "disc.name.men_LJ": "Men's Long Jump",
+  "disc.name.women_LJ": "Women's Long Jump",
+  "disc.name.men_TJ": "Men's Triple Jump",
+  "disc.name.women_TJ": "Women's Triple Jump",
+  "disc.name.men_SP": "Men's Shot Put",
+  "disc.name.women_SP": "Women's Shot Put",
+  "disc.name.men_DT": "Men's Discus Throw",
+  "disc.name.women_DT": "Women's Discus Throw",
+  "disc.name.men_JT": "Men's Javelin Throw",
+  "disc.name.women_JT": "Women's Javelin Throw",
+
   // Welcome modal
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Predicting the podium in Brussels.",

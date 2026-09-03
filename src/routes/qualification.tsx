@@ -6,6 +6,7 @@ import { Shell, Panel, PanelSkeleton, ErrorPanel, HeadFigure } from "@/component
 import type { QualificationDiscipline, QualificationRow, QualStatus } from "@/lib/dl-data";
 import { useQualification } from "@/hooks/useQualification";
 import { useT, type TFunc } from "@/lib/i18n";
+import { discName } from "@/lib/dl-data";
 
 export const Route = createFileRoute("/qualification")({
   head: () =>
@@ -201,7 +202,7 @@ function QualificationPage() {
                     >
                       <span className="min-w-0">
                         <span className="block truncate text-[13px] font-medium text-foreground">
-                          {d.disc}
+                          {discName(t, d.discKey, d.disc)}
                         </span>
                         <span className="block truncate text-[12px] text-muted-foreground">
                           {chaser.name}
@@ -247,7 +248,7 @@ function QualificationPage() {
             >
               {disciplines.map((d) => (
                 <option key={d.discKey} value={d.discKey}>
-                  {d.disc}
+                  {discName(t, d.discKey, d.disc)}
                 </option>
               ))}
             </select>
@@ -273,13 +274,13 @@ function QualificationPage() {
                     : undefined
                 }
               >
-                {d.disc}
+                {discName(t, d.discKey, d.disc)}
               </button>
             ))}
           </div>
 
           <Panel
-            title={t("qual.standingsTitle", { disc: current.disc })}
+            title={t("qual.standingsTitle", { disc: discName(t, current.discKey, current.disc) })}
             subtitle={
               current.cutPoints === null
                 ? t("qual.standingsSubtitle", { n: current.qualLimit })
@@ -293,7 +294,7 @@ function QualificationPage() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[680px]">
                 <caption className="sr-only">
-                  {t("qual.caption", { disc: current.disc })}
+                  {t("qual.caption", { disc: discName(t, current.discKey, current.disc) })}
                 </caption>
                 <thead>
                   <tr className="label-caps text-muted-foreground">

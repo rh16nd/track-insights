@@ -568,6 +568,24 @@ export const startNounKey = (isField: boolean, count = 2): string =>
 export const startVerbKey = (isField: boolean): string =>
   isField ? "word.competedAgainst" : "word.raced";
 
+/** A discipline's name in the reader's language.
+ *
+ * The API sends English labels ("Men's 100m"), but the 32 disciplines are a
+ * closed set with stable keys, so the name is translated on `discKey` rather
+ * than by matching the English. Falls back to whatever the API called it if a
+ * key ever appears that the locale tables do not carry — a new discipline
+ * should show up in English, not as a raw key. */
+export const discName = (
+  t: (key: string) => string,
+  discKey: string | null | undefined,
+  fallback: string,
+): string => {
+  if (!discKey) return fallback;
+  const key = `disc.name.${discKey}`;
+  const name = t(key);
+  return name === key ? fallback : name;
+};
+
 /** English writes "5th"; French writes "5e", and "1er" for one. Ordinals are
  * grammar rather than formatting, so they cannot come out of the number
  * itself the same way in every language. */

@@ -12,7 +12,7 @@ import {
   dotClass,
   badgeClass,
 } from "@/components/dl/shell";
-import { type ConfidenceRow, type TopWinner } from "@/lib/dl-data";
+import { discName, type ConfidenceRow, type TopWinner } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useCountUp } from "@/hooks/useCountUp";
 import { NewsFeed } from "@/components/dl/news-feed";
@@ -160,7 +160,9 @@ function CallCard({
         {winner.injuryWatch && <WatchBadge reason={winner.injuryReason} url={winner.injuryUrl} />}
       </div>
 
-      <div className="label-caps mt-3 text-terracotta-strong">{winner.disc}</div>
+      <div className="label-caps mt-3 text-terracotta-strong">
+        {discName(t, winner.discKey, winner.disc)}
+      </div>
       <div className="dg mt-1.5 text-[22px] leading-[1.05] font-bold tracking-[-0.02em] text-foreground">
         {winner.name}
       </div>
@@ -224,7 +226,7 @@ function LeastSurePanel({ confidence }: { confidence: ConfidenceRow[] }) {
           const row = (
             <>
               <span className="min-w-0 flex-1 truncate text-[14.5px] font-medium text-foreground">
-                {c.disc}
+                {discName(t, c.discKey, c.disc)}
               </span>
               <span
                 aria-hidden="true"

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import { useT } from "@/lib/i18n";
+import { discName } from "@/lib/dl-data";
 import { Panel } from "./shell";
 import type { DisciplineDepth } from "@/lib/dl-data";
 
@@ -126,7 +127,7 @@ export function DepthLadder({ rows }: { rows: DisciplineDepth[] }) {
                 className="group grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 rounded-[10px] py-2 transition-colors hover:bg-secondary/40 sm:grid-cols-[190px_1fr_58px]"
               >
                 <span className="truncate text-[13.5px] font-medium text-foreground transition-colors group-hover:text-terracotta-strong">
-                  {d.disc}
+                  {discName(t, d.discKey, d.disc)}
                 </span>
 
                 <span className="relative order-3 col-span-2 h-3.5 sm:order-none sm:col-span-1">
@@ -159,11 +160,15 @@ export function DepthLadder({ rows }: { rows: DisciplineDepth[] }) {
 
       <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
         {t("depth.noteBefore")}
-        <span className="font-medium text-foreground">{deepest?.disc}</span>
+        <span className="font-medium text-foreground">
+          {discName(t, deepest?.discKey, deepest?.disc ?? "")}
+        </span>
         {t("depth.noteMid")}
         <span className="nums">{deepest ? deepest.topScore - deepest.medianScore : 0}</span>
         {t("depth.notePointsClear")}
-        <span className="font-medium text-foreground">{widest?.disc}</span>
+        <span className="font-medium text-foreground">
+          {discName(t, widest?.discKey, widest?.disc ?? "")}
+        </span>
         {t("depth.noteAt")}
         <span className="nums">{widest ? widest.topScore - widest.medianScore : 0}</span>
         {t("depth.noteEnd")}

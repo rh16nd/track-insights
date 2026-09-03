@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import type { Athlete, Discipline } from "@/lib/dl-data";
 import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
 import { useT } from "@/lib/i18n";
+import { discName } from "@/lib/dl-data";
 import { InfoTip } from "./info-tip";
 import { NatFlag } from "./nat-flag";
 
@@ -207,7 +208,7 @@ export function DisciplineTable({
         >
           {disciplines.map((d) => (
             <option key={d.id} value={d.id}>
-              {d.label}
+              {discName(t, d.id, d.label)}
             </option>
           ))}
         </select>
@@ -233,7 +234,7 @@ export function DisciplineTable({
                 : undefined
             }
           >
-            {d.label}
+            {discName(t, d.id, d.label)}
           </button>
         ))}
       </div>
@@ -248,7 +249,7 @@ export function DisciplineTable({
           the long-distance races 10, so the men's shot put page promised a
           top 8 of a 6-man final. qualLimit is the real number. */}
       <Panel
-        title={t("table.projectedTop", { n: current.qualLimit, label: current.label })}
+        title={t("table.projectedTop", { n: current.qualLimit, label: discName(t, current.id, current.label) })}
         subtitle={t(SUBTITLE_KEY[sort.key]!)}
         className="mt-4"
         action={
@@ -264,7 +265,7 @@ export function DisciplineTable({
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px]">
             <caption className="sr-only">
-              {t("table.caption", { label: current.label })}
+              {t("table.caption", { label: discName(t, current.id, current.label) })}
             </caption>
             <thead>
               <tr className="label-caps text-muted-foreground">

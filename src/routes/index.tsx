@@ -11,6 +11,7 @@ import { Podium } from "@/components/dl/podium";
 import { WaSourceLink } from "@/components/dl/wa-link";
 import { useT, type TFunc } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/dl/language-switcher";
+import { discName } from "@/lib/dl-data";
 import { TrackCircuit } from "@/components/dl/track-circuit";
 
 export const Route = createFileRoute("/")({
@@ -482,28 +483,28 @@ function Landing() {
                 aria-label={t("landing.tickerAria")}
               >
                 <div className="marquee-track flex w-max gap-3">
-                  {ticker.map((t) => (
+                  {ticker.map((c) => (
                     <span
-                      key={t.disc}
+                      key={c.disc}
                       role="listitem"
                       className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
                     >
                       <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
-                        {t.value}%
+                        {c.value}%
                       </span>
-                      {t.disc}
+                      {discName(t, c.discKey, c.disc)}
                     </span>
                   ))}
-                  {ticker.map((t) => (
+                  {ticker.map((c) => (
                     <span
-                      key={`${t.disc}-dup`}
+                      key={`${c.disc}-dup`}
                       aria-hidden="true"
                       className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
                     >
                       <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
-                        {t.value}%
+                        {c.value}%
                       </span>
-                      {t.disc}
+                      {discName(t, c.discKey, c.disc)}
                     </span>
                   ))}
                 </div>
@@ -624,7 +625,9 @@ function Landing() {
                     <div className="truncate text-[15px] font-semibold text-[var(--landing-fg)]">
                       {topPick.name}
                     </div>
-                    <div className="text-[12px] text-[var(--landing-muted)]">{topPick.disc}</div>
+                    <div className="text-[12px] text-[var(--landing-muted)]">
+                      {discName(t, topPick.discKey, topPick.disc)}
+                    </div>
                   </div>
                 </div>
                 <div className="mt-4 flex items-baseline justify-between">
@@ -775,7 +778,9 @@ function Landing() {
                             <WatchBadge reason={w.injuryReason} url={w.injuryUrl} tone="dark" />
                           )}
                         </div>
-                        <div className="text-[11.5px] text-[var(--landing-muted)]">{w.disc}</div>
+                        <div className="text-[11.5px] text-[var(--landing-muted)]">
+                          {discName(t, w.discKey, w.disc)}
+                        </div>
                       </div>
                       <div className="flex w-full items-center justify-between gap-3 pl-9 sm:w-auto sm:justify-end sm:pl-0">
                         <div className="nums text-[13px] text-[var(--landing-muted)] sm:w-20 sm:text-right">

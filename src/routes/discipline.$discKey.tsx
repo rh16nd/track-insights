@@ -8,7 +8,7 @@ import { TrajectoryOverlayChart } from "@/components/dl/trajectory-overlay-chart
 import { StorylineCards } from "@/components/dl/storyline-cards";
 import { useDiscipline } from "@/hooks/useDiscipline";
 import type { DepthVerdict, DisciplineReport, FieldScore } from "@/lib/dl-data";
-import { ordinalIn } from "@/lib/dl-data";
+import { discName, ordinalIn } from "@/lib/dl-data";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/discipline/$discKey")({
@@ -48,7 +48,7 @@ function DisciplinePage() {
 
   return (
     <Shell
-      title={data ? data.disc : t("disc.titleFallback")}
+      title={data ? discName(t, data.discKey, data.disc) : t("disc.titleFallback")}
       eyebrow={
         data?.depth
           ? t("disc.eyebrow", {
@@ -72,7 +72,7 @@ function DisciplinePage() {
               closing centrepiece. */}
           {data.trajectories && data.trajectories.length > 0 && (
             <Panel
-              title={t("disc.seasonForm", { disc: data.disc })}
+              title={t("disc.seasonForm", { disc: discName(t, data.discKey, data.disc) })}
               subtitle={t("disc.seasonFormSubtitle")}
               className="mt-6"
             >
@@ -82,7 +82,7 @@ function DisciplinePage() {
 
           {data.storylines && data.storylines.length > 0 && (
             <Panel
-              title={t("disc.storylines", { disc: data.disc })}
+              title={t("disc.storylines", { disc: discName(t, data.discKey, data.disc) })}
               subtitle={t("disc.storylinesSubtitle")}
               className="mt-6"
             >
@@ -94,7 +94,7 @@ function DisciplinePage() {
             <FieldAnalysisBlock
               analysis={data.fieldAnalysis}
               discKey={data.discKey}
-              discLabel={data.disc}
+              discLabel={discName(t, data.discKey, data.disc)}
               isField={data.isField}
             />
           )}

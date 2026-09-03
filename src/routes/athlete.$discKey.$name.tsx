@@ -8,7 +8,7 @@ import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
 import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
 import { AthleteCareerBlock } from "@/components/dl/athlete-career";
 import { InfoTip } from "@/components/dl/info-tip";
-import { ordinalIn } from "@/lib/dl-data";
+import { discName, ordinalIn } from "@/lib/dl-data";
 import { useT, type TFunc } from "@/lib/i18n";
 
 const FIELD_EVENT_KEYS = new Set([
@@ -51,7 +51,7 @@ function notInFieldReason(data: AthleteNotInField, t: TFunc, lang: string): stri
   if (data.reasonCode === "outside_points_cut" && dl) {
     const head = t("reason.pointsCut", {
       rank: ordinalIn(lang, dl.rank),
-      disc: data.disc,
+      disc: discName(t, data.discKey, data.disc),
       points: dl.points ?? 0,
       limit: dl.qualLimit,
     });
@@ -66,17 +66,17 @@ function notInFieldReason(data: AthleteNotInField, t: TFunc, lang: string): stri
     return head + t("reason.tailTieBreak");
   }
   if (data.reasonCode === "not_in_standings") {
-    return t("reason.notInStandings", { disc: data.disc });
+    return t("reason.notInStandings", { disc: discName(t, data.discKey, data.disc) });
   }
   if (data.reasonCode === "injury_removed") return t("reason.injuryRemoved");
   if (data.reasonCode === "outside_cut") {
     return t("reason.outsideCut", {
       limit: dl?.qualLimit ?? 8,
-      disc: data.disc,
+      disc: discName(t, data.discKey, data.disc),
     });
   }
   if (data.reasonCode === "no_data") {
-    return t("reason.noData", { year: 2026, disc: data.disc });
+    return t("reason.noData", { year: 2026, disc: discName(t, data.discKey, data.disc) });
   }
   return data.reason;
 }
@@ -157,7 +157,7 @@ function NotInField({
           </Link>
         )}
         <div className="label-caps mt-3 text-gold-on-canvas">
-          {t("ath.dossier", { disc: data.disc })}
+          {t("ath.dossier", { disc: discName(t, data.discKey, data.disc) })}
         </div>
         <h1
           className="mt-3.5 text-[clamp(40px,7vw,92px)] leading-[0.92] font-bold tracking-[-0.03em] text-white"
@@ -264,7 +264,7 @@ function NotInField({
             search={{ disc: data.discKey }}
             className="mt-4 inline-block text-[12.5px] font-medium text-terracotta-strong hover:underline"
           >
-            {t("ath.seeStandings", { disc: data.disc })}
+            {t("ath.seeStandings", { disc: discName(t, data.discKey, data.disc) })}
           </Link>
         )}
         {data.worldRank === 1 && (
@@ -352,7 +352,7 @@ function NotInField({
             <p className="mt-4 max-w-md text-[11.5px] leading-snug text-muted-foreground">
               {t("ath.percentileBefore", {
                 ord: ordinalIn(lang, Math.round(data.scoreContext.discPercentile)),
-                disc: data.disc.toLowerCase(),
+                disc: discName(t, data.discKey, data.disc).toLowerCase(),
               })}
               <span className="nums">{data.scoreContext.discMedian}</span>
               {t("ath.percentileAfter")}
@@ -810,7 +810,7 @@ function AthleteProfilePage() {
             <p className="mt-4 max-w-md text-[11.5px] leading-snug text-muted-foreground">
               {t("ath.percentileBefore", {
                 ord: ordinalIn(lang, Math.round(a.scoreContext.discPercentile)),
-                disc: a.disc.toLowerCase(),
+                disc: discName(t, a.discKey, a.disc).toLowerCase(),
               })}
               <span className="nums">{a.scoreContext.discMedian}</span>
               {t("ath.percentileAfter")}

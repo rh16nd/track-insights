@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { pageHead } from "@/lib/seo";
 import { useT } from "@/lib/i18n";
+import { discName } from "@/lib/dl-data";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Shell,
@@ -163,7 +164,7 @@ function StatsPage() {
                         {p.athlete}
                       </Link>
                       <span className="flex flex-wrap items-center gap-x-2 text-[12px] text-muted-foreground">
-                        <span className="truncate">{p.disc}</span>
+                        <span className="truncate">{discName(t, p.discKey, p.disc)}</span>
                         <span aria-hidden="true">·</span>
                         <span className="nums">{p.mark}</span>
                         {p.indoor && <IndoorBadge />}
