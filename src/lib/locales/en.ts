@@ -14,7 +14,7 @@ export const en: Record<string, string> = {
   "nav.howItWorks": "How it works",
   "nav.live": "Live",
   "nav.searchAthletes": "Search athletes",
-  "nav.updated": "Updated {{date}} · {{days}}d to Brussels",
+  "nav.updated": "Updated {{date}}",
   "nav.language": "Language",
   "nav.skipToContent": "Skip to content",
 
@@ -141,6 +141,28 @@ export const en: Record<string, string> = {
   "table.notQualifiedNote":
     "Fast enough to belong here, but without a qualifying place: either below the points cut-off, or with no Diamond League points in this event at all. The model still scores them, so you can see who would be a threat if they got in.",
   "table.notQualified": "Not qualified",
+
+  // Discipline table — result vs projection (shown once a Final is contested)
+  "table.resultTitle": "Result vs projection · {{label}}",
+  "table.resultSummary":
+    "The model had {{hits}} of the {{n}} who reached the podium in its projected top three.",
+  "table.resultNote":
+    "What happened at the Final, shown against the model's projection from before the meet. The projection is frozen from beforehand, so nothing here is scored with hindsight.",
+  "table.resultCaption":
+    "Final result for the {{label}}: finishing position, athlete, nationality, mark, and what the model projected",
+  "table.colFinish": "Finish",
+  "table.colResult": "Result",
+  "table.colModelCall": "Model's call",
+  "table.colVsProjected": "vs projected",
+  "table.resultPredicted": "Projected {{rank}} · {{prob}}%",
+  "table.resultNearMiss": "Outside the projected field",
+  "table.resultUnseen": "Not in the projection",
+  "table.resultExact": "As projected",
+  "table.resultUpset": "Podium from outside the field",
+  "table.resultAboveTitle": "Finished {{n}} places above the projection",
+  "table.resultBelowTitle": "Finished {{n}} places below the projection",
+  "table.resultAboveOne": "Finished one place above the projection",
+  "table.resultBelowOne": "Finished one place below the projection",
 
   // Schedule
   "schedule.headlineRoad": "The road to the Final.",

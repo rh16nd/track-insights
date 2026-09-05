@@ -431,7 +431,6 @@ function Landing() {
                 delayMs={620}
                 label={t("landing.statHitRate")}
               />
-              <Stat value={daysToFinal} delayMs={700} label={t("landing.statDays")} />
               <Stat value={disciplineCount} delayMs={780} label={t("landing.statDisciplines")} />
               <Stat value={marksScored} delayMs={860} label={t("landing.statMarks")} />
             </div>

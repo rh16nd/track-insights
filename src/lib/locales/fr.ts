@@ -12,7 +12,7 @@ export const fr: Record<string, string> = {
   "nav.howItWorks": "Comment ça marche",
   "nav.live": "En direct",
   "nav.searchAthletes": "Rechercher des athlètes",
-  "nav.updated": "MAJ {{date}} · J-{{days}} avant Bruxelles",
+  "nav.updated": "MAJ {{date}}",
   "nav.language": "Langue",
   "nav.skipToContent": "Aller au contenu",
 
@@ -140,6 +140,28 @@ export const fr: Record<string, string> = {
   "table.notQualifiedNote":
     "Assez rapides pour y figurer, mais sans place qualificative : soit sous la barre des points, soit sans aucun point Diamond League dans cette épreuve. Le modèle les évalue quand même, pour que vous voyiez qui serait une menace s'ils y étaient.",
   "table.notQualified": "Non qualifié",
+
+  // Discipline table — résultat vs projection (affiché une fois la finale disputée)
+  "table.resultTitle": "Résultat vs projection · {{label}}",
+  "table.resultSummary":
+    "Le modèle avait {{hits}} des {{n}} athlètes montés sur le podium dans ses trois premiers projetés.",
+  "table.resultNote":
+    "Ce qui s'est passé lors de la finale, comparé à la projection du modèle établie avant la réunion. La projection est figée à l'avance : rien ici n'est évalué avec le recul.",
+  "table.resultCaption":
+    "Résultat de la finale du {{label}} : place, athlète, nationalité, marque et projection du modèle",
+  "table.colFinish": "Place",
+  "table.colResult": "Résultat",
+  "table.colModelCall": "Pronostic du modèle",
+  "table.colVsProjected": "vs projeté",
+  "table.resultPredicted": "Projeté {{rank}} · {{prob}} %",
+  "table.resultNearMiss": "Hors du plateau projeté",
+  "table.resultUnseen": "Absent de la projection",
+  "table.resultExact": "Conforme à la projection",
+  "table.resultUpset": "Podium hors du plateau projeté",
+  "table.resultAboveTitle": "Terminé {{n}} places au-dessus de la projection",
+  "table.resultBelowTitle": "Terminé {{n}} places en dessous de la projection",
+  "table.resultAboveOne": "Terminé une place au-dessus de la projection",
+  "table.resultBelowOne": "Terminé une place en dessous de la projection",
 
   // Schedule
   "schedule.headlineRoad": "La route vers la finale.",

@@ -46,6 +46,45 @@ export type Discipline = {
   qualLimit: number;
   athletes: Athlete[];
   nearMiss?: Athlete[];
+  /** The actual Final result once this event has been contested, next to the
+   * model's frozen pre-final projection. null/absent until the race is run --
+   * the discipline table shows the projection until then, the comparison
+   * after. */
+  result?: DisciplineResult | null;
+};
+
+/** One finisher in a contested Final, carrying both what happened and what the
+ * model had projected beforehand, so the two can be read on one line. */
+export type ResultRow = {
+  /** Finishing position; null for DNF/DQ/DNS, where `placeLabel` holds the
+   * status word instead and `mark` is empty. */
+  place: number | null;
+  placeLabel: string;
+  status: string;
+  name: string;
+  nat: string;
+  /** The actual result mark (empty on a DNF/DQ). */
+  mark: string;
+  waUrl: string;
+  /** True when the athlete has a page on the site (they were in the
+   * projection). A genuine wildcard links out to World Athletics instead. */
+  hasPage: boolean;
+  /** How the model had them BEFORE the meet: in the projected field, scored
+   * but left outside it, or never listed at all. */
+  modelState: "field" | "nearMiss" | "unseen";
+  predictedRank: number | null;
+  predictedProb: number | null;
+  /** predictedRank - place when both are known: positive = finished higher
+   * than projected, negative = lower, 0 = exactly as projected. */
+  delta: number | null;
+};
+
+export type DisciplineResult = {
+  rows: ResultRow[];
+  /** Athletes who reached the podium (place <= 3; can exceed 3 on a tie). */
+  podiumSize: number;
+  /** How many of them the model had in its projected top three. */
+  podiumHits: number;
 };
 
 export type RemovedAthlete = {

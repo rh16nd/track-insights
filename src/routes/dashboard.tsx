@@ -309,12 +309,6 @@ function Dashboard() {
   const stats = data
     ? [
         {
-          label: t("dashboard.stat.daysToBrussels"),
-          value: data.daysToFinal,
-          icon: "calendar" as const,
-          accent: "text-gold-light",
-        },
-        {
           // v0's label, and a better one than "Model accuracy": it names the
           // task the number measures rather than implying the model is right
           // 72% of the time about everything.
@@ -365,7 +359,7 @@ function Dashboard() {
     ))
   ) : (
     <>
-      {[0, 1, 2, 3].map((i) => (
+      {[0, 1, 2].map((i) => (
         <div key={i}>
           <span className="skeleton-pulse block h-10 w-16 rounded-md bg-white" />
           <span className="skeleton-pulse mt-3 block h-2.5 w-24 rounded-full bg-white" />
