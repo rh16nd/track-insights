@@ -3,7 +3,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { TopNav } from "./topnav";
 import { TrackCurveDecoration } from "./track-curve";
 import type { MeetStatus } from "@/lib/dl-data";
-import { API_IS_LOCAL } from "@/lib/api";
+import { API_IS_LOCAL, warmApi } from "@/lib/api";
 import { WaSourceLink } from "./wa-link";
 import { JsonLd } from "./json-ld";
 import { breadcrumbSchema } from "@/lib/seo";
@@ -72,6 +72,13 @@ export function Shell({
      exists -- see lib/seo.ts. */
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { t } = useT();
+
+  /* Every page renders through Shell, so this is the earliest moment we know
+     a real person is here. Wake the API now (see warmApi) rather than when
+     they click an athlete, since the wake-up takes longer than the reading. */
+  useEffect(() => {
+    warmApi();
+  }, []);
   return (
     <div className="relative min-h-screen bg-background">
       {/* Grain stays perfectly still -- it is a surface texture, and moving

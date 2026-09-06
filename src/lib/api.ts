@@ -24,6 +24,70 @@ export const API_BASE = RAW_BASE.replace(/\/+$/, "");
  * production, so the copy branches on this rather than always saying it. */
 export const API_IS_LOCAL = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/i.test(API_BASE);
 
+/** Paths whose response is a precomputed SNAPSHOT rather than a live
+ * computation, and the static file each maps to.
+ *
+ * The API runs on Render's free tier, which spins down after ~15 minutes idle.
+ * Measured 2026-09-06: a cold request took 32.7s to first byte, against 1.3s
+ * warm and 1.2s for Vercel itself — so the first visitor after a quiet spell
+ * watched skeletons for half a minute. Barely any of that is our code (the
+ * whole Flask app imports in ~3s); it is Render's container start.
+ *
+ * These responses only change when a data refresh is run and pushed, so they
+ * are written out as static JSON (src/build_static_api.py) and served from the
+ * CDN alongside the app. That takes the server out of the critical path
+ * entirely: there is no cold start to wait for, because there is no server.
+ *
+ * /api/search and /api/athlete/... are deliberately absent — one depends on the
+ * query, the other is per-athlete — so they still go to the live API. */
+const SNAPSHOT_FILES: Record<string, string> = {
+  "/api/predictions": "predictions.json",
+  "/api/stats": "stats.json",
+  "/api/ultimate": "ultimate.json",
+  "/api/world-rankings": "world-rankings.json",
+  "/api/news": "news.json",
+  "/api/qualification": "qualification.json",
+};
+
+const DISCIPLINE_PATH = /^\/api\/discipline\/([A-Za-z0-9_]+)$/;
+
+/** Prefer the snapshot in production; prefer the live API in development,
+ * where api.py is the source of truth and the checked-in snapshot may be a
+ * refresh behind. `VITE_STATIC_API=0` / `=1` overrides either way. */
+const PREFER_STATIC =
+  (import.meta.env["VITE_STATIC_API"] ?? (import.meta.env.PROD ? "1" : "0")) !== "0";
+
+function staticUrlFor(path: string): string | null {
+  if (!PREFER_STATIC || path.includes("?")) return null;
+  const file = SNAPSHOT_FILES[path];
+  if (file) return `/data/${file}`;
+  const m = DISCIPLINE_PATH.exec(path);
+  return m ? `/data/discipline/${m[1]}.json` : null;
+}
+
+/** Wake the API in the background, once per page session.
+ *
+ * The snapshots above take the server out of the critical path for every page
+ * that has one -- but athlete profiles and search are per-request, so they
+ * still call it, and on Render's free tier the first of those after an idle
+ * spell pays the very ~32s container start the snapshots were added to remove.
+ *
+ * So the moment a page mounts (instantly, from the CDN) we poke /api/health
+ * and throw the answer away. Reading a page takes a few seconds; a cold Render
+ * container takes about thirty. Starting the clock at page load rather than at
+ * the click means the container is usually up before anyone asks it for
+ * anything.
+ *
+ * Fire-and-forget by design: no await, errors swallowed. It must never delay a
+ * render or surface a failure -- if the wake-up doesn't work, the only cost is
+ * the wait we would have had anyway. */
+let warmed = false;
+export function warmApi(): void {
+  if (warmed || typeof window === "undefined") return;
+  warmed = true;
+  void fetch(`${API_BASE}/api/health`).catch(() => {});
+}
+
 export class ApiError extends Error {
   /** HTTP status, or 0 when the request never got an answer at all. */
   readonly status: number;
@@ -75,6 +139,21 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
     throw new Error(`apiFetch expects an API-relative path, got an absolute URL: ${path}`);
   }
   const url = `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+
+  // The CDN copy first, when this path is a snapshot. A miss here is not an
+  // error worth surfacing -- it just means the deploy has no snapshot yet, so
+  // we fall through to the live API below and behave exactly as before.
+  const staticUrl = staticUrlFor(path);
+  if (staticUrl) {
+    try {
+      const res = await fetch(staticUrl, init);
+      if (res.ok) return (await res.json()) as T;
+    } catch (e) {
+      // A caller cancelling (unmount, superseded keystroke) must not be
+      // retried against the API -- that would fight the caller.
+      if (e instanceof Error && e.name === "AbortError") throw e;
+    }
+  }
 
   let lastError: unknown;
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
