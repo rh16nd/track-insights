@@ -7,6 +7,7 @@ import type { QualificationDiscipline, QualificationRow, QualStatus } from "@/li
 import { useQualification } from "@/hooks/useQualification";
 import { useT, type TFunc } from "@/lib/i18n";
 import { discName } from "@/lib/dl-data";
+import { usePageTitle } from "@/lib/use-page-title";
 
 export const Route = createFileRoute("/qualification")({
   head: () =>
@@ -123,6 +124,7 @@ function tightestRaces(disciplines: QualificationDiscipline[]) {
 
 function QualificationPage() {
   const { t, lang } = useT();
+  usePageTitle(t("nav.qualifying"));
   const state = useQualification();
   const { disc } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });

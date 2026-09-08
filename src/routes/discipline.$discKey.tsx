@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { disciplineLabel, pageHead } from "@/lib/seo";
+import { usePageTitle } from "@/lib/use-page-title";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, ProbabilityBar } from "@/components/dl/shell";
 import { InfoTip } from "@/components/dl/info-tip";
@@ -43,6 +44,10 @@ const VERDICT_TONE: Record<DepthVerdict["key"], string> = {
 function DisciplinePage() {
   const { t, lang } = useT();
   const { discKey } = Route.useParams();
+  // Off the URL param, not the loaded response, so the tab is already right
+  // while the page loads -- the same reason the country page reads its theme
+  // from the code in the URL.
+  usePageTitle(discName(t, discKey, disciplineLabel(discKey)));
   const state = useDiscipline(discKey);
   const data = state.status === "ok" ? state.data : undefined;
 

@@ -1,3 +1,4 @@
+import { localizeDate } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 import { useState } from "react";
 import type { MeetMark } from "@/lib/dl-data";
@@ -16,7 +17,7 @@ const PAD_BOTTOM = 32;
  * already-plotted points; nothing is invented between them. */
 export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year: number | null }) {
   const [hover, setHover] = useState<number | null>(null);
-  const { t } = useT();
+  const { t, lang } = useT();
   const [tableView, setTableView] = useState(false);
 
   const first = history[0];
@@ -98,7 +99,9 @@ export function SeasonTrendChart({ history, year }: { history: MeetMark[]; year:
             <tbody>
               {history.map((h, i) => (
                 <tr key={i} className="border-t border-border/60">
-                  <td className="py-1.5 pr-3 text-muted-foreground">{h.date}</td>
+                  <td className="py-1.5 pr-3 text-muted-foreground">
+                    {localizeDate(lang, h.date)}
+                  </td>
                   <td
                     className={`nums py-1.5 pr-3 ${i === bestIndex ? "font-semibold text-terracotta-strong" : "text-foreground"}`}
                   >

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { localeTag, localizeDate } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 import type { Trajectory } from "@/lib/dl-data";
 import { formatMark } from "@/lib/dl-data";
@@ -54,7 +55,7 @@ export function TrajectoryOverlayChart({
   trajectories: Trajectory[];
   discKey: string;
 }) {
-  const { t } = useT();
+  const { t, lang } = useT();
   const [hover, setHover] = useState<{ series: number; point: number } | null>(null);
   const [tableView, setTableView] = useState(false);
 
@@ -190,7 +191,9 @@ export function TrajectoryOverlayChart({
                       />
                       {p.name}
                     </td>
-                    <td className="py-1.5 pr-3 text-muted-foreground">{p.date}</td>
+                    <td className="py-1.5 pr-3 text-muted-foreground">
+                      {localizeDate(lang, p.date)}
+                    </td>
                     <td className="nums py-1.5 pr-3 text-foreground">{p.mark}</td>
                     <td className="py-1.5 text-foreground">{p.venue}</td>
                   </tr>
@@ -244,7 +247,10 @@ export function TrajectoryOverlayChart({
                 fontSize={9.5}
                 fill="var(--muted-foreground)"
               >
-                {new Date(ts).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
+                {new Date(ts).toLocaleDateString(localeTag(lang), {
+                  day: "2-digit",
+                  month: "short",
+                })}
               </text>
             ))}
             {series.map((s, si) => {
@@ -281,7 +287,7 @@ export function TrajectoryOverlayChart({
                          The focus ring is unaffected: styles.css targets
                          [tabindex]:not([tabindex="-1"]), not the role. */
                       role="img"
-                      aria-label={`${s.trajectory.name}, ${p.mark}, ${p.date}, ${p.venue}`}
+                      aria-label={`${s.trajectory.name}, ${p.mark}, ${localizeDate(lang, p.date)}, ${p.venue}`}
                       onMouseEnter={() => setHover({ series: si, point: pi })}
                       onMouseLeave={() => setHover(null)}
                       onFocus={() => setHover({ series: si, point: pi })}

@@ -18,6 +18,8 @@ import { Route as QualificationRouteImport } from './routes/qualification'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as StatsRouteImport } from './routes/stats'
 import { Route as TrackRouteImport } from './routes/track'
+import { Route as UltimateRouteImport } from './routes/ultimate'
+import { Route as CountryCodeRouteImport } from './routes/country.$code'
 import { Route as DisciplineDiscKeyRouteImport } from './routes/discipline.$discKey'
 import { Route as AthleteDiscKeyNameRouteImport } from './routes/athlete.$discKey.$name'
 
@@ -66,6 +68,16 @@ const TrackRoute = TrackRouteImport.update({
   path: '/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UltimateRoute = UltimateRouteImport.update({
+  id: '/ultimate',
+  path: '/ultimate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountryCodeRoute = CountryCodeRouteImport.update({
+  id: '/country/$code',
+  path: '/country/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DisciplineDiscKeyRoute = DisciplineDiscKeyRouteImport.update({
   id: '/discipline/$discKey',
   path: '/discipline/$discKey',
@@ -87,6 +99,8 @@ export interface FileRoutesByFullPath {
   '/schedule': typeof ScheduleRoute
   '/stats': typeof StatsRoute
   '/track': typeof TrackRoute
+  '/ultimate': typeof UltimateRoute
+  '/country/$code': typeof CountryCodeRoute
   '/discipline/$discKey': typeof DisciplineDiscKeyRoute
   '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
 }
@@ -100,6 +114,8 @@ export interface FileRoutesByTo {
   '/schedule': typeof ScheduleRoute
   '/stats': typeof StatsRoute
   '/track': typeof TrackRoute
+  '/ultimate': typeof UltimateRoute
+  '/country/$code': typeof CountryCodeRoute
   '/discipline/$discKey': typeof DisciplineDiscKeyRoute
   '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
 }
@@ -114,6 +130,8 @@ export interface FileRoutesById {
   '/schedule': typeof ScheduleRoute
   '/stats': typeof StatsRoute
   '/track': typeof TrackRoute
+  '/ultimate': typeof UltimateRoute
+  '/country/$code': typeof CountryCodeRoute
   '/discipline/$discKey': typeof DisciplineDiscKeyRoute
   '/athlete/$discKey/$name': typeof AthleteDiscKeyNameRoute
 }
@@ -129,6 +147,8 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/stats'
     | '/track'
+    | '/ultimate'
+    | '/country/$code'
     | '/discipline/$discKey'
     | '/athlete/$discKey/$name'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +162,8 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/stats'
     | '/track'
+    | '/ultimate'
+    | '/country/$code'
     | '/discipline/$discKey'
     | '/athlete/$discKey/$name'
   id:
@@ -155,6 +177,8 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/stats'
     | '/track'
+    | '/ultimate'
+    | '/country/$code'
     | '/discipline/$discKey'
     | '/athlete/$discKey/$name'
   fileRoutesById: FileRoutesById
@@ -169,6 +193,8 @@ export interface RootRouteChildren {
   ScheduleRoute: typeof ScheduleRoute
   StatsRoute: typeof StatsRoute
   TrackRoute: typeof TrackRoute
+  UltimateRoute: typeof UltimateRoute
+  CountryCodeRoute: typeof CountryCodeRoute
   DisciplineDiscKeyRoute: typeof DisciplineDiscKeyRoute
   AthleteDiscKeyNameRoute: typeof AthleteDiscKeyNameRoute
 }
@@ -238,6 +264,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ultimate': {
+      id: '/ultimate'
+      path: '/ultimate'
+      fullPath: '/ultimate'
+      preLoaderRoute: typeof UltimateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/country/$code': {
+      id: '/country/$code'
+      path: '/country/$code'
+      fullPath: '/country/$code'
+      preLoaderRoute: typeof CountryCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/discipline/$discKey': {
       id: '/discipline/$discKey'
       path: '/discipline/$discKey'
@@ -265,6 +305,8 @@ const rootRouteChildren: RootRouteChildren = {
   ScheduleRoute: ScheduleRoute,
   StatsRoute: StatsRoute,
   TrackRoute: TrackRoute,
+  UltimateRoute: UltimateRoute,
+  CountryCodeRoute: CountryCodeRoute,
   DisciplineDiscKeyRoute: DisciplineDiscKeyRoute,
   AthleteDiscKeyNameRoute: AthleteDiscKeyNameRoute,
 }

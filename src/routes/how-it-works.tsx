@@ -7,6 +7,8 @@ import { useStats } from "@/hooks/useStats";
 import { WaSourceLink } from "@/components/dl/wa-link";
 import { useT } from "@/lib/i18n";
 import { Rich } from "@/lib/rich-text";
+import { localeTag } from "@/lib/dates";
+import { usePageTitle } from "@/lib/use-page-title";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () =>
@@ -41,6 +43,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 function HowItWorksPage() {
   const { t, lang } = useT();
+  usePageTitle(t("nav.howItWorks"));
   const preds = usePredictions();
   const stats = useStats();
 
@@ -49,7 +52,8 @@ function HowItWorksPage() {
   const toplist = preds.status === "ok" ? preds.data.modelAccuracyToplist : null;
   const corpus = stats.status === "ok" ? stats.data.corpus : null;
 
-  const num = (n: number | null | undefined) => (n == null ? "—" : n.toLocaleString());
+  const num = (n: number | null | undefined) =>
+    n == null ? "—" : n.toLocaleString(localeTag(lang));
 
   return (
     <Shell
@@ -98,7 +102,9 @@ function HowItWorksPage() {
                       sentence, which says the same thing. Showing an English
                       caption under a French heading is worse than losing the
                       season range it carries. */}
-                  {lang === "en" ? (basis ?? t("howItWorks.s3.basisFallback")) : t("howItWorks.s3.basisFallback")}
+                  {lang === "en"
+                    ? (basis ?? t("howItWorks.s3.basisFallback"))
+                    : t("howItWorks.s3.basisFallback")}
                 </div>
               </div>
               <div>
@@ -112,6 +118,14 @@ function HowItWorksPage() {
             </div>
             <p className="mt-6 text-[14px] leading-relaxed text-muted-foreground">
               {t("howItWorks.s3.note")}
+            </p>
+            {/* What the figure does NOT cover. Three of the model's projected
+                winners for Budapest are flagged as out or doubtful, and no
+                accuracy number could ever have caught that: both are scored
+                only on athletes who reached a start line, so a withdrawal is
+                invisible to them by construction. */}
+            <p className="mt-3 text-[14px] leading-relaxed text-muted-foreground">
+              {t("howItWorks.s3.withdrawals")}
             </p>
           </Section>
 
@@ -171,6 +185,18 @@ function HowItWorksPage() {
                 </span>
               </li>
             </ul>
+          </Section>
+
+          {/* Added because the search quietly grew a second thing it can find
+              and nothing on the site said so. A feature nobody knows about is
+              the same as one that is not there. */}
+          <Section title={t("howItWorks.s6.title")}>
+            <p className="mt-3.5 text-[15px] leading-relaxed text-foreground">
+              <Rich text={t("howItWorks.s6.p1")} />
+            </p>
+            <p className="mt-3 text-[15px] leading-relaxed text-foreground">
+              <Rich text={t("howItWorks.s6.p2")} />
+            </p>
           </Section>
         </div>
       </article>

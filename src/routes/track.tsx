@@ -1,15 +1,16 @@
 import { pageHead } from "@/lib/seo";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Shell, PanelSkeleton, ErrorPanel } from "@/components/dl/shell";
-import { DisciplineTable } from "@/components/dl/discipline-table";
-import { usePredictions } from "@/hooks/usePredictions";
+import { WorldRankingTable } from "@/components/dl/world-ranking-table";
+import { useWorldRankings } from "@/hooks/useWorldRankings";
 import { useT } from "@/lib/i18n";
+import { usePageTitle } from "@/lib/use-page-title";
 
 export const Route = createFileRoute("/track")({
   head: () =>
     pageHead(
       "Track events",
-      "Every track discipline at the 2026 Diamond League Final, with each qualified athlete's chance of finishing on the podium.",
+      "The world's best in every track discipline, ranked by World Athletics points or by the model's rating for a championship final podium.",
     ),
   validateSearch: (search: Record<string, unknown>): { disc?: string | undefined } => ({
     disc: typeof search["disc"] === "string" ? (search["disc"] as string) : undefined,
@@ -19,34 +20,26 @@ export const Route = createFileRoute("/track")({
 
 function TrackPage() {
   const { t } = useT();
-  const state = usePredictions();
+  usePageTitle(t("track.title"));
+  const state = useWorldRankings();
   const { disc } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const data = state.status === "ok" ? state.data : undefined;
+  const count = data ? Object.values(data).filter((d) => !d.isField).length : undefined;
 
-  // The page header stays on screen through loading and error rather than
-  // the route early-returning a bare Shell -- that fallback dropped the
-  // eyebrow/description entirely and reverted to the old bordered title
-  // card, so the page visibly changed identity while data was in flight.
-  // The discipline count is only shown once it's actually known.
   return (
     <Shell
       title={t("track.title")}
-      eyebrow={
-        data
-          ? t("track.eyebrow", { n: data.trackDisciplines.length })
-          : t("common.final2026")
-      }
+      eyebrow={count !== undefined ? t("track.eyebrow", { n: count }) : undefined}
       description={t("track.description")}
-      lastUpdated={data?.lastUpdated}
-      daysToFinal={data?.daysToFinal}
     >
-      {state.status === "loading" && <PanelSkeleton title={t("common.projectedField")} rows={8} />}
+      {state.status === "loading" && <PanelSkeleton title={t("rankings.loading")} rows={10} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
       {data && (
-        <DisciplineTable
-          disciplines={data.trackDisciplines}
-          activeId={disc ?? data.trackDisciplines[0]?.id ?? ""}
+        <WorldRankingTable
+          rankings={data}
+          isField={false}
+          activeId={disc ?? ""}
           onActiveChange={(id) => navigate({ search: { disc: id }, replace: true })}
         />
       )}

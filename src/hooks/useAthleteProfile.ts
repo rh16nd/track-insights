@@ -34,6 +34,12 @@ export type AthleteNotInField = {
   injuryUrl?: string | null;
   history: MeetMark[];
   historyYear: number | null;
+  /** True when the season had too many races to plot individually, so the
+   * chart shows each month's best instead. */
+  historyCondensed?: boolean;
+  /** How many races the athlete actually ran this season, which is more than
+   * the chart shows whenever historyCondensed is true. */
+  historyRaces?: number;
   photoUrl: string | null;
   photoFocus: { x: number; y: number } | null;
   photoCredit: PhotoCredit;

@@ -41,7 +41,23 @@ export function disciplineLabel(discKey: string): string {
   return `${sex === "men" ? "Men's" : "Women's"} ${name}`;
 }
 
-const SUFFIX = "PodiumCall";
+/** "OBLIQUE SEVILLE" -> "Oblique Seville", for a title.
+ *
+ * World Athletics writes surnames in caps and the pages keep that, but a
+ * browser tab reading "Matthew DENNY" looks like shouting. Exported so the
+ * client-side title in `usePageTitle` matches the SSR one character for
+ * character instead of re-deriving it slightly differently. */
+export function titleName(raw: string): string {
+  return raw
+    .split(/\s+/)
+    .map((w) => (w.length > 1 ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w))
+    .join(" ");
+}
+
+/** The brand half of every title. Exported so `usePageTitle` builds the
+ * client-side title from the same literal this file builds the SSR one
+ * from, rather than a copy that can drift. */
+export const SUFFIX = "PodiumCall";
 
 /** One place that builds the tags, so title and og:title cannot drift apart
  * — the failure mode where a page looks right in a tab and wrong when

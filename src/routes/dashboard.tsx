@@ -1,77 +1,30 @@
 import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState, type CSSProperties } from "react";
-import {
-  Shell,
-  Panel,
-  PanelSkeleton,
-  ErrorPanel,
-  ProbabilityBar,
-  WatchBadge,
-  HeadFigure,
-  dotClass,
-  badgeClass,
-} from "@/components/dl/shell";
-import { discName, type ConfidenceRow, type TopWinner } from "@/lib/dl-data";
+import type { CSSProperties } from "react";
+import { Shell, Panel, PanelSkeleton, ErrorPanel, HeadFigure } from "@/components/dl/shell";
+import { discName } from "@/lib/dl-data";
+import type { UltimateEvent, WorldRankings } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
+import { useUltimate } from "@/hooks/useUltimate";
+import { useWorldRankings } from "@/hooks/useWorldRankings";
 import { useCountUp } from "@/hooks/useCountUp";
+import { NatFlag } from "@/components/dl/nat-flag";
+import { AthleteCard } from "@/components/dl/athlete-card";
 import { NewsFeed } from "@/components/dl/news-feed";
 import { WelcomeLauncher } from "@/components/dl/welcome-modal";
-import { useT, type TFunc } from "@/lib/i18n";
-
-const LAST_PROBS_KEY = "podiumcall:lastProbs";
-
-/** Real, honest trend signal for a repeat visitor: compares today's
- * probabilities against whatever this browser last saw (localStorage, not
- * a fabricated number or a backend history endpoint that doesn't exist
- * yet). First-ever visit shows no deltas -- there's nothing true to compare
- * against -- and only genuinely-changed athletes get a chip. Added per the
- * 2026-08-24 critique: the product's whole premise is live, updating
- * predictions, but nothing on the page ever showed what moved. */
-function useProbabilityDeltas(topWinners: TopWinner[] | undefined) {
-  const [deltas, setDeltas] = useState<Record<string, number>>({});
-  useEffect(() => {
-    if (!topWinners) return;
-    let previous: Record<string, number> = {};
-    try {
-      previous = JSON.parse(localStorage.getItem(LAST_PROBS_KEY) ?? "{}");
-    } catch {
-      previous = {};
-    }
-    const computed: Record<string, number> = {};
-    const next: Record<string, number> = {};
-    for (const w of topWinners) {
-      next[w.name] = w.prob;
-      const prior = previous[w.name];
-      if (typeof prior === "number" && prior !== w.prob) {
-        computed[w.name] = w.prob - prior;
-      }
-    }
-    setDeltas(computed);
-    try {
-      localStorage.setItem(LAST_PROBS_KEY, JSON.stringify(next));
-    } catch {
-      // localStorage unavailable (private browsing, quota) -- delta signal
-      // just won't persist to the next visit; not worth surfacing an error
-      // for.
-    }
-  }, [topWinners]);
-  return deltas;
-}
+import { useT } from "@/lib/i18n";
+import { localeTag } from "@/lib/dates";
+import { usePageTitle } from "@/lib/use-page-title";
 
 export const Route = createFileRoute("/dashboard")({
   head: () =>
     pageHead(
       "Dashboard",
-      "The model's surest calls across all 32 Diamond League disciplines, and the events it is least sure about.",
+      "The model's read on the world's best across every event, with the next championship days away.",
     ),
   component: Dashboard,
 });
 
-/* Our own hand-drawn 20x20 line icons, restored rather than dropped: v0's
- * figrow carries no glyph, and these read better than anything generated for
- * it. One per stat, so the row scans as four distinct facts instead of four
- * identical number blocks. No icon-library dependency. */
 function StatIcon({ kind }: { kind: "flag" | "calendar" | "grid" | "target" }) {
   const common = {
     viewBox: "0 0 20 20",
@@ -83,14 +36,6 @@ function StatIcon({ kind }: { kind: "flag" | "calendar" | "grid" | "target" }) {
     className: "size-[18px]",
     "aria-hidden": true,
   };
-  if (kind === "flag") {
-    return (
-      <svg {...common}>
-        <path d="M5 2.5v15" />
-        <path d="M5 3.5h11l-3.2 3.2 3.2 3.2H5" />
-      </svg>
-    );
-  }
   if (kind === "calendar") {
     return (
       <svg {...common}>
@@ -109,6 +54,14 @@ function StatIcon({ kind }: { kind: "flag" | "calendar" | "grid" | "target" }) {
       </svg>
     );
   }
+  if (kind === "flag") {
+    return (
+      <svg {...common}>
+        <path d="M5 2.5v15" />
+        <path d="M5 3.5h11l-3.2 3.2 3.2 3.2H5" />
+      </svg>
+    );
+  }
   return (
     <svg {...common}>
       <circle cx="10" cy="10" r="6.5" />
@@ -118,369 +71,274 @@ function StatIcon({ kind }: { kind: "flag" | "calendar" | "grid" | "target" }) {
   );
 }
 
-/** The head-band figures keep the count-up the old stat tiles had — it is
- * the one bit of that treatment worth carrying over, since a number ticking
- * up on arrival is what makes the band feel live rather than printed. */
 function CountUpValue({ value }: { value: number }) {
   return <>{Math.round(useCountUp(value))}</>;
 }
 
-/** One of the six surest calls, as a card rather than a list row (the v0
- * "Race Programme" treatment). The probability is the card's anchor at 38px,
- * which is the point: this page's job is to say how sure the model is, and
- * the old row buried that in a 12px figure at the right-hand edge. */
-function CallCard({
-  winner,
-  index,
-  delta,
-}: {
-  winner: TopWinner;
-  index: number;
-  delta: number | undefined;
-}) {
-  const { t } = useT();
-  const lead = index === 0;
-  return (
-    <Link
-      to="/athlete/$discKey/$name"
-      params={{ discKey: winner.discKey, name: winner.name }}
-      style={{ "--stagger-i": index } as CSSProperties}
-      className={`stagger-item card-shadow group relative block overflow-hidden rounded-[26px] border bg-card p-[22px] transition-[transform,border-color] duration-150 hover:-translate-y-0.5 active:scale-[0.99] ${
-        lead ? "border-gold-light/70" : "border-border hover:border-terracotta/40"
-      }`}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <span
-          className={`dg text-[13px] font-bold tracking-[0.04em] ${
-            lead ? "text-gold-strong" : "text-muted-foreground"
-          }`}
-        >
-          {t("dashboard.surest", { n: index + 1 })}
-        </span>
-        {winner.injuryWatch && <WatchBadge reason={winner.injuryReason} url={winner.injuryUrl} />}
-      </div>
-
-      <div className="label-caps mt-3 text-terracotta-strong">
-        {discName(t, winner.discKey, winner.disc)}
-      </div>
-      <div className="dg mt-1.5 text-[22px] leading-[1.05] font-bold tracking-[-0.02em] text-foreground">
-        {winner.name}
-      </div>
-      <div className="nums mt-1.5 text-[13.5px] text-muted-foreground">
-        {t("dashboard.seasonBest", { mark: winner.mark })}
-      </div>
-
-      <div className="mt-4 flex items-baseline gap-1.5">
-        <span
-          className={`dg nums text-[38px] leading-none font-bold tracking-[-0.03em] ${
-            lead ? "text-gold-strong" : "text-terracotta"
-          }`}
-        >
-          {winner.prob}
-        </span>
-        <span className="label-caps text-muted-foreground">{t("dashboard.pctPodium")}</span>
-        {typeof delta === "number" && (
-          <span
-            className={`delta-chip nums ml-auto text-[10.5px] font-semibold ${
-              delta > 0 ? "text-gold-strong" : "text-muted-foreground"
-            }`}
-            title={t(delta > 0 ? "dashboard.deltaUp" : "dashboard.deltaDown", {
-              pts: `${Math.abs(delta)} ${t(Math.abs(delta) === 1 ? "dashboard.pt" : "dashboard.pts")}`,
-            })}
-          >
-            {delta > 0 ? "▲" : "▼"}
-            {Math.abs(delta)}
-          </span>
-        )}
-      </div>
-      <ProbabilityBar value={winner.prob} className="mt-3.5" trackHeight="h-[7px]" />
-    </Link>
-  );
+function daysTo(startDate: string): number {
+  const start = new Date(`${startDate}T00:00:00`);
+  return Math.max(0, Math.ceil((start.getTime() - Date.now()) / 86_400_000));
 }
 
-/** v0 put a "Confidence board — top eight by margin" here. Two problems, so
- * this is the same board read from the OTHER end.
- *
- * First, it is not a margin: `build_confidence()` returns each discipline's
- * favourite's probability. Second, sorted descending it is the same ranking
- * as the surest-calls panel directly above — its top six ARE those six
- * athletes' numbers, so the page would state them twice.
- *
- * Read from the bottom it stops duplicating and starts saying something the
- * dashboard never has: which events the model cannot call. That is the more
- * useful half on a site whose stated principle is not overclaiming, and it
- * lands the reader on the discipline page built to explain exactly that. */
-function LeastSurePanel({ confidence }: { confidence: ConfidenceRow[] }) {
-  const { t } = useT();
-  const least = [...confidence].sort((a, b) => a.value - b.value).slice(0, 8);
-  if (least.length === 0) return null;
-  const widest = least[least.length - 1]?.value || 1;
+type Favourite = {
+  discKey: string;
+  disc: string;
+  name: string;
+  nat: string | null;
+  mark: string | null;
+  ratingPct: number;
+  photoUrl?: string | null;
+  photoCredit?: { author?: string | null; license?: string | null } | null;
+  photoFocus?: { x: number; y: number } | null;
+};
 
-  return (
-    <Panel
-      title={t("dashboard.leastSure.title")}
-      subtitle={t("dashboard.leastSure.subtitle")}
-    >
-      <ul className="divide-y divide-border">
-        {least.map((c, i) => {
-          const row = (
-            <>
-              <span className="min-w-0 flex-1 truncate text-[14.5px] font-medium text-foreground">
-                {discName(t, c.discKey, c.disc)}
-              </span>
-              <span
-                aria-hidden="true"
-                className="hidden h-[9px] w-[200px] shrink-0 overflow-hidden rounded-full bg-secondary sm:block"
-              >
-                <span
-                  className="block h-full rounded-full"
-                  style={{
-                    width: `${Math.max((c.value / Math.max(widest, 1)) * 100, 4)}%`,
-                    backgroundImage:
-                      "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
-                  }}
-                />
-              </span>
-              <span className="nums w-13 shrink-0 text-right text-[13.5px] font-semibold text-foreground">
-                {c.value}%
-              </span>
-            </>
-          );
-          return (
-            /* The row's vertical padding lives on the CHILD, not here. With
-               py-3 on the <li> the link was only 21.8px tall while the row it
-               sat in was 47px, so most of the row looked clickable and wasn't.
-               Moving the padding down makes the target the whole row (45.8px)
-               and actually clickable; the first/last trims move with it, so
-               the rhythm is unchanged (panel height identical, measured).
-
-               NOT a WCAG 2.5.8 fix, though it looks like one: 21.8px is under
-               the 24x24 minimum, but the rows are 35-47px apart and the
-               success criterion's spacing exception clears anything whose
-               neighbouring target centres are 24px away. It conformed before
-               and conforms now. This is a UX change. */
-            <li
-              key={c.disc}
-              className="stagger-item [&:first-child>*]:pt-0 [&:last-child>*]:pb-0"
-              style={{ "--stagger-i": i } as CSSProperties}
-            >
-              {c.discKey ? (
-                <Link
-                  to="/discipline/$discKey"
-                  params={{ discKey: c.discKey }}
-                  className="flex items-center gap-4 rounded-md py-3 transition-colors hover:bg-secondary/30"
-                >
-                  {row}
-                </Link>
-              ) : (
-                <div className="flex items-center gap-4 py-3">{row}</div>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-      <p className="mt-4 text-[12px] leading-relaxed text-muted-foreground">
-        {t("dashboard.leastSure.note")}
-      </p>
-    </Panel>
-  );
+function buildFavourites(
+  rankings: WorldRankings,
+  t: (k: string, v?: Record<string, string | number>) => string,
+): Favourite[] {
+  const rows: Favourite[] = [];
+  for (const [key, r] of Object.entries(rankings)) {
+    const top = r.model[0];
+    if (!top) continue;
+    rows.push({
+      discKey: key,
+      disc: discName(t, key, key),
+      name: top.name,
+      nat: top.nat,
+      mark: top.mark,
+      ratingPct: top.ratingPct,
+      photoUrl: top.photoUrl ?? null,
+      photoCredit: top.photoCredit ?? null,
+      photoFocus: top.photoFocus ?? null,
+    });
+  }
+  return rows.sort((a, b) => b.ratingPct - a.ratingPct);
 }
 
-/** "six days out" / "tomorrow" / "today". The Final is a fixed date, so the
- * headline hits 0 and then goes negative if nobody refreshes the data — say
- * something true at each end rather than printing "-2 days out". */
-function dayPhrase(days: number, t: TFunc): string {
-  if (days > 1) return t("dashboard.daysOut", { days });
-  if (days === 1) return t("dashboard.oneDayOut");
-  if (days === 0) return t("dashboard.raceDay");
-  return t("dashboard.underway");
+/** Disciplines where the model's top pick is NOT the points leader — the
+ * model's contrarian calls, the most interesting thing it says. */
+function buildDisagreements(
+  rankings: WorldRankings,
+  t: (k: string, v?: Record<string, string | number>) => string,
+) {
+  const rows = [];
+  for (const [key, r] of Object.entries(rankings)) {
+    const m = r.model[0];
+    const p = r.points[0];
+    if (!m || !p || m.name === p.name) continue;
+    rows.push({
+      discKey: key,
+      disc: discName(t, key, key),
+      modelName: m.name,
+      modelRating: m.ratingPct,
+      pointsName: p.name,
+    });
+  }
+  return rows.sort((a, b) => b.modelRating - a.modelRating);
+}
+
+/** The dashboard's favourite, as a photo card.
+ *
+ * Replaces a text-only tile at the user's request, after they pointed at World
+ * Athletics' own rankings carousel: photo, event across the foot of it, name,
+ * nation, then the one number. The shared component is used as-is rather than
+ * restyled here, so this and the country pages cannot drift into two cards
+ * that merely resemble each other. */
+function FavouriteCard({ f, index }: { f: Favourite; index: number }) {
+  const { t } = useT();
+  return (
+    <AthleteCard
+      name={f.name}
+      nat={f.nat}
+      discipline={f.disc}
+      stat={`${f.ratingPct}%`}
+      statLabel={t("dashboard.fav.rating")}
+      sub={f.mark}
+      photoUrl={f.photoUrl}
+      photoCredit={f.photoCredit}
+      photoFocus={f.photoFocus}
+      to={{ discKey: f.discKey, name: f.name }}
+      index={index}
+    />
+  );
 }
 
 function Dashboard() {
-  const { t } = useT();
-  const state = usePredictions();
-  const data = state.status === "ok" ? state.data : undefined;
-  const deltas = useProbabilityDeltas(data?.topWinners);
+  const { t, lang } = useT();
+  usePageTitle(t("nav.dashboard"));
+  const predictions = usePredictions();
+  const ultimateState = useUltimate();
+  const rankingsState = useWorldRankings();
 
-  const doneCount = data ? data.meets.filter((m) => m.status === "done").length : 0;
-  const totalCount = data ? data.meets.length : 0;
-  const progressPct = data && totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+  const ev: UltimateEvent | undefined =
+    ultimateState.status === "ok" ? ultimateState.data : undefined;
+  const rankings = rankingsState.status === "ok" ? rankingsState.data : undefined;
+  const accuracy = predictions.status === "ok" ? Math.round(predictions.data.modelAccuracy) : null;
+  const lastUpdated = predictions.status === "ok" ? predictions.data.lastUpdated : undefined;
 
-  const stats = data
-    ? [
-        {
-          // v0's label, and a better one than "Model accuracy": it names the
-          // task the number measures rather than implying the model is right
-          // 72% of the time about everything.
-          label: t("dashboard.stat.hitRate"),
-          value: Math.round(data.modelAccuracy),
-          suffix: "%",
-          // The bare "72%" is opaque without saying WHAT it measures. Copy
-          // kept in step with the How-it-works page's vetted framing ("podium
-          // hit rate among the athletes who actually contest the Final") and
-          // the anti-"winner" rule: the target is top-three membership.
-          hint: t("dashboard.stat.hitRateHint"),
-          icon: "target" as const,
-          accent: "text-terracotta-light",
-        },
-        {
-          label: t("dashboard.stat.disciplines"),
-          value: data.trackDisciplines.length + data.fieldDisciplines.length,
-          icon: "grid" as const,
-          accent: "text-gold-light",
-        },
-        {
-          label: t("dashboard.stat.meetingsRun"),
-          value: doneCount,
-          icon: "flag" as const,
-          accent: "text-terracotta-light",
-        },
-      ]
-    : null;
+  const favourites = rankings ? buildFavourites(rankings, t) : [];
+  const disagreements = rankings ? buildDisagreements(rankings, t) : [];
+  const discCount = rankings ? Object.keys(rankings).length : 0;
 
-  // The track-surface hero box is gone. v0 opens every app page with one
-  // full-bleed band (Shell's page head), and the dashboard was the only page
-  // still wrapping its title in a textured, darkened, rounded card -- which
-  // is what made it read as a different design from the rest of the site,
-  // and what the drifting lanes were fighting with.
-  //
-  // Figures still hold their shape through loading so the band doesn't
-  // reflow when data lands, and still never show a fabricated number.
-  const figures = stats ? (
-    stats.map((s) => (
-      <HeadFigure
-        key={s.label}
-        icon={<StatIcon kind={s.icon} />}
-        value={<CountUpValue value={s.value} />}
-        unit={s.suffix}
-        label={s.label}
-        hint={s.hint}
-      />
-    ))
-  ) : (
-    <>
-      {[0, 1, 2].map((i) => (
-        <div key={i}>
-          <span className="skeleton-pulse block h-10 w-16 rounded-md bg-white" />
-          <span className="skeleton-pulse mt-3 block h-2.5 w-24 rounded-full bg-white" />
-        </div>
-      ))}
-    </>
-  );
+  const figures =
+    ev && rankings ? (
+      <>
+        <HeadFigure
+          value={<CountUpValue value={daysTo(ev.startDate)} />}
+          label={t("ultimate.stat.days")}
+          gold
+          icon={<StatIcon kind="calendar" />}
+        />
+        <HeadFigure
+          value={<CountUpValue value={ev.eventCount} />}
+          label={t("ultimate.stat.events")}
+          icon={<StatIcon kind="grid" />}
+        />
+        {accuracy !== null && (
+          <HeadFigure
+            value={<CountUpValue value={accuracy} />}
+            unit="%"
+            label={t("dashboard.stat.hitRate")}
+            hint={t("dashboard.stat.hitRateHint")}
+            icon={<StatIcon kind="target" />}
+          />
+        )}
+        <HeadFigure
+          value={<CountUpValue value={discCount} />}
+          label={t("dashboard.stat.disciplines")}
+          icon={<StatIcon kind="flag" />}
+        />
+      </>
+    ) : (
+      <>
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i}>
+            <span className="skeleton-pulse block h-10 w-16 rounded-md bg-white" />
+            <span className="skeleton-pulse mt-3 block h-2.5 w-24 rounded-full bg-white" />
+          </div>
+        ))}
+      </>
+    );
+
+  const loading = ultimateState.status === "loading" || rankingsState.status === "loading";
+  const error =
+    rankingsState.status === "error"
+      ? rankingsState
+      : ultimateState.status === "error"
+        ? ultimateState
+        : null;
 
   return (
     <Shell
-      title={
-        data
-          ? t("dashboard.title", { phrase: dayPhrase(data.daysToFinal, t) })
-          : t("dashboard.titleBare")
-      }
+      title={t("dashboard.titleBare")}
+      eyebrow={ev ? t("dashboard.eventEyebrow", { short: ev.shortName, name: ev.name }) : undefined}
       crumb={t("nav.dashboard")}
       description={t("dashboard.description")}
       figures={figures}
-      lastUpdated={data?.lastUpdated}
-      daysToFinal={data?.daysToFinal}
+      lastUpdated={lastUpdated}
     >
-      {state.status === "loading" && (
+      {loading && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.35fr_1fr]">
-          <PanelSkeleton title={t("dashboard.mostLikelyPodium")} rows={6} />
-          <PanelSkeleton title={t("dashboard.seasonProgress")} rows={3} />
+          <PanelSkeleton title={t("dashboard.favourites.title")} rows={6} />
+          <PanelSkeleton title={t("dashboard.disagree.title")} rows={6} />
         </div>
       )}
+      {error && <ErrorPanel message={error.message} onRetry={error.retry} />}
 
-      {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
-
-      {/* The "Removed from predictions — injury/withdrawal" panel used to sit
-          here, between the hero and the real content. It was deleted rather
-          than moved: NewsFeed at the bottom of this page is a strict superset
-          of it -- same athlete, disciplines, headline and source link, plus
-          the keyword the checker matched on -- so the panel was duplicating
-          the page's most valuable vertical space. api.py's build_news() now
-          guarantees a row for every removed athlete even when the match has
-          no usable headline, so nothing can go unlisted. `removedAthletes`
-          is still on the API and still tested; it just has no UI. */}
-
-      {data && (
+      {ev && rankings && (
         <>
-          {/* v0 promotes the surest calls from list rows to full cards, which
-              is the right weight for the page's headline content -- the
-              probability becomes a 38px figure instead of a 12px one. Every
-              feature the list row carried comes with it: the since-last-visit
-              delta chip, the injury watch badge, and the link through to the
-              athlete. */}
+          {/* Event band — the dashboard leads with whatever championship is next */}
           <Panel
-            title={t("dashboard.surestCalls.title")}
-            subtitle={t("dashboard.surestCalls.subtitle")}
+            title={t("dashboard.event.title")}
             className="mt-6"
+            action={
+              <Link to="/ultimate" className="label-caps text-terracotta-strong hover:underline">
+                {t("dashboard.event.cta")}
+              </Link>
+            }
+          >
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <div className="dg text-[22px] font-bold tracking-[-0.02em] text-foreground">
+                  {ev.name}
+                </div>
+                <div className="mt-1 text-[13.5px] text-muted-foreground">
+                  {t("dashboard.event.where", {
+                    venue: ev.venue,
+                    city: ev.city,
+                    dates: `${new Date(`${ev.startDate}T00:00:00`).getDate()}–${new Date(`${ev.endDate}T00:00:00`).getDate()} ${new Intl.DateTimeFormat(localeTag(lang), { month: "long" }).format(new Date(`${ev.endDate}T00:00:00`))}`,
+                  })}
+                </div>
+              </div>
+              <div className="text-right">
+                <span className="dg nums block text-[32px] font-bold leading-none text-gold-strong">
+                  {daysTo(ev.startDate)}
+                </span>
+                <span className="label-caps text-muted-foreground">{t("ultimate.stat.days")}</span>
+              </div>
+            </div>
+          </Panel>
+
+          {/* The model's favourites across the world */}
+          <Panel
+            title={t("dashboard.favourites.title")}
+            subtitle={t("dashboard.favourites.subtitle")}
+            className="mt-6"
+            action={
+              <Link to="/track" className="label-caps text-terracotta-strong hover:underline">
+                {t("dashboard.favourites.cta")}
+              </Link>
+            }
           >
             <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
-              {data.topWinners.map((w, i) => (
-                <CallCard key={w.name} winner={w} index={i} delta={deltas[w.name]} />
+              {favourites.slice(0, 9).map((f, i) => (
+                <FavouriteCard key={f.discKey} f={f} index={i} />
               ))}
             </div>
           </Panel>
 
-          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.5fr_1fr]">
-            <LeastSurePanel confidence={data.confidence} />
-
-            <div className="space-y-6">
-              <Panel title={t("dashboard.seasonProgress")}>
-                <div className="flex items-baseline justify-between">
-                  <span className="nums text-[28px] font-semibold leading-none text-foreground">
-                    {progressPct}%
-                  </span>
-                  <span className="nums text-[12px] text-muted-foreground">
-                    {t("dashboard.meetsScored", { done: doneCount, total: totalCount })}
-                  </span>
-                </div>
-                <ProbabilityBar value={progressPct} className="mt-4" trackHeight="h-2" />
-              </Panel>
-
-              <Panel
-                title={t("dashboard.upcomingCalendar")}
-                action={
-                  <Link
-                    to="/schedule"
-                    className="label-caps text-terracotta-strong hover:underline"
+          {/* Where the model's pick isn't the points leader */}
+          {disagreements.length > 0 && (
+            <Panel
+              title={t("dashboard.disagree.title")}
+              subtitle={t("dashboard.disagree.subtitle")}
+              className="mt-6"
+            >
+              <ul className="divide-y divide-border">
+                {disagreements.slice(0, 8).map((d, i) => (
+                  <li
+                    key={d.discKey}
+                    className="stagger-item flex items-center gap-3 py-3"
+                    style={{ "--stagger-i": i } as CSSProperties}
                   >
-                    {t("dashboard.viewFullSchedule")}
-                  </Link>
-                }
-              >
-                <ul className="space-y-2.5">
-                  {data.meets.slice(-5).map((m) => (
-                    <li key={m.n} className="flex items-center gap-3">
-                      <span className={`size-1.5 shrink-0 rounded-full ${dotClass[m.status]}`} />
-                      <span className="nums w-14 text-[12px] text-muted-foreground">{m.date}</span>
-                      <span
-                        className={[
-                          "flex-1 truncate text-[13px]",
-                          m.status === "done" ? "text-muted-foreground" : "text-foreground",
-                          m.status === "next" ? "font-semibold" : "",
-                          m.status === "final" ? "font-semibold text-gold-strong" : "",
-                        ].join(" ")}
-                      >
-                        {m.city}
+                    <Link
+                      to="/discipline/$discKey"
+                      params={{ discKey: d.discKey }}
+                      className="w-40 shrink-0 truncate text-[13.5px] font-medium text-foreground hover:text-terracotta-strong hover:underline"
+                    >
+                      {d.disc}
+                    </Link>
+                    <span className="min-w-0 flex-1 truncate text-[13px]">
+                      <span className="text-muted-foreground">
+                        {t("dashboard.disagree.model")}{" "}
                       </span>
-                      <span className={`label-caps rounded-sm px-1.5 py-1 ${badgeClass[m.status]}`}>
-                        {t(`meet.status.${m.status}`)}
+                      <span className="font-medium text-foreground">{d.modelName}</span>
+                    </span>
+                    <span className="hidden min-w-0 flex-1 truncate text-[13px] sm:block">
+                      <span className="text-muted-foreground">
+                        {t("dashboard.disagree.points")}{" "}
                       </span>
-                    </li>
-                  ))}
-                </ul>
-              </Panel>
-            </div>
-          </div>
+                      <span className="font-medium text-foreground">{d.pointsName}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </Panel>
+          )}
         </>
       )}
 
-      {/* Bottom of the dashboard: the evidence behind every injury flag and
-          every athlete missing from the field. Previously this only existed
-          as a tooltip on a badge. */}
-      {data && <NewsFeed />}
-
-      {/* First-run onboarding + a persistent "About" button to reopen it.
-          Self-contained: manages its own open state and localStorage. */}
+      {ev && rankings && <NewsFeed />}
       <WelcomeLauncher />
     </Shell>
   );

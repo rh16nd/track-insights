@@ -1,15 +1,16 @@
 import { pageHead } from "@/lib/seo";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Shell, PanelSkeleton, ErrorPanel } from "@/components/dl/shell";
-import { DisciplineTable } from "@/components/dl/discipline-table";
-import { usePredictions } from "@/hooks/usePredictions";
+import { WorldRankingTable } from "@/components/dl/world-ranking-table";
+import { useWorldRankings } from "@/hooks/useWorldRankings";
 import { useT } from "@/lib/i18n";
+import { usePageTitle } from "@/lib/use-page-title";
 
 export const Route = createFileRoute("/field")({
   head: () =>
     pageHead(
       "Field events",
-      "Every field discipline at the 2026 Diamond League Final, with each qualified athlete's chance of finishing on the podium.",
+      "The world's best in every field discipline, ranked by World Athletics points or by the model's rating for a championship final podium.",
     ),
   validateSearch: (search: Record<string, unknown>): { disc?: string | undefined } => ({
     disc: typeof search["disc"] === "string" ? (search["disc"] as string) : undefined,
@@ -19,30 +20,26 @@ export const Route = createFileRoute("/field")({
 
 function FieldPage() {
   const { t } = useT();
-  const state = usePredictions();
+  usePageTitle(t("field.title"));
+  const state = useWorldRankings();
   const { disc } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const data = state.status === "ok" ? state.data : undefined;
+  const count = data ? Object.values(data).filter((d) => d.isField).length : undefined;
 
-  // Header persists through loading/error -- see the note in track.tsx.
   return (
     <Shell
       title={t("field.title")}
-      eyebrow={
-        data
-          ? t("field.eyebrow", { n: data.fieldDisciplines.length })
-          : t("common.final2026")
-      }
+      eyebrow={count !== undefined ? t("field.eyebrow", { n: count }) : undefined}
       description={t("field.description")}
-      lastUpdated={data?.lastUpdated}
-      daysToFinal={data?.daysToFinal}
     >
-      {state.status === "loading" && <PanelSkeleton title={t("common.projectedField")} rows={8} />}
+      {state.status === "loading" && <PanelSkeleton title={t("rankings.loading")} rows={10} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
       {data && (
-        <DisciplineTable
-          disciplines={data.fieldDisciplines}
-          activeId={disc ?? data.fieldDisciplines[0]?.id ?? ""}
+        <WorldRankingTable
+          rankings={data}
+          isField={true}
+          activeId={disc ?? ""}
           onActiveChange={(id) => navigate({ search: { disc: id }, replace: true })}
         />
       )}

@@ -71,8 +71,21 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
-              router.invalidate();
-              reset();
+              // A soft reset only recovers a TRANSIENT failure. The causes that
+              // actually land people here are not transient: a route chunk that
+              // 404s after a deploy, or a component that throws deterministically.
+              // Both re-throw the instant the boundary resets, so the button
+              // appeared to do nothing at all -- reported from the live site.
+              //
+              // Try the cheap path first, then reload for real. Only a reload
+              // refetches the module graph, which is the one thing that fixes a
+              // stale chunk, and it is what "Try again" promises.
+              try {
+                router.invalidate();
+                reset();
+              } finally {
+                if (typeof window !== "undefined") window.location.reload();
+              }
             }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >

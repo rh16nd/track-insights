@@ -38,8 +38,13 @@ export const API_IS_LOCAL = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$
  * CDN alongside the app. That takes the server out of the critical path
  * entirely: there is no cold start to wait for, because there is no server.
  *
- * /api/search and /api/athlete/... are deliberately absent — one depends on the
- * query, the other is per-athlete — so they still go to the live API. */
+ * Athlete profiles are snapshotted too, keyed by name rather than listed here
+ * (see ATHLETE_PATH). They are per-athlete rather than one payload, but no less
+ * static — and serving them from the CDN also removes a live World Athletics
+ * GraphQL call that api.py otherwise makes on every single profile view.
+ *
+ * /api/search stays on the live API: its response depends on the query, so
+ * there is no fixed set of files to write. */
 const SNAPSHOT_FILES: Record<string, string> = {
   "/api/predictions": "predictions.json",
   "/api/stats": "stats.json",
@@ -47,9 +52,33 @@ const SNAPSHOT_FILES: Record<string, string> = {
   "/api/world-rankings": "world-rankings.json",
   "/api/news": "news.json",
   "/api/qualification": "qualification.json",
+  "/api/countries": "countries.json",
 };
 
 const DISCIPLINE_PATH = /^\/api\/discipline\/([A-Za-z0-9_]+)$/;
+const ATHLETE_PATH = /^\/api\/athlete\/([A-Za-z0-9_]+)\/(.+)$/;
+const COUNTRY_PATH = /^\/api\/country\/([A-Za-z]{2,3})$/;
+
+/** Filename-safe key for an athlete name. MUST stay identical to
+ * `athlete_slug()` in athletics-predictor/src/build_static_api.py, which names
+ * the files this reads.
+ *
+ * Athlete names carry spaces, apostrophes and accents, and the request path is
+ * percent-encoded, so the name itself makes a poor file name. Both sides fold
+ * it to lowercase ASCII joined by hyphens.
+ *
+ * If the two ever disagreed on some exotic name, the failure is safe rather
+ * than wrong: the file 404s and apiFetch falls back to the live API. It can
+ * never serve a different athlete's profile, because the builder refuses to
+ * write a file whenever two names in one discipline fold to the same slug. */
+function athleteSlug(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 /** Prefer the snapshot in production; prefer the live API in development,
  * where api.py is the source of truth and the checked-in snapshot may be a
@@ -62,7 +91,26 @@ function staticUrlFor(path: string): string | null {
   const file = SNAPSHOT_FILES[path];
   if (file) return `/data/${file}`;
   const m = DISCIPLINE_PATH.exec(path);
-  return m ? `/data/discipline/${m[1]}.json` : null;
+  if (m) return `/data/discipline/${m[1]}.json`;
+  const co = COUNTRY_PATH.exec(path);
+  // Country files are named by the upper-case IOC code the data uses, so a
+  // lower-case URL still finds them.
+  if (co) return `/data/country/${(co[1] ?? "").toUpperCase()}.json`;
+
+  const a = ATHLETE_PATH.exec(path);
+  if (a) {
+    let name: string;
+    try {
+      // The caller encoded this; a malformed sequence is not worth throwing
+      // over, so fall through to the live API and let it answer.
+      name = decodeURIComponent(a[2] ?? "");
+    } catch {
+      return null;
+    }
+    const slug = athleteSlug(name);
+    return slug ? `/data/athlete/${a[1]}/${slug}.json` : null;
+  }
+  return null;
 }
 
 /** Wake the API in the background, once per page session.

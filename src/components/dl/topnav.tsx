@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { PodiumCallMark } from "./logo";
 import { AthleteSearch } from "./athlete-search";
 import { LanguageSwitcher } from "./language-switcher";
+import { localizeDate } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 
 // "How it works" is deliberately NOT here — it's an explainer, not a section
@@ -12,7 +13,10 @@ const nav = [
   { to: "/dashboard", labelKey: "nav.dashboard" },
   { to: "/track", labelKey: "nav.track" },
   { to: "/field", labelKey: "nav.field" },
-  { to: "/qualification", labelKey: "nav.qualifying" },
+  // The Diamond League is over; its Qualifying standings are replaced in the
+  // primary nav by the next big championship, the Ultimate. The /qualification
+  // route is kept for when the DL season returns.
+  { to: "/ultimate", labelKey: "nav.ultimate" },
   { to: "/stats", labelKey: "nav.stats" },
   { to: "/schedule", labelKey: "nav.schedule" },
 ] as const;
@@ -62,7 +66,7 @@ export function TopNav({
   // visible window (confirmed live: Projections, the rightmost item, was
   // fully off-screen with no way to tell which page you were even on).
   // Scroll the current page's own link into view on every route change.
-  const { t } = useT();
+  const { t, lang } = useT();
   const activeRef = useRef<HTMLAnchorElement>(null);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [searchOpen, setSearchOpen] = useState(false);
@@ -145,7 +149,7 @@ export function TopNav({
           <LanguageSwitcher className="shrink-0" />
           {lastUpdated && (
             <span className="nums hidden shrink-0 whitespace-nowrap text-[11.5px] text-muted-foreground xl:block">
-              {t("nav.updated", { date: lastUpdated, days: daysToFinal ?? 0 })}
+              {t("nav.updated", { date: localizeDate(lang, lastUpdated), days: daysToFinal ?? 0 })}
             </span>
           )}
           {/* On a phone the switcher + search take the right side, so the Live

@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { Panel, ProbabilityBar } from "@/components/dl/shell";
 import { startNounKey } from "@/lib/dl-data";
+import { localizeDate, localizeMonth } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 import type { AthleteAnalytics, CareerSeason, SeasonForm } from "@/lib/dl-data";
 
@@ -352,12 +353,15 @@ function SeasonShapeChart({
     races: number;
   };
 }) {
-  const { t } = useT();
+  const { t, lang } = useT();
   const peak = Math.max(...shape.byMonth.map((m) => m.races), 1);
   return (
     <div>
       <div className="flex items-end gap-2" style={{ height: 120 }}>
         {shape.byMonth.map((m) => {
+          // Compare on the RAW English month, never the translated one: both
+          // sides come from the API in English, and localising before this test
+          // would silently drop the gold season-best bar on the French site.
           const isBest = m.month === shape.bestMonth;
           return (
             <div key={m.month} className="flex flex-1 flex-col items-center justify-end gap-1.5">
@@ -379,12 +383,14 @@ function SeasonShapeChart({
                     : "linear-gradient(180deg, var(--terracotta), var(--brick))",
                 }}
                 title={t(isBest ? "aa.monthTitleBest" : "aa.monthTitle", {
-                  month: m.month,
+                  month: localizeMonth(lang, m.month, "long"),
                   n: m.races,
                   noun: t(startNounKey(isField, m.races)),
                 })}
               />
-              <span className="label-caps text-muted-foreground">{m.month}</span>
+              <span className="label-caps text-muted-foreground">
+                {localizeMonth(lang, m.month)}
+              </span>
             </div>
           );
         })}
@@ -393,13 +399,15 @@ function SeasonShapeChart({
         {t("aa.shapeNote", {
           n: shape.races,
           noun: t(startNounKey(isField, shape.races)),
-          first: shape.firstRace,
-          last: shape.lastRace,
+          first: localizeDate(lang, shape.firstRace),
+          last: localizeDate(lang, shape.lastRace),
         })}
         {shape.bestMonth && (
           <>
             {t("aa.shapeBestBefore")}
-            <span className="font-medium text-foreground">{shape.bestMonth}</span>
+            <span className="font-medium text-foreground">
+              {localizeMonth(lang, shape.bestMonth, "long")}
+            </span>
             {t("aa.shapeBestAfter")}
           </>
         )}

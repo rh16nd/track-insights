@@ -166,6 +166,12 @@ export type AthleteProfile = {
   injuryUrl: string | null;
   history: MeetMark[];
   historyYear: number | null;
+  /** True when the season had too many races to plot one by one, so the chart
+   * shows each month's best instead of every meeting. */
+  historyCondensed?: boolean;
+  /** Races actually run this season — more than `history.length` whenever
+   * historyCondensed is true. */
+  historyRaces?: number;
   h2h: H2hMatchup[];
   /** Season-by-season bests. The other axis from `history`, which is one
    * season race by race. Empty for an athlete with nothing on record. */
@@ -710,3 +716,297 @@ export type DisciplineReport = {
   scores: FieldScore[];
   fieldAnalysis: FieldAnalysis | null;
 };
+
+// --- World Athletics Ultimate Championship (Budapest, 11-13 Sep 2026) --------
+// The site's focus now the Diamond League is over. From /api/ultimate
+// (src/ultimate_scraper.py). Event facts + the direct qualifiers we already
+// have (the DL Final winners); the official timetable/field/results fill in
+// once World Athletics publishes them (`fieldPublished`).
+
+/** One athlete holding a direct slot at the Ultimate — currently the 2026
+ * Diamond League Final winners, the qualifiers we can name before WA's full
+ * field is out. */
+export type UltimateQualifier = {
+  discipline: string;
+  athlete_name: string;
+  nationality: string;
+};
+
+export type UltimateTimetablePhase = {
+  phaseName: string;
+  sexName: string | null;
+  phaseDateAndTime: string | null;
+  phaseSessionName: string | null;
+  isStartlistPublished: boolean;
+  isResultPublished: boolean;
+  discipline: { name: string | null; isTrack: boolean; isField: boolean } | null;
+};
+
+export type UltimateResultRow = {
+  discipline: string;
+  athlete_name: string;
+  place: string;
+  mark: string | null;
+  nationality: string | null;
+};
+
+/** One champion holding a direct slot, as World Athletics names them. */
+export type UltimateNamedQualifier = {
+  /** Which direct route earned the slot. */
+  route: "olympic" | "world";
+  /** WA's own wording for that route, e.g. "Qualified by winning in Paris". */
+  routeNote: string;
+  name: string;
+  /** WA's event wording ("POLE VAULT"). Carries no gender -- their card
+   * doesn't either, which is why discKey is resolved separately. */
+  disciplineLabel: string | null;
+  nationality: string | null;
+  profileUrl: string | null;
+  waId: number | null;
+  /** Our discipline key, when the athlete could be matched beyond doubt.
+   * Null for a sprint double, or an event we don't cover (the hammer is not
+   * a Diamond League discipline), in which case they are shown unlinked. */
+  discKey: string | null;
+  /** Our own spelling of the name, set whenever discKey is. The athlete route
+   * is keyed on it, and it differs from WA's card often enough to matter
+   * ("MONDO DUPLANTIS" vs "Armand DUPLANTIS"). */
+  linkName: string | null;
+};
+
+/** An athlete a nation actually ran in a relay, from the qualifying meet.
+ * `rounds` is how many rounds they appeared in, which is what separates a
+ * fixed squad member from a one-round substitution. */
+export type RelaySquadMember = {
+  name: string;
+  waId: number | null;
+  rounds: number;
+  /** Which legs they ran (1-4). Usually one; more if they moved. */
+  legs: number[];
+  /** Years of the meets they appeared in, most recent first. An athlete in
+   * more than one is a fixture of the squad rather than a one-off pick. */
+  meets: number[];
+};
+
+/** One nation in a mixed relay, as it finished at the qualifying meet. */
+export type UltimateRelayTeam = {
+  nationality: string | null;
+  /** World Athletics' own name for the team ("Great Britain & NI"). */
+  country: string | null;
+  /** Null when the team did not finish, or holds a host place. */
+  place: number | null;
+  /** The time, or a status word ("DNF"). */
+  mark: string | null;
+  qualified: boolean;
+  squad: RelaySquadMember[];
+};
+
+export type UltimateRelay = {
+  event: string;
+  teams: UltimateRelayTeam[];
+  /** Nations holding a host place without racing the qualifier. */
+  wildcards: string[];
+  /** How many places the qualifying meet awarded. */
+  qualifyPlaces: number;
+  qualifier: { name: string; city: string; country: string; date: string };
+};
+
+/** One Ultimate event, ranked by the model.
+ *
+ * The FIELD here is real, not projected: World Athletics publishes the
+ * Ultimate's qualification list through their own API, so every athlete below
+ * is one they say has qualified, with the route they got in by (a wild card
+ * for the Olympic, world and Diamond League champions; World Athletics
+ * Rankings for the rest). Only the ordering is the model's. */
+export type UltimateProjection = {
+  discKey: string;
+  disciplineLabel: string;
+  sex: string;
+  /** Places in the event, per World Athletics: 16 on the track, 8 in the field. */
+  places: number | null;
+  qualified: number;
+  scored: number;
+  /** Qualified athletes with no 2026 mark on file, so the model has nothing to
+   * score them on. NAMED rather than counted — a missing favourite is the
+   * difference between a projection worth reading and one that is quietly
+   * wrong. */
+  unscored: string[];
+  athletes: {
+    rank: number;
+    name: string;
+    nat: string | null;
+    qualifiedBy: string | null;
+    rankingScore: number | null;
+    podiumChance: number;
+    /** Set by api.py from injury_flags.json when the injury check has matched
+     * a headline for this athlete. Flagged, never dropped: this field is
+     * World Athletics' published qualification list, so removing a row would
+     * contradict what the page says it is showing. */
+    injuryWatch?: boolean;
+    injuryStatus?: "watch" | "remove";
+    injuryReason?: string | null;
+    injuryUrl?: string | null;
+  }[];
+};
+
+export type UltimateEvent = {
+  competitionId: number;
+  name: string;
+  shortName: string;
+  venue: string;
+  city: string;
+  country: string;
+  startDate: string;
+  endDate: string;
+  timezone: string;
+  eventCount: number;
+  prizeUSD: number;
+  trackFieldSize: number;
+  fieldFieldSize: number;
+  sessions: number;
+  /** True once WA's official start lists are up. Until then the page shows the
+   * event facts and the direct qualifiers, not a field we don't have. */
+  fieldPublished: boolean;
+  resultsAvailable: boolean;
+  dlFinalQualifiers: UltimateQualifier[];
+  /** Champions World Athletics has NAMED as holding a direct slot: the 2024
+   * Olympic champions and the 2025 World champions, read from the event
+   * minisite. Together with dlFinalQualifiers these are the three direct
+   * routes into the Ultimate; the rest of each field comes from the World
+   * Athletics Rankings, which are not published yet. */
+  namedQualifiers: UltimateNamedQualifier[];
+  /** The two MIXED relays and who qualified. They are the one part of the
+   * championship the model says nothing about: the Diamond League has no
+   * relays, so there is no history to learn a national team from. */
+  relays: UltimateRelay[];
+  /** The model's projected podium per event, from src/ultimate_predictions.py.
+   * Empty until that has been run. */
+  projections: UltimateProjection[];
+  timetable: UltimateTimetablePhase[];
+  results: UltimateResultRow[];
+};
+
+// --- Countries (/api/country/<code>, /api/countries) ----------------------
+// Built by src/country_index.py. The site had no country entity before this,
+// which is why the Ultimate's two MIXED RELAYS had nowhere to live: a relay
+// result belongs to a nation, not to an athlete.
+
+/** One athlete on a country page. Ordered by `score` (World Athletics Results
+ * Score), never by podium probability -- those are per-discipline and do not
+ * compare across events, and this is the one view that puts a shot putter next
+ * to a 400m runner. */
+export type CountryAthlete = {
+  name: string;
+  discKey: string;
+  disc: string;
+  mark: string | null;
+  score: number | null;
+  worldRank: number | null;
+  profileUrl: string | null;
+  /** Headshot for the three athletes the country page leads with, attached
+   * by the API from the warmed card cache. */
+  photoUrl?: string | null;
+  photoCredit?: { author?: string | null; license?: string | null } | null;
+  photoFocus?: { x: number; y: number } | null;
+};
+
+/** A direct place at the Ultimate held by someone from this country. */
+export type CountryQualifier = {
+  /** "olympic" and "world" are the named champions; "dl" is a Diamond League
+   * Final winner. */
+  route: "olympic" | "world" | "dl";
+  name: string;
+  disciplineLabel: string | null;
+  discKey: string | null;
+};
+
+/** This nation in one of the two mixed relays. */
+export type CountryRelay = {
+  event: string;
+  /** Finishing place at the World Athletics Relays, the qualifying meet. Null
+   * for a host place, which was not raced for. */
+  place: number | null;
+  /** The qualifying time, or a status word ("DNF"). Null for a host place. */
+  mark: string | null;
+  qualified: boolean;
+  host: boolean;
+  /** Empty for a host place, which was not raced for. */
+  squad: RelaySquadMember[];
+};
+
+export type Country = {
+  code: string;
+  name: string;
+  area: string | null;
+  athleteCount: number;
+  disciplineCount: number;
+  topScore: number;
+  athletes: CountryAthlete[];
+  ultimateQualifiers: CountryQualifier[];
+  relays: CountryRelay[];
+};
+
+/** A country as it appears in search results. */
+export type CountryHit = {
+  code: string;
+  name: string;
+  area: string | null;
+  athleteCount: number;
+  disciplineCount: number;
+};
+
+// --- World rankings (Track/Field top-20, points vs model) --------------------
+// From /api/world-rankings (src/world_rankings.py). Two orderings per
+// discipline the UI toggles between: World Athletics performance points, and
+// the model's rating. Season data we already scrape, so it needs no official
+// start list.
+export type WorldRankingRow = {
+  rank: number;
+  name: string;
+  nat: string | null;
+  /** Season-best mark, as displayed. */
+  mark: string | null;
+  /** World Athletics points for that season best (the "by points" ordering). */
+  score: number | null;
+  /** The model's rating as a percentage (the "by model" ordering).
+   *
+   * NOT a read of who is strongest in the world, and must not be labelled as
+   * one. The model was trained on Diamond League Final podiums and every form
+   * feature it uses comes from the DL circuit, so an athlete who skipped the
+   * circuit rates near zero however fast they have run: across the 32 top-20s
+   * the mean rating climbs 1.2% -> 28.8% from 0 to 5 DL meetings while the
+   * mean World Athletics score hardly moves. That is why `dlRaces` sits next
+   * to it in the table. */
+  ratingPct: number;
+  /** Diamond League meetings contested in 2026. Still what the model's
+   * meets_count feature reads, but NOT what the table shows: the Diamond
+   * League contests each discipline at only a few of its meetings — the men's
+   * 400m hurdles at 5 of the 14 in 2026 — so a 0 means "no Diamond League
+   * 400mH", not "did not run". 28% of the athletes in the top-20s read 0. */
+  dlRaces: number | null;
+  /** Meets we can see this athlete contest this discipline, across the season
+   * toplist, the Diamond League meeting log and the wider race log
+   * (src/season_activity.py). A FLOOR, not a census — none of the three covers
+   * every meeting, so a 1 means one meeting we can see rather than one
+   * meeting run. Shown so a rating built on a single visible outing does not
+   * read like one built on a season: Rai Benjamin is third in the 400mH on
+   * exactly one. */
+  racesOnRecord: number | null;
+  profileUrl: string | null;
+  /** Headshot, attached by the API from the warmed card cache
+   * (src/warm_card_photos.py) for the top-rated athlete in each discipline
+   * only — those are the ones that appear on a card. Absent everywhere else,
+   * and absent for the ~25% of athletes no free photo exists for, which is a
+   * fact about the athlete rather than a failed lookup. */
+  photoUrl?: string | null;
+  photoCredit?: { author?: string | null; license?: string | null } | null;
+  photoFocus?: { x: number; y: number } | null;
+};
+
+export type DisciplineRankings = {
+  isField: boolean;
+  model: WorldRankingRow[];
+  points: WorldRankingRow[];
+};
+
+/** discipline key -> its two ranked lists. */
+export type WorldRankings = Record<string, DisciplineRankings>;

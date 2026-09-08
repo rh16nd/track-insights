@@ -1,0 +1,183 @@
+# Area-weighted colours of every flag in public/flags/, one line per file:
+#   <iso2> <hex>:<percent of the flag> ...   (largest first, >=6% only)
+#   ... max:<hex>                            the flag's single brightest pixel
+#   ... edges:<h>/<v>/<d> centre:<n>          how the flag is BUILT
+#
+# The brightest pixel is what decides how much of the flag can be shown behind
+# the head band's text: it is the worst case the scrim has to survive, and for
+# most nations it is plain white.
+#
+# `edges` is where the flag's edge energy points -- horizontal edges, vertical
+# edges, diagonal edges, normalised to sum to 1. It is a Sobel-ish gradient over
+# the same raster, binned by orientation, so Germany reads 1/0/0 (nothing but
+# horizontal edges), France 0/1/0, Jamaica 0.06/0.00/0.94, and a Nordic cross
+# reads ~0.58/0.41/0.01 -- both directions strong, no diagonals, which is a
+# signature no other kind of flag has. `centre` is how far the middle of the
+# flag is from its outer ring in RGB, which is what finds a device on a plain
+# field: Japan 337, Korea 233, against 20 for the United States.
+#
+# The RULES that turn these into a motif live in make-flag-palette.py, not here.
+# This file is measurements; that file is decisions.
+#
+# Measured, not eyeballed: each SVG was drawn into a 160x120 canvas and its
+# pixels counted, so a big field of colour outranks a fiddly coat of arms.
+# Reading the SVG fills instead would rank Spain's shield above its red, and
+# would have no answer at all for the flags that use gradients.
+#
+# To regenerate (only needed when a flag file changes), run the site and
+# paste this into the browser console:
+#
+#   const cv = document.createElement("canvas"); cv.width = 160; cv.height = 120;
+#   const ctx = cv.getContext("2d", { willReadFrequently: true });
+#   const hex = (n) => n.toString(16).padStart(2, "0");
+#   for (const c of CODES) {                       // the iso2 list below
+#     const img = new Image(); img.src = "/flags/" + c + ".svg"; await img.decode();
+#     ctx.clearRect(0, 0, 160, 120); ctx.drawImage(img, 0, 0, 160, 120);
+#     const d = ctx.getImageData(0, 0, 160, 120).data, bins = new Map(); let n = 0;
+#     for (let i = 0; i < d.length; i += 4) {
+#       if (d[i + 3] < 128) continue;
+#       const k = ((d[i] >> 4) << 8) | ((d[i+1] >> 4) << 4) | (d[i+2] >> 4);
+#       const b = bins.get(k) || [0,0,0,0];
+#       b[0] += d[i]; b[1] += d[i+1]; b[2] += d[i+2]; b[3]++; bins.set(k, b); n++;
+#     }
+#     ...top 4 bins by count, averaged, as hex:percent
+#   }
+#
+# The 4-bit-per-channel bins collapse anti-aliased edges into the colour they
+# were drawn from; each bin's hex is the mean of the real pixels in it.
+ad #0018a8:32 #d0103a:32 #fedf00:26 max:#ffffff edges:0.14/0.659/0.202 centre:138
+ae #ff0000:34 #00732f:22 #ffffff:22 #000001:22 max:#ffffff edges:0.75/0.242/0.008 centre:264
+al #ff0000:85 #000001:10 max:#ff0000 edges:0.287/0.144/0.569 centre:169
+am #d90012:33 #0033a0:33 #f2a800:33 max:#f2a800 edges:1/0/0 centre:202
+ar #74acdf:67 #ffffff:29 max:#ffffff edges:0.685/0.128/0.187 centre:102
+at #c8102e:67 #ffffff:33 max:#ffffff edges:1/0/0 centre:236
+au #00008b:73 #ffffff:11 #ff0000:9 max:#ffffff edges:0.302/0.239/0.459 centre:18
+az #3f9c35:33 #00b9e4:33 #ed2939:30 max:#ffffff edges:0.719/0.09/0.19 centre:167
+ba #000099:55 #ffcc00:37 max:#ffffff edges:0.179/0.314/0.507 centre:25
+bb #00267f:66 #ffc726:28 max:#ffc726 edges:0.083/0.762/0.155 centre:161
+be #000001:33 #f31830:33 #ffd90c:33 max:#ffd90c edges:0/1/0 centre:182
+bf #de0000:45 #35a100:43 #fff300:10 max:#fff300 edges:0.451/0.159/0.39 centre:133
+bg #ffffff:33 #00966e:33 #d62612:33 max:#ffffff edges:1/0/0 centre:174
+bh #ce1126:76 #ffffff:23 max:#ffffff edges:0.387/0.031/0.582 centre:114
+bi #ffffff:39 #cf0921:35 #18b637:21 max:#ffffff edges:0.276/0.09/0.634 centre:173
+bj #319400:39 #ffd600:30 #de2110:30 max:#ffd600 edges:0.388/0.603/0.008 centre:51
+bm #ce132b:72 #fefefe:11 max:#ffffff edges:0.301/0.258/0.441 centre:41
+br #229e45:60 #f8e509:21 #2b49a3:13 max:#ffffff edges:0.256/0.129/0.614 centre:119
+bs #08ced6:51 #000001:30 #ffe900:16 max:#ffe900 edges:0.593/0.013/0.394 centre:145
+bw #00cbff:67 #000001:22 #ffffff:10 max:#ffffff edges:1/0/0 centre:178
+by #ce1720:62 #007c30:28 max:#ffffff edges:0.213/0.231/0.556 centre:76
+ca #d52b1e:55 #ffffff:42 max:#ffffff edges:0.119/0.662/0.218 centre:13
+ch #ff0000:84 #ffffff:14 max:#ffffff edges:0.482/0.482/0.036 centre:280
+ci #ff9a00:33 #ffffff:33 #00cd00:33 max:#ffffff edges:0/1/0 centre:216
+cl #d52b1e:50 #ffffff:33 #0039a6:17 max:#ffffff edges:0.522/0.293/0.185 centre:44
+cm #fcd116:34 #007a5e:33 #ce1126:31 max:#fcd116 edges:0.057/0.812/0.131 centre:114
+cn #ee1c25:96 max:#ffff00 edges:0.287/0.293/0.42 centre:1
+co #ffe800:50 #00148e:25 #da0010:25 max:#ffe800 edges:1/0/0 centre:98
+cr #ffffff:33 #0000b4:32 #d90000:32 max:#ffffff edges:1/0/0 centre:189
+cu #002a8f:42 #cb1515:29 #ffffff:26 max:#ffffff edges:0.675/0.042/0.283 centre:97
+cv #081873:72 #ffffff:14 #de3929:7 max:#ffffff edges:0.779/0.085/0.136 centre:123
+cy #ffffff:87 #d47600:9 max:#ffffff edges:0.355/0.157/0.489 centre:153
+cz #ffffff:36 #d7141a:36 #11457e:28 max:#ffffff edges:0.346/0/0.654 centre:25
+de #000001:33 #ff0000:33 #ffcc00:33 max:#ffcc00 edges:1/0/0 centre:121
+dj #6699ff:36 #00cc00:35 #fffefe:26 max:#fffefe edges:0.31/0.065/0.625 centre:20
+dk #c8102e:75 #ffffff:22 max:#ffffff edges:0.58/0.413/0.007 centre:142
+dm #108c00:54 #e72910:11 #ffffff:9 #ffd600:9 max:#ffffff edges:0.484/0.332/0.184 centre:168
+do #ce1126:34 #002d62:34 #ffffff:30 max:#ffffff edges:0.495/0.356/0.15 centre:174
+dz #ffffff:47 #006233:45 max:#ffffff edges:0.215/0.41/0.375 centre:71
+ec #ffe800:36 #da0010:22 #00148e:14 max:#ffffff edges:0.307/0.335/0.359 centre:96
+ee #1791ff:33 #000001:33 #ffffff:33 max:#ffffff edges:1/0/0 centre:255
+eg #ce1126:33 #000001:33 #ffffff:29 max:#ffffff edges:0.791/0.131/0.078 centre:234
+er #be0027:37 #239e46:25 #b4d7f4:25 #f3e295:7 max:#f3e295 edges:0.319/0.207/0.474 centre:111
+es #aa151b:51 #f1bf00:42 max:#cccccc edges:0.56/0.162/0.278 centre:109
+et #298c08:34 #ef2118:32 #ffc621:23 #006bc6:7 max:#ffc621 edges:0.376/0.189/0.434 centre:126
+fi #ffffff:56 #002f6c:41 max:#ffffff edges:0.592/0.4/0.008 centre:224
+fj #68bfe5:64 #c8102e:9 #fefefe:9 max:#ffffff edges:0.331/0.247/0.422 centre:7
+fr #000091:33 #e1000f:33 #ffffff:33 max:#ffffff edges:0/1/0 centre:250
+ga #36a100:33 #ffe700:33 #006dbc:33 max:#ffe700 edges:1/0/0 centre:192
+gb #c8102e:40 #ffffff:33 #012169:20 max:#ffffff edges:0.308/0.199/0.493 centre:95
+gd #ce1126:40 #fcd116:28 #007a5e:25 max:#fcd116 edges:0.308/0.286/0.406 centre:98
+ge #ffffff:62 #ff0000:36 max:#ffffff edges:0.525/0.428/0.047 centre:214
+gh #ce1126:33 #006b3f:33 #fcd116:30 max:#fcd116 edges:0.685/0.1/0.215 centre:89
+gm #000099:28 #ff0000:28 #009900:28 #ffffff:13 max:#ffffff edges:1/0/0 centre:153
+gn #ff0000:33 #009900:33 #ffff00:33 max:#ffff00 edges:0/1/0 centre:161
+gr #0d5eaf:54 #ffffff:41 max:#ffffff edges:0.881/0.11/0.009 centre:46
+gt #4997d0:66 #ffffff:28 max:#ffffff edges:0.104/0.562/0.334 centre:115
+gy #399408:51 #de2110:18 #ffde08:17 #fffffe:6 max:#ffffff edges:0.312/0.007/0.681 centre:144
+hr #ff0000:33 #171796:32 #ffffff:28 max:#ffffff edges:0.504/0.237/0.258 centre:146
+ht #00209f:47 #d21034:47 max:#ffffff edges:0.494/0.22/0.286 centre:73
+hu #d43516:33 #ffffff:33 #388d00:33 max:#ffffff edges:1/0/0 centre:230
+ie #009a49:33 #ff7900:33 #ffffff:33 max:#ffffff edges:0/1/0 centre:205
+il #ffffff:67 #0038b8:28 max:#ffffff edges:0.725/0.076/0.199 centre:11
+in #ff9933:33 #128807:33 #ffffff:30 max:#ffffff edges:0.625/0.105/0.271 centre:164
+ir #da0000:31 #ffffff:30 #239f40:28 max:#ffffff edges:0.395/0.255/0.349 centre:178
+is #003897:63 #d72828:17 #ffffff:15 max:#ffffff edges:0.582/0.41/0.008 centre:137
+it #009246:33 #ce2b37:33 #ffffff:33 max:#ffffff edges:0/1/0 centre:216
+jm #ffcc00:32 #009900:32 #000001:32 max:#ffcc00 edges:0.061/0.002/0.937 centre:106
+jp #ffffff:77 #bc002d:22 max:#ffffff edges:0.229/0.23/0.54 centre:337
+ke #000001:30 #bb0000:29 #006600:29 #ffffff:10 max:#ffffff edges:0.592/0.226/0.181 centre:133
+kp #c60000:45 #3e5698:35 #ffffff:15 max:#ffffff edges:0.731/0.084/0.185 centre:108
+kr #ffffff:74 #010101:7 #cd2e3a:7 #0047a0:7 max:#ffffff edges:0.095/0.143/0.761 centre:233
+ky #000066:57 #c8102e:10 #ffffff:9 max:#ffffff edges:0.3/0.205/0.495 centre:17
+kz #00abc2:81 #ffec2d:7 max:#ffec2d edges:0.247/0.265/0.489 centre:121
+lb #ee161f:50 #ffffff:39 #00a850:8 max:#ffffff edges:0.598/0.079/0.323 centre:195
+lc #65cfff:78 #ffce00:10 max:#ffffff edges:0.145/0.287/0.569 centre:140
+lk #8d2029:40 #ffb700:27 #005641:12 #ff5b00:12 max:#ffb700 edges:0.304/0.477/0.219 centre:19
+lr #cc0000:43 #ffffff:38 #000066:13 max:#ffffff edges:0.906/0.045/0.049 centre:59
+ls #ffffff:36 #00209f:30 #009543:30 max:#ffffff edges:0.609/0.154/0.238 centre:153
+lt #006a44:33 #fdb913:33 #c1272d:33 max:#fdb913 edges:1/0/0 centre:168
+lu #ed2939:33 #ffffff:33 #00a1de:33 max:#ffffff edges:1/0/0 centre:173
+lv #981e32:80 #ffffff:20 max:#ffffff edges:1/0/0 centre:157
+ma #c1272d:98 max:#c1272d edges:0.259/0.242/0.498 centre:29
+md #de2110:31 #00319c:31 #ffde00:17 max:#ffff00 edges:0.155/0.447/0.398 centre:71
+me #c40308:68 #d3ae3b:21 max:#d4af3a edges:0.365/0.332/0.304 centre:61
+mu #ee2737:25 #151f6d:25 #ffcd00:25 #00a04d:25 max:#ffcd00 edges:1/0/0 centre:26
+mx #006847:33 #ce1126:33 #ffffff:28 max:#ffffff edges:0.116/0.611/0.274 centre:169
+my #cc0000:33 #ffffff:32 #000066:24 max:#ffffff edges:0.851/0.067/0.082 centre:30
+mz #ffca00:27 #009a00:26 #ff0000:21 #000001:18 max:#ffffff edges:0.687/0.03/0.283 centre:106
+na #c70000:35 #38a100:29 #3662a2:24 #fffffe:7 max:#ffffff edges:0.183/0.065/0.751 centre:108
+ne #e05206:38 #0db02b:33 #ffffff:28 max:#ffffff edges:0.82/0.059/0.121 centre:126
+ng #008753:66 #ffffff:33 max:#ffffff edges:0/1/0 centre:242
+nl #ae1c28:33 #ffffff:33 #21468b:33 max:#ffffff edges:1/0/0 centre:223
+no #ed2939:61 #002664:19 #ffffff:17 max:#ffffff edges:0.582/0.41/0.008 centre:116
+nz #00247d:73 #c8102e:10 #fffeff:7 max:#ffffff edges:0.295/0.218/0.487 centre:9
+om #ef2d29:49 #009025:24 #ffffff:23 max:#ffffff edges:0.549/0.205/0.245 centre:103
+pa #ffffff:46 #0000ab:28 #db0000:24 max:#ffffff edges:0.445/0.343/0.212 centre:13
+pe #d91023:66 #ffffff:33 max:#ffffff edges:0/1/0 centre:240
+ph #0038a8:33 #ce1126:33 #ffffff:25 max:#ffffff edges:0.305/0.098/0.598 centre:75
+pk #0c590b:72 #ffffff:26 max:#ffffff edges:0.155/0.488/0.357 centre:16
+pl #ffffff:50 #dc143c:50 max:#ffffff edges:1/0/0 centre:7
+pr #ed0000:43 #0050f0:29 #ffffff:26 max:#ffffff edges:0.647/0.035/0.318 centre:132
+pt #ff0000:56 #006600:34 max:#ffffff edges:0.247/0.322/0.431 centre:104
+py #d52b1e:33 #0038a8:33 #ffffff:30 max:#ffffff edges:0.693/0.079/0.228 centre:191
+qa #8d1b3d:66 #ffffff:31 max:#ffffff edges:0.562/0.035/0.404 centre:115
+ro #00319c:33 #de2110:33 #ffde00:33 max:#ffde00 edges:0/1/0 centre:183
+rs #ffffff:33 #c6363c:31 #0c4076:24 max:#ffffff edges:0.384/0.271/0.345 centre:76
+ru #ffffff:33 #0039a6:33 #d52b1e:33 max:#ffffff edges:1/0/0 centre:187
+rw #00a1de:47 #fad201:25 #20603d:25 max:#fad201 edges:0.754/0.087/0.159 centre:94
+sa #165d31:88 max:#ffffff edges:0.306/0.288/0.406 centre:86
+se #005293:68 #fecb00:32 max:#fecb00 edges:0.585/0.409/0.007 centre:158
+si #0000bf:34 #d50000:33 #ffffff:31 max:#ffffff edges:0.628/0.159/0.213 centre:194
+sk #ee1c25:39 #ffffff:33 #0b4ea2:25 max:#ffffff edges:0.506/0.251/0.243 centre:98
+sn #0b7226:36 #bc0000:33 #ffff00:28 max:#ffff00 edges:0.099/0.671/0.23 centre:120
+ss #0f47af:29 #078930:24 #000001:24 #da121a:13 max:#ffffff edges:0.696/0.052/0.252 centre:104
+sv #0f47af:67 #ffffff:29 max:#ffffff edges:0.694/0.106/0.2 centre:188
+th #a51931:33 #2d2a4a:33 #f4f5f8:32 max:#f4f5f8 edges:1/0/0 centre:102
+tn #e70013:88 #ffffff:9 max:#ffffff edges:0.273/0.219/0.507 centre:220
+to #c10000:86 #ffffff:13 max:#ffffff edges:0.496/0.444/0.06 centre:52
+tr #e30a17:92 #ffffff:6 max:#ffffff edges:0.3/0.191/0.51 centre:68
+tt #e00000:72 #000001:18 #fffefe:7 max:#ffffff edges:0/0/1 centre:81
+tw #ff0000:72 #000095:24 max:#ffffff edges:0.306/0.255/0.44 centre:20
+tz #000001:30 #009900:28 #0099ff:28 #ffff00:11 max:#ffff00 edges:0.149/0/0.851 centre:97
+ua #0057b8:50 #ffd700:50 max:#ffd700 edges:1/0/0 centre:8
+ug #ffe700:33 #000001:31 #de3908:30 max:#ffffff edges:0.703/0.093/0.205 centre:92
+us #bd3d44:34 #ffffff:32 #192f5d:23 max:#ffffff edges:0.723/0.142/0.135 centre:20
+uy #ffffff:57 #0038a8:33 max:#ffffff edges:0.798/0.077/0.125 centre:66
+uz #ffffff:32 #1eb53a:32 #0099b5:30 max:#ffffff edges:0.806/0.086/0.107 centre:205
+vc #f4f100:45 #199a00:29 #0058aa:23 max:#f4f100 edges:0.011/0.67/0.319 centre:105
+ve #ffcc00:33 #cf142b:33 #00247d:31 max:#ffffff edges:0.691/0.152/0.158 centre:180
+vg #000066:57 #c8102e:9 #fefefe:8 max:#ffffff edges:0.28/0.254/0.466 centre:25
+vi #ffffff:69 #f4c53d:7 max:#ffffff edges:0.179/0.355/0.467 centre:182
+ws #ce1126:75 #002b7f:23 max:#ffffff edges:0.359/0.333/0.309 centre:5
+za #007847:33 #000c8a:19 #e1392d:19 #ffffff:11 max:#ffffff edges:0.467/0.002/0.531 centre:76
+zm #198a00:70 #ef7d00:9 #000001:8 #de2010:8 max:#ef7d00 edges:0.221/0.594/0.186 centre:9
+zw #006400:25 #ffd200:21 #ffffff:20 #d40000:18 max:#ffffff edges:0.467/0.056/0.476 centre:88

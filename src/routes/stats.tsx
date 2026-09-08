@@ -16,6 +16,8 @@ import type { Performance } from "@/lib/dl-data";
 import { useStats } from "@/hooks/useStats";
 import { DepthLadder } from "@/components/dl/depth-ladder";
 import { HeadFigure } from "@/components/dl/shell";
+import { localeTag } from "@/lib/dates";
+import { usePageTitle } from "@/lib/use-page-title";
 
 export const Route = createFileRoute("/stats")({
   head: () =>
@@ -54,7 +56,8 @@ function scorePercent(score: number, min: number, max: number): number {
 }
 
 function StatsPage() {
-  const { t } = useT();
+  const { t, lang } = useT();
+  usePageTitle(t("stats.title"));
   const state = useStats();
   const data = state.status === "ok" ? state.data : undefined;
   const [filter, setFilter] = useState<Filter>("all");
@@ -74,7 +77,7 @@ function StatsPage() {
         data && scale
           ? t("stats.eyebrow", {
               season: data.season,
-              rows: scale.rows.toLocaleString(),
+              rows: scale.rows.toLocaleString(localeTag(lang)),
               min: scale.min,
               max: scale.max,
             })
@@ -84,11 +87,11 @@ function StatsPage() {
       figures={
         <>
           <HeadFigure
-            value={scale ? scale.rows.toLocaleString() : "—"}
+            value={scale ? scale.rows.toLocaleString(localeTag(lang)) : "—"}
             label={t("stats.figMarksScored")}
           />
           <HeadFigure
-            value={scale ? scale.median.toLocaleString() : "—"}
+            value={scale ? scale.median.toLocaleString(localeTag(lang)) : "—"}
             label={t("stats.figFieldMedian")}
           />
           <HeadFigure
@@ -191,7 +194,7 @@ function StatsPage() {
                 {t("stats.indoorNoteMid")}
                 <span className="nums">{indoor.share}</span>
                 {t("stats.indoorNoteOf")}
-                <span className="nums">{indoor.total.toLocaleString()}</span>
+                <span className="nums">{indoor.total.toLocaleString(localeTag(lang))}</span>
                 {t("stats.indoorNoteAfter")}
                 <em>{t("stats.indoorNoteOutdoorOnly")}</em>
                 {t("stats.indoorNoteEnd")}
@@ -205,7 +208,7 @@ function StatsPage() {
 }
 
 function IndoorBadge() {
-  const { t } = useT();
+  const { t, lang } = useT();
   return (
     <span
       title={t("stats.indoorBadgeTitle")}

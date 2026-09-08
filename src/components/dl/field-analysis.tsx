@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Panel, ProbabilityBar } from "@/components/dl/shell";
 import { InfoTip } from "@/components/dl/info-tip";
 import { ordinalIn, startNounKey, startVerbKey } from "@/lib/dl-data";
+import { localizeDate, localizeMonth } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
 import type { FieldAnalysis, FormResult, H2hCell } from "@/lib/dl-data";
 
@@ -32,7 +33,7 @@ export function FieldAnalysisBlock({
    * number: a 22.58m shot put and a 22.58s 200m are the same float. */
   isField: boolean;
 }) {
-  const { t } = useT();
+  const { t, lang } = useT();
   const { matrix, comparison } = analysis;
   const byName = new Map(comparison.map((c) => [c.name, c]));
 
@@ -237,7 +238,7 @@ export function FieldAnalysisBlock({
                       {c?.podiumRate != null ? `${c.podiumRate}%` : "—"}
                     </td>
                     <td className="py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
-                      {c?.bestMonth ?? "—"}
+                      {c?.bestMonth ? localizeMonth(lang, c.bestMonth) : "—"}
                     </td>
                   </tr>
                 );
@@ -275,7 +276,7 @@ function FormStrip({ form }: { form: FormResult[] }) {
         return (
           <span
             key={`${f.date}-${i}`}
-            title={`${ordinalIn(lang, f.place)}${f.meeting ? ` — ${f.meeting}` : ""}, ${f.date}`}
+            title={`${ordinalIn(lang, f.place)}${f.meeting ? ` — ${f.meeting}` : ""}, ${localizeDate(lang, f.date)}`}
             className={`nums flex size-5 shrink-0 items-center justify-center rounded-[5px] text-[10.5px] font-semibold ${tone} ${
               newest ? "ring-1 ring-foreground/25" : ""
             }`}
@@ -304,7 +305,7 @@ function MatrixCell({
   b: string;
   isField: boolean;
 }) {
-  const { t } = useT();
+  const { t, lang } = useT();
   if (self) {
     return (
       <td aria-hidden className="px-2 py-2.5 text-center text-muted-foreground/30">
@@ -339,7 +340,7 @@ function MatrixCell({
             b,
             n: cell.meetings,
             noun: t(startNounKey(isField, cell.meetings)),
-          }) + (cell.lastMet ? t("fa.cellLastMet", { date: cell.lastMet }) : "")
+          }) + (cell.lastMet ? t("fa.cellLastMet", { date: localizeDate(lang, cell.lastMet) }) : "")
         }
         className={`nums text-[12.5px] ${tone} ${weight}`}
       >

@@ -1,8 +1,11 @@
 import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useStats } from "@/hooks/useStats";
+import { useUltimate } from "@/hooks/useUltimate";
+import { useWorldRankings } from "@/hooks/useWorldRankings";
 import { useInView } from "@/hooks/useInView";
 import { useCountUp } from "@/hooks/useCountUp";
 import { PodiumCallMark } from "@/components/dl/logo";
@@ -12,13 +15,16 @@ import { WaSourceLink } from "@/components/dl/wa-link";
 import { useT, type TFunc } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/dl/language-switcher";
 import { discName } from "@/lib/dl-data";
+import type { TopWinner } from "@/lib/dl-data";
 import { TrackCircuit } from "@/components/dl/track-circuit";
+import { localeTag } from "@/lib/dates";
+import { usePageTitle } from "@/lib/use-page-title";
 
 export const Route = createFileRoute("/")({
   head: () =>
     pageHead(
-      "Predicting the 2026 Diamond League Final",
-      "Real-data podium predictions for all 32 disciplines at the 2026 Wanda Diamond League Final in Brussels, trained on results scraped from World Athletics.",
+      "The world's best, read by the model",
+      "Real-data athletics rankings and podium predictions across all 32 disciplines, trained on results scraped from World Athletics. Next up: the Ultimate Championship in Budapest.",
     ),
   component: Landing,
 });
@@ -182,7 +188,8 @@ const FEED = [
 ];
 
 function Landing() {
-  const { t } = useT();
+  const { t, lang } = useT();
+  usePageTitle(t("seo.landing"));
   const state = usePredictions();
   // Second fetch, for one number: the total marks scored. Worth it because
   // the alternative is hand-typing it, and it just moved -- two toplists
@@ -190,40 +197,63 @@ function Landing() {
   // 4,000 when the uniform figure is 3,200.
   const stats = useStats();
   const accuracy = state.status === "ok" ? state.data.modelAccuracy : null;
-  const daysToFinal = state.status === "ok" ? state.data.daysToFinal : null;
   const disciplineCount =
     state.status === "ok"
       ? state.data.trackDisciplines.length + state.data.fieldDisciplines.length
       : 32;
-  // v0's badge is a live countdown, not a fixed date. Written out rather
-  // than templated because the tail has to stay true on the last three
-  // days it will ever be read: "1 day", then the Final itself, then a
-  // negative number if anyone loads the page afterwards.
-  const countdownLabel =
-    daysToFinal === null
-      ? t("landing.badgeFinal")
-      : daysToFinal < 0
-        ? t("landing.badgeComplete")
-        : daysToFinal === 0
-          ? t("landing.badgeFinalDay")
-          : daysToFinal === 1
-            ? t("landing.badgeOneDay")
-            : t("landing.badgeDays", { n: daysToFinal });
-  // All six, same as the dashboard panel -- the old slice(0, 5) quietly
-  // dropped one real discipline from a list whose whole job is to preview
-  // what the dashboard shows.
-  const preview = state.status === "ok" ? state.data.topWinners : [];
+  // The badge counts down to whatever championship is next, not to a Diamond
+  // League Final that has already been run. It reads from the event payload,
+  // so when the next championship takes over it re-points itself.
+  const ultimateState = useUltimate();
+  const ev = ultimateState.status === "ok" ? ultimateState.data : undefined;
+  const countdownLabel = (() => {
+    if (!ev) return t("landing.badgeBare");
+    const now = Date.now();
+    const start = new Date(`${ev.startDate}T00:00:00`).getTime();
+    const end = new Date(`${ev.endDate}T23:59:59`).getTime();
+    if (now > end) return t("landing.badgeDone", { city: ev.city });
+    if (now >= start) return t("landing.badgeLive", { city: ev.city });
+    return t("landing.badgeCountdown", {
+      n: Math.max(0, Math.ceil((start - now) / 86_400_000)),
+      city: ev.city,
+    });
+  })();
+  // The landing showcases the model's read on the WORLD now, not the finished
+  // Diamond League field: each discipline's top-rated athlete, strongest first.
+  // Shaped as TopWinner so the podium and the dashboard preview below render it
+  // unchanged.
+  const rankingsState = useWorldRankings();
+  const rankings = rankingsState.status === "ok" ? rankingsState.data : undefined;
+  const bestByModel = useMemo<TopWinner[]>(() => {
+    if (!rankings) return [];
+    const rows: TopWinner[] = [];
+    for (const [key, r] of Object.entries(rankings)) {
+      const top = r.model[0];
+      if (!top) continue;
+      rows.push({
+        rank: 0,
+        name: top.name,
+        disc: key,
+        discKey: key,
+        mark: top.mark ?? "",
+        prob: top.ratingPct,
+        waUrl: top.profileUrl ?? "",
+        injuryWatch: false,
+        injuryReason: null,
+        injuryUrl: null,
+      });
+    }
+    rows.sort((x, y) => y.prob - x.prob);
+    return rows.map((r, i) => ({ ...r, rank: i + 1 }));
+  }, [rankings]);
+  // Six, same as the dashboard panel.
+  const preview = bestByModel.slice(0, 6);
   const topPick = preview[0];
-  // ALL of them, not slice(0, 10). The caption reads as complete coverage,
-  // and the top ten run 69-78% while the full set spans 24-78% -- so the
-  // page was showing the flattering decile under a total-sounding label, on
-  // the one surface whose pitch is that nothing here is dressed up. The
-  // marquee already duplicates its own content to loop, so length is free.
-  const ticker = state.status === "ok" ? state.data.confidence : [];
-  // Derived, never typed: the range is the interesting fact and it moves.
+  // ALL of them, not a flattering decile: the spread is the interesting fact.
+  const ticker = bestByModel;
   const tickerRange =
     ticker.length > 0
-      ? { lo: Math.min(...ticker.map((t) => t.value)), hi: Math.max(...ticker.map((t) => t.value)) }
+      ? { lo: Math.min(...ticker.map((c) => c.prob)), hi: Math.max(...ticker.map((c) => c.prob)) }
       : null;
   const demoInView = useInView<HTMLElement>();
   const marksScored =
@@ -436,9 +466,7 @@ function Landing() {
             </div>
             {state.status !== "ok" && (
               <p className="mt-4 text-[12.5px] text-[var(--landing-muted)]">
-                {state.status === "loading"
-                  ? t("landing.statsLoading")
-                  : t("landing.statsError")}
+                {state.status === "loading" ? t("landing.statsLoading") : t("landing.statsError")}
               </p>
             )}
           </div>
@@ -484,26 +512,32 @@ function Landing() {
                 <div className="marquee-track flex w-max gap-3">
                   {ticker.map((c) => (
                     <span
-                      key={c.disc}
+                      key={c.discKey}
                       role="listitem"
                       className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
                     >
                       <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
-                        {c.value}%
+                        {c.prob}%
                       </span>
-                      {discName(t, c.discKey, c.disc)}
+                      {c.name}
+                      <span className="text-[var(--landing-muted)]">
+                        {discName(t, c.discKey, c.disc)}
+                      </span>
                     </span>
                   ))}
                   {ticker.map((c) => (
                     <span
-                      key={`${c.disc}-dup`}
+                      key={`${c.discKey}-dup`}
                       aria-hidden="true"
                       className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
                     >
                       <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
-                        {c.value}%
+                        {c.prob}%
                       </span>
-                      {discName(t, c.discKey, c.disc)}
+                      {c.name}
+                      <span className="text-[var(--landing-muted)]">
+                        {discName(t, c.discKey, c.disc)}
+                      </span>
                     </span>
                   ))}
                 </div>
@@ -537,9 +571,7 @@ function Landing() {
               <Podium winners={preview} />
             ) : (
               <p className="mt-10 text-center text-[13.5px] text-muted-foreground">
-                {state.status === "error"
-                  ? t("landing.podiumError")
-                  : t("landing.podiumLoading")}
+                {state.status === "error" ? t("landing.podiumError") : t("landing.podiumLoading")}
               </p>
             )}
 
@@ -571,9 +603,7 @@ function Landing() {
 
           <div className="mt-10 grid grid-cols-1 items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
             <div className="rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow p-6">
-              <div className="label-caps text-[var(--landing-muted)]">
-                {t("landing.rawSignal")}
-              </div>
+              <div className="label-caps text-[var(--landing-muted)]">{t("landing.rawSignal")}</div>
               <ul className="mt-4 space-y-3">
                 {FEED.map((m, i) => (
                   <li
@@ -597,7 +627,7 @@ function Landing() {
               <div className="mt-4 text-[12px] text-[var(--landing-muted)]">
                 {corpus
                   ? t("landing.corpusMore", {
-                      n: (corpus.competitions - FEED.length).toLocaleString(),
+                      n: (corpus.competitions - FEED.length).toLocaleString(localeTag(lang)),
                       seasons: corpus.seasons,
                       first: corpus.firstSeason ?? "",
                       last: corpus.lastSeason ?? "",
@@ -633,7 +663,9 @@ function Landing() {
                   <span className="nums text-[13px] text-[var(--landing-muted)]">
                     {topPick.mark}
                   </span>
-                  <span className="label-caps text-[var(--landing-muted)]">Podium chance</span>
+                  <span className="label-caps text-[var(--landing-muted)]">
+                    {t("landing.modelRating")}
+                  </span>
                   <span className="nums text-[18px] font-semibold text-[var(--landing-accent-text)]">
                     {topPick.prob}%
                   </span>
@@ -695,10 +727,7 @@ function Landing() {
 
         {/* ── Live app preview (browser-chrome framed) ─────────────── */}
         <section className="mx-auto max-w-5xl px-6 py-20 pb-24 sm:px-10 sm:py-28 sm:pb-32">
-          <SectionHead
-            eyebrow={t("landing.previewEyebrow")}
-            title={t("landing.previewTitle")}
-          />
+          <SectionHead eyebrow={t("landing.previewEyebrow")} title={t("landing.previewTitle")} />
 
           <div className="mt-10 overflow-hidden rounded-2xl border border-[var(--landing-border)] bg-[var(--landing-card)] card-shadow">
             <div className="flex items-center gap-2 border-b border-[var(--landing-border)] px-4 py-3">
@@ -817,8 +846,7 @@ function Landing() {
                 It is the page that argues hardest that the data is real, and
                 it was the one with nothing to click. */}
             <p className="text-[12px] text-[var(--landing-muted)]">
-              {t("footer.scrapedFrom")} <WaSourceLink tone="canvas" />.{" "}
-              {t("footer.notAffiliated")}
+              {t("footer.scrapedFrom")} <WaSourceLink tone="canvas" />. {t("footer.notAffiliated")}
             </p>
             <Link
               to="/dashboard"

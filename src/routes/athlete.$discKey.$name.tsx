@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { disciplineLabel, pageHead } from "@/lib/seo";
+import { disciplineLabel, pageHead, titleName } from "@/lib/seo";
+import { usePageTitle } from "@/lib/use-page-title";
 import { createFileRoute, Link, useCanGoBack, useRouter } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, WatchBadge } from "@/components/dl/shell";
 import { useAthleteProfile, type AthleteNotInField } from "@/hooks/useAthleteProfile";
@@ -9,6 +10,7 @@ import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
 import { AthleteCareerBlock } from "@/components/dl/athlete-career";
 import { InfoTip } from "@/components/dl/info-tip";
 import { discName, ordinalIn, type PhotoCredit as PhotoCreditT } from "@/lib/dl-data";
+import { localizeDate } from "@/lib/dates";
 import { useT, type TFunc } from "@/lib/i18n";
 
 /** The attribution a Wikimedia Commons fallback photo requires, shown in the
@@ -66,46 +68,6 @@ const FIELD_EVENT_KEYS = new Set([
  * and "absent from that list" was read as "never scored". He is 9th on 15
  * points, two short of the cut. The API now answers from the full
  * standings table and this page shows the points and the gap. */
-/** The API sends both a finished English `reason` sentence and the parts it
- * was built from (`reasonCode` plus the `dl` standings row). Rebuilding it
- * here from the parts is what lets it be read in French without teaching the
- * Python API a second language. Any reasonCode this does not recognise falls
- * back to the API's own sentence rather than showing nothing. */
-function notInFieldReason(data: AthleteNotInField, t: TFunc, lang: string): string {
-  const { dl } = data;
-  if (data.reasonCode === "outside_points_cut" && dl) {
-    const head = t("reason.pointsCut", {
-      rank: ordinalIn(lang, dl.rank),
-      disc: discName(t, data.discKey, data.disc),
-      points: dl.points ?? 0,
-      limit: dl.qualLimit,
-    });
-    if (dl.status === "out") return head + t("reason.tailOut");
-    if (dl.gap == null) return head;
-    if (dl.gap > 0) {
-      return (
-        head +
-        t(dl.gap === 1 ? "reason.tailShortOne" : "reason.tailShortMany", { gap: dl.gap })
-      );
-    }
-    return head + t("reason.tailTieBreak");
-  }
-  if (data.reasonCode === "not_in_standings") {
-    return t("reason.notInStandings", { disc: discName(t, data.discKey, data.disc) });
-  }
-  if (data.reasonCode === "injury_removed") return t("reason.injuryRemoved");
-  if (data.reasonCode === "outside_cut") {
-    return t("reason.outsideCut", {
-      limit: dl?.qualLimit ?? 8,
-      disc: discName(t, data.discKey, data.disc),
-    });
-  }
-  if (data.reasonCode === "no_data") {
-    return t("reason.noData", { year: 2026, disc: discName(t, data.discKey, data.disc) });
-  }
-  return data.reason;
-}
-
 function NotInField({
   data,
   discKey,
@@ -174,7 +136,7 @@ function NotInField({
             onClick={() => router.history.back()}
             className="label-caps -m-2 p-2 text-white/80 transition-colors hover:text-white"
           >
-            ← Back
+            {t("nav.back")}
           </button>
         ) : (
           <Link
@@ -200,8 +162,7 @@ function NotInField({
           )}
         </h1>
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <Tag>{data.nat}</Tag>
-          <Tag>{t("ath.notInField")}</Tag>
+          <CountryTag nat={data.nat} />
           {data.dl && (
             <Tag>
               {t("ath.onDlPoints", {
@@ -210,9 +171,7 @@ function NotInField({
               })}
             </Tag>
           )}
-          {data.worldRank != null && (
-            <Tag>{t("ath.worldRankTag", { n: data.worldRank })}</Tag>
-          )}
+          {data.worldRank != null && <Tag>{t("ath.worldRankTag", { n: data.worldRank })}</Tag>}
         </div>
       </div>
 
@@ -234,81 +193,17 @@ function NotInField({
 
   return (
     <Shell title={data.name} crumb={data.name} hero={hero} headTone="brick" headBackdrop={backdrop}>
-      <Panel
-        title={t("ath.whyNotTitle")}
-        subtitle={t("ath.whyNotSubtitle")}
-      >
-        <p className="text-[13.5px] leading-relaxed text-foreground">
-          {notInFieldReason(data, t, lang)}
-        </p>
-        {data.injuryReason && (
-          <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">
-            {t("ath.flaggedFrom", { reason: data.injuryReason })}{" "}
-            {data.injuryUrl && (
-              <a
-                href={data.injuryUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-terracotta-strong hover:underline"
-              >
-                {t("ath.viewSource")}
-              </a>
-            )}
-          </p>
-        )}
-        {/* Points are what actually decides eligibility, so when the athlete
-            has any they belong right under the reason rather than only
-            inside the prose. The rest of their numbers live in Season stats
-            below, the same panel the in-field profile uses. */}
-        {data.dl && (
-          <div className="mt-5 flex flex-wrap gap-x-10 gap-y-4">
-            <div>
-              <div className="label-caps text-muted-foreground">{t("ath.dlPoints")}</div>
-              <div className="nums mt-1 text-[20px] font-semibold text-foreground">
-                {data.dl.points ?? "—"}
-                {/* Separated by a middot, not just whitespace: "15" beside
-                    "9th" reads as "159th" at a glance. */}
-                <span className="ml-2 text-[13px] font-medium text-muted-foreground">
-                  {t("ath.inStandings", { rank: ordinalIn(lang, data.dl.rank) })}
-                </span>
-              </div>
-            </div>
-            <div>
-              <div className="label-caps text-muted-foreground">{t("ath.gapToCut")}</div>
-              <div className="nums mt-1 text-[20px] font-semibold text-foreground">
-                {data.dl.gap == null ? "—" : data.dl.gap > 0 ? `−${data.dl.gap}` : t("ath.level")}
-                {data.dl.cutPoints != null && (
-                  <span className="ml-2 text-[13px] font-medium text-muted-foreground">
-                    {t("ath.cutAt", { n: data.dl.cutPoints })}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-        {data.dl && (
-          <Link
-            to="/qualification"
-            search={{ disc: data.discKey }}
-            className="mt-4 inline-block text-[12.5px] font-medium text-terracotta-strong hover:underline"
-          >
-            {t("ath.seeStandings", { disc: discName(t, data.discKey, data.disc) })}
-          </Link>
-        )}
-        {data.worldRank === 1 && (
-          <p className="mt-4 text-[12.5px] leading-relaxed text-muted-foreground">
-            {t("ath.fastestNote")}
-          </p>
-        )}
-      </Panel>
-
       {/* Same two-panel row, same StatBlock grid and same chart the in-field
           profile uses. None of these numbers stop being true because the
           athlete missed the cut, and the page read as a stub without them. */}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
         <Panel title={t("ath.seasonStats")}>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <StatBlock label={t("ath.seasonBest2026")} value={data.seasonBest ?? "—"} icon="target" />
+            <StatBlock
+              label={t("ath.seasonBest2026")}
+              value={data.seasonBest ?? "—"}
+              icon="target"
+            />
             <StatBlock
               label={t("ath.worldRank")}
               value={data.worldRank != null ? `#${data.worldRank}` : "—"}
@@ -326,9 +221,7 @@ function NotInField({
               sub={t("ath.offCareerBest")}
               icon="ruler"
               hint={t(
-                FIELD_EVENT_KEYS.has(data.discKey)
-                  ? "ath.pbGapHintMetres"
-                  : "ath.pbGapHintSeconds",
+                FIELD_EVENT_KEYS.has(data.discKey) ? "ath.pbGapHintMetres" : "ath.pbGapHintSeconds",
               )}
             />
             <StatBlock
@@ -354,10 +247,8 @@ function NotInField({
             />
             <StatBlock
               label={t("ath.lastCompeted")}
-              value={
-                data.daysSinceLast != null ? t("ath.daysAgo", { n: data.daysSinceLast }) : "—"
-              }
-              {...(data.lastRaceDate ? { sub: data.lastRaceDate } : {})}
+              value={data.daysSinceLast != null ? t("ath.daysAgo", { n: data.daysSinceLast }) : "—"}
+              {...(data.lastRaceDate ? { sub: localizeDate(lang, data.lastRaceDate) } : {})}
               icon="clock"
             />
             {/* The same World Athletics score the in-field profile carries,
@@ -412,7 +303,11 @@ function NotInField({
 
         <Panel
           title={t("ath.realSeasonForm")}
-          subtitle={t("ath.realSeasonFormSubtitle")}
+          subtitle={
+            data.historyCondensed
+              ? t("ath.seasonFormCondensed", { n: data.historyRaces ?? 0 })
+              : t("ath.seasonFormAll", { n: data.history.length })
+          }
         >
           {data.history.length > 0 ? (
             <SeasonTrendChart history={data.history} year={data.historyYear} />
@@ -442,11 +337,7 @@ function NotInField({
           careerSeasons={data.careerSeasons}
         />
       ) : (
-        <Panel
-          title={t("ath.h2hTitle")}
-          subtitle={t("ath.h2hSubtitle")}
-          className="mt-6"
-        >
+        <Panel title={t("ath.h2hTitle")} subtitle={t("ath.h2hSubtitle")} className="mt-6">
           {data.h2h.length > 0 ? (
             <HeadToHeadChart matchups={data.h2h} opponentsLabel="the qualified field" />
           ) : (
@@ -464,7 +355,7 @@ function NotInField({
             onClick={() => router.history.back()}
             className="label-caps -m-2 p-2 text-muted-foreground transition-colors hover:text-foreground"
           >
-            ← Back
+            {t("nav.back")}
           </button>
         ) : (
           <Link
@@ -494,10 +385,7 @@ export const Route = createFileRoute("/athlete/$discKey/$name")({
   // caps convention still applies, so it is title-cased for the tab and the
   // search result the same way the dossier headline is.
   head: ({ params }) => {
-    const name = decodeURIComponent(params.name)
-      .split(/\s+/)
-      .map((w) => (w.length > 1 ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w))
-      .join(" ");
+    const name = titleName(decodeURIComponent(params.name));
     const label = disciplineLabel(params.discKey);
     return pageHead(
       `${name} — ${label}`,
@@ -575,6 +463,26 @@ function StatBlock({
 /** v0's `.dh-tags` pill and `.dh-fig` figure — the two repeating pieces of
  * the dossier head. Both sit on the brick band, so their colours are fixed
  * to it rather than inheriting page tokens. */
+/** The nationality pill, as a link to that country's page.
+ *
+ * It looks identical to a Tag on purpose -- it sits in the same row as the
+ * other pills -- but it is the one that leads somewhere, so it gains a hover
+ * state to say so. Reading an athlete and wanting the rest of their country is
+ * a natural next step, and before the country pages existed there was nowhere
+ * for this to go. */
+function CountryTag({ nat }: { nat: string | null }) {
+  if (!nat) return null;
+  return (
+    <Link
+      to="/country/$code"
+      params={{ code: nat }}
+      className="dg rounded-full bg-white/12 px-3.5 py-1.5 text-[12.5px] font-semibold tracking-[0.02em] text-white transition-colors hover:bg-white/20 hover:underline"
+    >
+      {nat}
+    </Link>
+  );
+}
+
 function Tag({ children }: { children: ReactNode }) {
   return (
     <span className="dg rounded-full bg-white/12 px-3.5 py-1.5 text-[12.5px] font-semibold tracking-[0.02em] text-white">
@@ -616,6 +524,10 @@ function AthleteProfilePage() {
   // The athlete's real name is already in the route params, so the header
   // can show who is loading rather than a generic "Athlete" title card.
   const pendingName = decodeURIComponent(name);
+
+  // The same shape head() builds, with the discipline translated. An
+  // athlete's own name never is.
+  usePageTitle(`${titleName(pendingName)} — ${discName(t, discKey, disciplineLabel(discKey))}`);
 
   if (state.status === "loading") {
     return (
@@ -708,14 +620,14 @@ function AthleteProfilePage() {
             onClick={() => router.history.back()}
             className="label-caps -m-2 p-2 text-white/80 transition-colors hover:text-white"
           >
-            ← Back
+            {t("nav.back")}
           </button>
         ) : (
           <Link
             to="/dashboard"
             className="label-caps -m-2 p-2 text-white/80 transition-colors hover:text-white"
           >
-            ← Back to dashboard
+            {t("nav.back")} to dashboard
           </Link>
         )}
         <div className="label-caps mt-3 text-gold-on-canvas">Athlete dossier · {a.disc}</div>
@@ -732,7 +644,7 @@ function AthleteProfilePage() {
           )}
         </h1>
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <Tag>{a.nat}</Tag>
+          <CountryTag nat={a.nat} />
           {a.age != null && <Tag>{t("ath.age", { n: Math.round(a.age) })}</Tag>}
           <Tag>{t("ath.rankInField", { n: a.rank })}</Tag>
           {a.injuryWatch && <WatchBadge reason={a.injuryReason} url={a.injuryUrl} tone="dark" />}
@@ -740,7 +652,12 @@ function AthleteProfilePage() {
         <div className="mt-6 flex flex-wrap gap-x-7 gap-y-5">
           <DossierFigure label={t("ath.figSeasonBest")} value={a.mark} />
           {a.careerBest && <DossierFigure label={t("ath.figPersonalBest")} value={a.careerBest} />}
-          {a.lastRaceDate && <DossierFigure label={t("ath.lastCompeted")} value={a.lastRaceDate} />}
+          {a.lastRaceDate && (
+            <DossierFigure
+              label={t("ath.lastCompeted")}
+              value={localizeDate(lang, a.lastRaceDate)}
+            />
+          )}
           <DossierFigure
             label={t("ath.figRacesIn", { year: a.historyYear ?? "" }).trim()}
             value={String(a.racesThisSeason)}
@@ -820,7 +737,7 @@ function AthleteProfilePage() {
             <StatBlock
               label={t("ath.lastCompeted")}
               value={a.daysSinceLast != null ? t("ath.daysAgo", { n: a.daysSinceLast }) : "—"}
-              {...(a.lastRaceDate ? { sub: a.lastRaceDate } : {})}
+              {...(a.lastRaceDate ? { sub: localizeDate(lang, a.lastRaceDate) } : {})}
               icon="clock"
             />
             {/* World Athletics' own scoring-table points. The only number on
@@ -863,7 +780,11 @@ function AthleteProfilePage() {
 
         <Panel
           title={t("ath.realSeasonForm")}
-          subtitle={t("ath.realSeasonFormSubtitle")}
+          subtitle={
+            a.historyCondensed
+              ? t("ath.seasonFormCondensed", { n: a.historyRaces ?? 0 })
+              : t("ath.seasonFormAll", { n: a.history.length })
+          }
         >
           {a.history.length > 0 ? (
             <SeasonTrendChart history={a.history} year={a.historyYear} />

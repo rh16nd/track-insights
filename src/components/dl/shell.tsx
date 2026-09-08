@@ -24,6 +24,49 @@ export const badgeClass: Record<MeetStatus, string> = {
   final: "bg-gold/15 text-gold-strong",
 };
 
+/** A ground a page brings with it, instead of the site's terracotta.
+ *
+ * The colours are the caller's problem, and they are not decoration: the site
+ * paints white/90, white/92 and --gold-on-canvas straight onto this surface,
+ * so `ground` has to carry all three at 4.5:1 with `glow` and the grain tile
+ * composited on. The country pages get theirs from
+ * scripts/make-flag-palette.py, which does that measurement and refuses to
+ * emit a ground that fails it. The glow alphas are fixed here (10% and 9%,
+ * the `1a`/`17` suffixes below) because that script clamps against those exact
+ * numbers — change one and change the other. */
+export type PageGround = {
+  /** Opaque page canvas. */
+  ground: string;
+  /** One or two #rrggbb blooms. The second falls back to the first. */
+  glow: string[];
+  /** Optional ruling for the ground, keyed into MOTIF below. The country pages
+   * pass the shape of the nation's flag, so a page is ruled the way its flag
+   * is built. */
+  motif?: keyof typeof MOTIF;
+};
+
+/** Rulings for a page's ground: 2px lines every 46px, in the direction the
+ * page's own subject is built.
+ *
+ * Every one of these is BLACK at low alpha, which is not a stylistic choice.
+ * A ground is signed off at exactly 4.5:1 against the text on it, so a ruling
+ * that lightened it -- white lines, the obvious first instinct -- would eat
+ * into a ratio with nothing to give. Darkening can only ever move contrast the
+ * safe way, so these need no measurement of their own and cannot be broken by
+ * a later change to the palette. */
+const MOTIF = {
+  horizontal: "repeating-linear-gradient(to bottom, rgba(0,0,0,0.10) 0 2px, transparent 2px 30px)",
+  vertical: "repeating-linear-gradient(to right, rgba(0,0,0,0.10) 0 2px, transparent 2px 30px)",
+  diagonal: "repeating-linear-gradient(118deg, rgba(0,0,0,0.10) 0 2px, transparent 2px 30px)",
+  // Both directions at once, because that is what a cross flag is.
+  cross:
+    "repeating-linear-gradient(to bottom, rgba(0,0,0,0.08) 0 2px, transparent 2px 34px)," +
+    "repeating-linear-gradient(to right, rgba(0,0,0,0.08) 0 2px, transparent 2px 34px)",
+  // Rings out of a single point, for the flags that are a device on a field.
+  emblem:
+    "repeating-radial-gradient(circle at 50% 20%, transparent 0 32px, rgba(0,0,0,0.10) 32px 34px)",
+} as const;
+
 export function Shell({
   title,
   crumb,
@@ -34,8 +77,10 @@ export function Shell({
   figures,
   headTone = "canvas",
   headBackdrop,
+  back,
   eyebrow,
   description,
+  theme = "default",
 }: {
   title: string;
   /** The page's NAME, for the breadcrumb — distinct from `title`, which is
@@ -61,10 +106,25 @@ export function Shell({
   /** A backdrop rendered behind the band's content (the athlete photo).
    * Sits under the lanes and the glow. */
   headBackdrop?: ReactNode;
+  /** A back control, rendered above the breadcrumb. Optional because most
+   * pages are top-level tabs with nowhere to go back to; the pages that are
+   * reached FROM somewhere (an athlete, a country) pass one. */
+  back?: ReactNode;
   /** Small caps line above the page title. */
   eyebrow?: string | undefined;
   /** One-line explanation under the page title. */
   description?: string | undefined;
+  /** Per-page ground. "ultimate" swaps the site's terracotta track canvas for
+   * the championship's own black-and-purple, matching how World Athletics
+   * dresses the Ultimate. Deliberately a PAGE-level opt-in, not a site theme:
+   * only the event tab wears it, and when the next championship takes that tab
+   * this is the one switch that re-dresses it.
+   *
+   * A `PageGround` does the same thing with colours the page computes for
+   * itself — the country pages pass their nation's, measured off its flag.
+   * Same mechanism, same two layers, so there is one way to re-dress a page
+   * rather than a growing list of named themes. */
+  theme?: "default" | "ultimate" | PageGround;
 }) {
   /* Mirrors the visible breadcrumb below. Read from the router rather than
      passed in, so the two cannot drift: a page that changes its crumb gets
@@ -72,6 +132,11 @@ export function Shell({
      exists -- see lib/seo.ts. */
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { t } = useT();
+  const isUltimate = theme === "ultimate";
+  const custom = typeof theme === "object" ? theme : null;
+  // Either way the page brings its own ground, so the site's terracotta must
+  // not be painted underneath it.
+  const ownGround = isUltimate || custom !== null;
 
   /* Every page renders through Shell, so this is the earliest moment we know
      a real person is here. Wake the API now (see warmApi) rather than when
@@ -79,17 +144,68 @@ export function Shell({
   useEffect(() => {
     warmApi();
   }, []);
+
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className={`relative min-h-screen ${ownGround ? "" : "bg-background"}`}>
+      {/* A page's own ground is painted as a FIXED layer, not as this div's
+          own background: the document body still carries the site's
+          terracotta, which showed through at the edges of the scroll when the
+          colour lived on the box. Fixed, it covers the viewport always. */}
+      {ownGround && (
+        <div
+          className="pointer-events-none fixed inset-0 z-0"
+          aria-hidden="true"
+          style={{ backgroundColor: custom ? custom.ground : "#07050d" }}
+        />
+      )}
+      {/* The ground's own ruling, under the grain so it reads as part of the
+          surface rather than as something laid on top of it. */}
+      {custom?.motif && (
+        <div
+          className="pointer-events-none fixed inset-0 z-0"
+          aria-hidden="true"
+          style={{ backgroundImage: MOTIF[custom.motif] }}
+        />
+      )}
       {/* Grain stays perfectly still -- it is a surface texture, and moving
           noise reads as television static. Only the glow breathes, on its own
           layer so the two can't drag each other. */}
       <div className="ambient-grain pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
-      <div
-        className="ambient-glow ambient-breath pointer-events-none fixed inset-0 z-0"
-        aria-hidden="true"
-      />
-      <TrackCurveDecoration className="pointer-events-none fixed bottom-0 right-0 z-0 h-[65vh] w-[65vh] opacity-80" />
+      {isUltimate || custom ? (
+        /* The championship's ground: near-black with violet blooms, the look
+           World Athletics gives the Ultimate. A country page's is the same
+           shape in its own two flag colours. Fixed, like the default glow, so
+           it holds still down a long page instead of stretching with it.
+
+           The country blooms are weaker than the Ultimate's on purpose: they
+           sit over a colour that carries body text, and every point of alpha
+           here is paid for by darkening that ground (see
+           scripts/make-flag-palette.py, which clamps against these exact
+           numbers). */
+        <div
+          className="ambient-breath pointer-events-none fixed inset-0 z-0"
+          aria-hidden="true"
+          style={{
+            backgroundImage: custom
+              ? `radial-gradient(ellipse 1200px 720px at 84% -8%, ${custom.glow[0]}1a, transparent 62%),` +
+                `radial-gradient(ellipse 1000px 640px at 2% 104%, ${custom.glow[1] ?? custom.glow[0]}17, transparent 58%)`
+              : "radial-gradient(ellipse 1200px 720px at 84% -8%, rgba(150,74,224,0.40), transparent 62%)," +
+                "radial-gradient(ellipse 1000px 640px at 2% 104%, rgba(96,42,178,0.34), transparent 58%)," +
+                "radial-gradient(ellipse 760px 520px at 50% 46%, rgba(72,30,140,0.20), transparent 60%)",
+          }}
+        />
+      ) : (
+        <div
+          className="ambient-glow ambient-breath pointer-events-none fixed inset-0 z-0"
+          aria-hidden="true"
+        />
+      )}
+      {/* The track curve is white and gold at 8-16% — hue-neutral, so it works
+          on a nation's ground as well as on the site's own. Only the
+          championship drops it: a warm arc reads as a stray on that black. */}
+      {!isUltimate && (
+        <TrackCurveDecoration className="pointer-events-none fixed bottom-0 right-0 z-0 h-[65vh] w-[65vh] opacity-80" />
+      )}
       <div className="relative z-10">
         {/* Every page opens with the same nav, so without this a keyboard or
             screen-reader user tabs the whole thing again on each one before
@@ -137,6 +253,7 @@ export function Shell({
                     { name: crumb ?? title, path: pathname },
                   ])}
                 />
+                {back}
                 <nav
                   aria-label="Breadcrumb"
                   className="dg text-[12.5px] tracking-[0.04em] text-white/92"
@@ -488,10 +605,15 @@ export function WatchBadge({
   url,
   className = "",
   tone = "light",
+  status = "watch",
 }: {
   reason: string | null;
   url: string | null;
   className?: string;
+  /** "watch" is an injury mention; "remove" is a reported withdrawal. Both
+   * keep their place in the field -- the difference is what is known, so it
+   * belongs on the label rather than in whether the row exists. */
+  status?: "watch" | "remove";
   /** "light" is the app's cream card surface. "dark" is the landing page's
    * tinted-glass card, where the standard `--destructive` (oklch L=0.55) sits
    * almost on top of the surface's own lightness: measured 1.38:1 against the
@@ -551,7 +673,7 @@ export function WatchBadge({
         onClick={() => setOpen((v) => !v)}
         className={`${badgeClassName} transition-[background-color,transform] duration-150 hover:bg-destructive/20 active:scale-90`}
       >
-        {t("watch.badge")}
+        {t(status === "remove" ? "watch.badgeOut" : "watch.badge")}
       </button>
       {open && (
         <span

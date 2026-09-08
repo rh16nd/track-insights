@@ -1,8 +1,10 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { apiFetch } from "@/lib/api";
 import { useT } from "@/lib/i18n";
 import { discName } from "@/lib/dl-data";
+import type { CountryHit } from "@/lib/dl-data";
+import { NatFlag } from "@/components/dl/nat-flag";
 
 export type SearchHit = {
   name: string;
@@ -11,6 +13,12 @@ export type SearchHit = {
   mark: string | null;
   worldRank: number | null;
 };
+
+/** One row in the dropdown. Countries and athletes are different kinds of
+ * result but share one list, so arrow keys walk the whole thing rather than
+ * skipping a group -- the input owns keyboard navigation for both. */
+type SearchItem =
+  { kind: "country"; country: CountryHit } | { kind: "athlete"; athlete: SearchHit };
 
 /** Search across EVERY athlete in this season's worldwide toplists (~3,700),
  * not just the ~230 in the projected field.
@@ -35,6 +43,7 @@ export function AthleteSearch({
 } = {}) {
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<SearchHit[]>([]);
+  const [countries, setCountries] = useState<CountryHit[]>([]);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -51,6 +60,7 @@ export function AthleteSearch({
     const q = query.trim();
     if (q.length < 2) {
       setHits([]);
+      setCountries([]);
       setLoading(false);
       return;
     }
@@ -61,17 +71,22 @@ export function AthleteSearch({
       // the debounce window anyway, so a retried request would race the one
       // the user actually wants. `retries: 0` is expressed by treating any
       // failure as an empty result set, which is what the UI already did.
-      apiFetch<{ results?: SearchHit[] }>(`/api/search?q=${encodeURIComponent(q)}`, {
-        signal: controller.signal,
-      })
+      apiFetch<{ results?: SearchHit[]; countries?: CountryHit[] }>(
+        `/api/search?q=${encodeURIComponent(q)}`,
+        {
+          signal: controller.signal,
+        },
+      )
         .then((d) => {
           setHits(d.results ?? []);
+          setCountries(d.countries ?? []);
           setActive(0);
           setLoading(false);
         })
         .catch(() => {
           if (!controller.signal.aborted) {
             setHits([]);
+            setCountries([]);
             setLoading(false);
           }
         });
@@ -104,13 +119,27 @@ export function AthleteSearch({
     if (autoFocus) inputRef.current?.focus();
   }, [autoFocus]);
 
-  function go(hit: SearchHit) {
+  // Countries first: someone who typed a country name means the country, and
+  // an athlete match on the same letters is the less likely intent.
+  const items = useMemo<SearchItem[]>(
+    () => [
+      ...countries.map((country) => ({ kind: "country" as const, country })),
+      ...hits.map((athlete) => ({ kind: "athlete" as const, athlete })),
+    ],
+    [countries, hits],
+  );
+
+  function go(item: SearchItem) {
     setOpen(false);
     setQuery("");
     onDone?.();
+    if (item.kind === "country") {
+      navigate({ to: "/country/$code", params: { code: item.country.code } });
+      return;
+    }
     navigate({
       to: "/athlete/$discKey/$name",
-      params: { discKey: hit.discKey, name: hit.name },
+      params: { discKey: item.athlete.discKey, name: item.athlete.name },
     });
   }
 
@@ -120,17 +149,17 @@ export function AthleteSearch({
       inputRef.current?.blur();
       return;
     }
-    if (!hits.length) return;
+    if (!items.length) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActive((i) => (i + 1) % hits.length);
+      setActive((i) => (i + 1) % items.length);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActive((i) => (i - 1 + hits.length) % hits.length);
+      setActive((i) => (i - 1 + items.length) % items.length);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      const hit = hits[active];
-      if (hit) go(hit);
+      const item = items[active];
+      if (item) go(item);
     }
   }
 
@@ -156,7 +185,7 @@ export function AthleteSearch({
            reader: focus correctly stays in the input (that is the combobox
            pattern), so the only way to announce which option is current is
            to point at it. The visual highlight had no spoken equivalent. */
-        aria-activedescendant={showList && hits[active] ? `${listId}-opt-${active}` : undefined}
+        aria-activedescendant={showList && items[active] ? `${listId}-opt-${active}` : undefined}
         aria-autocomplete="list"
         autoComplete="off"
         value={query}
@@ -176,17 +205,17 @@ export function AthleteSearch({
           role="listbox"
           className="card-shadow absolute right-0 top-11 z-30 max-h-[60vh] w-[min(22rem,calc(100vw-3rem))] overflow-y-auto rounded-[14px] bg-card py-1"
         >
-          {loading && hits.length === 0 && (
+          {loading && items.length === 0 && (
             <li className="px-4 py-3 text-[12.5px] text-muted-foreground">
               {t("search.searching")}
             </li>
           )}
-          {!loading && hits.length === 0 && (
+          {!loading && items.length === 0 && (
             <li className="px-4 py-3 text-[12.5px] text-muted-foreground">
               {t("search.noMatch", { query: query.trim() })}
             </li>
           )}
-          {hits.map((h, i) => (
+          {items.map((item, i) => (
             /* The option IS the li -- it used to wrap a <button>, and an
                element with role="option" must not contain a focusable
                control: it put the results in the tab order, competing with
@@ -195,32 +224,57 @@ export function AthleteSearch({
                click still works from here; keyboard goes through the input's
                ArrowUp/ArrowDown/Enter, which was always implemented. */
             <li
-              key={`${h.discKey}-${h.name}`}
+              key={
+                item.kind === "country"
+                  ? `c-${item.country.code}`
+                  : `a-${item.athlete.discKey}-${item.athlete.name}`
+              }
               id={`${listId}-opt-${i}`}
               role="option"
               aria-selected={i === active}
               onMouseEnter={() => setActive(i)}
-              onClick={() => go(h)}
+              onClick={() => go(item)}
               className={`flex w-full cursor-pointer items-center gap-3 px-4 py-2.5 text-left transition-colors ${
                 i === active ? "bg-secondary/60" : "hover:bg-secondary/40"
               }`}
             >
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13.5px] font-medium text-foreground">
-                  {h.name}
-                </span>
-                <span className="block text-[11.5px] text-muted-foreground">
-                {discName(t, h.discKey, h.disc)}
-              </span>
-              </span>
-              <span className="nums shrink-0 text-right">
-                <span className="block text-[12.5px] text-foreground">{h.mark ?? "—"}</span>
-                {h.worldRank != null && (
-                  <span className="block text-[11px] text-muted-foreground">
-                    {t("search.worldRank", { rank: h.worldRank })}
+              {item.kind === "country" ? (
+                <>
+                  <NatFlag nat={item.country.code} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[13.5px] font-medium text-foreground">
+                      {item.country.name}
+                    </span>
+                    <span className="block text-[11.5px] text-muted-foreground">
+                      {t("search.countryHint", {
+                        n: item.country.athleteCount,
+                        d: item.country.disciplineCount,
+                      })}
+                    </span>
                   </span>
-                )}
-              </span>
+                </>
+              ) : (
+                <>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[13.5px] font-medium text-foreground">
+                      {item.athlete.name}
+                    </span>
+                    <span className="block text-[11.5px] text-muted-foreground">
+                      {discName(t, item.athlete.discKey, item.athlete.disc)}
+                    </span>
+                  </span>
+                  <span className="nums shrink-0 text-right">
+                    <span className="block text-[12.5px] text-foreground">
+                      {item.athlete.mark ?? "—"}
+                    </span>
+                    {item.athlete.worldRank != null && (
+                      <span className="block text-[11px] text-muted-foreground">
+                        {t("search.worldRank", { rank: item.athlete.worldRank })}
+                      </span>
+                    )}
+                  </span>
+                </>
+              )}
             </li>
           ))}
         </ul>
