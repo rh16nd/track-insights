@@ -45,6 +45,10 @@
      one of those silently fell back to inherited --foreground. Caught by
      reading the computed color, 2026-08-24. */
   --color-terracotta-strong: var(--terracotta-strong);
+  /* Registering this is the whole point -- see the --color-terracotta-strong
+     note above for what happens when a raw token is used and never declared
+     here: it silently falls back to inherited --foreground. */
+  --color-violet-strong: var(--violet-strong);
   --color-terracotta-light: var(--terracotta-light);
   --color-ink: var(--foreground);
   --color-sand: var(--sand);
@@ -150,6 +154,20 @@
      thin margin for small label-caps text) -- darkened slightly for real
      headroom, 7.34:1. */
   --terracotta-strong: oklch(0.45 0.164 38.5);
+  /* The Ultimate's violet, in a version that survives the top bar.
+     The page's own bloom is rgb(150,74,224) and is built to sit on near-black:
+     against the header's real composited cream (240,228,218) it measures
+     3.86:1, a failure for an 11px label. This is the same hue darkened until
+     both nav states clear with margin -- 6.2:1 on the bar, 5.18:1 on the
+     active pill, where the 12% wash lifts the background to (226,204,217).
+
+     L=0.50 was tried first and gave 4.53:1 active. That passes, by 0.03,
+     which is exactly the sort of number this project has been burned by; the
+     extra 0.03 of lightness is not worth the margin it costs. All measured
+     by compositing through a canvas rather than eyeballed, because
+     getComputedStyle returns oklch() strings here and parsing them as rgb
+     produces confident nonsense. */
+  --violet-strong: oklch(0.47 0.24 300);
   /* Gold/terracotta lightened for TEXT sitting on a dark or textured
      surface -- no longer needed for general card content (card is light
      now), but still correct for the Dashboard/landing hero banners, whose

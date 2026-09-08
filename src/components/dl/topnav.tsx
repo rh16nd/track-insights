@@ -16,7 +16,11 @@ const nav = [
   // The Diamond League is over; its Qualifying standings are replaced in the
   // primary nav by the next big championship, the Ultimate. The /qualification
   // route is kept for when the DL season returns.
-  { to: "/ultimate", labelKey: "nav.ultimate" },
+  // Carries the championship's own violet, the one colour in this bar that is
+  // not the site's terracotta. The event is the reason to visit right now and
+  // the tab should say so; when the next championship takes this slot, the
+  // flag moves with it.
+  { to: "/ultimate", labelKey: "nav.ultimate", accent: true },
   { to: "/stats", labelKey: "nav.stats" },
   { to: "/schedule", labelKey: "nav.schedule" },
 ] as const;
@@ -112,6 +116,7 @@ export function TopNav({
         >
           {nav.map((item) => {
             const isActive = pathname === item.to;
+            const accent = "accent" in item && item.accent;
             return (
               <Link
                 key={item.to}
@@ -119,8 +124,16 @@ export function TopNav({
                 ref={isActive ? activeRef : undefined}
                 // min-h-11 (44px) -- measured at 43px before (py-3.5 alone
                 // was 1px short of the touch-target floor on mobile).
-                className="label-caps flex min-h-11 items-center whitespace-nowrap rounded-full px-3.5 py-3.5 text-muted-foreground transition-[color,background-color,transform] duration-150 hover:bg-secondary hover:text-foreground active:scale-95 sm:min-h-0 sm:py-2"
-                activeProps={{ className: "!bg-secondary !text-foreground" }}
+                className={`label-caps flex min-h-11 items-center whitespace-nowrap rounded-full px-3.5 py-3.5 transition-[color,background-color,transform] duration-150 active:scale-95 sm:min-h-0 sm:py-2 ${
+                  accent
+                    ? "text-violet-strong hover:bg-violet-strong/10"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                }`}
+                activeProps={{
+                  className: accent
+                    ? "!bg-violet-strong/12 !text-violet-strong"
+                    : "!bg-secondary !text-foreground",
+                }}
               >
                 {t(item.labelKey)}
               </Link>
