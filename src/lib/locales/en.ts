@@ -113,7 +113,7 @@ export const en: Record<string, string> = {
     "The model's estimate that this athlete finishes in the top three of this event. It is each athlete's own chance, not a share of one hundred, so the column does not add up to 100 — in a close event several athletes can all be likely medallists.",
   "ultimate.projection.flaggedTitle": "Flagged by the injury check",
   "ultimate.projection.flaggedHint":
-    "These athletes are still in World Athletics' qualified field, and the number beside them is still the model's. What changed is that a headline or a results recap mentioned an injury, a DNF or a withdrawal — something the model has no way of knowing. They sit down here instead of being deleted, because a match can be wrong: tap the badge to read the headline it came from and judge it yourself.",
+    "These athletes are still in World Athletics' qualified field. What changed is that a headline or a results recap mentioned an injury, a DNF or a withdrawal — something the model has no way of knowing. The number beside each one is the place the model gave them; the list above is numbered by who is expected to be on the start line, which is why it runs straight from 1. They sit down here instead of being deleted, because a match can be wrong: tap the badge to read the headline it came from and judge it yourself.",
   "ultimate.projection.unscored":
     "Qualified but not ranked here, with no 2026 mark on file for this event: {{names}}.",
   "ultimate.projection.note":

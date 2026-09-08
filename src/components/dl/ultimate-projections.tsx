@@ -141,7 +141,7 @@ export function UltimateProjections({
             </thead>
             <tbody className="divide-y divide-border">
               {clear.map((a, i) => (
-                <ProjectionRow key={a.name} a={a} i={i} discKey={current.discKey} />
+                <ProjectionRow key={a.name} a={a} i={i} place={i + 1} discKey={current.discKey} />
               ))}
             </tbody>
             {flagged.length > 0 && (
@@ -161,7 +161,14 @@ export function UltimateProjections({
                   </th>
                 </tr>
                 {flagged.map((a, i) => (
-                  <ProjectionRow key={a.name} a={a} i={i} discKey={current.discKey} dimmed />
+                  <ProjectionRow
+                    key={a.name}
+                    a={a}
+                    i={i}
+                    place={a.rank}
+                    discKey={current.discKey}
+                    dimmed
+                  />
                 ))}
               </tbody>
             )}
@@ -193,26 +200,34 @@ export function UltimateProjections({
 function ProjectionRow({
   a,
   i,
+  place,
   discKey,
   dimmed = false,
 }: {
   a: UltimateProjection["athletes"][number];
   i: number;
+  /** The number in the # column. In the main list it is the athlete's position
+   * among those expected to start, counted 1..N so the list has no holes in
+   * it -- moving a flagged athlete down used to leave the 100m reading 2, 3, 4.
+   * In the flagged group it is `a.rank`, the position the MODEL gave them,
+   * which is the interesting fact about a flagged favourite and would be lost
+   * if this were a position in that short list instead. */
+  place: number;
   discKey: string;
   dimmed?: boolean;
 }) {
   return (
     <tr
       className={`stagger-item transition-colors hover:bg-secondary/40 ${
-        dimmed ? "opacity-70" : a.rank <= 3 ? "bg-gold/[0.06]" : ""
+        dimmed ? "opacity-70" : place <= 3 ? "bg-gold/[0.06]" : ""
       }`}
       style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
     >
       <td className="py-3 pr-2">
-        {!dimmed && a.rank <= 3 ? (
-          <RankBadge rank={a.rank} />
+        {!dimmed && place <= 3 ? (
+          <RankBadge rank={place} />
         ) : (
-          <span className="nums text-[13px] font-semibold text-muted-foreground">{a.rank}</span>
+          <span className="nums text-[13px] font-semibold text-muted-foreground">{place}</span>
         )}
       </td>
       <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
