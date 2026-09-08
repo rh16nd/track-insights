@@ -112,6 +112,14 @@ export const fr: Record<string, string> = {
   "ultimate.projection.flaggedTitle": "Annoncés forfaits",
   "ultimate.projection.flaggedHint":
     "Ces athlètes figurent toujours dans le plateau qualifié de World Athletics, mais une information de presse annonce leur absence. Seul un forfait annoncé fait descendre un athlète ici ; une simple mention de blessure le laisse à sa place dans la liste ci-dessus, avec un badge « à surveiller ». Le chiffre à côté de chaque nom est la place que le modèle lui avait donnée ; la liste ci-dessus est numérotée selon les athlètes attendus au départ, et repart donc de 1. Personne n’est supprimé, car une détection peut se tromper : touchez le badge pour lire l’information et en juger vous-même.",
+  "ultimate.projection.alsoQualified": "aussi engagé sur le {{events}}",
+  "ultimate.projection.alsoClash": "aussi qualifié sur le {{events}}, en conflit d’horaire",
+  "ultimate.projection.subtitleEntered":
+    "Les {{n}} athlètes inscrits sur la liste officielle de World Athletics pour cette épreuve, classés par le modèle. {{places}} places.",
+  "ultimate.projection.notEntered":
+    "Qualifiés pour cette épreuve mais absents de la liste des engagés, donc non classés ci-dessus : {{names}}.",
+  "ultimate.projection.promoted":
+    "Le modèle plaçait {{names}} dans son top 3. Forfait annoncé depuis : les trois athlètes ci-dessous sont les suivants de son classement.",
   "ultimate.projection.unscored":
     "Qualifiés mais non classés ici, faute de marque 2026 dans cette épreuve : {{names}}.",
   "ultimate.projection.note":
@@ -416,7 +424,7 @@ export const fr: Record<string, string> = {
   "howItWorks.s2.p1":
     "Le modèle apprend des podiums réels de chaque finale de Diamond League, des Jeux olympiques, des Championnats du monde, des Championnats d’Europe et de la Coupe continentale, de **2018 à 2025** (2020 a été annulée). Ce sont de vrais résultats, tirés directement de World Athletics, pas l’avis de quiconque sur qui aurait dû gagner. Chaque athlète n’est jugé que sur ce qu’il avait accompli **avant que cette finale ait lieu** : une finale de juillet n’est jamais évaluée avec une course d’août.",
   "howItWorks.s2.p2":
-    "Pour chaque athlète en lice, le modèle calcule **14 signaux** à partir de sa vraie saison : sa meilleure marque de l’année et son record en carrière, sa régularité d’un meeting à l’autre, la tendance de sa forme, sa fréquence de compétition, et son bilan **en confrontation directe avec ce plateau précis**. Une **forêt aléatoire**, un modèle qui pèse de nombreux signaux ensemble, transforme le tout en un seul chiffre : la chance de podium. Elle les pèse ensemble parce que les signaux s’influencent les uns les autres. Une superbe meilleure performance compte moins, par exemple, si l’athlète n’a presque pas concouru de l’année.",
+    "Pour chaque athlète en lice, le modèle calcule **18 signaux** à partir de sa vraie saison : sa meilleure marque de l’année et son record en carrière, sa régularité d’un meeting à l’autre, la tendance de sa forme, sa fréquence de compétition, l’ancienneté de sa meilleure marque, son retard sur le meilleur du plateau, et son bilan **en confrontation directe avec ce plateau précis**. Une **forêt aléatoire**, un modèle qui pèse de nombreux signaux ensemble, transforme le tout en un seul chiffre : la chance de podium. Elle les pèse ensemble parce que les signaux s’influencent les uns les autres. Une superbe meilleure performance compte moins, par exemple, si l’athlète n’a presque pas concouru de l’année.",
   "howItWorks.s2.p3":
     "Et il est testé honnêtement, par **validation glissante** : le modèle n’est entraîné que sur des saisons *antérieures* à l’année sur laquelle il est évalué, la précision ci-dessous provient donc entièrement de finales qu’il n’avait jamais vues. C’est toute la différence entre une vraie prévision et un modèle qui a simplement appris les réponses par cœur.",
   "howItWorks.s3.title": "Sa précision",
@@ -434,7 +442,7 @@ export const fr: Record<string, string> = {
   "howItWorks.s4.pAfter":
     ", les données mêmes qui alimentent leurs retransmissions et leurs fiches d’athlètes. L’extraction tourne sur une machine séparée, et aucune performance n’est jamais saisie ni modifiée à la main : ce que vous lisez ici est exactement ce qu’ils ont publié.",
   "howItWorks.s4.competitions": "Compétitions",
-  "howItWorks.s4.marks": "Performances",
+  "howItWorks.s4.marks": "Performances passées apprises",
   "howItWorks.s4.venues": "Sites",
   "howItWorks.s4.seasons": "Saisons",
   "howItWorks.s4.seasonsDeep": "Saisons d’historique",
@@ -860,7 +868,7 @@ export const fr: Record<string, string> = {
   "landing.ctaSecondary": "Parcourir les {{n}} épreuves",
   "landing.statHitRate": "Taux de réussite du podium",
   "landing.statDisciplines": "Disciplines suivies",
-  "landing.statMarks": "Performances cotées",
+  "landing.statMarks": "Performances cotées cette saison",
   "landing.statsLoading": "Chargement des statistiques en direct…",
   "landing.statsError":
     "Les statistiques en direct sont injoignables pour le moment. Les chiffres ci-dessus se rempliront dès que le modèle tournera.",

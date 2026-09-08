@@ -830,6 +830,15 @@ export type UltimateProjection = {
    * difference between a projection worth reading and one that is quietly
    * wrong. */
   unscored: string[];
+  /** Qualified for this event but absent from World Athletics' published
+   * ENTRY list. Qualification says who is eligible; entries say who is
+   * running, and they disagreed about 19 athletes each way three days out
+   * — including this projection's own number one in the women's long jump.
+   * Named rather than dropped, because a reader who saw them yesterday is
+   * owed an explanation. */
+  notEntered?: string[];
+  /** "entries" once WA has published entry lists, "qualification" before. */
+  fieldSource?: string;
   athletes: {
     rank: number;
     name: string;
@@ -845,6 +854,12 @@ export type UltimateProjection = {
     injuryStatus?: "watch" | "remove";
     injuryReason?: string | null;
     injuryUrl?: string | null;
+    /** Other events this athlete has ALSO qualified for. World Athletics
+     * publishes who is eligible, not who is entered, and 11 athletes qualified
+     * twice — so listing them in both projections silently claims they will run
+     * both. `clashes` is true when the two events share a session in WA's own
+     * timetable, which makes the double impossible rather than merely hard. */
+    alsoQualifiedIn?: { label: string; discKey: string; clashes: boolean }[];
   }[];
 };
 

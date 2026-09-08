@@ -39,8 +39,9 @@ export const Route = createFileRoute("/")({
  *
  * `value` is a number, not a pre-formatted string, because a counter cannot
  * animate a string -- and the decimal place matters: the figure carries a
- * tenth (72.8% as of the 2026-09-01 retrain, 71.9% before it), and rounding
- * it away was quietly claiming a tenth of a point the model has not earned.
+ * tenth (61.6% since the 2026-09-08 head-to-head cut-off fix; it read 62.4%
+ * while that feature could see the race it was predicting), and rounding it
+ * away was quietly claiming a tenth of a point the model has not earned.
  * The value itself comes from `/api/stats`, never from a literal here, so a
  * retrain moves it on its own. `null` while the API is still answering; the
  * counter still runs on a real value arriving. */

@@ -114,6 +114,14 @@ export const en: Record<string, string> = {
   "ultimate.projection.flaggedTitle": "Reported out",
   "ultimate.projection.flaggedHint":
     "These athletes are still in World Athletics' qualified field, but a report says they will not be there. Only a reported withdrawal moves an athlete down here — an injury mention that stops short of one keeps its place in the list above, with a Watch badge on it. The number beside each name is the place the model gave them; the list above is numbered by who is expected to start, which is why it runs straight from 1. Nobody is deleted, because a match can be wrong: tap the badge to read the report and judge it yourself.",
+  "ultimate.projection.alsoQualified": "also in the {{events}}",
+  "ultimate.projection.alsoClash": "also in the {{events}}, which clashes",
+  "ultimate.projection.subtitleEntered":
+    "All {{n}} athletes on World Athletics' official entry list for this event, ranked by the model. {{places}} places.",
+  "ultimate.projection.notEntered":
+    "Qualified for this event but not on the entry list, so not ranked above: {{names}}.",
+  "ultimate.projection.promoted":
+    "The model's own top three included {{names}}, since reported out. The three below are the next in its order.",
   "ultimate.projection.unscored":
     "Qualified but not ranked here, with no 2026 mark on file for this event: {{names}}.",
   "ultimate.projection.note":
@@ -417,7 +425,7 @@ export const en: Record<string, string> = {
   "howItWorks.s2.p1":
     "The model learns from the real podiums of every Diamond League Final, Olympic Games, World Championships, European Championships and Continental Cup from **2018 to 2025** (2020 was cancelled). These are actual results, taken straight from World Athletics, not anyone's opinion of who should have won. Each athlete is judged only on what they had done **before that final was run**, so a July final is never scored using an August race.",
   "howItWorks.s2.p2":
-    "For each athlete in the running, the model works out **14 signals** from their real season: their best mark this year and their career best, how steady they've been from meeting to meeting, which way their form is heading, how often they've raced, and their record **head-to-head against this exact field**. A **random forest**, a model that weighs many signals together, turns all of it into one number: the chance of a podium. It weighs them together because the signals affect each other. A superb season best counts for less, for example, if the athlete has barely raced all year.",
+    "For each athlete in the running, the model works out **18 signals** from their real season: their best mark this year and their career best, how steady they've been from meeting to meeting, which way their form is heading, how often they've raced, how long ago they set that best mark, how far behind the fastest in the field they sit, and their record **head-to-head against this exact field**. A **random forest**, a model that weighs many signals together, turns all of it into one number: the chance of a podium. It weighs them together because the signals affect each other. A superb season best counts for less, for example, if the athlete has barely raced all year.",
   "howItWorks.s2.p3":
     "And it's tested honestly, using **walk-forward validation**: the model is only ever trained on seasons *before* the year it's scored on, so the accuracy below comes entirely from Finals it had never seen. That's the difference between a real forecast and a model that has simply memorised the answers.",
   "howItWorks.s3.title": "How accurate it is",
@@ -433,7 +441,7 @@ export const en: Record<string, string> = {
   "howItWorks.s4.pAfter":
     "'s own public API, the same data behind their broadcasts and athlete profiles. The scraping runs on a separate machine, and no mark is ever typed in or edited by hand, so what you read here is exactly what they published.",
   "howItWorks.s4.competitions": "Competitions",
-  "howItWorks.s4.marks": "Marks",
+  "howItWorks.s4.marks": "Past marks learned from",
   "howItWorks.s4.venues": "Venues",
   "howItWorks.s4.seasons": "Seasons",
   "howItWorks.s4.seasonsDeep": "Seasons deep",
@@ -854,7 +862,7 @@ export const en: Record<string, string> = {
   "landing.ctaSecondary": "Browse all {{n}} events",
   "landing.statHitRate": "Podium hit rate",
   "landing.statDisciplines": "Disciplines tracked",
-  "landing.statMarks": "Marks scored",
+  "landing.statMarks": "Marks ranked this season",
   "landing.statsLoading": "Loading live stats…",
   "landing.statsError":
     "Live stats aren't reachable right now. The numbers above will fill in once the model is running.",

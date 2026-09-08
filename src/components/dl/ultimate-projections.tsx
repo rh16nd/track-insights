@@ -55,6 +55,13 @@ export function UltimateProjections({
   const isOut = (a: UltimateProjection["athletes"][number]) => a.injuryStatus === "remove";
   const clear = current.athletes.filter((a) => !isOut(a));
   const flagged = current.athletes.filter(isOut);
+  // Renumbering the list 1..N closes the hole a withdrawal leaves, and in doing
+  // so it hides something: with the model's number one reported out, the three
+  // medal badges sit on its 2nd, 3rd and 4th, and the page said nothing about
+  // it. Only worth saying when a withdrawal actually displaced the podium --
+  // the javelin's flagged athlete is its number eight, and nobody was promoted
+  // over him.
+  const promoted = flagged.filter((a) => a.rank <= 3);
 
   return (
     <>
@@ -99,12 +106,23 @@ export function UltimateProjections({
         title={t("ultimate.projection.title", {
           disc: discName(t, current.discKey, current.disciplineLabel),
         })}
-        subtitle={t("ultimate.projection.subtitle", {
-          n: current.qualified,
-          places: current.places ?? current.qualified,
-        })}
+        subtitle={t(
+          current.fieldSource === "entries"
+            ? "ultimate.projection.subtitleEntered"
+            : "ultimate.projection.subtitle",
+          { n: current.athletes.length, places: current.places ?? current.qualified },
+        )}
         className="mt-4"
       >
+        {/* Above the table, not below it. A reader who meets this after
+            counting down the podium has already drawn the wrong conclusion. */}
+        {promoted.length > 0 && (
+          <p className="mb-3 max-w-3xl border-l-2 border-gold/50 pl-3 text-[11.5px] leading-snug text-muted-foreground">
+            {t("ultimate.projection.promoted", {
+              names: promoted.map((a) => a.name).join(", "),
+            })}
+          </p>
+        )}
         <div className="overflow-x-auto">
           <table className="w-full min-w-[620px]">
             <caption className="sr-only">
@@ -147,7 +165,14 @@ export function UltimateProjections({
             </thead>
             <tbody className="divide-y divide-border">
               {clear.map((a, i) => (
-                <ProjectionRow key={a.name} a={a} i={i} place={i + 1} discKey={current.discKey} />
+                <ProjectionRow
+                  key={a.name}
+                  a={a}
+                  i={i}
+                  place={i + 1}
+                  discKey={current.discKey}
+                  t={t}
+                />
               ))}
             </tbody>
             {flagged.length > 0 && (
@@ -173,6 +198,7 @@ export function UltimateProjections({
                     i={i}
                     place={a.rank}
                     discKey={current.discKey}
+                    t={t}
                     dimmed
                   />
                 ))}
@@ -183,6 +209,16 @@ export function UltimateProjections({
         {/* Named, not counted. A qualified athlete the model could not score is
             a hole in the projection, and the one thing a reader must not have
             to guess at is whether their favourite is missing. */}
+        {/* Qualified and not entered. Below the table, not above: unlike the
+            promoted-podium note this does not change how the numbers above
+            should be read, it answers "where did they go". */}
+        {(current.notEntered?.length ?? 0) > 0 && (
+          <p className="mt-3 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
+            {t("ultimate.projection.notEntered", {
+              names: (current.notEntered ?? []).join(", "),
+            })}
+          </p>
+        )}
         {current.unscored.length > 0 && (
           <p className="mt-3 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
             {t("ultimate.projection.unscored", { names: current.unscored.join(", ") })}
@@ -208,6 +244,7 @@ function ProjectionRow({
   i,
   place,
   discKey,
+  t,
   dimmed = false,
 }: {
   a: UltimateProjection["athletes"][number];
@@ -220,6 +257,7 @@ function ProjectionRow({
    * if this were a position in that short list instead. */
   place: number;
   discKey: string;
+  t: (k: string, v?: Record<string, string | number>) => string;
   dimmed?: boolean;
 }) {
   return (
@@ -252,6 +290,26 @@ function ProjectionRow({
             className="ml-2"
           />
         )}
+        {/* Qualified here AND somewhere else. Worth saying on the row rather
+            than in a footnote, because the reader's question is about this
+            athlete: a clash means they cannot run both, and this list does not
+            know which one they will pick. */}
+        {a.alsoQualifiedIn?.length ? (
+          <span
+            className={`ml-2 whitespace-nowrap rounded px-1.5 py-0.5 text-[10.5px] font-medium ${
+              a.alsoQualifiedIn.some((o) => o.clashes)
+                ? "bg-gold/20 text-[var(--gold-on-canvas)]"
+                : "bg-secondary text-muted-foreground"
+            }`}
+          >
+            {t(
+              a.alsoQualifiedIn.some((o) => o.clashes)
+                ? "ultimate.projection.alsoClash"
+                : "ultimate.projection.alsoQualified",
+              { events: a.alsoQualifiedIn.map((o) => o.label).join(", ") },
+            )}
+          </span>
+        ) : null}
       </td>
       <td className="py-3 pl-4">
         <NatFlag nat={a.nat ?? "—"} />
