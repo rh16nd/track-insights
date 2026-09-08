@@ -109,9 +109,9 @@ export const fr: Record<string, string> = {
     "Les termes de World Athletics. Une wild card est une place réservée à un champion : le vainqueur olympique 2024, le champion du monde 2025 et le vainqueur de la finale de Diamond League 2026 de chaque épreuve en obtiennent une automatiquement. Tous les autres se sont qualifiés grâce à leur classement mondial World Athletics sur l’année de qualification.",
   "ultimate.projection.chanceHint":
     "L’estimation par le modèle des chances de cet athlète de finir dans les trois premiers de cette épreuve. C’est la chance propre à chacun, pas une part de cent : la colonne ne totalise donc pas 100 — dans une épreuve serrée, plusieurs athlètes peuvent tous être de sérieux candidats au podium.",
-  "ultimate.projection.flaggedTitle": "Signalés par la vérification des blessures",
+  "ultimate.projection.flaggedTitle": "Annoncés forfaits",
   "ultimate.projection.flaggedHint":
-    "Ces athlètes figurent toujours dans le plateau qualifié de World Athletics. Ce qui a changé, c’est qu’un titre de presse ou un compte rendu de résultats a mentionné une blessure, un abandon ou un forfait — une chose que le modèle ne peut pas savoir. Le chiffre à côté de chacun est la place que le modèle lui avait donnée ; la liste ci-dessus est numérotée selon les athlètes attendus au départ, et repart donc de 1. Ils sont placés ici plutôt que supprimés, car une détection peut se tromper : touchez le badge pour lire le titre d’origine et en juger vous-même.",
+    "Ces athlètes figurent toujours dans le plateau qualifié de World Athletics, mais une information de presse annonce leur absence. Seul un forfait annoncé fait descendre un athlète ici ; une simple mention de blessure le laisse à sa place dans la liste ci-dessus, avec un badge « à surveiller ». Le chiffre à côté de chaque nom est la place que le modèle lui avait donnée ; la liste ci-dessus est numérotée selon les athlètes attendus au départ, et repart donc de 1. Personne n’est supprimé, car une détection peut se tromper : touchez le badge pour lire l’information et en juger vous-même.",
   "ultimate.projection.unscored":
     "Qualifiés mais non classés ici, faute de marque 2026 dans cette épreuve : {{names}}.",
   "ultimate.projection.note":

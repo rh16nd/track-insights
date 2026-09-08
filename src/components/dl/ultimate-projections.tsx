@@ -40,15 +40,21 @@ export function UltimateProjections({
   const current = sorted.find((p) => p.discKey === active) ?? sorted[0];
   if (!current) return null;
 
-  // Flagged athletes drop to their own group at the foot of the discipline
-  // rather than out of the table. Two reasons they are not removed: this field
-  // is World Athletics' published qualification list, which the page says in as
-  // many words, and an injury match can be wrong -- the check reads headlines,
-  // and it has been wrong before (HANDOFF: the Cole Hocker false positive). A
-  // reader gets the athlete, the model's number, and the headline behind the
-  // flag, and decides.
-  const clear = current.athletes.filter((a) => !a.injuryWatch);
-  const flagged = current.athletes.filter((a) => a.injuryWatch);
+  // Only a REPORTED WITHDRAWAL leaves the list. The two injury statuses mean
+  // different things and this used to treat them the same, which moved
+  // Duplantis out of the pole vault on a report that said he pulled out of the
+  // Diamond League final -- a meeting already run, saying nothing about
+  // Budapest. A "watch" is an injury mention that stops short of a withdrawal;
+  // it keeps its place, its rank and its number, and carries the badge.
+  //
+  // Even a reported withdrawal is moved rather than deleted: this field is
+  // World Athletics' published qualification list, which the page says in as
+  // many words, and a headline match can be wrong (HANDOFF: the Cole Hocker
+  // false positive). The reader gets the athlete, the model's number and the
+  // report behind it, and decides.
+  const isOut = (a: UltimateProjection["athletes"][number]) => a.injuryStatus === "remove";
+  const clear = current.athletes.filter((a) => !isOut(a));
+  const flagged = current.athletes.filter(isOut);
 
   return (
     <>

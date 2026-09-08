@@ -111,9 +111,9 @@ export const en: Record<string, string> = {
     "World Athletics' own wording. A wild card is a place held for a champion: the 2024 Olympic winner, the 2025 world champion and the 2026 Diamond League Final winner in each event get one automatically. Everyone else got in on their World Athletics Ranking over the qualifying year.",
   "ultimate.projection.chanceHint":
     "The model's estimate that this athlete finishes in the top three of this event. It is each athlete's own chance, not a share of one hundred, so the column does not add up to 100 — in a close event several athletes can all be likely medallists.",
-  "ultimate.projection.flaggedTitle": "Flagged by the injury check",
+  "ultimate.projection.flaggedTitle": "Reported out",
   "ultimate.projection.flaggedHint":
-    "These athletes are still in World Athletics' qualified field. What changed is that a headline or a results recap mentioned an injury, a DNF or a withdrawal — something the model has no way of knowing. The number beside each one is the place the model gave them; the list above is numbered by who is expected to be on the start line, which is why it runs straight from 1. They sit down here instead of being deleted, because a match can be wrong: tap the badge to read the headline it came from and judge it yourself.",
+    "These athletes are still in World Athletics' qualified field, but a report says they will not be there. Only a reported withdrawal moves an athlete down here — an injury mention that stops short of one keeps its place in the list above, with a Watch badge on it. The number beside each name is the place the model gave them; the list above is numbered by who is expected to start, which is why it runs straight from 1. Nobody is deleted, because a match can be wrong: tap the badge to read the report and judge it yourself.",
   "ultimate.projection.unscored":
     "Qualified but not ranked here, with no 2026 mark on file for this event: {{names}}.",
   "ultimate.projection.note":
