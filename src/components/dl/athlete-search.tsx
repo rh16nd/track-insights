@@ -1,18 +1,13 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { apiFetch } from "@/lib/api";
+import { prefetchSearchIndex, searchAll } from "@/lib/search";
+import type { SearchHit } from "@/lib/search";
 import { useT } from "@/lib/i18n";
 import { discName } from "@/lib/dl-data";
 import type { CountryHit } from "@/lib/dl-data";
 import { NatFlag } from "@/components/dl/nat-flag";
 
-export type SearchHit = {
-  name: string;
-  disc: string;
-  discKey: string;
-  mark: string | null;
-  worldRank: number | null;
-};
+export type { SearchHit };
 
 /** One row in the dropdown. Countries and athletes are different kinds of
  * result but share one list, so arrow keys walk the whole thing rather than
@@ -67,19 +62,18 @@ export function AthleteSearch({
     const controller = new AbortController();
     setLoading(true);
     const timer = setTimeout(() => {
+      // Matched against the CDN snapshot when there is one, and against the
+      // live API when there is not — searchAll decides, and the difference is
+      // invisible here except in how long the first one takes.
+      //
       // Search does not retry: a keystroke supersedes the last query within
       // the debounce window anyway, so a retried request would race the one
       // the user actually wants. `retries: 0` is expressed by treating any
       // failure as an empty result set, which is what the UI already did.
-      apiFetch<{ results?: SearchHit[]; countries?: CountryHit[] }>(
-        `/api/search?q=${encodeURIComponent(q)}`,
-        {
-          signal: controller.signal,
-        },
-      )
+      searchAll(q, controller.signal)
         .then((d) => {
-          setHits(d.results ?? []);
-          setCountries(d.countries ?? []);
+          setHits(d.results);
+          setCountries(d.countries);
           setActive(0);
           setLoading(false);
         })
@@ -190,7 +184,13 @@ export function AthleteSearch({
         autoComplete="off"
         value={query}
         placeholder={t("search.placeholder")}
-        onFocus={() => setOpen(true)}
+        onFocus={() => {
+          setOpen(true);
+          // Someone who has clicked into the box is about to type. Start the
+          // index download now so it arrives under the first two characters
+          // rather than after them.
+          prefetchSearchIndex();
+        }}
         onChange={(e) => {
           setQuery(e.target.value);
           setOpen(true);

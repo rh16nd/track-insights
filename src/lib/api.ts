@@ -43,8 +43,11 @@ export const API_IS_LOCAL = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$
  * static — and serving them from the CDN also removes a live World Athletics
  * GraphQL call that api.py otherwise makes on every single profile view.
  *
- * /api/search stays on the live API: its response depends on the query, so
- * there is no fixed set of files to write. */
+ * /api/search stays on the live API, because its response depends on the query
+ * and there is no fixed set of files to write. Nothing waits on it, though:
+ * /api/search-index — the whole searchable set, one snapshot — is fetched
+ * instead and matched in the browser (lib/search.ts), leaving the route as a
+ * fallback. */
 const SNAPSHOT_FILES: Record<string, string> = {
   "/api/predictions": "predictions.json",
   "/api/results": "results.json",
@@ -83,8 +86,12 @@ function athleteSlug(name: string): string {
 
 /** Prefer the snapshot in production; prefer the live API in development,
  * where api.py is the source of truth and the checked-in snapshot may be a
- * refresh behind. `VITE_STATIC_API=0` / `=1` overrides either way. */
-const PREFER_STATIC =
+ * refresh behind. `VITE_STATIC_API=0` / `=1` overrides either way.
+ *
+ * Exported because search reads its own snapshot rather than going through
+ * apiFetch (the query string means there is no one file to map a path to), and
+ * it must make the same choice this does rather than a second, divergent one. */
+export const PREFER_STATIC =
   (import.meta.env["VITE_STATIC_API"] ?? (import.meta.env.PROD ? "1" : "0")) !== "0";
 
 function staticUrlFor(path: string): string | null {
