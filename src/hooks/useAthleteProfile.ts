@@ -10,7 +10,7 @@ import type {
   ScoreContext,
   StandingsPosition,
 } from "@/lib/dl-data";
-import { apiFetch, ApiError, describeApiError } from "@/lib/api";
+import { apiFetch, staticFetch, ApiError, describeApiError } from "@/lib/api";
 
 /** An athlete who exists in the season's worldwide toplist but is not in the
  * projected field. Carries the REAL reason (mirroring run.py's selection
@@ -100,12 +100,30 @@ export function useAthleteProfile(discKey: string, name: string): State {
     const ac = new AbortController();
     setState({ status: "loading" });
 
+    const profilePath = `/api/athlete/${discKey}/${encodeURIComponent(name)}`;
+    const statusPath = `/api/athlete-status/${discKey}/${encodeURIComponent(name)}`;
+
     const load = async () => {
       try {
-        const data = await apiFetch<AthleteProfile>(
-          `/api/athlete/${discKey}/${encodeURIComponent(name)}`,
-          { signal: ac.signal },
-        );
+        // Both CDN snapshots before either live request. Only ~240 athletes
+        // have a profile, so for most searchable names the profile 404s and
+        // the real answer is the status page -- and if that first miss went
+        // straight to the API, the click would wait out Render's cold start
+        // even though the answer was already sitting on the CDN.
+        const snap = await staticFetch<AthleteProfile>(profilePath, { signal: ac.signal });
+        if (snap) {
+          setState({ status: "ok", data: snap });
+          return;
+        }
+        const snapStatus = await staticFetch<AthleteNotInField>(statusPath, {
+          signal: ac.signal,
+        });
+        if (snapStatus && !snapStatus.inField) {
+          setState({ status: "notInField", data: snapStatus });
+          return;
+        }
+
+        const data = await apiFetch<AthleteProfile>(profilePath, { signal: ac.signal });
         setState({ status: "ok", data });
       } catch (e) {
         if (ac.signal.aborted) return;
@@ -114,10 +132,9 @@ export function useAthleteProfile(discKey: string, name: string): State {
         // finalists out of ~3,700 ranked athletes. Ask why before giving up.
         if (e instanceof ApiError && e.status === 404) {
           try {
-            const status = await apiFetch<AthleteNotInField>(
-              `/api/athlete-status/${discKey}/${encodeURIComponent(name)}`,
-              { signal: ac.signal },
-            );
+            const status = await apiFetch<AthleteNotInField>(statusPath, {
+              signal: ac.signal,
+            });
             if (ac.signal.aborted) return;
             if (!status.inField) {
               setState({ status: "notInField", data: status });

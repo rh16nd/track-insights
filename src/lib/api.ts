@@ -61,6 +61,10 @@ const SNAPSHOT_FILES: Record<string, string> = {
 
 const DISCIPLINE_PATH = /^\/api\/discipline\/([A-Za-z0-9_]+)$/;
 const ATHLETE_PATH = /^\/api\/athlete\/([A-Za-z0-9_]+)\/(.+)$/;
+/** The "why isn't this athlete in the field?" page. Snapshotted for the same
+ * reason profiles are, and it matters more: only ~240 athletes have a profile,
+ * so this is what the other few thousand searchable names resolve to. */
+const ATHLETE_STATUS_PATH = /^\/api\/athlete-status\/([A-Za-z0-9_]+)\/(.+)$/;
 const COUNTRY_PATH = /^\/api\/country\/([A-Za-z]{2,3})$/;
 
 /** Filename-safe key for an athlete name. MUST stay identical to
@@ -106,19 +110,23 @@ function staticUrlFor(path: string): string | null {
   if (co) return `/data/country/${(co[1] ?? "").toUpperCase()}.json`;
 
   const a = ATHLETE_PATH.exec(path);
-  if (a) {
-    let name: string;
-    try {
-      // The caller encoded this; a malformed sequence is not worth throwing
-      // over, so fall through to the live API and let it answer.
-      name = decodeURIComponent(a[2] ?? "");
-    } catch {
-      return null;
-    }
-    const slug = athleteSlug(name);
-    return slug ? `/data/athlete/${a[1]}/${slug}.json` : null;
-  }
+  if (a) return perAthleteFile("athlete", a[1] ?? "", a[2] ?? "");
+  const st = ATHLETE_STATUS_PATH.exec(path);
+  if (st) return perAthleteFile("athlete-status", st[1] ?? "", st[2] ?? "");
   return null;
+}
+
+function perAthleteFile(dir: string, discKey: string, encodedName: string): string | null {
+  let name: string;
+  try {
+    // The caller encoded this; a malformed sequence is not worth throwing
+    // over, so fall through to the live API and let it answer.
+    name = decodeURIComponent(encodedName);
+  } catch {
+    return null;
+  }
+  const slug = athleteSlug(name);
+  return slug ? `/data/${dir}/${discKey}/${slug}.json` : null;
 }
 
 /** Wake the API in the background, once per page session.
@@ -184,6 +192,34 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const RETRY_DELAYS_MS = [400, 1200];
 
 /**
+ * The CDN copy of a path, or null if there isn't one.
+ *
+ * Separate from `apiFetch` because some callers need to know a snapshot was
+ * missing WITHOUT the live API being asked in the same breath. The athlete page
+ * is the case that forced it: a name outside the projected field 404s on
+ * `/api/athlete/...` and the page then asks `/api/athlete-status/...` why. Both
+ * are snapshotted, but if the first miss went straight to Render the click
+ * would still wait out the cold start — the one thing the snapshots exist to
+ * prevent. So it checks both CDN files first, and only then gives up on them.
+ *
+ * A rejected fetch is a miss, not an error: the deploy simply may not carry
+ * this file yet. An abort is the caller changing its mind and propagates.
+ */
+export async function staticFetch<T>(path: string, init?: RequestInit): Promise<T | null> {
+  const url = staticUrlFor(path);
+  if (!url) return null;
+  try {
+    const res = await fetch(url, init);
+    if (res.ok) return (await res.json()) as T;
+  } catch (e) {
+    // A caller cancelling (unmount, superseded keystroke) must not be
+    // retried against the API -- that would fight the caller.
+    if (e instanceof Error && e.name === "AbortError") throw e;
+  }
+  return null;
+}
+
+/**
  * Fetch a path from the API, retrying transient failures.
  *
  * `path` is API-relative and must start with "/" (e.g. "/api/stats").
@@ -199,17 +235,8 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
   // The CDN copy first, when this path is a snapshot. A miss here is not an
   // error worth surfacing -- it just means the deploy has no snapshot yet, so
   // we fall through to the live API below and behave exactly as before.
-  const staticUrl = staticUrlFor(path);
-  if (staticUrl) {
-    try {
-      const res = await fetch(staticUrl, init);
-      if (res.ok) return (await res.json()) as T;
-    } catch (e) {
-      // A caller cancelling (unmount, superseded keystroke) must not be
-      // retried against the API -- that would fight the caller.
-      if (e instanceof Error && e.name === "AbortError") throw e;
-    }
-  }
+  const hit = await staticFetch<T>(path, init);
+  if (hit !== null) return hit;
 
   let lastError: unknown;
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {

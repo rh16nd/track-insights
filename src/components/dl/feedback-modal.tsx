@@ -118,7 +118,19 @@ export function FeedbackModal({ open, onClose }: { open: boolean; onClose: () =>
           reply_to: reply.trim() || undefined,
         }),
       });
-      setStatus(res.ok ? "sent" : "error");
+      // web3forms answers 200 with {"success": false} for a rejected key, so
+      // res.ok alone would tell the reader their message was sent while it was
+      // being dropped. A feedback box that silently swallows feedback is worse
+      // than no feedback box, which is the same reason the mailto fallback
+      // above exists.
+      let ok = res.ok;
+      try {
+        ok = ok && ((await res.json()) as { success?: boolean }).success !== false;
+      } catch {
+        // A 200 with an unreadable body: nothing says it failed, so trust the
+        // status rather than telling the reader it broke.
+      }
+      setStatus(ok ? "sent" : "error");
     } catch {
       setStatus("error");
     }
