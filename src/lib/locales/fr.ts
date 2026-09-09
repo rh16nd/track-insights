@@ -453,6 +453,12 @@ export const fr: Record<string, string> = {
     "Il prédit **qui monte sur le podium, pas le 1-2-3 exact**, et il ne prétend jamais savoir qui gagne.",
   "howItWorks.s5.b3":
     "Il n’est **pas affilié à World Athletics** ni à la Wanda Diamond League. Il se contente de lire leurs données publiques.",
+  "howItWorks.contact.title": "Vous avez repéré une erreur ?",
+  "howItWorks.contact.p1":
+    "Ce site est construit à partir de données publiques, et il se trompe parfois. Si un chiffre paraît faux, si un athlète est dans la mauvaise épreuve, ou si quelque chose ici n’a pas de sens, dites-le-moi. Plusieurs des corrections décrites sur cette page sont parties d’un message de lecteur.",
+  "howItWorks.contact.cta": "Envoyer un retour",
+  "howItWorks.contact.note":
+    "Une seule personne les lit : une réponse peut prendre quelques jours.",
   "howItWorks.s6.title": "Rechercher par pays",
   "howItWorks.s6.p1":
     "La recherche trouve **les pays autant que les athlètes**. Tapez une nation — « Jamaïque », « KEN », « Norvège » — et elle apparaît dans les résultats à côté des athlètes dont le nom correspond, avec le nombre d’athlètes classés et d’épreuves de cette nation cette saison.",
@@ -605,6 +611,13 @@ export const fr: Record<string, string> = {
   "disc.disagreeTitle": "Là où le modèle diverge des performances",
   "disc.disagreeSubtitle":
     "La chance de podium du modèle à côté du score de la saison de chaque athlète, pour les mêmes {{n}} athlètes. Les deux ne coïncident pas toujours, et les athlètes où ils divergent sont les plus intéressants à suivre.",
+  "disc.disagreeSubtitleModel":
+    "Les mêmes {{n}} athlètes, classés cette fois selon leur chance de podium plutôt que selon leur score de la saison. Un athlète qui monte ou descend nettement est un athlète sur lequel les deux mesures ne s’accordent pas.",
+  "disc.disagreeToggleLabel": "Classer cette liste par",
+  "disc.disagreeByPoints": "Score de la saison",
+  "disc.disagreeByModel": "Chance de podium",
+  "disc.disagreeColScore": "Score",
+  "disc.disagreeColChance": "Chance",
   "disc.disagreeNote":
     "Classé par score World Athletics. Le pourcentage est la chance, selon le modèle, que cet athlète finisse dans le top trois, pas une chance de victoire. Les deux colonnes peuvent diverger : une meilleure performance de la saison est un seul résultat, alors que la projection pèse toute la saison.",
 

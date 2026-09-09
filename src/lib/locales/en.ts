@@ -452,6 +452,11 @@ export const en: Record<string, string> = {
     "It predicts **who makes the podium, not the exact 1-2-3**, and it never claims to know who wins.",
   "howItWorks.s5.b3":
     "It's **not affiliated with World Athletics** or the Wanda Diamond League. It just reads their public data.",
+  "howItWorks.contact.title": "Found something wrong?",
+  "howItWorks.contact.p1":
+    "This site is built from public data and it does get things wrong. If a number looks off, an athlete is in the wrong event, or something here just doesn’t make sense, tell me. Several of the fixes described on this page started as somebody writing in.",
+  "howItWorks.contact.cta": "Send feedback",
+  "howItWorks.contact.note": "One person reads these, so a reply may take a few days.",
   "howItWorks.s6.title": "Searching by country",
   "howItWorks.s6.p1":
     "The search box finds **countries as well as athletes**. Type a nation — “Jamaica”, “KEN”, “Norway” — and it appears in the results alongside any athletes whose name matches, with how many ranked athletes and how many events that nation has this season.",
@@ -602,6 +607,13 @@ export const en: Record<string, string> = {
   "disc.disagreeTitle": "Where the model disagrees with the marks",
   "disc.disagreeSubtitle":
     "The model's podium chance next to each athlete's season score, for the same {{n}} athletes. The two don't always agree, and the athletes where they disagree are the most interesting to watch.",
+  "disc.disagreeSubtitleModel":
+    "The same {{n}} athletes, now ordered by the model's podium chance instead of their season score. Where an athlete jumps up or down the list, the two measures disagree about them.",
+  "disc.disagreeToggleLabel": "Order this list by",
+  "disc.disagreeByPoints": "Season score",
+  "disc.disagreeByModel": "Podium chance",
+  "disc.disagreeColScore": "Score",
+  "disc.disagreeColChance": "Chance",
   "disc.disagreeNote":
     "Ordered by World Athletics score. The percentage is the model's chance of that athlete finishing top three, not a chance of winning. The two columns can disagree: a season best is a single result, while the projection weighs the whole season.",
 

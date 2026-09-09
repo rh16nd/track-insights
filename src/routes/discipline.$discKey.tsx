@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { disciplineLabel, pageHead } from "@/lib/seo";
 import { usePageTitle } from "@/lib/use-page-title";
@@ -115,10 +116,7 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
 
   if (!depth || scores.length < 2) {
     return (
-      <Panel
-        title={t("disc.depthTitle")}
-        subtitle={t("disc.depthNeeds")}
-      >
+      <Panel title={t("disc.depthTitle")} subtitle={t("disc.depthNeeds")}>
         <p className="py-6 text-[13px] text-muted-foreground">{t("disc.depthNotEnough")}</p>
       </Panel>
     );
@@ -132,10 +130,7 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
 
   return (
     <>
-      <Panel
-        title={t("disc.levelTitle")}
-        subtitle={t("disc.levelSubtitle", { of: depth.of })}
-      >
+      <Panel title={t("disc.levelTitle")} subtitle={t("disc.levelSubtitle", { of: depth.of })}>
         <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
           {verdict && (
             <p className={`dg text-[30px] leading-none font-semibold ${VERDICT_TONE[verdict.key]}`}>
@@ -205,45 +200,120 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
         </p>
       </Panel>
 
-      <Panel
-        title={t("disc.disagreeTitle")}
-        subtitle={t("disc.disagreeSubtitle", { n: scores.length })}
-        className="mt-6"
-      >
-        <ol className="divide-y divide-border">
-          {scores.map((s, i) => (
-            <li
-              key={s.name}
-              className="stagger-item flex items-center gap-3 py-2.5 first:pt-0 last:pb-0"
-              style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
-            >
-              <span className="nums w-6 shrink-0 text-[12px] text-muted-foreground">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <Link
-                to="/athlete/$discKey/$name"
-                params={{ discKey: data.discKey, name: s.name }}
-                className="min-w-0 flex-1 truncate text-[13.5px] font-medium text-foreground transition-colors hover:text-terracotta-strong hover:underline"
-              >
-                {s.name}
-              </Link>
-              <span className="nums w-14 shrink-0 text-right text-[12.5px] text-muted-foreground">
-                {s.score}
-              </span>
-              <span className="hidden w-28 shrink-0 sm:block">
-                <ProbabilityBar value={s.prob} trackHeight="h-1.5" />
-              </span>
-              <span className="nums w-12 shrink-0 text-right text-[13.5px] font-semibold text-foreground">
-                {s.prob}%
-              </span>
-            </li>
-          ))}
-        </ol>
-        <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-          {t("disc.disagreeNote")}
-        </p>
-      </Panel>
+      <ModelVsPoints scores={scores} discKey={data.discKey} />
     </>
+  );
+}
+
+type Ranking = "points" | "model";
+
+/** The two rankings side by side, with a toggle for which one orders them.
+ *
+ * This panel exists to show that the marks and the model disagree, and it used
+ * to make that point with two unlabelled numbers in a row -- "1355" and "45%"
+ * -- ordered by one of them without saying which. Reported as confusing, and
+ * fairly: a reader had no way to tell which column they were looking at, let
+ * alone which one the list was sorted by.
+ *
+ * Both numbers still show, because the comparison IS the panel. What the
+ * toggle changes is the order and which column is emphasised, so at any moment
+ * one of them is clearly the one in charge. Same control the Track and Field
+ * pages use, deliberately -- a reader who has met it once should not have to
+ * learn it again. */
+function ModelVsPoints({ scores, discKey }: { scores: FieldScore[]; discKey: string }) {
+  const { t } = useT();
+  const [by, setBy] = useState<Ranking>("points");
+  const ordered = useMemo(
+    () => [...scores].sort((a, b) => (by === "points" ? b.score - a.score : b.prob - a.prob)),
+    [scores, by],
+  );
+
+  return (
+    <Panel
+      title={t("disc.disagreeTitle")}
+      subtitle={t(by === "points" ? "disc.disagreeSubtitle" : "disc.disagreeSubtitleModel", {
+        n: scores.length,
+      })}
+      className="mt-6"
+      action={
+        <div
+          role="tablist"
+          aria-label={t("disc.disagreeToggleLabel")}
+          className="inline-flex rounded-full border border-border bg-card p-0.5"
+        >
+          {(["points", "model"] as Ranking[]).map((v) => (
+            <button
+              key={v}
+              role="tab"
+              aria-selected={by === v}
+              type="button"
+              onClick={() => setBy(v)}
+              className={`rounded-full px-3 py-1 text-[12px] font-semibold transition-colors ${
+                by === v
+                  ? "bg-terracotta text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t(v === "points" ? "disc.disagreeByPoints" : "disc.disagreeByModel")}
+            </button>
+          ))}
+        </div>
+      }
+    >
+      {/* Named columns, which is the other half of the fix: a toggle tells you
+          what the list is sorted by, a header tells you what each number IS. */}
+      <div className="label-caps flex items-center gap-3 border-b border-border pb-2 text-muted-foreground">
+        <span className="w-6 shrink-0" />
+        <span className="min-w-0 flex-1">{t("table.colAthlete")}</span>
+        <span className={`w-14 shrink-0 text-right ${by === "points" ? "text-foreground" : ""}`}>
+          {t("disc.disagreeColScore")}
+        </span>
+        <span className="hidden w-28 shrink-0 sm:block" />
+        <span className={`w-12 shrink-0 text-right ${by === "model" ? "text-foreground" : ""}`}>
+          {t("disc.disagreeColChance")}
+        </span>
+      </div>
+      <ol className="divide-y divide-border">
+        {ordered.map((s, i) => (
+          <li
+            key={s.name}
+            className="stagger-item flex items-center gap-3 py-2.5 last:pb-0"
+            style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
+          >
+            <span className="nums w-6 shrink-0 text-[12px] text-muted-foreground">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <Link
+              to="/athlete/$discKey/$name"
+              params={{ discKey, name: s.name }}
+              className="min-w-0 flex-1 truncate text-[13.5px] font-medium text-foreground transition-colors hover:text-terracotta-strong hover:underline"
+            >
+              {s.name}
+            </Link>
+            <span
+              className={`nums w-14 shrink-0 text-right text-[12.5px] ${
+                by === "points" ? "font-semibold text-foreground" : "text-muted-foreground"
+              }`}
+            >
+              {s.score}
+            </span>
+            <span className="hidden w-28 shrink-0 sm:block">
+              <ProbabilityBar value={s.prob} trackHeight="h-1.5" />
+            </span>
+            <span
+              className={`nums w-12 shrink-0 text-right text-[13.5px] ${
+                by === "model" ? "font-semibold text-foreground" : "text-muted-foreground"
+              }`}
+            >
+              {s.prob}%
+            </span>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
+        {t("disc.disagreeNote")}
+      </p>
+    </Panel>
   );
 }
 
@@ -286,9 +356,7 @@ function ScoreSpread({ scores }: { scores: FieldScore[] }) {
           {shortName(scores[0]?.name ?? "")} · {top}
         </span>
       </div>
-      <p className="mt-2 text-[12px] text-muted-foreground">
-        {t("disc.spreadNote")}
-      </p>
+      <p className="mt-2 text-[12px] text-muted-foreground">{t("disc.spreadNote")}</p>
     </figure>
   );
 }

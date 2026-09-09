@@ -370,9 +370,9 @@ function NotInField({
             href={data.waUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[12px] text-muted-foreground transition-colors hover:text-terracotta-strong hover:underline"
+            className="inline-flex items-center gap-1.5 rounded-full border border-terracotta/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-terracotta-strong transition-[transform,background-color,border-color] duration-150 ease-out hover:border-terracotta hover:bg-terracotta/[0.07] active:scale-[0.97]"
           >
-            View full profile on World Athletics
+            {t("ath.viewFullProfile")}
           </a>
         )}
       </div>
@@ -772,7 +772,7 @@ function AthleteProfilePage() {
             href={a.waUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-5 inline-block text-[12px] text-muted-foreground transition-colors hover:text-terracotta-strong hover:underline"
+            className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-terracotta/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-terracotta-strong transition-[transform,background-color,border-color] duration-150 ease-out hover:border-terracotta hover:bg-terracotta/[0.07] active:scale-[0.97]"
           >
             {t("ath.viewFullProfile")}
           </a>
