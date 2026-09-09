@@ -12,6 +12,24 @@ export const en: Record<string, string> = {
   "nav.ultimate": "Ultimate",
   "nav.stats": "Stats",
   "nav.schedule": "Schedule",
+  "nav.results": "Results",
+  "results.title": "How the last predictions turned out",
+  "results.eyebrow": "2026 Diamond League Final · Brussels",
+  "results.description":
+    "Every event at the Final, with the model’s projection frozen before the meet and the result that followed. Nothing here was rewritten afterwards.",
+  "results.figPodium": "Podium places called",
+  "results.figShare": "Of the places available",
+  "results.figEvents": "Events contested",
+  "results.figBacktest": "What the model claims",
+  "results.figBacktestHint":
+    "The hit rate the model scores across every championship final in its training history, testing only on seasons it was not trained on. The figure beside it is what actually happened at one meeting it had never seen. They should be close; if they ever stop being close, the claim is the thing that is wrong.",
+  "results.scorecardTitle": "Why this page exists",
+  "results.scorecardNote":
+    "Every other accuracy number on this site is a backtest — honest, but still the model being marked on races it was scored against afterwards. This is the other kind of evidence. These projections were published before the Final was run and left alone, so what you are reading is a forecast and its outcome, not a model explaining itself in hindsight. Pick an event to see who the model had, who actually finished there, and where it was wrong.",
+  "results.pendingTitle": "Nothing to show yet",
+  "results.pendingBody":
+    "No final has been contested since the last projection was published. This page fills in once one has.",
+  "results.error": "Could not load the results.",
   "nav.howItWorks": "How it works",
   "nav.live": "Live",
   "nav.searchAthletes": "Search athletes",

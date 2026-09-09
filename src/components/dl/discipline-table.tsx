@@ -8,6 +8,7 @@ import { discName, ordinalIn } from "@/lib/dl-data";
 import type { ResultRow } from "@/lib/dl-data";
 import { InfoTip } from "./info-tip";
 import { NatFlag } from "./nat-flag";
+import { ResultComparison } from "./result-comparison";
 
 /** Which column the table is ordered by. "rank" is the API's own ordering
  * (season-best mark, ascending = fastest/furthest first); "prob" is the
@@ -137,200 +138,6 @@ function SortHeader({
   );
 }
 
-/** A small up/down triangle, reusing the sort arrow's glyph, for how far a
- * finisher landed from where the model projected them. */
-function DeltaArrow({ up }: { up: boolean }) {
-  return (
-    <svg viewBox="0 0 10 10" aria-hidden className={`size-[9px] ${up ? "" : "rotate-180"}`}>
-      <path d="M5 1.5 8.5 7h-7L5 1.5Z" fill="currentColor" />
-    </svg>
-  );
-}
-
-/** The finishing-position badge. Podium places (1-3) carry the gold-tipped
- * fill the site uses for a strong signal; the rest sit in the plain chip; a
- * DNF/DQ (no place) shows the same dashed placeholder as an unranked athlete. */
-function FinishBadge({ row }: { row: ResultRow }) {
-  if (row.place === null) {
-    return (
-      <span
-        aria-hidden
-        className="flex size-6 items-center justify-center rounded-full border border-dashed border-border text-[11px] text-muted-foreground"
-      >
-        –
-      </span>
-    );
-  }
-  const podium = row.place <= 3;
-  return (
-    <span
-      className={`nums flex size-6 items-center justify-center rounded-full text-[12px] font-semibold ${
-        podium ? "text-primary-foreground shadow-sm" : "bg-secondary text-muted-foreground"
-      }`}
-      style={
-        podium
-          ? { backgroundImage: "linear-gradient(135deg, var(--terracotta) 0%, var(--gold-strong) 100%)" }
-          : undefined
-      }
-    >
-      {row.place}
-    </span>
-  );
-}
-
-/** What the model said about this finisher before the meet: a projected place
- * and podium chance, or that it had them outside the field, or not at all. */
-function ModelCall({ row }: { row: ResultRow }) {
-  const { t, lang } = useT();
-  if (row.modelState === "field" && row.predictedRank !== null) {
-    return (
-      <span className="text-foreground">
-        {t("table.resultPredicted", {
-          rank: ordinalIn(lang, row.predictedRank),
-          prob: row.predictedProb ?? 0,
-        })}
-      </span>
-    );
-  }
-  const key = row.modelState === "nearMiss" ? "table.resultNearMiss" : "table.resultUnseen";
-  return <span className="text-muted-foreground">{t(key)}</span>;
-}
-
-/** The one-glance verdict: did the model call this place, and if not, which
- * way and by how much. An "as projected" hit reads in the accent colour; a
- * miss shows the signed gap; a podium reached from outside the field is the
- * headline upset. */
-function VerdictCell({ row }: { row: ResultRow }) {
-  const { t } = useT();
-  if (row.status !== "finished") return <span className="text-muted-foreground">—</span>;
-
-  if (row.modelState === "field" && row.delta !== null) {
-    if (row.delta === 0) {
-      return <span className="font-medium text-terracotta-strong">{t("table.resultExact")}</span>;
-    }
-    const up = row.delta > 0;
-    const n = Math.abs(row.delta);
-    const titleKey =
-      n === 1
-        ? up
-          ? "table.resultAboveOne"
-          : "table.resultBelowOne"
-        : up
-          ? "table.resultAboveTitle"
-          : "table.resultBelowTitle";
-    return (
-      <span
-        title={t(titleKey, { n })}
-        className={`nums inline-flex items-center gap-1 ${up ? "text-gold-strong" : "text-muted-foreground"}`}
-      >
-        <DeltaArrow up={up} />
-        {n}
-      </span>
-    );
-  }
-
-  if (row.modelState === "nearMiss" && row.place !== null && row.place <= 3) {
-    return <span className="font-medium text-terracotta-strong">{t("table.resultUpset")}</span>;
-  }
-  return <span className="text-muted-foreground">—</span>;
-}
-
-/** Shown in place of the projected table once a discipline's Final has been
- * contested: the actual finishing order, each finisher read against the
- * model's frozen pre-final projection so the difference is the point. */
-function ResultComparison({ current }: { current: Discipline }) {
-  const { t } = useT();
-  const result = current.result!;
-  const label = discName(t, current.id, current.label);
-  return (
-    <Panel
-      title={t("table.resultTitle", { label })}
-      subtitle={t("table.resultSummary", { hits: result.podiumHits, n: result.podiumSize })}
-      className="mt-4"
-    >
-      <p className="mb-3 max-w-2xl text-[12px] leading-snug text-muted-foreground">
-        {t("table.resultNote")}
-      </p>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[680px]">
-          <caption className="sr-only">{t("table.resultCaption", { label })}</caption>
-          <thead>
-            <tr className="label-caps text-muted-foreground">
-              <th scope="col" className="w-12 pb-3 text-left font-semibold">
-                {t("table.colFinish")}
-              </th>
-              <th scope="col" className="pb-3 pl-3 text-left font-semibold">
-                {t("table.colAthlete")}
-              </th>
-              <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
-                {t("table.colNat")}
-              </th>
-              <th scope="col" className="w-24 pb-3 pl-4 text-right font-semibold">
-                {t("table.colResult")}
-              </th>
-              <th scope="col" className="w-44 pb-3 pl-6 text-left font-semibold">
-                {t("table.colModelCall")}
-              </th>
-              <th scope="col" className="w-28 pb-3 pl-6 text-left font-semibold">
-                {t("table.colVsProjected")}
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {result.rows.map((r, i) => (
-              <tr
-                key={`${r.name}-${i}`}
-                className="stagger-item transition-colors hover:bg-secondary/40"
-                style={{ "--stagger-i": i } as CSSProperties}
-              >
-                <td className="py-3 pr-2">
-                  <FinishBadge row={r} />
-                </td>
-                <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
-                  {r.hasPage ? (
-                    <Link
-                      to="/athlete/$discKey/$name"
-                      params={{ discKey: current.id, name: r.name }}
-                      className="transition-colors hover:text-terracotta-strong hover:underline"
-                    >
-                      {r.name}
-                    </Link>
-                  ) : (
-                    <a
-                      href={r.waUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="transition-colors hover:text-terracotta-strong hover:underline"
-                    >
-                      {r.name}
-                    </a>
-                  )}
-                </td>
-                <td className="py-3 pl-4">
-                  <NatFlag nat={r.nat} />
-                </td>
-                <td className="nums py-3 pl-4 text-right text-[13.5px] font-medium text-foreground">
-                  {r.status === "finished" ? (
-                    r.mark
-                  ) : (
-                    <span className="label-caps text-muted-foreground">{r.placeLabel}</span>
-                  )}
-                </td>
-                <td className="py-3 pl-6 text-[12.5px]">
-                  <ModelCall row={r} />
-                </td>
-                <td className="py-3 pl-6 text-[12.5px]">
-                  <VerdictCell row={r} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </Panel>
-  );
-}
-
 /** The active discipline tab is controlled by the caller (track.tsx/
  * field.tsx put it in the URL's search params, not local state) so that
  * clicking into an athlete and hitting "back" restores the exact tab the
@@ -446,118 +253,120 @@ export function DisciplineTable({
       {current.result ? (
         <ResultComparison current={current} />
       ) : (
-      <Panel
-        title={t("table.projectedTop", { n: current.qualLimit, label: discName(t, current.id, current.label) })}
-        subtitle={t(SUBTITLE_KEY[sort.key]!)}
-        className="mt-4"
-        action={
-          <Link
-            to="/discipline/$discKey"
-            params={{ discKey: current.id }}
-            className="label-caps shrink-0 rounded-full border border-border px-3 py-1.5 text-muted-foreground transition-colors hover:border-terracotta/40 hover:text-foreground"
-          >
-            {t("table.howLevel")}
-          </Link>
-        }
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[680px]">
-            <caption className="sr-only">
-              {t("table.caption", { label: discName(t, current.id, current.label) })}
-            </caption>
-            <thead>
-              <tr className="label-caps text-muted-foreground">
-                <th scope="col" className="w-10 pb-3 text-left font-semibold">
-                  #<span className="sr-only">{t("table.colRankSr")}</span>
-                </th>
-                <th scope="col" className="pb-3 pl-3 text-left font-semibold">
-                  {t("table.colAthlete")}
-                </th>
-                <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
-                  {t("table.colNat")}
-                </th>
-                <th scope="col" className="w-20 pb-3 pl-4 text-left font-semibold">
-                  {t("table.colQualified")}
-                </th>
-                <SortHeader
-                  label={t("table.colProjected")}
-                  columnKey="rank"
-                  sort={sort}
-                  onSort={onSort}
-                  className="w-28 pb-3 pl-6 text-right"
-                  hint={t("table.colProjectedHint")}
-                />
-                <SortHeader
-                  label={t("table.colPodiumChance")}
-                  columnKey="prob"
-                  sort={sort}
-                  onSort={onSort}
-                  className="w-56 pb-3 pl-8 text-right"
-                  hint={t("table.colPodiumChanceHint")}
-                />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {rows.map((a, i) => (
-                <tr
-                  key={a.name}
-                  className="stagger-item transition-colors hover:bg-secondary/40"
-                  style={{ "--stagger-i": i } as CSSProperties}
-                >
-                  <td className="py-3 pr-2">
-                    <RankBadge rank={a.rank} className="size-6" />
-                  </td>
-                  <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
-                    <Link
-                      to="/athlete/$discKey/$name"
-                      params={{ discKey: current.id, name: a.name }}
-                      className="hover:text-terracotta-strong hover:underline transition-colors"
-                    >
-                      {a.name}
-                    </Link>
-                    {a.injuryWatch && (
-                      <WatchBadge reason={a.injuryReason} url={a.injuryUrl} className="ml-2" />
-                    )}
-                  </td>
-                  <td className="py-3 pl-4">
-                    <NatFlag nat={a.nat} />
-                  </td>
-                  <td className="py-3 pl-4">
-                    {/* "Q" per the user's preference over a check glyph. It
+        <Panel
+          title={t("table.projectedTop", {
+            n: current.qualLimit,
+            label: discName(t, current.id, current.label),
+          })}
+          subtitle={t(SUBTITLE_KEY[sort.key]!)}
+          className="mt-4"
+          action={
+            <Link
+              to="/discipline/$discKey"
+              params={{ discKey: current.id }}
+              className="label-caps shrink-0 rounded-full border border-border px-3 py-1.5 text-muted-foreground transition-colors hover:border-terracotta/40 hover:text-foreground"
+            >
+              {t("table.howLevel")}
+            </Link>
+          }
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[680px]">
+              <caption className="sr-only">
+                {t("table.caption", { label: discName(t, current.id, current.label) })}
+              </caption>
+              <thead>
+                <tr className="label-caps text-muted-foreground">
+                  <th scope="col" className="w-10 pb-3 text-left font-semibold">
+                    #<span className="sr-only">{t("table.colRankSr")}</span>
+                  </th>
+                  <th scope="col" className="pb-3 pl-3 text-left font-semibold">
+                    {t("table.colAthlete")}
+                  </th>
+                  <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
+                    {t("table.colNat")}
+                  </th>
+                  <th scope="col" className="w-20 pb-3 pl-4 text-left font-semibold">
+                    {t("table.colQualified")}
+                  </th>
+                  <SortHeader
+                    label={t("table.colProjected")}
+                    columnKey="rank"
+                    sort={sort}
+                    onSort={onSort}
+                    className="w-28 pb-3 pl-6 text-right"
+                    hint={t("table.colProjectedHint")}
+                  />
+                  <SortHeader
+                    label={t("table.colPodiumChance")}
+                    columnKey="prob"
+                    sort={sort}
+                    onSort={onSort}
+                    className="w-56 pb-3 pl-8 text-right"
+                    hint={t("table.colPodiumChanceHint")}
+                  />
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {rows.map((a, i) => (
+                  <tr
+                    key={a.name}
+                    className="stagger-item transition-colors hover:bg-secondary/40"
+                    style={{ "--stagger-i": i } as CSSProperties}
+                  >
+                    <td className="py-3 pr-2">
+                      <RankBadge rank={a.rank} className="size-6" />
+                    </td>
+                    <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
+                      <Link
+                        to="/athlete/$discKey/$name"
+                        params={{ discKey: current.id, name: a.name }}
+                        className="hover:text-terracotta-strong hover:underline transition-colors"
+                      >
+                        {a.name}
+                      </Link>
+                      {a.injuryWatch && (
+                        <WatchBadge reason={a.injuryReason} url={a.injuryUrl} className="ml-2" />
+                      )}
+                    </td>
+                    <td className="py-3 pl-4">
+                      <NatFlag nat={a.nat} />
+                    </td>
+                    <td className="py-3 pl-4">
+                      {/* "Q" per the user's preference over a check glyph. It
                         previously rendered at 10px with heavy label-caps
                         tracking, where it was easy to misread as a zero — so
                         it's set larger, at normal tracking, in the display
                         face (whose Q has a distinct tail). The column header
                         spells out "Qualified" and the sr-only text carries
                         the full definition. */}
-                    {a.qualified && (
-                      <span
-                        title={t("table.qTitle")}
-                        className="inline-flex size-6 items-center justify-center rounded-md bg-terracotta/12 text-[13px] font-semibold leading-none text-terracotta-strong"
-                        style={{ fontFamily: "var(--font-display)" }}
-                      >
-                        Q
-                        <span className="sr-only">{t("table.qSr")}</span>
-                      </span>
-                    )}
-                  </td>
-                  <td className="nums py-3 pl-6 text-right text-[13.5px] font-medium text-foreground">
-                    {a.mark}
-                  </td>
-                  <td className="py-3 pl-8">
-                    <div className="flex items-center justify-end gap-3">
-                      <ProbabilityBar value={a.prob} className="w-28" trackHeight="h-1.5" />
-                      <span
-                        className={`nums w-9 text-right text-[12.5px] font-semibold ${probTone(a.prob, maxProb)}`}
-                      >
-                        {a.prob}%
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                      {a.qualified && (
+                        <span
+                          title={t("table.qTitle")}
+                          className="inline-flex size-6 items-center justify-center rounded-md bg-terracotta/12 text-[13px] font-semibold leading-none text-terracotta-strong"
+                          style={{ fontFamily: "var(--font-display)" }}
+                        >
+                          Q<span className="sr-only">{t("table.qSr")}</span>
+                        </span>
+                      )}
+                    </td>
+                    <td className="nums py-3 pl-6 text-right text-[13.5px] font-medium text-foreground">
+                      {a.mark}
+                    </td>
+                    <td className="py-3 pl-8">
+                      <div className="flex items-center justify-end gap-3">
+                        <ProbabilityBar value={a.prob} className="w-28" trackHeight="h-1.5" />
+                        <span
+                          className={`nums w-9 text-right text-[12.5px] font-semibold ${probTone(a.prob, maxProb)}`}
+                        >
+                          {a.prob}%
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
 
-              {/* Athletes who are NOT in WA's Diamond League standings, so
+                {/* Athletes who are NOT in WA's Diamond League standings, so
                   not eligible for the Final -- scored by the same model, but
                   kept below the real field, unnumbered, and marked. Noah
                   Lyles is the reason this exists: world #1 at 9.79 with no
@@ -566,78 +375,78 @@ export function DisciplineTable({
                   change it; Zurich ran 26-27 Aug and it was the last scoring
                   meeting, so who is in this group is now settled except
                   where World Athletics' tie-break decides it. */}
-              {nearMiss.length > 0 && (
-                <tr>
-                  <td colSpan={6} className="pb-2 pt-6">
-                    <div className="label-caps text-muted-foreground">
-                      {t("table.notQualifiedHeading", { n: current.qualLimit })}
-                    </div>
-                    {/* Was "outside the Diamond League standings", which is
+                {nearMiss.length > 0 && (
+                  <tr>
+                    <td colSpan={6} className="pb-2 pt-6">
+                      <div className="label-caps text-muted-foreground">
+                        {t("table.notQualifiedHeading", { n: current.qualLimit })}
+                      </div>
+                      {/* Was "outside the Diamond League standings", which is
                         wrong for most of these athletes: they are IN the
                         standings, just below the qualifying places. Verified
                         2026-08-25 on the men's 1500m, where all four
                         near-miss athletes have real Diamond League points.
                         Same imprecision that made the athlete page tell
                         readers Noah Lyles had never scored. */}
-                    <p className="mt-1 max-w-xl text-[12px] leading-snug text-muted-foreground">
-                      {t("table.notQualifiedNote")}
-                    </p>
-                  </td>
-                </tr>
-              )}
-              {nearMiss.map((a, i) => (
-                <tr
-                  key={`nm-${a.name}`}
-                  className="stagger-item transition-colors hover:bg-secondary/40"
-                  style={{ "--stagger-i": i } as CSSProperties}
-                >
-                  <td className="py-3 pr-2">
-                    <span
-                      aria-hidden
-                      className="flex size-6 items-center justify-center rounded-full border border-dashed border-border text-[11px] text-muted-foreground"
-                    >
-                      –
-                    </span>
-                  </td>
-                  <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
-                    <Link
-                      to="/athlete/$discKey/$name"
-                      params={{ discKey: current.id, name: a.name }}
-                      className="transition-colors hover:text-terracotta-strong hover:underline"
-                    >
-                      {a.name}
-                    </Link>
-                    {a.injuryWatch && (
-                      <WatchBadge reason={a.injuryReason} url={a.injuryUrl} className="ml-2" />
-                    )}
-                  </td>
-                  <td className="py-3 pl-4">
-                    <NatFlag nat={a.nat} />
-                  </td>
-                  <td className="py-3 pl-4">
-                    <span className="label-caps whitespace-nowrap text-muted-foreground">
-                      {t("table.notQualified")}
-                    </span>
-                  </td>
-                  <td className="nums py-3 pl-6 text-right text-[13.5px] font-medium text-foreground">
-                    {a.mark}
-                  </td>
-                  <td className="py-3 pl-8">
-                    <div className="flex items-center justify-end gap-3 opacity-70">
-                      <ProbabilityBar value={a.prob} className="w-28" trackHeight="h-1.5" />
+                      <p className="mt-1 max-w-xl text-[12px] leading-snug text-muted-foreground">
+                        {t("table.notQualifiedNote")}
+                      </p>
+                    </td>
+                  </tr>
+                )}
+                {nearMiss.map((a, i) => (
+                  <tr
+                    key={`nm-${a.name}`}
+                    className="stagger-item transition-colors hover:bg-secondary/40"
+                    style={{ "--stagger-i": i } as CSSProperties}
+                  >
+                    <td className="py-3 pr-2">
                       <span
-                        className={`nums w-9 text-right text-[12.5px] font-semibold ${probTone(a.prob, maxProb)}`}
+                        aria-hidden
+                        className="flex size-6 items-center justify-center rounded-full border border-dashed border-border text-[11px] text-muted-foreground"
                       >
-                        {a.prob}%
+                        –
                       </span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Panel>
+                    </td>
+                    <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
+                      <Link
+                        to="/athlete/$discKey/$name"
+                        params={{ discKey: current.id, name: a.name }}
+                        className="transition-colors hover:text-terracotta-strong hover:underline"
+                      >
+                        {a.name}
+                      </Link>
+                      {a.injuryWatch && (
+                        <WatchBadge reason={a.injuryReason} url={a.injuryUrl} className="ml-2" />
+                      )}
+                    </td>
+                    <td className="py-3 pl-4">
+                      <NatFlag nat={a.nat} />
+                    </td>
+                    <td className="py-3 pl-4">
+                      <span className="label-caps whitespace-nowrap text-muted-foreground">
+                        {t("table.notQualified")}
+                      </span>
+                    </td>
+                    <td className="nums py-3 pl-6 text-right text-[13.5px] font-medium text-foreground">
+                      {a.mark}
+                    </td>
+                    <td className="py-3 pl-8">
+                      <div className="flex items-center justify-end gap-3 opacity-70">
+                        <ProbabilityBar value={a.prob} className="w-28" trackHeight="h-1.5" />
+                        <span
+                          className={`nums w-9 text-right text-[12.5px] font-semibold ${probTone(a.prob, maxProb)}`}
+                        >
+                          {a.prob}%
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
       )}
     </>
   );

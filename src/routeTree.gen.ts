@@ -15,6 +15,7 @@ import { Route as FieldRouteImport } from './routes/field'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ProjectionsRouteImport } from './routes/projections'
 import { Route as QualificationRouteImport } from './routes/qualification'
+import { Route as ResultsRouteImport } from './routes/results'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as StatsRouteImport } from './routes/stats'
 import { Route as TrackRouteImport } from './routes/track'
@@ -51,6 +52,11 @@ const ProjectionsRoute = ProjectionsRouteImport.update({
 const QualificationRoute = QualificationRouteImport.update({
   id: '/qualification',
   path: '/qualification',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResultsRoute = ResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ScheduleRoute = ScheduleRouteImport.update({
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/how-it-works': typeof HowItWorksRoute
   '/projections': typeof ProjectionsRoute
   '/qualification': typeof QualificationRoute
+  '/results': typeof ResultsRoute
   '/schedule': typeof ScheduleRoute
   '/stats': typeof StatsRoute
   '/track': typeof TrackRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/how-it-works': typeof HowItWorksRoute
   '/projections': typeof ProjectionsRoute
   '/qualification': typeof QualificationRoute
+  '/results': typeof ResultsRoute
   '/schedule': typeof ScheduleRoute
   '/stats': typeof StatsRoute
   '/track': typeof TrackRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/how-it-works': typeof HowItWorksRoute
   '/projections': typeof ProjectionsRoute
   '/qualification': typeof QualificationRoute
+  '/results': typeof ResultsRoute
   '/schedule': typeof ScheduleRoute
   '/stats': typeof StatsRoute
   '/track': typeof TrackRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/projections'
     | '/qualification'
+    | '/results'
     | '/schedule'
     | '/stats'
     | '/track'
@@ -159,6 +169,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/projections'
     | '/qualification'
+    | '/results'
     | '/schedule'
     | '/stats'
     | '/track'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
     | '/how-it-works'
     | '/projections'
     | '/qualification'
+    | '/results'
     | '/schedule'
     | '/stats'
     | '/track'
@@ -190,6 +202,7 @@ export interface RootRouteChildren {
   HowItWorksRoute: typeof HowItWorksRoute
   ProjectionsRoute: typeof ProjectionsRoute
   QualificationRoute: typeof QualificationRoute
+  ResultsRoute: typeof ResultsRoute
   ScheduleRoute: typeof ScheduleRoute
   StatsRoute: typeof StatsRoute
   TrackRoute: typeof TrackRoute
@@ -241,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/qualification'
       fullPath: '/qualification'
       preLoaderRoute: typeof QualificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/results': {
+      id: '/results'
+      path: '/results'
+      fullPath: '/results'
+      preLoaderRoute: typeof ResultsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/schedule': {
@@ -302,6 +322,7 @@ const rootRouteChildren: RootRouteChildren = {
   HowItWorksRoute: HowItWorksRoute,
   ProjectionsRoute: ProjectionsRoute,
   QualificationRoute: QualificationRoute,
+  ResultsRoute: ResultsRoute,
   ScheduleRoute: ScheduleRoute,
   StatsRoute: StatsRoute,
   TrackRoute: TrackRoute,

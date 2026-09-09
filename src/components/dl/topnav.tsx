@@ -21,6 +21,10 @@ const nav = [
   // the tab should say so; when the next championship takes this slot, the
   // flag moves with it.
   { to: "/ultimate", labelKey: "nav.ultimate", accent: true },
+  // The site's own track record, next to the projections rather than buried in
+  // the About page. A forecast that is never checked afterwards is a claim, and
+  // the whole argument of this project is that the numbers are checkable.
+  { to: "/results", labelKey: "nav.results" },
   { to: "/stats", labelKey: "nav.stats" },
   { to: "/schedule", labelKey: "nav.schedule" },
 ] as const;

@@ -10,6 +10,24 @@ export const fr: Record<string, string> = {
   "nav.ultimate": "Ultimate",
   "nav.stats": "Stats",
   "nav.schedule": "Calendrier",
+  "nav.results": "Résultats",
+  "results.title": "Ce que les derniers pronostics ont donné",
+  "results.eyebrow": "Finale de la Diamond League 2026 · Bruxelles",
+  "results.description":
+    "Chaque épreuve de la finale, avec le pronostic du modèle figé avant la réunion et le résultat qui a suivi. Rien n’a été réécrit après coup.",
+  "results.figPodium": "Places de podium trouvées",
+  "results.figShare": "Des places disponibles",
+  "results.figEvents": "Épreuves disputées",
+  "results.figBacktest": "Ce que le modèle annonce",
+  "results.figBacktestHint":
+    "Le taux de réussite du modèle sur toutes les finales de championnat de son historique, testé uniquement sur des saisons où il n’a pas été entraîné. Le chiffre à côté est ce qui s’est réellement passé lors d’une réunion qu’il n’avait jamais vue. Les deux doivent être proches ; s’ils cessent de l’être, c’est l’annonce qui est fausse.",
+  "results.scorecardTitle": "À quoi sert cette page",
+  "results.scorecardNote":
+    "Tous les autres chiffres de précision du site sont des tests rétrospectifs — honnêtes, mais le modèle reste noté sur des courses jugées après coup. Ici, c’est autre chose. Ces pronostics ont été publiés avant la finale puis laissés intacts : vous lisez donc une prévision et son résultat, pas un modèle qui se justifie après la course. Choisissez une épreuve pour voir qui le modèle donnait, qui a réellement fini là, et où il s’est trompé.",
+  "results.pendingTitle": "Rien à afficher pour l’instant",
+  "results.pendingBody":
+    "Aucune finale n’a été disputée depuis la publication du dernier pronostic. Cette page se remplira dès que ce sera le cas.",
+  "results.error": "Impossible de charger les résultats.",
   "nav.howItWorks": "Comment ça marche",
   "nav.live": "En direct",
   "nav.searchAthletes": "Rechercher des athlètes",
