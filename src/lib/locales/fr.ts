@@ -12,12 +12,19 @@ export const fr: Record<string, string> = {
   "nav.schedule": "Calendrier",
   "nav.results": "Résultats",
   "results.title": "Ce que les derniers pronostics ont donné",
-  "results.eyebrow": "Finale de la Diamond League 2026 · Bruxelles",
+  "results.eyebrow": "Le bilan du modèle",
   "results.description":
-    "Chaque épreuve de la finale, avec le pronostic du modèle figé avant la réunion et le résultat qui a suivi. Rien n’a été réécrit après coup.",
+    "Chaque championnat pronostiqué à l’avance, avec le pronostic figé avant la réunion et le résultat qui a suivi. Rien n’a été réécrit après coup.",
+  "results.meet.dlFinal": "Finale de la Diamond League 2026",
+  "results.meet.ultimate": "Championnat Ultimate 2026",
+  "results.eventsWord": "{{n}} épreuves",
+  "results.notRunYet": "Pas encore disputé",
+  "results.badgeCalled": "Pronosticé à l’avance",
+  "results.pendingMeet":
+    "Le pronostic du modèle sur les {{n}} épreuves a été figé avant la première session et ne peut plus être modifié. La comparaison s’affichera ici une fois le championnat disputé.",
   "results.figPodium": "Places de podium trouvées",
   "results.figShare": "Des places disponibles",
-  "results.figEvents": "Épreuves disputées",
+  "results.figMeets": "Championnats",
   "results.figBacktest": "Ce que le modèle annonce",
   "results.figBacktestHint":
     "Le taux de réussite du modèle sur toutes les finales de championnat de son historique, testé uniquement sur des saisons où il n’a pas été entraîné. Le chiffre à côté est ce qui s’est réellement passé lors d’une réunion qu’il n’avait jamais vue. Les deux doivent être proches ; s’ils cessent de l’être, c’est l’annonce qui est fausse.",
@@ -162,6 +169,22 @@ export const fr: Record<string, string> = {
 
   // Footer (the source name is a link rendered between these two)
   "footer.scrapedFrom": "Données extraites de",
+  "feedback.trigger": "Envoyer un retour",
+  "feedback.title": "Vous avez repéré une erreur ?",
+  "feedback.body":
+    "Ce site est construit à partir de données publiques, et il se trompe parfois. Si un chiffre paraît faux, si un athlète est dans la mauvaise épreuve, ou si quelque chose n’a pas de sens, dites-le. Plusieurs corrections de ce site sont parties d’un message de lecteur.",
+  "feedback.messageLabel": "Votre message",
+  "feedback.messagePlaceholder": "Qu’avez-vous vu, et sur quelle page ?",
+  "feedback.replyLabel": "E-mail, si vous voulez une réponse",
+  "feedback.replyPlaceholder": "Facultatif",
+  "feedback.send": "Envoyer",
+  "feedback.sending": "Envoi…",
+  "feedback.cancel": "Annuler",
+  "feedback.close": "Fermer",
+  "feedback.sentTitle": "Envoyé — merci.",
+  "feedback.sentBody": "Une seule personne les lit : une réponse peut prendre quelques jours.",
+  "feedback.error":
+    "L’envoi a échoué. Réessayez dans un instant, ou écrivez à rayenhamed65 arobase gmail point com.",
   "footer.notAffiliated": "Sans affiliation avec World Athletics ni la Wanda Diamond League.",
   "footer.disclaimer": "Les prédictions sont des estimations du modèle, pas des conseils de paris.",
 
@@ -471,12 +494,6 @@ export const fr: Record<string, string> = {
     "Il prédit **qui monte sur le podium, pas le 1-2-3 exact**, et il ne prétend jamais savoir qui gagne.",
   "howItWorks.s5.b3":
     "Il n’est **pas affilié à World Athletics** ni à la Wanda Diamond League. Il se contente de lire leurs données publiques.",
-  "howItWorks.contact.title": "Vous avez repéré une erreur ?",
-  "howItWorks.contact.p1":
-    "Ce site est construit à partir de données publiques, et il se trompe parfois. Si un chiffre paraît faux, si un athlète est dans la mauvaise épreuve, ou si quelque chose ici n’a pas de sens, dites-le-moi. Plusieurs des corrections décrites sur cette page sont parties d’un message de lecteur.",
-  "howItWorks.contact.cta": "Envoyer un retour",
-  "howItWorks.contact.note":
-    "Une seule personne les lit : une réponse peut prendre quelques jours.",
   "howItWorks.s6.title": "Rechercher par pays",
   "howItWorks.s6.p1":
     "La recherche trouve **les pays autant que les athlètes**. Tapez une nation — « Jamaïque », « KEN », « Norvège » — et elle apparaît dans les résultats à côté des athlètes dont le nom correspond, avec le nombre d’athlètes classés et d’épreuves de cette nation cette saison.",

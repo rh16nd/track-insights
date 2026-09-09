@@ -27,10 +27,6 @@ export const Route = createFileRoute("/how-it-works")({
  * Every number is read live from the same API the rest of the site uses, so
  * this page can't drift from the model; the prose renders before the API
  * answers. */
-// Split so the finished address never appears as one string in the bundle or
-// in the served HTML, which is what the simplest harvesters scrape.
-const CONTACT = ["rayenhamed65", "@", "gmail", ".com"];
-
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="border-t border-border py-8 first:border-t-0 sm:py-11">
@@ -200,30 +196,6 @@ function HowItWorksPage() {
             </p>
             <p className="mt-3 text-[15px] leading-relaxed text-foreground">
               <Rich text={t("howItWorks.s6.p2")} />
-            </p>
-          </Section>
-
-          {/* Last, deliberately: someone who has read this far knows what the
-              site claims and is best placed to say where it is wrong. Several
-              of the fixes on this page started as exactly that kind of report.
-
-              The address is assembled at render rather than written into the
-              markup. It is a personal inbox, chosen knowingly, and a plain
-              mailto in the HTML is what address harvesters read. This stops
-              the naive ones; nothing stops a determined one. */}
-          <Section title={t("howItWorks.contact.title")}>
-            <p className="mt-3.5 max-w-[62ch] text-[15px] leading-relaxed text-foreground">
-              <Rich text={t("howItWorks.contact.p1")} />
-            </p>
-            <a
-              href={`mailto:${CONTACT.join("")}`}
-              className="mt-5 inline-flex items-center gap-2 rounded-full bg-terracotta px-4 py-2 text-[13.5px] font-semibold text-primary-foreground transition-[transform,background-color] duration-150 ease-out hover:bg-terracotta-strong active:scale-[0.97]"
-            >
-              {t("howItWorks.contact.cta")}
-              <span aria-hidden="true">&rarr;</span>
-            </a>
-            <p className="mt-3 text-[12.5px] leading-snug text-muted-foreground">
-              {t("howItWorks.contact.note")}
             </p>
           </Section>
         </div>

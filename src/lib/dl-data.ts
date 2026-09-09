@@ -696,6 +696,35 @@ export type DepthIndexData = {
   toplistDepth: number;
 };
 
+/** One championship the model called in advance, from /api/results.
+ *
+ * `status` is "pending" when a projection was frozen but the meeting has not
+ * been run. That state is worth showing rather than hiding: it is the only
+ * moment a reader can see the call was made BEFORE the event instead of
+ * assembled afterwards, which is the entire claim the page rests on. */
+export type Championship = {
+  id: string;
+  /** A translation key rather than a label -- meeting names are chrome, and
+   * the site is bilingual. */
+  labelKey: string;
+  venue: string;
+  date: string;
+  status: "complete" | "pending";
+  /** When the projection was snapshotted; null for the Diamond League Final,
+   * whose snapshot predates src/freeze_prefinal.py and was taken by hand. */
+  frozenAt: string | null;
+  /** How many events the model CALLED. Before the meeting is run this is
+   * the only meaningful count -- `events` holds comparisons and is empty
+   * until there are results to compare against. */
+  calledEvents: number;
+  events: { id: string; label: string; result: DisciplineResult }[];
+};
+
+export type ResultsHistory = {
+  championships: Championship[];
+  modelAccuracy: number;
+};
+
 export type FieldScore = {
   name: string;
   score: number;

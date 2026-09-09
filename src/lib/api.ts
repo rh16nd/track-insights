@@ -47,6 +47,7 @@ export const API_IS_LOCAL = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$
  * there is no fixed set of files to write. */
 const SNAPSHOT_FILES: Record<string, string> = {
   "/api/predictions": "predictions.json",
+  "/api/results": "results.json",
   "/api/stats": "stats.json",
   "/api/ultimate": "ultimate.json",
   "/api/world-rankings": "world-rankings.json",

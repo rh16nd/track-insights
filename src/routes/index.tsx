@@ -14,6 +14,7 @@ import { Podium } from "@/components/dl/podium";
 import { WaSourceLink } from "@/components/dl/wa-link";
 import { useT, type TFunc } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/dl/language-switcher";
+import { FeedbackLink } from "@/components/dl/feedback-modal";
 import { discName } from "@/lib/dl-data";
 import type { TopWinner } from "@/lib/dl-data";
 import { TrackCircuit } from "@/components/dl/track-circuit";
@@ -849,12 +850,15 @@ function Landing() {
             <p className="text-[12px] text-[var(--landing-muted)]">
               {t("footer.scrapedFrom")} <WaSourceLink tone="canvas" />. {t("footer.notAffiliated")}
             </p>
-            <Link
-              to="/dashboard"
-              className="label-caps inline-block py-1.5 text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)]"
-            >
-              {t("landing.footerLink")}
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                to="/dashboard"
+                className="label-caps inline-block py-1.5 text-[var(--landing-muted)] transition-colors hover:text-[var(--landing-fg)]"
+              >
+                {t("landing.footerLink")}
+              </Link>
+              <FeedbackLink className="label-caps inline-block py-1.5 text-[var(--landing-muted)] underline decoration-current/40 underline-offset-2 transition-colors hover:text-[var(--landing-fg)]" />
+            </div>
           </div>
         </footer>
       </main>

@@ -14,12 +14,19 @@ export const en: Record<string, string> = {
   "nav.schedule": "Schedule",
   "nav.results": "Results",
   "results.title": "How the last predictions turned out",
-  "results.eyebrow": "2026 Diamond League Final · Brussels",
+  "results.eyebrow": "The model’s track record",
   "results.description":
-    "Every event at the Final, with the model’s projection frozen before the meet and the result that followed. Nothing here was rewritten afterwards.",
+    "Every championship the model called in advance, with the projection frozen before the meet and the result that followed. Nothing here was rewritten afterwards.",
+  "results.meet.dlFinal": "Diamond League Final 2026",
+  "results.meet.ultimate": "Ultimate Championship 2026",
+  "results.eventsWord": "{{n}} events",
+  "results.notRunYet": "Not run yet",
+  "results.badgeCalled": "Called in advance",
+  "results.pendingMeet":
+    "The model’s call on all {{n}} events was frozen before the first session and cannot be edited now. This opens up with the comparison once the championship has been run.",
   "results.figPodium": "Podium places called",
   "results.figShare": "Of the places available",
-  "results.figEvents": "Events contested",
+  "results.figMeets": "Championships",
   "results.figBacktest": "What the model claims",
   "results.figBacktestHint":
     "The hit rate the model scores across every championship final in its training history, testing only on seasons it was not trained on. The figure beside it is what actually happened at one meeting it had never seen. They should be close; if they ever stop being close, the claim is the thing that is wrong.",
@@ -163,6 +170,22 @@ export const en: Record<string, string> = {
 
   // Footer (the source name is a link rendered between these two)
   "footer.scrapedFrom": "Data scraped from",
+  "feedback.trigger": "Send feedback",
+  "feedback.title": "Found something wrong?",
+  "feedback.body":
+    "This site is built from public data and it does get things wrong. If a number looks off, an athlete is in the wrong event, or something here just doesn’t make sense, say so. Several of the fixes on this site started as somebody writing in.",
+  "feedback.messageLabel": "Your message",
+  "feedback.messagePlaceholder": "What did you see, and on which page?",
+  "feedback.replyLabel": "Email, if you want a reply",
+  "feedback.replyPlaceholder": "Optional",
+  "feedback.send": "Send",
+  "feedback.sending": "Sending…",
+  "feedback.cancel": "Cancel",
+  "feedback.close": "Close",
+  "feedback.sentTitle": "Sent — thank you.",
+  "feedback.sentBody": "One person reads these, so a reply may take a few days.",
+  "feedback.error":
+    "That did not send. Try again in a moment, or write to rayenhamed65 at gmail dot com.",
   "footer.notAffiliated": "Not affiliated with World Athletics or the Wanda Diamond League.",
   "footer.disclaimer": "Predictions are model estimates, not betting advice.",
 
@@ -470,11 +493,6 @@ export const en: Record<string, string> = {
     "It predicts **who makes the podium, not the exact 1-2-3**, and it never claims to know who wins.",
   "howItWorks.s5.b3":
     "It's **not affiliated with World Athletics** or the Wanda Diamond League. It just reads their public data.",
-  "howItWorks.contact.title": "Found something wrong?",
-  "howItWorks.contact.p1":
-    "This site is built from public data and it does get things wrong. If a number looks off, an athlete is in the wrong event, or something here just doesn’t make sense, tell me. Several of the fixes described on this page started as somebody writing in.",
-  "howItWorks.contact.cta": "Send feedback",
-  "howItWorks.contact.note": "One person reads these, so a reply may take a few days.",
   "howItWorks.s6.title": "Searching by country",
   "howItWorks.s6.p1":
     "The search box finds **countries as well as athletes**. Type a nation — “Jamaica”, “KEN”, “Norway” — and it appears in the results alongside any athletes whose name matches, with how many ranked athletes and how many events that nation has this season.",

@@ -5,6 +5,7 @@ import { TrackCurveDecoration } from "./track-curve";
 import type { MeetStatus } from "@/lib/dl-data";
 import { API_IS_LOCAL, warmApi } from "@/lib/api";
 import { WaSourceLink } from "./wa-link";
+import { FeedbackLink } from "./feedback-modal";
 import { JsonLd } from "./json-ld";
 import { breadcrumbSchema } from "@/lib/seo";
 import { InfoTip } from "./info-tip";
@@ -329,6 +330,10 @@ export function Shell({
               >
                 {t("nav.howItWorks")}
               </Link>
+              {/* In the footer rather than on the About page: a reader notices
+                  something wrong while looking at the thing that is wrong, and
+                  the footer is the one place on every page. */}
+              <FeedbackLink className="underline decoration-white/40 underline-offset-2 transition-colors hover:decoration-white" />
               <span className="text-white/70">{t("footer.disclaimer")}</span>
             </div>
           </div>
