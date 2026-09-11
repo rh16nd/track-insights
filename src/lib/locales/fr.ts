@@ -791,7 +791,7 @@ export const fr: Record<string, string> = {
   "ath.rankInField": "n°{{n}} du plateau projeté",
   "ath.ifQualified": "En cas de qualification",
   "ath.ifQualifiedBefore":
-    " % de chance de podium, d’après le même modèle appliqué au groupe des recalés. Ce n’est pas une projection sur Bruxelles ; il ou elle n’est pas dans le plateau.",
+    " % de chance de podium, d’après le même modèle appliqué au groupe des recalés. Il ou elle n’est pas dans le plateau.",
   "ath.flaggedFrom": "Signalé d’après : {{reason}}",
   "ath.viewSource": "Voir la source",
   "ath.dlPoints": "Points Diamond League",
@@ -846,7 +846,7 @@ export const fr: Record<string, string> = {
   "ath.figRacesIn": "Courses en {{year}}",
   "ath.model": "Modèle PodiumCall",
   "ath.modelBefore":
-    " % de chance de finir sur le podium à Bruxelles, pas de gagner. Le modèle prédit l’appartenance au top trois.",
+    " % de chance de finir sur le podium, pas de gagner. Le modèle prédit l’appartenance au top trois.",
   "ath.modelScoreBefore": " Le ",
   "ath.modelScoreMid": " vaut ",
   "ath.modelScoreAfter": " points World Athletics, soit le ",

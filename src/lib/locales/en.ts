@@ -787,7 +787,7 @@ export const en: Record<string, string> = {
   "ath.rankInField": "#{{n}} in the projected field",
   "ath.ifQualified": "If they had qualified",
   "ath.ifQualifiedBefore":
-    "% chance of a podium, from the same model run over the near-miss group. This isn't a projection about Brussels; they aren't in the field.",
+    "% chance of a podium, from the same model run over the near-miss group. They aren't in the field.",
   "ath.flaggedFrom": "Flagged from: {{reason}}",
   "ath.viewSource": "View source",
   "ath.dlPoints": "Diamond League points",
@@ -842,7 +842,7 @@ export const en: Record<string, string> = {
   "ath.figRacesIn": "Races in {{year}}",
   "ath.model": "PodiumCall model",
   "ath.modelBefore":
-    "% chance of finishing on the podium in Brussels, not of winning. The model predicts top-three membership.",
+    "% chance of finishing on the podium, not of winning. The model predicts top-three membership.",
   "ath.modelScoreBefore": " The ",
   "ath.modelScoreMid": " scores ",
   "ath.modelScoreAfter": " World Athletics points, the ",
