@@ -15,6 +15,7 @@ import { WaSourceLink } from "@/components/dl/wa-link";
 import { useT, type TFunc } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/dl/language-switcher";
 import { FeedbackLink } from "@/components/dl/feedback-modal";
+import { IntroVideo } from "@/components/dl/intro-video";
 import { discName } from "@/lib/dl-data";
 import type { TopWinner } from "@/lib/dl-data";
 import { TrackCircuit } from "@/components/dl/track-circuit";
@@ -448,6 +449,17 @@ function Landing() {
               >
                 {t("landing.ctaSecondary", { n: disciplineCount })}
               </Link>
+            </div>
+
+            {/* The one-minute walkthrough, for anyone who lands here without knowing
+                what the site is. It sits under the two actions rather than above them,
+                so people who already know what they want still reach the predictions
+                first. */}
+            <div
+              className="hero-reveal mx-auto mt-10 w-full max-w-[560px]"
+              style={{ "--reveal-d": "430ms" } as CSSProperties}
+            >
+              <IntroVideo />
             </div>
 
             <div
