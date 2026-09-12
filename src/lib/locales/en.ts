@@ -20,6 +20,7 @@ export const en: Record<string, string> = {
   "results.meet.dlFinal": "Diamond League Final 2026",
   "results.meet.ultimate": "Ultimate Championship 2026",
   "results.eventsWord": "{{n}} events",
+  "results.eventsSoFar": "{{done}} of {{n}} events so far",
   "results.notRunYet": "Not run yet",
   "results.badgeCalled": "Called in advance",
   "results.pendingMeet":

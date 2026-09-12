@@ -169,7 +169,11 @@ function ChampionshipBlock({
             {champ.venue}
             {pending
               ? ` · ${t("results.notRunYet")}`
-              : ` · ${t("results.eventsWord", { n: champ.events.length })}`}
+              : // Mid-championship the score covers only the finals run so far.
+                // Say so, or "6 events" reads as the whole meeting.
+                champ.events.length < champ.calledEvents
+                ? ` · ${t("results.eventsSoFar", { done: champ.events.length, n: champ.calledEvents })}`
+                : ` · ${t("results.eventsWord", { n: champ.events.length })}`}
           </span>
         </span>
         {pending ? (

@@ -18,6 +18,7 @@ export const fr: Record<string, string> = {
   "results.meet.dlFinal": "Finale de la Diamond League 2026",
   "results.meet.ultimate": "Championnat Ultimate 2026",
   "results.eventsWord": "{{n}} épreuves",
+  "results.eventsSoFar": "{{done}} épreuves sur {{n}} pour l’instant",
   "results.notRunYet": "Pas encore disputé",
   "results.badgeCalled": "Pronosticé à l’avance",
   "results.pendingMeet":
