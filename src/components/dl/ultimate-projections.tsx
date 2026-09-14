@@ -79,8 +79,9 @@ export function UltimateProjections({
   const promoted = flagged.filter((a) => a.rank <= 3);
   const unranked = current.unranked ?? [];
   // The Ultimate's table reads a qualification route, then a chance. A call
-  // made one way per event (the Asian Games) reads each athlete's 2026 best,
-  // then a chance where the model called the event or points where it did not.
+  // made one way per event (the Asian Games) reads the mark each athlete is
+  // ranked on, then a chance where the model called the event or points where
+  // it did not.
   const middle = current.method
     ? { label: "championship.projection.colMark", hint: "championship.projection.markHint" }
     : { label: "ultimate.projection.colRoute", hint: "ultimate.projection.routeHint" };
@@ -479,6 +480,21 @@ function ProjectionRow({
       </td>
       <td className={`py-3 pl-4 text-[12px] text-muted-foreground ${method ? "nums" : ""}`}>
         {method ? (a.mark ?? "—") : a.qualifiedBy}
+        {/* A mark from last season: what an entrant with no mark this season is
+            ranked on, and in the 5000m and 10,000m anyone whose last season was
+            better. Tagged on the row, so the order never reads a 2025 mark as
+            this year's. */}
+        {method && a.markSeason ? (
+          <span
+            title={t("championship.projection.markSeason", { year: a.markSeason })}
+            className="ml-1.5 rounded bg-secondary px-1 py-0.5 text-[10.5px] font-medium text-muted-foreground"
+          >
+            <span aria-hidden="true">{a.markSeason}</span>
+            <span className="sr-only">
+              {t("championship.projection.markSeason", { year: a.markSeason })}
+            </span>
+          </span>
+        ) : null}
       </td>
       <td className="py-3 pl-6">
         {a.podiumChance === null ? (

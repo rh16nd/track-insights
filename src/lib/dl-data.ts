@@ -908,8 +908,14 @@ export type UltimateProjection = {
     nat: string | null;
     qualifiedBy: string | null;
     rankingScore: number | null;
-    /** 2026 season best, where the call carries one (the Asian Games). */
+    /** The mark the athlete is ranked on, where the call carries one (the
+     * Asian Games). */
     mark?: string | null;
+    /** The year of `mark` when it is from last season: an Asian Games entrant
+     * with no mark this season is ranked on last season's best, and in the
+     * 5000m and 10,000m everyone takes the better of the two. Null for a mark
+     * from this season. */
+    markSeason?: number | null;
     /** False for an athlete on no world toplist, whom the site has no page
      * for; the row then links to `profileUrl` on World Athletics instead. */
     hasPage?: boolean;
@@ -981,7 +987,8 @@ export type CallMethod = "model" | "points";
  * athlete matches the entry. "noMark": World Athletics has them, with no 2026
  * result in the event. "lookupFailed": the check itself failed. "notScored": a
  * 2026 mark the model could not score. */
-export type UnrankedReason = "notFound" | "noMark" | "lookupFailed" | "notScored";
+export type UnrankedReason =
+  "notFound" | "noMark" | "lookupFailed" | "notScored" | "lastSeasonOnly";
 
 /** The current championship's call on one athlete in one event, for their
  * page (api.py championship_call). Absent once the championship has ended. */

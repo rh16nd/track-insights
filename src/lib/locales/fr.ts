@@ -56,44 +56,46 @@ export const fr: Record<string, string> = {
   "championship.chip.live": "En direct de {{city}}",
   "championship.chip.done": "{{city}}, c’est terminé",
   "championship.projection.titlePoints": "Classement aux points · {{disc}}",
-  "championship.projection.subtitle":
-    "{{n}} athlètes inscrits. Les {{ranked}} qui ont une marque en 2026 dans cette épreuve sont classés ci-dessous.",
+  "championship.projection.subtitle": "{{n}} athlètes inscrits, {{ranked}} classés ci-dessous.",
   "championship.projection.whyModel":
     "{{n}} des {{of}} premiers inscrits aux points ont un historique chez nous : c’est donc le modèle qui fait ce pronostic.",
   "championship.projection.whyPoints":
     "Seuls {{n}} des {{of}} premiers inscrits aux points ont un historique chez nous. Le modèle en demande {{needed}} : cette épreuve est donc classée aux points.",
   "championship.projection.whyFloor":
     "{{n}} des {{of}} premiers inscrits aux points ont un historique chez nous, mais le favori du modèle n’a que {{chance}} % de chances de podium, sous les {{floor}} % requis. Cette épreuve est donc classée aux points.",
-  "championship.projection.colMark": "Meilleure marque 2026",
+  "championship.projection.colMark": "Meilleure marque",
   "championship.projection.markHint":
-    "La meilleure marque de l’athlète dans cette épreuve cette saison, d’après le bilan asiatique de World Athletics, ou d’après son propre profil World Athletics quand ce bilan ne le classe pas.",
+    "La meilleure marque de l’athlète dans cette épreuve en 2026, d’après le bilan asiatique de World Athletics ou son propre profil World Athletics. Un athlète sans marque en 2026 est classé sur sa meilleure marque de 2025, signalée 2025. Sur 5 000 m et 10 000 m, des distances que l’on ne court que quelques fois par an, c’est la meilleure des deux saisons qui compte pour tous.",
+  "championship.projection.markSeason": "Marque de {{year}}",
   "championship.projection.colPoints": "Points",
   "championship.projection.pointsHint":
-    "Les points World Athletics de la meilleure marque 2026 de l’athlète dans cette épreuve. Plus de points signifie une meilleure marque. Cette colonne est un classement, pas un pronostic.",
+    "Les points World Athletics de la meilleure marque affichée. Plus de points signifie une meilleure marque. Cette colonne est un classement, pas un pronostic.",
   "championship.projection.chanceHint":
     "La probabilité, selon le modèle, que cet athlète finisse dans les trois premiers. C’est la chance propre à chacun : la colonne ne totalise donc pas 100.",
   "championship.projection.unrankedTitle": "Engagés, non classés ({{n}})",
   "championship.projection.unrankedHint":
-    "Ces athlètes figurent sur la liste des engagés des organisateurs, mais nous n’avons trouvé aucune marque 2026 pour les classer. Chaque ligne en donne la raison. Ils n’occupent aucune place dans l’ordre ci-dessus.",
+    "Ces athlètes figurent sur la liste des engagés des organisateurs, mais nous n’avons trouvé aucune marque pour les classer. Chaque ligne en donne la raison. Ils n’occupent aucune place dans l’ordre ci-dessus.",
   "championship.projection.unranked.notFound":
     "Aucun profil World Athletics ne correspond à cette inscription",
   "championship.projection.unranked.noMark":
-    "Aucun résultat en 2026 dans cette épreuve sur World Athletics",
+    "Aucun résultat en 2026 dans cette épreuve, et absent du bilan asiatique 2025",
   "championship.projection.unranked.lookupFailed":
     "World Athletics n’a pas répondu lors de notre vérification",
   "championship.projection.unranked.notScored":
     "A une marque en 2026, mais il manque au modèle une donnée pour l’évaluer",
+  "championship.projection.unranked.lastSeasonOnly":
+    "Seulement une marque de 2025, et le modèle en demande une de 2026",
   "championship.projection.unscored":
     "Inscrits, sans marque 2026 trouvée dans cette épreuve : {{names}}.",
   "championship.projection.noteModel":
     "La liste des inscrits est celle des organisateurs. Seul l’ordre est celui du modèle.",
   "championship.projection.notePoints":
-    "La liste des inscrits est celle des organisateurs. L’ordre suit les points World Athletics de la meilleure marque 2026 de chacun : ce n’est pas un pronostic.",
+    "La liste des inscrits est celle des organisateurs. L’ordre suit les points World Athletics de la meilleure marque de chacun : ce n’est pas un pronostic.",
   "championship.projection.byModel": "pronostic du modèle",
   "championship.projection.captionModel":
     "Tous les inscrits du {{disc}} ayant une marque en 2026, classés selon leur chance de podium",
   "championship.projection.captionPoints":
-    "Tous les inscrits du {{disc}} ayant une marque en 2026, classés selon leurs points World Athletics",
+    "Tous les inscrits du {{disc}} ayant une marque en 2026 ou en 2025, classés selon leurs points World Athletics",
   "asianGames.title": "Les Jeux asiatiques",
   "asianGames.hero.headline": "Le meilleur de l’Asie, à {{city}}.",
   "asianGames.hero.body":
@@ -112,7 +114,7 @@ export const fr: Record<string, string> = {
   "asianGames.how.modelFloor":
     "Le modèle pronostique une épreuve quand au moins {{needed}} de ses {{of}} premiers inscrits aux points ont un historique chez nous (un bilan mondial, une finale de championnat ou un meeting de Diamond League) et que son propre favori a au moins {{floor}} % de chances de podium.",
   "asianGames.how.points":
-    "Les autres épreuves sont classées selon les points World Athletics de la meilleure marque 2026 de chaque athlète. Une épreuve ne mélange jamais les deux.",
+    "Les autres épreuves sont classées selon les points World Athletics de la meilleure marque de chaque athlète, et une épreuve ne mélange jamais les deux. Un athlète sans marque en 2026 est classé sur sa meilleure marque de 2025. Sur 5 000 m et 10 000 m, des distances que l’on ne court que quelques fois par an, c’est la meilleure des deux saisons qui compte.",
   "asianGames.field.pending":
     "Le pronostic n’est pas encore prêt. Le plateau et le pronostic apparaîtront ici.",
   "asianGames.notCalled.title": "Épreuves sans pronostic",

@@ -58,41 +58,44 @@ export const en: Record<string, string> = {
   "championship.chip.live": "Live in {{city}}",
   "championship.chip.done": "{{city}} is over",
   "championship.projection.titlePoints": "Ranked on points · {{disc}}",
-  "championship.projection.subtitle":
-    "{{n}} athletes entered. The {{ranked}} with a 2026 mark in this event are ranked below.",
+  "championship.projection.subtitle": "{{n}} athletes entered, {{ranked}} ranked below.",
   "championship.projection.whyModel":
     "{{n}} of the top {{of}} entrants on points have a record we hold, so the model makes this call.",
   "championship.projection.whyPoints":
     "Only {{n}} of the top {{of}} entrants on points have a record we hold. The model needs {{needed}}, so this event is ranked on points instead.",
   "championship.projection.whyFloor":
     "{{n}} of the top {{of}} entrants on points have a record we hold, but the model's favourite has only a {{chance}}% chance of a podium, under the {{floor}}% it needs. This event is ranked on points instead.",
-  "championship.projection.colMark": "2026 best",
+  "championship.projection.colMark": "Best mark",
   "championship.projection.markHint":
-    "The athlete's best mark in this event this season, from World Athletics' Asian toplist, or from the athlete's own World Athletics profile when that list does not place them.",
+    "The athlete's best mark in this event in 2026, from World Athletics' Asian toplist or the athlete's own World Athletics profile. An athlete with no 2026 mark is ranked on their 2025 best, tagged 2025. In the 5000m and 10,000m, where runners race the distance only a few times a year, the better of 2025 and 2026 counts for everyone.",
+  "championship.projection.markSeason": "Mark from {{year}}",
   "championship.projection.colPoints": "Points",
   "championship.projection.pointsHint":
-    "World Athletics points for the athlete's best 2026 mark in this event. More points means a better mark. This column is an order, not a forecast.",
+    "World Athletics points for the best mark shown. More points means a better mark. This column is an order, not a forecast.",
   "championship.projection.chanceHint":
     "The model's chance that this athlete finishes in the top three. It is each athlete's own chance, so the column does not add up to 100.",
   "championship.projection.unrankedTitle": "Entered, not ranked ({{n}})",
   "championship.projection.unrankedHint":
-    "These athletes are on the organisers' entry list, but we found no 2026 mark to rank them by. Each row says why. They take no place in the order above.",
+    "These athletes are on the organisers' entry list, but we found no mark to rank them by. Each row says why. They take no place in the order above.",
   "championship.projection.unranked.notFound": "No World Athletics profile matches this entry",
-  "championship.projection.unranked.noMark": "No 2026 result in this event on World Athletics",
+  "championship.projection.unranked.noMark":
+    "No 2026 result in this event, and not on the 2025 Asian toplist",
   "championship.projection.unranked.lookupFailed": "World Athletics didn't answer when we checked",
   "championship.projection.unranked.notScored":
     "Has a 2026 mark, but the model is missing a figure it needs to score them",
+  "championship.projection.unranked.lastSeasonOnly":
+    "Only a 2025 mark, and the model needs one from 2026",
   "championship.projection.unscored":
     "Entered, with no 2026 mark we could find in this event: {{names}}.",
   "championship.projection.noteModel":
     "The entry list is the organisers'. Only the order is the model's.",
   "championship.projection.notePoints":
-    "The entry list is the organisers'. The order is World Athletics points for each athlete's 2026 best, not a forecast.",
+    "The entry list is the organisers'. The order is World Athletics points for each athlete's best mark, not a forecast.",
   "championship.projection.byModel": "called by the model",
   "championship.projection.captionModel":
     "Every entrant in the {{disc}} with a 2026 mark, ranked by the model's chance of a podium",
   "championship.projection.captionPoints":
-    "Every entrant in the {{disc}} with a 2026 mark, ranked by World Athletics points",
+    "Every entrant in the {{disc}} with a mark from 2026 or 2025, ranked by World Athletics points",
   "asianGames.title": "The Asian Games",
   "asianGames.hero.headline": "Asia's best, in {{city}}.",
   "asianGames.hero.body":
@@ -111,7 +114,7 @@ export const en: Record<string, string> = {
   "asianGames.how.modelFloor":
     "The model calls an event when at least {{needed}} of its top {{of}} entrants on points have a record we hold (a world toplist, a championship final or a Diamond League meeting) and its own favourite has at least a {{floor}}% chance of a podium.",
   "asianGames.how.points":
-    "Every other event is ranked by World Athletics points for each athlete's 2026 best. One event never mixes the two.",
+    "Every other event is ranked by World Athletics points for each athlete's best mark, and one event never mixes the two. An athlete with no 2026 mark is ranked on their 2025 best. In the 5000m and 10,000m, where runners race the distance only a few times a year, the better of 2025 and 2026 counts.",
   "asianGames.field.pending":
     "The call is not built yet. The field and the call appear here once it is.",
   "asianGames.notCalled.title": "Events without a call",
