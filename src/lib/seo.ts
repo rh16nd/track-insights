@@ -15,6 +15,7 @@ const EVENT_NAME: Record<string, string> = {
   "800m": "800m",
   "1500m": "1500m",
   "5000m": "5000m",
+  "10000m": "10,000m",
   "110h": "110m Hurdles",
   "100h": "100m Hurdles",
   "400h": "400m Hurdles",
@@ -26,12 +27,13 @@ const EVENT_NAME: Record<string, string> = {
   SP: "Shot Put",
   DT: "Discus Throw",
   JT: "Javelin Throw",
+  HT: "Hammer Throw",
 };
 
 /** "men_100m" -> "Men's 100m". Derived from the key rather than duplicating
- * api.py's DISC_LABELS: a second hand-maintained list of 32 labels is a
- * second thing to keep in sync, and this maps the 17 event codes instead.
- * Verified to reproduce all 32 of the API's own labels exactly. Falls back to
+ * api.py's DISC_LABELS: a second hand-maintained list of 36 labels is a
+ * second thing to keep in sync, and this maps the 19 event codes instead.
+ * Written to reproduce all 36 of the API's own labels exactly. Falls back to
  * the raw key rather than inventing a name for one it doesn't recognise. */
 export function disciplineLabel(discKey: string): string {
   const [sex, ...rest] = discKey.split("_");

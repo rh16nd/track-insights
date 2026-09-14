@@ -8,6 +8,7 @@ import { SeasonTrendChart } from "@/components/dl/season-trend-chart";
 import { HeadToHeadChart } from "@/components/dl/head-to-head-chart";
 import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
 import { AthleteCareerBlock } from "@/components/dl/athlete-career";
+import { ChampionshipCallPanel } from "@/components/dl/championship-call";
 import { InfoTip } from "@/components/dl/info-tip";
 import { discName, ordinalIn, type PhotoCredit as PhotoCreditT } from "@/lib/dl-data";
 import { localizeDate } from "@/lib/dates";
@@ -53,6 +54,8 @@ const FIELD_EVENT_KEYS = new Set([
   "women_DT",
   "men_JT",
   "women_JT",
+  "men_HT",
+  "women_HT",
 ]);
 
 /** An athlete who is really ranked this season but is NOT in the projected
@@ -193,6 +196,9 @@ function NotInField({
 
   return (
     <Shell title={data.name} crumb={data.name} hero={hero} headTone="brick" headBackdrop={backdrop}>
+      {/* First, for an entrant at the current championship: for the Asian
+          Games entrants on no world toplist, the call is why this page exists. */}
+      {data.championship && <ChampionshipCallPanel call={data.championship} />}
       {/* Same two-panel row, same StatBlock grid and same chart the in-field
           profile uses. None of these numbers stop being true because the
           athlete missed the cut, and the page read as a stub without them. */}
@@ -336,7 +342,12 @@ function NotInField({
           rivalNames={data.rivalNames}
           careerSeasons={data.careerSeasons}
         />
-      ) : (
+      ) : // An empty record "against the projected field" means nothing for the
+      // hammer or the 10,000m, which never had one, or for a championship
+      // entrant the Diamond League field has no bearing on. A real record
+      // still shows.
+      data.h2h.length > 0 ||
+        (data.reasonCode !== "points_only" && data.reasonCode !== "championship_entrant") ? (
         <Panel title={t("ath.h2hTitle")} subtitle={t("ath.h2hSubtitle")} className="mt-6">
           {data.h2h.length > 0 ? (
             <HeadToHeadChart matchups={data.h2h} opponentsLabel="the qualified field" />
@@ -346,7 +357,7 @@ function NotInField({
             </div>
           )}
         </Panel>
-      )}
+      ) : null}
 
       <div className="mt-5 flex flex-wrap items-center gap-4">
         {canGoBack ? (
@@ -689,6 +700,7 @@ function AthleteProfilePage() {
 
   return (
     <Shell title={a.name} crumb={a.name} hero={hero} headTone="brick" headBackdrop={backdrop}>
+      {a.championship && <ChampionshipCallPanel call={a.championship} />}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
         <Panel title={t("ath.seasonStats")}>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">

@@ -66,12 +66,23 @@ export const fr: Record<string, string> = {
     "{{n}} des {{of}} premiers inscrits aux points ont un historique chez nous, mais le favori du modèle n’a que {{chance}} % de chances de podium, sous les {{floor}} % requis. Cette épreuve est donc classée aux points.",
   "championship.projection.colMark": "Meilleure marque 2026",
   "championship.projection.markHint":
-    "La meilleure marque de l’athlète dans cette épreuve cette saison, d’après le bilan asiatique de World Athletics.",
+    "La meilleure marque de l’athlète dans cette épreuve cette saison, d’après le bilan asiatique de World Athletics, ou d’après son propre profil World Athletics quand ce bilan ne le classe pas.",
   "championship.projection.colPoints": "Points",
   "championship.projection.pointsHint":
     "Les points World Athletics de la meilleure marque 2026 de l’athlète dans cette épreuve. Plus de points signifie une meilleure marque. Cette colonne est un classement, pas un pronostic.",
   "championship.projection.chanceHint":
     "La probabilité, selon le modèle, que cet athlète finisse dans les trois premiers. C’est la chance propre à chacun : la colonne ne totalise donc pas 100.",
+  "championship.projection.unrankedTitle": "Engagés, non classés ({{n}})",
+  "championship.projection.unrankedHint":
+    "Ces athlètes figurent sur la liste des engagés des organisateurs, mais nous n’avons trouvé aucune marque 2026 pour les classer. Chaque ligne en donne la raison. Ils n’occupent aucune place dans l’ordre ci-dessus.",
+  "championship.projection.unranked.notFound":
+    "Aucun profil World Athletics ne correspond à cette inscription",
+  "championship.projection.unranked.noMark":
+    "Aucun résultat en 2026 dans cette épreuve sur World Athletics",
+  "championship.projection.unranked.lookupFailed":
+    "World Athletics n’a pas répondu lors de notre vérification",
+  "championship.projection.unranked.notScored":
+    "A une marque en 2026, mais il manque au modèle une donnée pour l’évaluer",
   "championship.projection.unscored":
     "Inscrits, sans marque 2026 trouvée dans cette épreuve : {{names}}.",
   "championship.projection.noteModel":
@@ -384,6 +395,8 @@ export const fr: Record<string, string> = {
     "Classé selon l’évaluation du modèle — sa lecture de qui monterait sur le podium si cette épreuve disputait une finale de championnat maintenant. Il pèse la façon dont l’athlète a réellement concouru, et pas seulement sa meilleure marque : il ne se contente donc pas de répéter l’ordre des points.",
   "rankings.subtitle.points":
     "Classé selon les points World Athletics — le score de la meilleure performance de la saison. Aucun modèle ici.",
+  "rankings.subtitle.pointsOnly":
+    "Classé selon les points World Athletics, le score de la meilleure performance de la saison. Cette épreuve n’a pas d’évaluation du modèle : elle ne figure pas au programme de la Diamond League, et nous n’avons donc aucun résultat passé sur lequel l’évaluer.",
   "rankings.toggle.label": "Méthode de classement",
   "rankings.toggle.model": "Éval. du modèle",
   "rankings.toggle.points": "Par points",
@@ -887,6 +900,12 @@ export const fr: Record<string, string> = {
   "ath.fastestNote":
     "À noter : c’est la meilleure performance mondiale de la saison. L’éligibilité à la finale de la Diamond League se décide aux points marqués dans la série, pas à la meilleure performance de la saison.",
   "ath.seasonStats": "Statistiques de la saison",
+  "ath.champ.subtitle": "Engagé dans cette épreuve",
+  "ath.champ.points":
+    "{{rank}} sur {{n}} engagés classés selon les points World Athletics ({{score}}). Cette épreuve est pronostiquée aux points, pas par le modèle.",
+  "ath.champ.model":
+    "{{rank}} choix du modèle sur {{n}} engagés classés, avec {{chance}} % de chances de podium.",
+  "ath.champ.link": "Voir le pronostic de chaque épreuve",
   "ath.seasonBest2026": "Meilleure perf. 2026",
   "ath.worldRank": "Rang mondial",
   "ath.thisSeasonToplist": "classement de cette saison",
@@ -1088,7 +1107,8 @@ export const fr: Record<string, string> = {
 
   // Discipline names, keyed by discKey. Every French name has a MASCULINE
   // head noun ("le 100 m", "le saut en hauteur", "le lancer du poids"), which
-  // is what keeps "pour le {{disc}}" / "du {{disc}}" grammatical across all 32.
+  // is what keeps "pour le {{disc}}" / "du {{disc}}" grammatical across all 36.
+  // "10 000" takes a no-break space, so a pill never splits the number.
   "disc.name.men_100m": "100 m hommes",
   "disc.name.women_100m": "100 m femmes",
   "disc.name.men_200m": "200 m hommes",
@@ -1121,6 +1141,10 @@ export const fr: Record<string, string> = {
   "disc.name.women_DT": "Lancer du disque femmes",
   "disc.name.men_JT": "Lancer du javelot hommes",
   "disc.name.women_JT": "Lancer du javelot femmes",
+  "disc.name.men_HT": "Lancer du marteau hommes",
+  "disc.name.women_HT": "Lancer du marteau femmes",
+  "disc.name.men_10000m": "10 000 m hommes",
+  "disc.name.women_10000m": "10 000 m femmes",
 
   "podium.strongestCall": "Le plus sûr",
   "podium.sb": "MPS {{mark}}",

@@ -99,7 +99,7 @@ function buildFavourites(
   const rows: Favourite[] = [];
   for (const [key, r] of Object.entries(rankings)) {
     const top = r.model[0];
-    if (!top) continue;
+    if (!top || top.ratingPct === null) continue;
     rows.push({
       discKey: key,
       disc: discName(t, key, key),
@@ -125,7 +125,7 @@ function buildDisagreements(
   for (const [key, r] of Object.entries(rankings)) {
     const m = r.model[0];
     const p = r.points[0];
-    if (!m || !p || m.name === p.name) continue;
+    if (!m || !p || m.name === p.name || m.ratingPct === null) continue;
     rows.push({
       discKey: key,
       disc: discName(t, key, key),

@@ -381,9 +381,19 @@ html {
 /* Panels get a barely-there warm wash rather than one flat cream fill --
    the darkest stop is only ~6% toward the brand terracotta, so text
    contrast is unaffected (verified live), but the surface stops reading
-   as flat white. */
+   as flat white.
+
+   The wash is a background-IMAGE, so it paints over whatever `bg-card` a
+   parent sets. A championship's dark box on the Results page re-dresses its
+   panels with light text, and this cream stayed underneath it: white on cream,
+   near 1.1:1, the "can't see anything" the user reported on 2026-09-14. Every
+   ratio in the theme file was measured against --card and never saw it. A box
+   that sets its own --card sets --card-wash: none alongside it. */
 @utility card-surface {
-  background-image: linear-gradient(148deg, oklch(0.985 0.008 75) 0%, oklch(0.945 0.022 70) 100%);
+  background-image: var(
+    --card-wash,
+    linear-gradient(148deg, oklch(0.985 0.008 75) 0%, oklch(0.945 0.022 70) 100%)
+  );
 }
 
 /* Raised from 0.625rem (10px) -- the 2026-08-24 critique's live-rendered

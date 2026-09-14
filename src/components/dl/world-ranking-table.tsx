@@ -55,10 +55,16 @@ export function WorldRankingTable({
 
   const currentId = keys.includes(activeId) ? activeId : (keys[0] ?? "");
   const current = rankings[currentId];
+  // The hammer and the 10,000m have no model rating at all: they are not
+  // Diamond League events, so there are no past results to rate them on. They
+  // show points with no toggle and no rating column, whichever view the reader
+  // last picked on another discipline.
+  const modelAvailable = current?.modelAvailable !== false;
+  const shown: View = modelAvailable ? view : "points";
   // Memoised so the empty-case `[]` literal is not a new array every render,
   // which would make maxRating recompute (and its dep change) on each pass.
-  const rows = useMemo(() => (current ? current[view] : []), [current, view]);
-  const maxRating = useMemo(() => Math.max(1, ...rows.map((r) => r.ratingPct)), [rows]);
+  const rows = useMemo(() => (current ? current[shown] : []), [current, shown]);
+  const maxRating = useMemo(() => Math.max(1, ...rows.map((r) => r.ratingPct ?? 0)), [rows]);
 
   if (!current) return null;
 
@@ -112,31 +118,39 @@ export function WorldRankingTable({
 
       <Panel
         title={t("rankings.panelTitle", { label })}
-        subtitle={t(view === "model" ? "rankings.subtitle.model" : "rankings.subtitle.points")}
+        subtitle={t(
+          !modelAvailable
+            ? "rankings.subtitle.pointsOnly"
+            : shown === "model"
+              ? "rankings.subtitle.model"
+              : "rankings.subtitle.points",
+        )}
         className="mt-4"
         action={
-          <div
-            role="tablist"
-            aria-label={t("rankings.toggle.label")}
-            className="inline-flex rounded-full border border-border bg-card p-0.5"
-          >
-            {(["model", "points"] as View[]).map((v) => (
-              <button
-                key={v}
-                role="tab"
-                aria-selected={view === v}
-                type="button"
-                onClick={() => setView(v)}
-                className={`rounded-full px-3 py-1 text-[12px] font-semibold transition-colors ${
-                  view === v
-                    ? "bg-terracotta text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t(v === "model" ? "rankings.toggle.model" : "rankings.toggle.points")}
-              </button>
-            ))}
-          </div>
+          modelAvailable ? (
+            <div
+              role="tablist"
+              aria-label={t("rankings.toggle.label")}
+              className="inline-flex rounded-full border border-border bg-card p-0.5"
+            >
+              {(["model", "points"] as View[]).map((v) => (
+                <button
+                  key={v}
+                  role="tab"
+                  aria-selected={view === v}
+                  type="button"
+                  onClick={() => setView(v)}
+                  className={`rounded-full px-3 py-1 text-[12px] font-semibold transition-colors ${
+                    view === v
+                      ? "bg-terracotta text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {t(v === "model" ? "rankings.toggle.model" : "rankings.toggle.points")}
+                </button>
+              ))}
+            </div>
+          ) : undefined
         }
       >
         <div className="overflow-x-auto">
@@ -158,7 +172,7 @@ export function WorldRankingTable({
                 </th>
                 <th
                   scope="col"
-                  className={`w-24 pb-3 pl-6 text-right font-semibold ${view === "points" ? "text-foreground" : ""}`}
+                  className={`w-24 pb-3 pl-6 text-right font-semibold ${shown === "points" ? "text-foreground" : ""}`}
                 >
                   <span className="inline-flex items-center gap-1 justify-end">
                     {t("rankings.colPoints")}
@@ -175,17 +189,19 @@ export function WorldRankingTable({
                     </InfoTip>
                   </span>
                 </th>
-                <th
-                  scope="col"
-                  className={`w-40 pb-3 pl-6 text-right font-semibold ${view === "model" ? "text-foreground" : ""}`}
-                >
-                  <span className="inline-flex items-center gap-1 justify-end">
-                    {t("rankings.colRating")}
-                    <InfoTip label={t("figure.about", { label: t("rankings.colRating") })}>
-                      {t("rankings.ratingHint")}
-                    </InfoTip>
-                  </span>
-                </th>
+                {modelAvailable && (
+                  <th
+                    scope="col"
+                    className={`w-40 pb-3 pl-6 text-right font-semibold ${shown === "model" ? "text-foreground" : ""}`}
+                  >
+                    <span className="inline-flex items-center gap-1 justify-end">
+                      {t("rankings.colRating")}
+                      <InfoTip label={t("figure.about", { label: t("rankings.colRating") })}>
+                        {t("rankings.ratingHint")}
+                      </InfoTip>
+                    </span>
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -218,7 +234,7 @@ export function WorldRankingTable({
                     {r.mark ?? "—"}
                   </td>
                   <td
-                    className={`nums py-3 pl-6 text-right text-[13px] ${view === "points" ? "font-semibold text-foreground" : "text-muted-foreground"}`}
+                    className={`nums py-3 pl-6 text-right text-[13px] ${shown === "points" ? "font-semibold text-foreground" : "text-muted-foreground"}`}
                   >
                     {r.score ?? "—"}
                   </td>
@@ -236,25 +252,27 @@ export function WorldRankingTable({
                   >
                     {r.racesOnRecord ?? "—"}
                   </td>
-                  <td className="py-3 pl-6">
-                    <div className="flex items-center justify-end gap-2.5">
-                      <span className="h-1.5 w-20 overflow-hidden rounded-full bg-secondary">
+                  {modelAvailable && (
+                    <td className="py-3 pl-6">
+                      <div className="flex items-center justify-end gap-2.5">
+                        <span className="h-1.5 w-20 overflow-hidden rounded-full bg-secondary">
+                          <span
+                            className="block h-full rounded-full"
+                            style={{
+                              width: `${Math.round(((r.ratingPct ?? 0) / maxRating) * 100)}%`,
+                              backgroundImage:
+                                "linear-gradient(90deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
+                            }}
+                          />
+                        </span>
                         <span
-                          className="block h-full rounded-full"
-                          style={{
-                            width: `${Math.round((r.ratingPct / maxRating) * 100)}%`,
-                            backgroundImage:
-                              "linear-gradient(90deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
-                          }}
-                        />
-                      </span>
-                      <span
-                        className={`nums w-10 text-right text-[12.5px] ${view === "model" ? "font-semibold text-foreground" : "text-muted-foreground"}`}
-                      >
-                        {r.ratingPct}%
-                      </span>
-                    </div>
-                  </td>
+                          className={`nums w-10 text-right text-[12.5px] ${shown === "model" ? "font-semibold text-foreground" : "text-muted-foreground"}`}
+                        >
+                          {r.ratingPct === null ? "—" : `${r.ratingPct}%`}
+                        </span>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

@@ -68,12 +68,20 @@ export const en: Record<string, string> = {
     "{{n}} of the top {{of}} entrants on points have a record we hold, but the model's favourite has only a {{chance}}% chance of a podium, under the {{floor}}% it needs. This event is ranked on points instead.",
   "championship.projection.colMark": "2026 best",
   "championship.projection.markHint":
-    "The athlete's best mark in this event this season, from World Athletics' Asian toplist.",
+    "The athlete's best mark in this event this season, from World Athletics' Asian toplist, or from the athlete's own World Athletics profile when that list does not place them.",
   "championship.projection.colPoints": "Points",
   "championship.projection.pointsHint":
     "World Athletics points for the athlete's best 2026 mark in this event. More points means a better mark. This column is an order, not a forecast.",
   "championship.projection.chanceHint":
     "The model's chance that this athlete finishes in the top three. It is each athlete's own chance, so the column does not add up to 100.",
+  "championship.projection.unrankedTitle": "Entered, not ranked ({{n}})",
+  "championship.projection.unrankedHint":
+    "These athletes are on the organisers' entry list, but we found no 2026 mark to rank them by. Each row says why. They take no place in the order above.",
+  "championship.projection.unranked.notFound": "No World Athletics profile matches this entry",
+  "championship.projection.unranked.noMark": "No 2026 result in this event on World Athletics",
+  "championship.projection.unranked.lookupFailed": "World Athletics didn't answer when we checked",
+  "championship.projection.unranked.notScored":
+    "Has a 2026 mark, but the model is missing a figure it needs to score them",
   "championship.projection.unscored":
     "Entered, with no 2026 mark we could find in this event: {{names}}.",
   "championship.projection.noteModel":
@@ -385,6 +393,8 @@ export const en: Record<string, string> = {
     "Ordered by the model's rating — its read of who would make the podium if this event held a championship final now. It weighs how an athlete has actually competed, not only their fastest mark, so it does not simply repeat the points order.",
   "rankings.subtitle.points":
     "Ordered by World Athletics points — the score of each athlete's season best. No model involved.",
+  "rankings.subtitle.pointsOnly":
+    "Ordered by World Athletics points, the score of each athlete's season best. This event has no model rating: it is not on the Diamond League programme, so we hold no past results to rate it on.",
   "rankings.toggle.label": "Ranking method",
   "rankings.toggle.model": "Model rating",
   "rankings.toggle.points": "By points",
@@ -881,6 +891,12 @@ export const en: Record<string, string> = {
   "ath.fastestNote":
     "Worth noting: this is the fastest mark in the world this season. Diamond League Final eligibility is decided by points scored in the series, not by season best.",
   "ath.seasonStats": "Season stats",
+  "ath.champ.subtitle": "Entered in this event",
+  "ath.champ.points":
+    "{{rank}} of {{n}} ranked entrants on World Athletics points ({{score}}). This event is called on points, not by the model.",
+  "ath.champ.model":
+    "The model's {{rank}} pick of {{n}} ranked entrants, with a {{chance}}% chance of a podium.",
+  "ath.champ.link": "See the call for every event",
   "ath.seasonBest2026": "2026 season best",
   "ath.worldRank": "World rank",
   "ath.thisSeasonToplist": "this season's toplist",
@@ -1071,7 +1087,7 @@ export const en: Record<string, string> = {
   // in the reader's language from the structured fields the API already
   // sends (reasonCode + dl), rather than translating its English prose.
 
-  // Discipline names, keyed by discKey. A closed set of 32, so they can be
+  // Discipline names, keyed by discKey. A closed set of 36, so they can be
   // translated on the key without the API having to know a language. The
   // English here matches what the API already sends, so nothing changes for
   // English readers; anything unrecognised falls back to the API's label.
@@ -1107,6 +1123,10 @@ export const en: Record<string, string> = {
   "disc.name.women_DT": "Women's Discus Throw",
   "disc.name.men_JT": "Men's Javelin Throw",
   "disc.name.women_JT": "Women's Javelin Throw",
+  "disc.name.men_HT": "Men's Hammer Throw",
+  "disc.name.women_HT": "Women's Hammer Throw",
+  "disc.name.men_10000m": "Men's 10,000m",
+  "disc.name.women_10000m": "Women's 10,000m",
 
   "podium.strongestCall": "Strongest call",
   "podium.sb": "SB {{mark}}",

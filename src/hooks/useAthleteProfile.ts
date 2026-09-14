@@ -4,6 +4,7 @@ import type {
   AthleteCareer,
   AthleteProfile,
   CareerSeason,
+  ChampionshipCall,
   H2hMatchup,
   MeetMark,
   PhotoCredit,
@@ -25,7 +26,15 @@ export type AthleteNotInField = {
   waUrl: string | null;
   reason: string;
   reasonCode:
-    "not_in_standings" | "outside_points_cut" | "injury_removed" | "outside_cut" | "no_data";
+    | "not_in_standings"
+    | "outside_points_cut"
+    | "injury_removed"
+    | "outside_cut"
+    | "no_data"
+    | "championship_entrant"
+    | "points_only";
+  /** Entered at the current championship: its call on them in this event. */
+  championship?: ChampionshipCall | null;
   /** Their real place in WA's Diamond League standings, or null when they
    * have no points in this discipline at all -- the two cases the site used
    * to report as one. */

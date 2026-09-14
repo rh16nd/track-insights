@@ -139,6 +139,8 @@ export type AthleteProfile = {
   name: string;
   discKey: string;
   disc: string;
+  /** The current championship's call on them in this event, when entered. */
+  championship?: ChampionshipCall | null;
   nat: string;
   rank: number;
   mark: string;
@@ -863,6 +865,15 @@ export type UltimateProjection = {
    * difference between a projection worth reading and one that is quietly
    * wrong. */
   unscored: string[];
+  /** The same athletes with the reason each has no place, shown as rows at the
+   * foot of the table. Sent for the Asian Games; absent on the Ultimate, whose
+   * page still names `unscored` in a sentence. */
+  unranked?: {
+    name: string;
+    nat: string | null;
+    reason: UnrankedReason;
+    profileUrl: string | null;
+  }[];
   /** Qualified for this event but absent from World Athletics' published
    * ENTRY list. Qualification says who is eligible; entries say who is
    * running, and they disagreed about 19 athletes each way three days out
@@ -966,6 +977,29 @@ export type UltimateEvent = {
 
 export type CallMethod = "model" | "points";
 
+/** Why an entrant has no place in a call. "notFound": no World Athletics
+ * athlete matches the entry. "noMark": World Athletics has them, with no 2026
+ * result in the event. "lookupFailed": the check itself failed. "notScored": a
+ * 2026 mark the model could not score. */
+export type UnrankedReason = "notFound" | "noMark" | "lookupFailed" | "notScored";
+
+/** The current championship's call on one athlete in one event, for their
+ * page (api.py championship_call). Absent once the championship has ended. */
+export type ChampionshipCall = {
+  id: string;
+  labelKey: string;
+  theme: string;
+  /** Null on a call made before methods existed (the Ultimate). */
+  method: CallMethod | null;
+  entered: number;
+  ranked: number;
+  /** Null for an entrant the call could not rank; `unranked` says why. */
+  rank: number | null;
+  podiumChance: number | null;
+  rankingScore: number | null;
+  unranked: UnrankedReason | null;
+};
+
 /** Name, place, dates and theme, from /api/championship/summary. */
 export type ChampionshipSummary = {
   id: string;
@@ -993,7 +1027,11 @@ export type ChampionshipEntrant = {
   mark: string | null;
   score: number | null;
   asiaRank: number | null;
-  matchedBy: "waId" | "name" | "nameParts" | null;
+  /** "search": no id on the entry, found through World Athletics' athlete
+   * search and then on the Asian list. "profile": the mark was read off the
+   * athlete's World Athletics profile because no list placed them. */
+  matchedBy: "waId" | "name" | "nameParts" | "search" | "profile" | null;
+  unranked?: UnrankedReason | null;
   profileUrl: string | null;
 };
 
@@ -1068,6 +1106,11 @@ export type CountryAthlete = {
   score: number | null;
   worldRank: number | null;
   profileUrl: string | null;
+  isField?: boolean;
+  /** False for the hammer and the 10,000m, which have no discipline page (no
+   * model field): the row links their Track or Field ranking instead. Absent
+   * from a countries file built before 2026-09-14, which means true. */
+  hasDisciplinePage?: boolean;
   /** Headshot for the three athletes the country page leads with, attached
    * by the API from the warmed card cache. */
   photoUrl?: string | null;
@@ -1141,8 +1184,9 @@ export type WorldRankingRow = {
    * circuit rates near zero however fast they have run: across the 32 top-20s
    * the mean rating climbs 1.2% -> 28.8% from 0 to 5 DL meetings while the
    * mean World Athletics score hardly moves. That is why `dlRaces` sits next
-   * to it in the table. */
-  ratingPct: number;
+   * to it in the table. Null in a discipline the model does not rate
+   * (`modelAvailable` false). */
+  ratingPct: number | null;
   /** Diamond League meetings contested in 2026. Still what the model's
    * meets_count feature reads, but NOT what the table shows: the Diamond
    * League contests each discipline at only a few of its meetings — the men's
@@ -1170,6 +1214,10 @@ export type WorldRankingRow = {
 
 export type DisciplineRankings = {
   isField: boolean;
+  /** False for a discipline the model has never seen (the hammer and the
+   * 10,000m, added 2026-09-14): `model` is empty and the page ranks it on
+   * points alone. Absent from a snapshot built before then, which means true. */
+  modelAvailable?: boolean;
   model: WorldRankingRow[];
   points: WorldRankingRow[];
 };

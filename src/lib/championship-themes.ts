@@ -47,6 +47,9 @@ function box(tokens: {
 }): CSSProperties {
   return {
     "--card": tokens.card,
+    // Panel's cream wash is a background-image and would paint over --card,
+    // leaving this box's light text on cream (styles.css, card-surface).
+    "--card-wash": "none",
     "--foreground": tokens.foreground,
     "--muted-foreground": tokens.muted,
     "--border": tokens.border,
@@ -72,8 +75,10 @@ export const CHAMPIONSHIP_THEMES: Record<ChampionshipThemeId, ChampionshipTheme>
       muted: "#b4c6db", // 8.72; 8.05 on a hovered row; 7.06 on a chip
       border: "#3b4d6e",
       secondary: "#213459",
-      fill: "#44a2d9", // 5.37 against the card (non-text)
-      onFill: "#07183a", // 6.16 on the fill, 11.32 on the gold (place badges)
+      // Lifted from #44a2d9 (6.18 under its text) to clear 7:1: the user found
+      // these boxes hard to read, so AA alone is not the target here.
+      fill: "#5bb0e0", // 6.28 against the card (non-text)
+      onFill: "#07183a", // 7.27 on the fill, 11.37 on the gold (place badges)
       accent: "#7dc7f7", // 8.25
       gold: "#f5cb70", // 9.87
     }),
@@ -131,9 +136,10 @@ export const CHAMPIONSHIP_THEMES: Record<ChampionshipThemeId, ChampionshipTheme>
       border: "#29523b",
       secondary: "#0f3924",
       // Coral, not the sun's red: red measured 2.91 against this green, under
-      // the 3:1 a control boundary needs. Coral is 6.45.
-      fill: "#f18a76",
-      onFill: "#00220f", // 6.97 on the fill, 10.99 on the gold (place badges)
+      // the 3:1 a control boundary needs. This coral is 6.93, lifted from
+      // #f18a76 so the text on it clears 7:1 rather than 6.99.
+      fill: "#f39382",
+      onFill: "#00220f", // 7.53 on the fill, 10.99 on the gold (place badges)
       accent: "#fca391", // 8.05
       gold: "#f8ca65", // 10.17
     }),

@@ -77,6 +77,7 @@ export function UltimateProjections({
   // the javelin's flagged athlete is its number eight, and nobody was promoted
   // over him.
   const promoted = flagged.filter((a) => a.rank <= 3);
+  const unranked = current.unranked ?? [];
   // The Ultimate's table reads a qualification route, then a chance. A call
   // made one way per event (the Asian Games) reads each athlete's 2026 best,
   // then a chance where the model called the event or points where it did not.
@@ -282,6 +283,58 @@ export function UltimateProjections({
                 ))}
               </tbody>
             )}
+            {/* Entered and not ranked, as rows rather than a sentence of names:
+                a reader looking for one athlete scans the table, and each row
+                says why that athlete has no place in the order above. */}
+            {unranked.length > 0 && (
+              <tbody className="divide-y divide-border">
+                <tr>
+                  <th scope="colgroup" colSpan={5} className="pt-5 pb-2 text-left">
+                    <span className="label-caps inline-flex items-center gap-1 text-muted-foreground">
+                      {t("championship.projection.unrankedTitle", { n: unranked.length })}
+                      <InfoTip
+                        label={t("figure.about", {
+                          label: t("championship.projection.unrankedTitle", { n: unranked.length }),
+                        })}
+                      >
+                        {t("championship.projection.unrankedHint")}
+                      </InfoTip>
+                    </span>
+                  </th>
+                </tr>
+                {unranked.map((u, i) => (
+                  <tr
+                    key={`${u.name}-${i}`}
+                    className="stagger-item"
+                    style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
+                  >
+                    <td className="nums py-2.5 pr-2 text-[13px] font-semibold text-muted-foreground">
+                      —
+                    </td>
+                    <td className="py-2.5 pl-3 text-[13px] font-medium text-foreground">
+                      {u.profileUrl ? (
+                        <a
+                          href={u.profileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="transition-colors hover:text-terracotta-strong hover:underline"
+                        >
+                          {displayName(u.name)}
+                        </a>
+                      ) : (
+                        <span>{displayName(u.name)}</span>
+                      )}
+                    </td>
+                    <td className="py-2.5 pl-4">
+                      <NatFlag nat={u.nat ?? "—"} />
+                    </td>
+                    <td colSpan={2} className="py-2.5 pl-4 text-[12px] text-muted-foreground">
+                      {t(`championship.projection.unranked.${u.reason}`)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            )}
           </table>
         </div>
         {/* Named, not counted. A qualified athlete the model could not score is
@@ -297,7 +350,9 @@ export function UltimateProjections({
             })}
           </p>
         )}
-        {current.unscored.length > 0 && (
+        {/* The Ultimate's call predates the rows above and still names its
+            unscored athletes in a sentence. */}
+        {current.unscored.length > 0 && !current.unranked && (
           <p className="mt-3 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
             {t(
               current.method ? "championship.projection.unscored" : "ultimate.projection.unscored",

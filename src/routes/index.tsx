@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
   head: () =>
     pageHead(
       "The world's best, read by the model",
-      "Real-data athletics rankings and podium predictions across all 32 disciplines, trained on results scraped from World Athletics. Next up: the Ultimate Championship in Budapest.",
+      "Real-data athletics rankings across 36 disciplines and podium predictions for 32, trained on results scraped from World Athletics. Next up: the Ultimate Championship in Budapest.",
     ),
   component: Landing,
 });
@@ -232,7 +232,7 @@ function Landing() {
     const rows: TopWinner[] = [];
     for (const [key, r] of Object.entries(rankings)) {
       const top = r.model[0];
-      if (!top) continue;
+      if (!top || top.ratingPct === null) continue;
       rows.push({
         rank: 0,
         name: top.name,
