@@ -65,10 +65,14 @@ function ModelCall({ row }: { row: ResultRow }) {
   if (row.modelState === "field" && row.predictedRank !== null) {
     return (
       <span className="text-foreground">
-        {t("table.resultPredicted", {
-          rank: ordinalIn(lang, row.predictedRank),
-          prob: row.predictedProb ?? 0,
-        })}
+        {/* No chance for an event ranked on points: it stated an order, and
+            printing 0% beside every athlete would invent one. */}
+        {row.predictedProb === null
+          ? t("table.resultRanked", { rank: ordinalIn(lang, row.predictedRank) })
+          : t("table.resultPredicted", {
+              rank: ordinalIn(lang, row.predictedRank),
+              prob: row.predictedProb,
+            })}
       </span>
     );
   }

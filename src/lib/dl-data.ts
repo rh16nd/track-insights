@@ -709,6 +709,8 @@ export type Championship = {
   labelKey: string;
   venue: string;
   date: string;
+  /** Which competition's colours the box wears (lib/championship-themes.ts). */
+  theme?: string;
   status: "complete" | "pending";
   /** When the projection was snapshotted; null for the Diamond League Final,
    * whose snapshot predates src/freeze_prefinal.py and was taken by hand. */
@@ -717,7 +719,9 @@ export type Championship = {
    * the only meaningful count -- `events` holds comparisons and is empty
    * until there are results to compare against. */
   calledEvents: number;
-  events: { id: string; label: string; result: DisciplineResult }[];
+  /** `method` is how the event was called: the model, or a ranking by points.
+   * Absent for championships that predate the Asian Games, all the model's. */
+  events: { id: string; label: string; method?: CallMethod; result: DisciplineResult }[];
 };
 
 export type ResultsHistory = {
@@ -868,13 +872,39 @@ export type UltimateProjection = {
   notEntered?: string[];
   /** "entries" once WA has published entry lists, "qualification" before. */
   fieldSource?: string;
+  /** How the event was called. Absent on the Ultimate, where the model called
+   * every event. At the Asian Games an event goes to the model only when enough
+   * of its leading entrants have a record we hold; otherwise it is ranked by
+   * World Athletics Results Score, and never a mix of the two. */
+  method?: CallMethod;
+  /** Why: the top entrants by points, and which of them have a record. */
+  methodEvidence?: {
+    considered: string[];
+    withHistory: string[];
+    needed: number;
+    of: number;
+    /** Why an event went to points: too few records ("history"), or the
+     * model's favourite under the floor ("floor"). Null for a model event. */
+    reason?: "history" | "floor" | null;
+    /** The model's highest podium chance, whenever the history rule let it
+     * score the event. */
+    topChance?: number;
+    floor?: number;
+  };
   athletes: {
     rank: number;
     name: string;
     nat: string | null;
     qualifiedBy: string | null;
     rankingScore: number | null;
-    podiumChance: number;
+    /** 2026 season best, where the call carries one (the Asian Games). */
+    mark?: string | null;
+    /** False for an athlete on no world toplist, whom the site has no page
+     * for; the row then links to `profileUrl` on World Athletics instead. */
+    hasPage?: boolean;
+    profileUrl?: string | null;
+    /** Null in an event ranked by points, which states an order, not a chance. */
+    podiumChance: number | null;
     /** Set by api.py from injury_flags.json when the injury check has matched
      * a headline for this athlete. Flagged, never dropped: this field is
      * World Athletics' published qualification list, so removing a row would
@@ -927,6 +957,98 @@ export type UltimateEvent = {
   projections: UltimateProjection[];
   timetable: UltimateTimetablePhase[];
   results: UltimateResultRow[];
+};
+
+// --- The current championship (/api/championship) ---------------------------
+// Whichever championship athletics-predictor/src/championships.py names as
+// current. The Ultimate's payload is the UltimateEvent above; the Asian Games'
+// carries the organisers' entry list and a call made one way per event.
+
+export type CallMethod = "model" | "points";
+
+/** Name, place, dates and theme, from /api/championship/summary. */
+export type ChampionshipSummary = {
+  id: string;
+  labelKey: string;
+  navKey: string | null;
+  theme: string;
+  name: string;
+  shortName: string;
+  /** The stadium. */
+  venue: string;
+  city: string;
+  country: string;
+  startDate: string;
+  endDate: string;
+  eventCount: number;
+};
+
+/** One entrant as the organisers' entry list has them, with their 2026 season
+ * best from World Athletics' Asian toplist when one was found. */
+export type ChampionshipEntrant = {
+  name: string;
+  entryName: string | null;
+  nat: string | null;
+  waId: number | null;
+  mark: string | null;
+  score: number | null;
+  asiaRank: number | null;
+  matchedBy: "waId" | "name" | "nameParts" | null;
+  profileUrl: string | null;
+};
+
+export type ChampionshipFieldEvent = {
+  evKey: string;
+  discKey: string;
+  disciplineLabel: string;
+  sex: string;
+  athletes: ChampionshipEntrant[];
+  withSeasonMark: number;
+  addedToSnapshot: string[];
+  fieldSource: string;
+};
+
+/** An event on the programme with no call: a relay, an event we hold no data
+ * for, or one with nobody entered. */
+export type NotCalledEvent = {
+  evKey: string;
+  label: string;
+  reason: "relay" | "noData" | "noEntries";
+  entrants: number;
+};
+
+export type ChampionshipEvent = Partial<UltimateEvent> & {
+  championship: {
+    id: string;
+    labelKey: string;
+    navKey: string | null;
+    venue: string;
+    startDate: string;
+    endDate: string;
+    theme: string;
+  };
+  competitionId: number;
+  name: string;
+  shortName: string;
+  venue: string;
+  city: string;
+  country: string;
+  startDate: string;
+  endDate: string;
+  timezone: string;
+  eventCount: number;
+  fieldPublished: boolean;
+  resultsAvailable: boolean;
+  projections: UltimateProjection[];
+  results: UltimateResultRow[];
+  /** The Asian Games only, from here down. */
+  field?: ChampionshipFieldEvent[];
+  notCalled?: NotCalledEvent[];
+  rule?: { needed: number; of: number; floor?: number };
+  entrants?: number;
+  federations?: number;
+  entriesSource?: string;
+  entriesFetchedAt?: string;
 };
 
 // --- Countries (/api/country/<code>, /api/countries) ----------------------

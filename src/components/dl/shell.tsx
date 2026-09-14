@@ -44,6 +44,13 @@ export type PageGround = {
    * pass the shape of the nation's flag, so a page is ruled the way its flag
    * is built. */
   motif?: keyof typeof MOTIF;
+  /** A whole bloom layer, for a ground measured with its own bloom strengths
+   * rather than the country pages' fixed 10% and 9%. The championship themes
+   * pass one (lib/championship-themes.ts). */
+  blooms?: string;
+  /** False leaves out the site's track curve: a warm arc reads as a stray on a
+   * championship's own ground. */
+  trackCurve?: boolean;
 };
 
 /** Rulings for a page's ground: 2px lines every 46px, in the direction the
@@ -115,17 +122,13 @@ export function Shell({
   eyebrow?: string | undefined;
   /** One-line explanation under the page title. */
   description?: string | undefined;
-  /** Per-page ground. "ultimate" swaps the site's terracotta track canvas for
-   * the championship's own black-and-purple, matching how World Athletics
-   * dresses the Ultimate. Deliberately a PAGE-level opt-in, not a site theme:
-   * only the event tab wears it, and when the next championship takes that tab
-   * this is the one switch that re-dresses it.
-   *
-   * A `PageGround` does the same thing with colours the page computes for
-   * itself — the country pages pass their nation's, measured off its flag.
-   * Same mechanism, same two layers, so there is one way to re-dress a page
-   * rather than a growing list of named themes. */
-  theme?: "default" | "ultimate" | PageGround;
+  /** Per-page ground, in place of the site's terracotta track canvas.
+   * Deliberately a PAGE-level opt-in, not a site theme. The championship page
+   * passes its competition's (lib/championship-themes.ts: the Ultimate's
+   * black and purple, the Asian Games' green), and the country pages pass
+   * their nation's, measured off its flag. One mechanism, so there is one way
+   * to re-dress a page rather than a growing list of named themes. */
+  theme?: "default" | PageGround;
 }) {
   /* Mirrors the visible breadcrumb below. Read from the router rather than
      passed in, so the two cannot drift: a page that changes its crumb gets
@@ -133,11 +136,10 @@ export function Shell({
      exists -- see lib/seo.ts. */
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { t } = useT();
-  const isUltimate = theme === "ultimate";
   const custom = typeof theme === "object" ? theme : null;
-  // Either way the page brings its own ground, so the site's terracotta must
-  // not be painted underneath it.
-  const ownGround = isUltimate || custom !== null;
+  // The page brings its own ground, so the site's terracotta must not be
+  // painted underneath it.
+  const ownGround = custom !== null;
 
   /* Every page renders through Shell, so this is the earliest moment we know
      a real person is here. Wake the API now (see warmApi) rather than when
@@ -152,11 +154,11 @@ export function Shell({
           own background: the document body still carries the site's
           terracotta, which showed through at the edges of the scroll when the
           colour lived on the box. Fixed, it covers the viewport always. */}
-      {ownGround && (
+      {custom && (
         <div
           className="pointer-events-none fixed inset-0 z-0"
           aria-hidden="true"
-          style={{ backgroundColor: custom ? custom.ground : "#07050d" }}
+          style={{ backgroundColor: custom.ground }}
         />
       )}
       {/* The ground's own ruling, under the grain so it reads as part of the
@@ -172,27 +174,24 @@ export function Shell({
           noise reads as television static. Only the glow breathes, on its own
           layer so the two can't drag each other. */}
       <div className="ambient-grain pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
-      {isUltimate || custom ? (
-        /* The championship's ground: near-black with violet blooms, the look
-           World Athletics gives the Ultimate. A country page's is the same
-           shape in its own two flag colours. Fixed, like the default glow, so
-           it holds still down a long page instead of stretching with it.
+      {custom ? (
+        /* A page's own blooms: a championship's, measured with the ground
+           they sit on, or a country page's two flag colours. Fixed, like the
+           default glow, so they hold still down a long page instead of
+           stretching with it.
 
-           The country blooms are weaker than the Ultimate's on purpose: they
-           sit over a colour that carries body text, and every point of alpha
-           here is paid for by darkening that ground (see
-           scripts/make-flag-palette.py, which clamps against these exact
-           numbers). */
+           The country blooms are weak on purpose: they sit over a colour that
+           carries body text, and every point of alpha here is paid for by
+           darkening that ground (see scripts/make-flag-palette.py, which
+           clamps against these exact numbers). */
         <div
           className="ambient-breath pointer-events-none fixed inset-0 z-0"
           aria-hidden="true"
           style={{
-            backgroundImage: custom
-              ? `radial-gradient(ellipse 1200px 720px at 84% -8%, ${custom.glow[0]}1a, transparent 62%),` +
-                `radial-gradient(ellipse 1000px 640px at 2% 104%, ${custom.glow[1] ?? custom.glow[0]}17, transparent 58%)`
-              : "radial-gradient(ellipse 1200px 720px at 84% -8%, rgba(150,74,224,0.40), transparent 62%)," +
-                "radial-gradient(ellipse 1000px 640px at 2% 104%, rgba(96,42,178,0.34), transparent 58%)," +
-                "radial-gradient(ellipse 760px 520px at 50% 46%, rgba(72,30,140,0.20), transparent 60%)",
+            backgroundImage:
+              custom.blooms ??
+              `radial-gradient(ellipse 1200px 720px at 84% -8%, ${custom.glow[0]}1a, transparent 62%),` +
+                `radial-gradient(ellipse 1000px 640px at 2% 104%, ${custom.glow[1] ?? custom.glow[0]}17, transparent 58%)`,
           }}
         />
       ) : (
@@ -202,9 +201,9 @@ export function Shell({
         />
       )}
       {/* The track curve is white and gold at 8-16% — hue-neutral, so it works
-          on a nation's ground as well as on the site's own. Only the
-          championship drops it: a warm arc reads as a stray on that black. */}
-      {!isUltimate && (
+          on a nation's ground as well as on the site's own. A championship
+          drops it: a warm arc reads as a stray on its own ground. */}
+      {custom?.trackCurve !== false && (
         <TrackCurveDecoration className="pointer-events-none fixed bottom-0 right-0 z-0 h-[65vh] w-[65vh] opacity-80" />
       )}
       <div className="relative z-10">

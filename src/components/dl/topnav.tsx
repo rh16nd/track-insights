@@ -1,5 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useChampionshipSummary } from "@/hooks/useChampionship";
+import { championshipTheme } from "@/lib/championship-themes";
 import { PodiumCallMark } from "./logo";
 import { AthleteSearch } from "./athlete-search";
 import { LanguageSwitcher } from "./language-switcher";
@@ -14,13 +16,13 @@ const nav = [
   { to: "/track", labelKey: "nav.track" },
   { to: "/field", labelKey: "nav.field" },
   // The Diamond League is over; its Qualifying standings are replaced in the
-  // primary nav by the next big championship, the Ultimate. The /qualification
-  // route is kept for when the DL season returns.
-  // Carries the championship's own violet, the one colour in this bar that is
-  // not the site's terracotta. The event is the reason to visit right now and
-  // the tab should say so; when the next championship takes this slot, the
-  // flag moves with it.
-  { to: "/ultimate", labelKey: "nav.ultimate", accent: true },
+  // primary nav by the next big championship. The /qualification route is kept
+  // for when the DL season returns.
+  // The tab follows whichever championship is current, in that competition's
+  // own colour, the one colour in this bar that is not the site's terracotta.
+  // Its label and accent come from /api/championship/summary, so when the next
+  // championship takes the slot the tab moves with the data.
+  { to: "/championship", labelKey: "nav.championship", championship: true },
   // The site's own track record, next to the projections rather than buried in
   // the About page. A forecast that is never checked afterwards is a claim, and
   // the whole argument of this project is that the numbers are checkable.
@@ -78,6 +80,11 @@ export function TopNav({
   const activeRef = useRef<HTMLAnchorElement>(null);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [searchOpen, setSearchOpen] = useState(false);
+  const championshipState = useChampionshipSummary();
+  const championship = championshipState.status === "ok" ? championshipState.data : undefined;
+  const championshipAccent = {
+    "--nav-accent": championshipTheme(championship?.theme)?.navAccent ?? "var(--violet-strong)",
+  } as CSSProperties;
   useEffect(() => {
     activeRef.current?.scrollIntoView({ inline: "center", block: "nearest" });
     // Collapse the mobile search row whenever the route changes.
@@ -120,26 +127,27 @@ export function TopNav({
         >
           {nav.map((item) => {
             const isActive = pathname === item.to;
-            const accent = "accent" in item && item.accent;
+            const accent = "championship" in item && item.championship;
             return (
               <Link
                 key={item.to}
                 to={item.to}
                 ref={isActive ? activeRef : undefined}
+                style={accent ? championshipAccent : undefined}
                 // min-h-11 (44px) -- measured at 43px before (py-3.5 alone
                 // was 1px short of the touch-target floor on mobile).
                 className={`label-caps flex min-h-11 items-center whitespace-nowrap rounded-full px-3.5 py-3.5 transition-[color,background-color,transform] duration-150 active:scale-95 sm:min-h-0 sm:py-2 ${
                   accent
-                    ? "text-violet-strong hover:bg-violet-strong/10"
+                    ? "text-[var(--nav-accent)] hover:bg-[color-mix(in_oklab,var(--nav-accent)_10%,transparent)]"
                     : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 }`}
                 activeProps={{
                   className: accent
-                    ? "!bg-violet-strong/12 !text-violet-strong"
+                    ? "!bg-[color-mix(in_oklab,var(--nav-accent)_12%,transparent)] !text-[var(--nav-accent)]"
                     : "!bg-secondary !text-foreground",
                 }}
               >
-                {t(item.labelKey)}
+                {t(accent && championship?.navKey ? championship.navKey : item.labelKey)}
               </Link>
             );
           })}

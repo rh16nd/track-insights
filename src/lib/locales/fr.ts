@@ -8,6 +8,9 @@ export const fr: Record<string, string> = {
   "nav.field": "Concours",
   "nav.qualifying": "Qualification",
   "nav.ultimate": "Ultimate",
+  "nav.asianGames": "Jeux asiatiques",
+  "nav.championship": "Championnat",
+  "results.meet.asianGames": "Jeux asiatiques 2026",
   "nav.stats": "Stats",
   "nav.schedule": "Calendrier",
   "nav.results": "Résultats",
@@ -48,6 +51,85 @@ export const fr: Record<string, string> = {
   "ultimate.title": "Le Championnat Ultimate",
   "ultimate.tagline": "Les meilleurs face aux meilleurs, à Budapest.",
   "ultimate.stat.days": "Jours avant Budapest",
+  "championship.stat.daysTo": "Jours avant {{city}}",
+  "championship.chip.days": "J-{{n}} avant {{city}}",
+  "championship.chip.live": "En direct de {{city}}",
+  "championship.chip.done": "{{city}}, c’est terminé",
+  "championship.projection.titlePoints": "Classement aux points · {{disc}}",
+  "championship.projection.subtitle":
+    "{{n}} athlètes inscrits. Les {{ranked}} qui ont une marque en 2026 dans cette épreuve sont classés ci-dessous.",
+  "championship.projection.whyModel":
+    "{{n}} des {{of}} premiers inscrits aux points ont un historique chez nous : c’est donc le modèle qui fait ce pronostic.",
+  "championship.projection.whyPoints":
+    "Seuls {{n}} des {{of}} premiers inscrits aux points ont un historique chez nous. Le modèle en demande {{needed}} : cette épreuve est donc classée aux points.",
+  "championship.projection.whyFloor":
+    "{{n}} des {{of}} premiers inscrits aux points ont un historique chez nous, mais le favori du modèle n’a que {{chance}} % de chances de podium, sous les {{floor}} % requis. Cette épreuve est donc classée aux points.",
+  "championship.projection.colMark": "Meilleure marque 2026",
+  "championship.projection.markHint":
+    "La meilleure marque de l’athlète dans cette épreuve cette saison, d’après le bilan asiatique de World Athletics.",
+  "championship.projection.colPoints": "Points",
+  "championship.projection.pointsHint":
+    "Les points World Athletics de la meilleure marque 2026 de l’athlète dans cette épreuve. Plus de points signifie une meilleure marque. Cette colonne est un classement, pas un pronostic.",
+  "championship.projection.chanceHint":
+    "La probabilité, selon le modèle, que cet athlète finisse dans les trois premiers. C’est la chance propre à chacun : la colonne ne totalise donc pas 100.",
+  "championship.projection.unscored":
+    "Inscrits, sans marque 2026 trouvée dans cette épreuve : {{names}}.",
+  "championship.projection.noteModel":
+    "La liste des inscrits est celle des organisateurs. Seul l’ordre est celui du modèle.",
+  "championship.projection.notePoints":
+    "La liste des inscrits est celle des organisateurs. L’ordre suit les points World Athletics de la meilleure marque 2026 de chacun : ce n’est pas un pronostic.",
+  "championship.projection.byModel": "pronostic du modèle",
+  "championship.projection.captionModel":
+    "Tous les inscrits du {{disc}} ayant une marque en 2026, classés selon leur chance de podium",
+  "championship.projection.captionPoints":
+    "Tous les inscrits du {{disc}} ayant une marque en 2026, classés selon leurs points World Athletics",
+  "asianGames.title": "Les Jeux asiatiques",
+  "asianGames.hero.headline": "Le meilleur de l’Asie, à {{city}}.",
+  "asianGames.hero.body":
+    "Athlétisme, {{dates}}, au {{venue}}. {{entrants}} athlètes de {{federations}} pays sont inscrits.",
+  "asianGames.hero.bodyBare": "Athlétisme, {{dates}}, au {{venue}}.",
+  "asianGames.split.aria":
+    "{{model}} épreuves pronostiquées par le modèle, {{points}} classées aux points, {{none}} sans pronostic",
+  "asianGames.split.model": "par le modèle",
+  "asianGames.split.points": "aux points",
+  "asianGames.split.none": "sans pronostic",
+  "asianGames.how.title": "Comment chaque épreuve est pronostiquée",
+  "asianGames.how.field":
+    "Le plateau est la liste officielle des inscrits, publiée par les organisateurs : personne n’y figure au hasard.",
+  "asianGames.how.model":
+    "Le modèle pronostique une épreuve quand au moins {{needed}} de ses {{of}} premiers inscrits aux points ont un historique chez nous : un bilan mondial, une finale de championnat ou un meeting de Diamond League.",
+  "asianGames.how.modelFloor":
+    "Le modèle pronostique une épreuve quand au moins {{needed}} de ses {{of}} premiers inscrits aux points ont un historique chez nous (un bilan mondial, une finale de championnat ou un meeting de Diamond League) et que son propre favori a au moins {{floor}} % de chances de podium.",
+  "asianGames.how.points":
+    "Les autres épreuves sont classées selon les points World Athletics de la meilleure marque 2026 de chaque athlète. Une épreuve ne mélange jamais les deux.",
+  "asianGames.field.pending":
+    "Le pronostic n’est pas encore prêt. Le plateau et le pronostic apparaîtront ici.",
+  "asianGames.notCalled.title": "Épreuves sans pronostic",
+  "asianGames.notCalled.subtitle":
+    "{{n}} épreuves du programme n’ont pas de pronostic. Voici pourquoi.",
+  "asianGames.notCalled.relay": "Relais",
+  "asianGames.notCalled.relayNote":
+    "Le modèle lit des athlètes individuels. Une équipe de relais n’a pas d’historique propre.",
+  "asianGames.notCalled.noData": "Pas de données",
+  "asianGames.notCalled.noDataNote":
+    "Nous n’avons ni bilan, ni historique de résultats, ni modèle pour ces épreuves.",
+  "asianGames.notCalled.noEntries": "Aucun inscrit",
+  "asianGames.notCalled.noEntriesNote":
+    "La liste des inscrits ne compte aucun athlète dans ces épreuves.",
+  "asianGames.notCalled.entrants": "{{n}} inscrits",
+  "asianGames.eventLabel": "{{event}} {{sex}}",
+  "asianGames.sex.M": "hommes",
+  "asianGames.sex.W": "femmes",
+  "asianGames.sex.X": "mixte",
+  "asianGames.event.10000M": "10 000 m",
+  "asianGames.event.MARATHON": "Marathon",
+  "asianGames.event.HAMMER": "Lancer du marteau",
+  "asianGames.event.DECATH": "Décathlon",
+  "asianGames.event.HEPTATH": "Heptathlon",
+  "asianGames.event.WALKHM": "Semi-marathon marche",
+  "asianGames.event.WALKM": "Marathon marche",
+  "asianGames.event.4X100M": "Relais 4 × 100 m",
+  "asianGames.event.4X400M": "Relais 4 × 400 m",
   "ultimate.stat.liveValue": "En direct",
   "ultimate.stat.liveLabel": "En piste à Budapest",
   "ultimate.stat.doneValue": "Terminé",
@@ -357,6 +439,7 @@ export const fr: Record<string, string> = {
   "table.colResult": "Résultat",
   "table.colModelCall": "Pronostic du modèle",
   "table.colVsProjected": "vs projeté",
+  "table.resultRanked": "Classé {{rank}} aux points",
   "table.resultPredicted": "Projeté {{rank}} · {{prob}} %",
   "table.resultNearMiss": "Hors du plateau projeté",
   "table.resultUnseen": "Absent de la projection",
@@ -376,7 +459,7 @@ export const fr: Record<string, string> = {
   "schedule.titleNext": "La route à venir",
   "schedule.descriptionNext":
     "Le prochain grand championnat, et la saison Diamond League 2026 qui y a mené.",
-  "schedule.eyebrowNext": "J-{{n}} avant Budapest",
+  "schedule.eyebrowNext": "J-{{n}} avant {{city}}",
   "schedule.figNext": "Prochain championnat",
   "schedule.figSeasonRun": "Meetings DL disputés",
   "schedule.upcoming.title": "Prochain championnat",

@@ -4,8 +4,22 @@ import { Link } from "@tanstack/react-router";
 import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
 import { NatFlag } from "./nat-flag";
 import { InfoTip } from "./info-tip";
+import { useT, type Lang } from "@/lib/i18n";
+import { localeTag } from "@/lib/dates";
 import { discName } from "@/lib/dl-data";
-import type { UltimateProjection } from "@/lib/dl-data";
+import type { CallMethod, UltimateProjection } from "@/lib/dl-data";
+
+/** World Athletics writes a single-named athlete with a placeholder given name,
+ * ". SEEMA". The placeholder stays in the data, where it is part of the key,
+ * and is dropped where a reader sees it. */
+function displayName(name: string): string {
+  return name.replace(/^\.\s+/, "");
+}
+
+/** A percentage the way the reader writes it: "0.4" in English, "0,4" in French. */
+function formatPercent(value: number, lang: Lang): string {
+  return new Intl.NumberFormat(localeTag(lang), { maximumFractionDigits: 1 }).format(value);
+}
 
 /** The model's call on each event at the Ultimate Championship.
  *
@@ -27,6 +41,7 @@ export function UltimateProjections({
   projections: UltimateProjection[];
   t: (k: string, v?: Record<string, string | number>) => string;
 }) {
+  const { lang } = useT();
   const sorted = useMemo(
     () =>
       [...projections].sort((a, b) =>
@@ -62,6 +77,21 @@ export function UltimateProjections({
   // the javelin's flagged athlete is its number eight, and nobody was promoted
   // over him.
   const promoted = flagged.filter((a) => a.rank <= 3);
+  // The Ultimate's table reads a qualification route, then a chance. A call
+  // made one way per event (the Asian Games) reads each athlete's 2026 best,
+  // then a chance where the model called the event or points where it did not.
+  const middle = current.method
+    ? { label: "championship.projection.colMark", hint: "championship.projection.markHint" }
+    : { label: "ultimate.projection.colRoute", hint: "ultimate.projection.routeHint" };
+  const last =
+    current.method === "points"
+      ? { label: "championship.projection.colPoints", hint: "championship.projection.pointsHint" }
+      : {
+          label: "ultimate.projection.colChance",
+          hint: current.method
+            ? "championship.projection.chanceHint"
+            : "ultimate.projection.chanceHint",
+        };
 
   return (
     <>
@@ -98,22 +128,67 @@ export function UltimateProjections({
             }`}
           >
             {discName(t, p.discKey, p.disciplineLabel)}
+            {/* A dot marks an event the model calls: gold, like the model's
+                share of the hero's split, and the pill's own text colour when
+                the pill is selected, where gold would vanish into it. */}
+            {p.method === "model" && (
+              <>
+                <span
+                  aria-hidden="true"
+                  className={`ml-1.5 inline-block size-1.5 rounded-full align-middle ${
+                    p.discKey === current.discKey ? "bg-primary-foreground" : "bg-gold"
+                  }`}
+                />
+                <span className="sr-only"> · {t("championship.projection.byModel")}</span>
+              </>
+            )}
           </button>
         ))}
       </div>
 
       <Panel
-        title={t("ultimate.projection.title", {
-          disc: discName(t, current.discKey, current.disciplineLabel),
-        })}
-        subtitle={t(
-          current.fieldSource === "entries"
-            ? "ultimate.projection.subtitleEntered"
-            : "ultimate.projection.subtitle",
-          { n: current.athletes.length, places: current.places ?? current.qualified },
+        title={t(
+          current.method === "points"
+            ? "championship.projection.titlePoints"
+            : "ultimate.projection.title",
+          { disc: discName(t, current.discKey, current.disciplineLabel) },
         )}
+        subtitle={
+          current.method
+            ? t("championship.projection.subtitle", {
+                n: current.qualified,
+                ranked: current.athletes.length,
+              })
+            : t(
+                current.fieldSource === "entries"
+                  ? "ultimate.projection.subtitleEntered"
+                  : "ultimate.projection.subtitle",
+                { n: current.athletes.length, places: current.places ?? current.qualified },
+              )
+        }
         className="mt-4"
       >
+        {/* Why this event was called the way it was, and above the table: the
+            reader has to know whether the last column is a chance or a score
+            before reading down it. */}
+        {current.methodEvidence && (
+          <p className="mb-3 max-w-3xl text-[12.5px] leading-snug text-foreground">
+            {t(
+              current.method === "model"
+                ? "championship.projection.whyModel"
+                : current.methodEvidence.reason === "floor"
+                  ? "championship.projection.whyFloor"
+                  : "championship.projection.whyPoints",
+              {
+                n: current.methodEvidence.withHistory.length,
+                of: current.methodEvidence.considered.length,
+                needed: current.methodEvidence.needed,
+                chance: formatPercent(current.methodEvidence.topChance ?? 0, lang),
+                floor: formatPercent(current.methodEvidence.floor ?? 0, lang),
+              },
+            )}
+          </p>
+        )}
         {/* Above the table, not below it. A reader who meets this after
             counting down the podium has already drawn the wrong conclusion. */}
         {promoted.length > 0 && (
@@ -126,9 +201,14 @@ export function UltimateProjections({
         <div className="overflow-x-auto">
           <table className="w-full min-w-[620px]">
             <caption className="sr-only">
-              {t("ultimate.projection.caption", {
-                disc: discName(t, current.discKey, current.disciplineLabel),
-              })}
+              {t(
+                current.method === "model"
+                  ? "championship.projection.captionModel"
+                  : current.method === "points"
+                    ? "championship.projection.captionPoints"
+                    : "ultimate.projection.caption",
+                { disc: discName(t, current.discKey, current.disciplineLabel) },
+              )}
             </caption>
             <thead>
               <tr className="label-caps text-muted-foreground">
@@ -143,21 +223,17 @@ export function UltimateProjections({
                 </th>
                 <th scope="col" className="w-44 pb-3 pl-4 text-left font-semibold">
                   <span className="inline-flex items-center gap-1">
-                    {t("ultimate.projection.colRoute")}
-                    <InfoTip
-                      label={t("figure.about", { label: t("ultimate.projection.colRoute") })}
-                    >
-                      {t("ultimate.projection.routeHint")}
+                    {t(middle.label)}
+                    <InfoTip label={t("figure.about", { label: t(middle.label) })}>
+                      {t(middle.hint)}
                     </InfoTip>
                   </span>
                 </th>
                 <th scope="col" className="w-40 pb-3 pl-6 text-right font-semibold">
                   <span className="inline-flex items-center justify-end gap-1">
-                    {t("ultimate.projection.colChance")}
-                    <InfoTip
-                      label={t("figure.about", { label: t("ultimate.projection.colChance") })}
-                    >
-                      {t("ultimate.projection.chanceHint")}
+                    {t(last.label)}
+                    <InfoTip label={t("figure.about", { label: t(last.label) })}>
+                      {t(last.hint)}
                     </InfoTip>
                   </span>
                 </th>
@@ -172,6 +248,7 @@ export function UltimateProjections({
                   place={i + 1}
                   discKey={current.discKey}
                   t={t}
+                  method={current.method}
                 />
               ))}
             </tbody>
@@ -199,6 +276,7 @@ export function UltimateProjections({
                     place={a.rank}
                     discKey={current.discKey}
                     t={t}
+                    method={current.method}
                     dimmed
                   />
                 ))}
@@ -221,11 +299,20 @@ export function UltimateProjections({
         )}
         {current.unscored.length > 0 && (
           <p className="mt-3 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
-            {t("ultimate.projection.unscored", { names: current.unscored.join(", ") })}
+            {t(
+              current.method ? "championship.projection.unscored" : "ultimate.projection.unscored",
+              { names: current.unscored.map(displayName).join(", ") },
+            )}
           </p>
         )}
         <p className="mt-2 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
-          {t("ultimate.projection.note")}
+          {t(
+            current.method === "model"
+              ? "championship.projection.noteModel"
+              : current.method === "points"
+                ? "championship.projection.notePoints"
+                : "ultimate.projection.note",
+          )}
         </p>
       </Panel>
     </>
@@ -245,10 +332,13 @@ function ProjectionRow({
   place,
   discKey,
   t,
+  method,
   dimmed = false,
 }: {
   a: UltimateProjection["athletes"][number];
   i: number;
+  /** How the event was called; absent on the Ultimate. */
+  method?: CallMethod | undefined;
   /** The number in the # column. In the main list it is the athlete's position
    * among those expected to start, counted 1..N so the list has no holes in
    * it -- moving a flagged athlete down used to leave the 100m reading 2, 3, 4.
@@ -275,13 +365,31 @@ function ProjectionRow({
         )}
       </td>
       <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
-        <Link
-          to="/athlete/$discKey/$name"
-          params={{ discKey, name: a.name }}
-          className="transition-colors hover:text-terracotta-strong hover:underline"
-        >
-          {a.name}
-        </Link>
+        {a.hasPage === false ? (
+          // On no world toplist, so the site has no page for them. Link to
+          // World Athletics when their profile is known and to nothing when it
+          // is not, rather than to a page that cannot load.
+          a.profileUrl ? (
+            <a
+              href={a.profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-terracotta-strong hover:underline"
+            >
+              {displayName(a.name)}
+            </a>
+          ) : (
+            <span>{displayName(a.name)}</span>
+          )
+        ) : (
+          <Link
+            to="/athlete/$discKey/$name"
+            params={{ discKey, name: a.name }}
+            className="transition-colors hover:text-terracotta-strong hover:underline"
+          >
+            {displayName(a.name)}
+          </Link>
+        )}
         {a.injuryWatch && (
           <WatchBadge
             reason={a.injuryReason ?? null}
@@ -314,14 +422,22 @@ function ProjectionRow({
       <td className="py-3 pl-4">
         <NatFlag nat={a.nat ?? "—"} />
       </td>
-      <td className="py-3 pl-4 text-[12px] text-muted-foreground">{a.qualifiedBy}</td>
+      <td className={`py-3 pl-4 text-[12px] text-muted-foreground ${method ? "nums" : ""}`}>
+        {method ? (a.mark ?? "—") : a.qualifiedBy}
+      </td>
       <td className="py-3 pl-6">
-        <div className="flex items-center justify-end gap-2.5">
-          <ProbabilityBar value={a.podiumChance / 100} trackHeight="h-1.5" />
-          <span className="nums w-12 text-right text-[12.5px] font-semibold text-foreground">
-            {a.podiumChance}%
+        {a.podiumChance === null ? (
+          <span className="nums block text-right text-[12.5px] font-semibold text-foreground">
+            {a.rankingScore ?? "—"}
           </span>
-        </div>
+        ) : (
+          <div className="flex items-center justify-end gap-2.5">
+            <ProbabilityBar value={a.podiumChance / 100} trackHeight="h-1.5" />
+            <span className="nums w-12 text-right text-[12.5px] font-semibold text-foreground">
+              {a.podiumChance}%
+            </span>
+          </div>
+        )}
       </td>
     </tr>
   );

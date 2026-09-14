@@ -2,9 +2,9 @@ import type { CSSProperties } from "react";
 import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, HeadFigure } from "@/components/dl/shell";
-import type { Meet, UltimateEvent } from "@/lib/dl-data";
+import type { ChampionshipSummary, Meet } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
-import { useUltimate } from "@/hooks/useUltimate";
+import { useChampionshipSummary } from "@/hooks/useChampionship";
 import { useT, type Lang } from "@/lib/i18n";
 import { localeTag, localizeDate, localizeMonth } from "@/lib/dates";
 import { usePageTitle } from "@/lib/use-page-title";
@@ -39,7 +39,7 @@ function daysTo(startDate: string): number {
   );
 }
 
-function eventDates(ev: UltimateEvent, lang: Lang): string {
+function eventDates(ev: ChampionshipSummary, lang: Lang): string {
   const start = new Date(`${ev.startDate}T00:00:00`);
   const end = new Date(`${ev.endDate}T00:00:00`);
   const month = new Intl.DateTimeFormat(localeTag(lang), {
@@ -51,12 +51,12 @@ function eventDates(ev: UltimateEvent, lang: Lang): string {
 /** The marquee: the next championship, front and centre, linking through to the
  * immersive Ultimate tab. A light accented card here (the full dark treatment
  * lives on the Ultimate page itself). */
-function UpcomingMarquee({ ev, lang }: { ev: UltimateEvent; lang: Lang }) {
+function UpcomingMarquee({ ev, lang }: { ev: ChampionshipSummary; lang: Lang }) {
   const { t } = useT();
   const days = daysTo(ev.startDate);
   return (
     <Link
-      to="/ultimate"
+      to="/championship"
       className="card-shadow group mb-6 block overflow-hidden rounded-[26px] border border-gold-light/60 bg-card p-6 transition-[transform,border-color] duration-150 hover:-translate-y-0.5 sm:p-7"
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -78,7 +78,9 @@ function UpcomingMarquee({ ev, lang }: { ev: UltimateEvent; lang: Lang }) {
             <span className="dg nums block text-[40px] font-bold leading-none text-gold-strong">
               {days}
             </span>
-            <span className="label-caps text-muted-foreground">{t("ultimate.stat.days")}</span>
+            <span className="label-caps text-muted-foreground">
+              {t("championship.stat.daysTo", { city: ev.city })}
+            </span>
           </div>
           <span className="label-caps shrink-0 rounded-full border border-border px-3 py-1.5 text-muted-foreground transition-colors group-hover:border-terracotta/40 group-hover:text-foreground">
             {t("schedule.upcoming.cta")}
@@ -152,9 +154,9 @@ function SchedulePage() {
   const { t, lang } = useT();
   usePageTitle(t("nav.schedule"));
   const state = usePredictions();
-  const ultimateState = useUltimate();
+  const championshipState = useChampionshipSummary();
   const data = state.status === "ok" ? state.data : undefined;
-  const ev = ultimateState.status === "ok" ? ultimateState.data : undefined;
+  const ev = championshipState.status === "ok" ? championshipState.data : undefined;
   const meets = data?.meets ?? [];
   const doneCount = meets.filter((m) => m.status === "done").length;
 
@@ -163,13 +165,21 @@ function SchedulePage() {
       title={t("schedule.titleNext")}
       crumb={t("nav.schedule")}
       eyebrow={
-        ev ? t("schedule.eyebrowNext", { n: daysTo(ev.startDate) }) : t("schedule.eyebrowBare")
+        ev
+          ? t("schedule.eyebrowNext", { n: daysTo(ev.startDate), city: ev.city })
+          : t("schedule.eyebrowBare")
       }
       description={t("schedule.descriptionNext")}
       figures={
         ev || data ? (
           <>
-            {ev && <HeadFigure value={daysTo(ev.startDate)} label={t("ultimate.stat.days")} gold />}
+            {ev && (
+              <HeadFigure
+                value={daysTo(ev.startDate)}
+                label={t("championship.stat.daysTo", { city: ev.city })}
+                gold
+              />
+            )}
             {ev && <HeadFigure value={eventDates(ev, lang)} label={t("schedule.figNext")} />}
             {data && <HeadFigure value={doneCount} label={t("schedule.figSeasonRun")} />}
           </>

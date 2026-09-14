@@ -3,9 +3,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, HeadFigure } from "@/components/dl/shell";
 import { discName } from "@/lib/dl-data";
-import type { UltimateEvent, WorldRankings } from "@/lib/dl-data";
+import type { ChampionshipSummary, WorldRankings } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
-import { useUltimate } from "@/hooks/useUltimate";
+import { useChampionshipSummary } from "@/hooks/useChampionship";
 import { useWorldRankings } from "@/hooks/useWorldRankings";
 import { useCountUp } from "@/hooks/useCountUp";
 import { NatFlag } from "@/components/dl/nat-flag";
@@ -167,11 +167,11 @@ function Dashboard() {
   const { t, lang } = useT();
   usePageTitle(t("nav.dashboard"));
   const predictions = usePredictions();
-  const ultimateState = useUltimate();
+  const championshipState = useChampionshipSummary();
   const rankingsState = useWorldRankings();
 
-  const ev: UltimateEvent | undefined =
-    ultimateState.status === "ok" ? ultimateState.data : undefined;
+  const ev: ChampionshipSummary | undefined =
+    championshipState.status === "ok" ? championshipState.data : undefined;
   const rankings = rankingsState.status === "ok" ? rankingsState.data : undefined;
   const accuracy = predictions.status === "ok" ? Math.round(predictions.data.modelAccuracy) : null;
   const lastUpdated = predictions.status === "ok" ? predictions.data.lastUpdated : undefined;
@@ -185,7 +185,7 @@ function Dashboard() {
       <>
         <HeadFigure
           value={<CountUpValue value={daysTo(ev.startDate)} />}
-          label={t("ultimate.stat.days")}
+          label={t("championship.stat.daysTo", { city: ev.city })}
           gold
           icon={<StatIcon kind="calendar" />}
         />
@@ -220,12 +220,12 @@ function Dashboard() {
       </>
     );
 
-  const loading = ultimateState.status === "loading" || rankingsState.status === "loading";
+  const loading = championshipState.status === "loading" || rankingsState.status === "loading";
   const error =
     rankingsState.status === "error"
       ? rankingsState
-      : ultimateState.status === "error"
-        ? ultimateState
+      : championshipState.status === "error"
+        ? championshipState
         : null;
 
   return (
@@ -252,7 +252,10 @@ function Dashboard() {
             title={t("dashboard.event.title")}
             className="mt-6"
             action={
-              <Link to="/ultimate" className="label-caps text-terracotta-strong hover:underline">
+              <Link
+                to="/championship"
+                className="label-caps text-terracotta-strong hover:underline"
+              >
                 {t("dashboard.event.cta")}
               </Link>
             }
@@ -274,7 +277,9 @@ function Dashboard() {
                 <span className="dg nums block text-[32px] font-bold leading-none text-gold-strong">
                   {daysTo(ev.startDate)}
                 </span>
-                <span className="label-caps text-muted-foreground">{t("ultimate.stat.days")}</span>
+                <span className="label-caps text-muted-foreground">
+                  {t("championship.stat.daysTo", { city: ev.city })}
+                </span>
               </div>
             </div>
           </Panel>

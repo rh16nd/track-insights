@@ -11,6 +11,7 @@
  * an incorrect flag would be exactly the kind of fabricated detail this project
  * refuses. Keep this list accurate rather than complete. */
 export const IOC_TO_ISO2: Record<string, string> = {
+  AFG: "af",
   ALB: "al",
   ALG: "dz",
   AND: "ad",
@@ -20,11 +21,13 @@ export const IOC_TO_ISO2: Record<string, string> = {
   AUT: "at",
   AZE: "az",
   BAH: "bs",
+  BAN: "bd", // Bangladesh (Bahrain is BRN)
   BAR: "bb", // Barbados
   BDI: "bi",
   BEL: "be",
   BEN: "bj",
   BER: "bm",
+  BHU: "bt", // Bhutan
   BIH: "ba", // Bosnia and Herzegovina
   BLR: "by",
   BOT: "bw",
@@ -32,6 +35,7 @@ export const IOC_TO_ISO2: Record<string, string> = {
   BRN: "bh", // Bahrain (the Bahamas is BAH)
   BUL: "bg",
   BUR: "bf", // Burkina Faso (Burundi is BDI)
+  CAM: "kh", // Cambodia (Cameroon is CMR)
   CAN: "ca",
   CAY: "ky",
   CHI: "cl", // Chile (China is CHN)
@@ -71,10 +75,13 @@ export const IOC_TO_ISO2: Record<string, string> = {
   GUI: "gn", // Guinea (Guinea-Bissau is GBS)
   GUY: "gy",
   HAI: "ht", // Haiti
+  HKG: "hk", // Hong Kong, China
   HUN: "hu",
+  INA: "id", // Indonesia (India is IND)
   IND: "in",
   IRI: "ir", // Iran
   IRL: "ie",
+  IRQ: "iq", // Iraq (Iran is IRI)
   ISL: "is", // Iceland (Israel is ISR)
   ISR: "il", // Israel
   ISV: "vi", // US Virgin Islands (the British ones are IVB)
@@ -84,8 +91,11 @@ export const IOC_TO_ISO2: Record<string, string> = {
   JPN: "jp",
   KAZ: "kz",
   KEN: "ke",
+  KGZ: "kg", // Kyrgyzstan
   KOR: "kr",
   KSA: "sa", // Saudi Arabia
+  KUW: "kw", // Kuwait
+  LAO: "la", // Laos
   LAT: "lv",
   LBN: "lb", // Lebanon
   LBR: "lr", // Liberia
@@ -93,15 +103,19 @@ export const IOC_TO_ISO2: Record<string, string> = {
   LES: "ls", // Lesotho
   LTU: "lt",
   LUX: "lu",
+  MAC: "mo", // Macao, China
   MAR: "ma",
   MAS: "my", // Malaysia
   MDA: "md",
+  MDV: "mv", // Maldives
   MEX: "mx",
+  MGL: "mn", // Mongolia
   MNE: "me",
   MOZ: "mz",
   MRI: "mu", // Mauritius (Morocco is MAR)
   NAM: "na", // Namibia
   NED: "nl",
+  NEP: "np", // Nepal
   NGR: "ng",
   NIG: "ne", // Niger -- NOT Nigeria, which is NGR
   NOR: "no",
@@ -112,6 +126,7 @@ export const IOC_TO_ISO2: Record<string, string> = {
   PAR: "py", // Paraguay
   PER: "pe",
   PHI: "ph",
+  PLE: "ps", // Palestine
   POL: "pl",
   POR: "pt",
   PRK: "kp", // DPR Korea (the South is KOR)
@@ -123,6 +138,7 @@ export const IOC_TO_ISO2: Record<string, string> = {
   RWA: "rw",
   SAM: "ws", // Samoa
   SEN: "sn",
+  SGP: "sg", // Singapore
   SLO: "si", // Slovenia (Slovakia is SVK)
   SRB: "rs",
   SRI: "lk",
@@ -133,6 +149,9 @@ export const IOC_TO_ISO2: Record<string, string> = {
   TAN: "tz", // Tanzania
   TGA: "to", // Tonga
   THA: "th",
+  TJK: "tj", // Tajikistan
+  TKM: "tm", // Turkmenistan
+  TLS: "tl", // Timor-Leste
   TPE: "tw", // Chinese Taipei
   TTO: "tt",
   TUN: "tn",
@@ -144,7 +163,9 @@ export const IOC_TO_ISO2: Record<string, string> = {
   USA: "us",
   UZB: "uz",
   VEN: "ve",
+  VIE: "vn", // Vietnam
   VIN: "vc", // Saint Vincent and the Grenadines
+  YEM: "ye", // Yemen
   ZAM: "zm",
   ZIM: "zw",
 };

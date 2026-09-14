@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useStats } from "@/hooks/useStats";
-import { useUltimate } from "@/hooks/useUltimate";
+import { useChampionshipSummary } from "@/hooks/useChampionship";
 import { useWorldRankings } from "@/hooks/useWorldRankings";
 import { useInView } from "@/hooks/useInView";
 import { useCountUp } from "@/hooks/useCountUp";
@@ -207,8 +207,8 @@ function Landing() {
   // The badge counts down to whatever championship is next, not to a Diamond
   // League Final that has already been run. It reads from the event payload,
   // so when the next championship takes over it re-points itself.
-  const ultimateState = useUltimate();
-  const ev = ultimateState.status === "ok" ? ultimateState.data : undefined;
+  const championshipState = useChampionshipSummary();
+  const ev = championshipState.status === "ok" ? championshipState.data : undefined;
   const countdownLabel = (() => {
     if (!ev) return t("landing.badgeBare");
     const now = Date.now();

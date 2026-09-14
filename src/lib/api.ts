@@ -53,6 +53,8 @@ const SNAPSHOT_FILES: Record<string, string> = {
   "/api/results": "results.json",
   "/api/stats": "stats.json",
   "/api/ultimate": "ultimate.json",
+  "/api/championship": "championship.json",
+  "/api/championship/summary": "championship-summary.json",
   "/api/world-rankings": "world-rankings.json",
   "/api/news": "news.json",
   "/api/qualification": "qualification.json",

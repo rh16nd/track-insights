@@ -10,6 +10,8 @@ export const en: Record<string, string> = {
   "nav.field": "Field",
   "nav.qualifying": "Qualifying",
   "nav.ultimate": "Ultimate",
+  "nav.asianGames": "Asian Games",
+  "nav.championship": "Championship",
   "nav.stats": "Stats",
   "nav.schedule": "Schedule",
   "nav.results": "Results",
@@ -19,6 +21,7 @@ export const en: Record<string, string> = {
     "Every championship the model called in advance, with the projection frozen before the meet and the result that followed. Nothing here was rewritten afterwards.",
   "results.meet.dlFinal": "Diamond League Final 2026",
   "results.meet.ultimate": "Ultimate Championship 2026",
+  "results.meet.asianGames": "Asian Games 2026",
   "results.eventsWord": "{{n}} events",
   "results.eventsSoFar": "{{done}} of {{n}} events so far",
   "results.notRunYet": "Not run yet",
@@ -50,6 +53,83 @@ export const en: Record<string, string> = {
   "ultimate.title": "The Ultimate Championship",
   "ultimate.tagline": "The best against the best, in Budapest.",
   "ultimate.stat.days": "Days to Budapest",
+  "championship.stat.daysTo": "Days to {{city}}",
+  "championship.chip.days": "{{n}} days to {{city}}",
+  "championship.chip.live": "Live in {{city}}",
+  "championship.chip.done": "{{city}} is over",
+  "championship.projection.titlePoints": "Ranked on points · {{disc}}",
+  "championship.projection.subtitle":
+    "{{n}} athletes entered. The {{ranked}} with a 2026 mark in this event are ranked below.",
+  "championship.projection.whyModel":
+    "{{n}} of the top {{of}} entrants on points have a record we hold, so the model makes this call.",
+  "championship.projection.whyPoints":
+    "Only {{n}} of the top {{of}} entrants on points have a record we hold. The model needs {{needed}}, so this event is ranked on points instead.",
+  "championship.projection.whyFloor":
+    "{{n}} of the top {{of}} entrants on points have a record we hold, but the model's favourite has only a {{chance}}% chance of a podium, under the {{floor}}% it needs. This event is ranked on points instead.",
+  "championship.projection.colMark": "2026 best",
+  "championship.projection.markHint":
+    "The athlete's best mark in this event this season, from World Athletics' Asian toplist.",
+  "championship.projection.colPoints": "Points",
+  "championship.projection.pointsHint":
+    "World Athletics points for the athlete's best 2026 mark in this event. More points means a better mark. This column is an order, not a forecast.",
+  "championship.projection.chanceHint":
+    "The model's chance that this athlete finishes in the top three. It is each athlete's own chance, so the column does not add up to 100.",
+  "championship.projection.unscored":
+    "Entered, with no 2026 mark we could find in this event: {{names}}.",
+  "championship.projection.noteModel":
+    "The entry list is the organisers'. Only the order is the model's.",
+  "championship.projection.notePoints":
+    "The entry list is the organisers'. The order is World Athletics points for each athlete's 2026 best, not a forecast.",
+  "championship.projection.byModel": "called by the model",
+  "championship.projection.captionModel":
+    "Every entrant in the {{disc}} with a 2026 mark, ranked by the model's chance of a podium",
+  "championship.projection.captionPoints":
+    "Every entrant in the {{disc}} with a 2026 mark, ranked by World Athletics points",
+  "asianGames.title": "The Asian Games",
+  "asianGames.hero.headline": "Asia's best, in {{city}}.",
+  "asianGames.hero.body":
+    "Athletics runs {{dates}} at {{venue}}. {{entrants}} athletes from {{federations}} nations are entered.",
+  "asianGames.hero.bodyBare": "Athletics runs {{dates}} at {{venue}}.",
+  "asianGames.split.aria":
+    "{{model}} events called by the model, {{points}} ranked on points, {{none}} not called",
+  "asianGames.split.model": "by the model",
+  "asianGames.split.points": "on points",
+  "asianGames.split.none": "not called",
+  "asianGames.how.title": "How each event is called",
+  "asianGames.how.field":
+    "The field is the organisers' official entry list, so nobody here is a guess.",
+  "asianGames.how.model":
+    "The model calls an event when at least {{needed}} of its top {{of}} entrants on points have a record we hold: a world toplist, a championship final or a Diamond League meeting.",
+  "asianGames.how.modelFloor":
+    "The model calls an event when at least {{needed}} of its top {{of}} entrants on points have a record we hold (a world toplist, a championship final or a Diamond League meeting) and its own favourite has at least a {{floor}}% chance of a podium.",
+  "asianGames.how.points":
+    "Every other event is ranked by World Athletics points for each athlete's 2026 best. One event never mixes the two.",
+  "asianGames.field.pending":
+    "The call is not built yet. The field and the call appear here once it is.",
+  "asianGames.notCalled.title": "Events without a call",
+  "asianGames.notCalled.subtitle": "{{n}} events on the programme have no call, and this is why.",
+  "asianGames.notCalled.relay": "Relays",
+  "asianGames.notCalled.relayNote":
+    "The model reads individual athletes. A relay team has no record of its own to read.",
+  "asianGames.notCalled.noData": "No data to call on",
+  "asianGames.notCalled.noDataNote":
+    "We hold no toplist, results history or model for these events.",
+  "asianGames.notCalled.noEntries": "Nobody entered",
+  "asianGames.notCalled.noEntriesNote": "The entry list has no athletes for these events.",
+  "asianGames.notCalled.entrants": "{{n}} entered",
+  "asianGames.eventLabel": "{{sex}} {{event}}",
+  "asianGames.sex.M": "Men's",
+  "asianGames.sex.W": "Women's",
+  "asianGames.sex.X": "Mixed",
+  "asianGames.event.10000M": "10,000m",
+  "asianGames.event.MARATHON": "marathon",
+  "asianGames.event.HAMMER": "hammer throw",
+  "asianGames.event.DECATH": "decathlon",
+  "asianGames.event.HEPTATH": "heptathlon",
+  "asianGames.event.WALKHM": "half marathon race walk",
+  "asianGames.event.WALKM": "marathon race walk",
+  "asianGames.event.4X100M": "4 × 100m relay",
+  "asianGames.event.4X400M": "4 × 400m relay",
   "ultimate.stat.liveValue": "Live",
   "ultimate.stat.liveLabel": "Racing in Budapest",
   "ultimate.stat.doneValue": "Done",
@@ -360,6 +440,7 @@ export const en: Record<string, string> = {
   "table.colModelCall": "Model's call",
   "table.colVsProjected": "vs projected",
   "table.resultPredicted": "Projected {{rank}} · {{prob}}%",
+  "table.resultRanked": "Ranked {{rank}} on points",
   "table.resultNearMiss": "Outside the projected field",
   "table.resultUnseen": "Not in the projection",
   "table.resultExact": "As projected",
@@ -378,7 +459,7 @@ export const en: Record<string, string> = {
   "schedule.titleNext": "The road ahead",
   "schedule.descriptionNext":
     "The next big championship, and the 2026 Diamond League season that led up to it.",
-  "schedule.eyebrowNext": "{{n}} days to Budapest",
+  "schedule.eyebrowNext": "{{n}} days to {{city}}",
   "schedule.figNext": "Next championship",
   "schedule.figSeasonRun": "DL meetings run",
   "schedule.upcoming.title": "Next championship",

@@ -6,6 +6,7 @@ import { ResultComparison } from "@/components/dl/result-comparison";
 import { useResults } from "@/hooks/useResults";
 import { useT } from "@/lib/i18n";
 import { discName } from "@/lib/dl-data";
+import { championshipTheme } from "@/lib/championship-themes";
 import type { Championship, Discipline } from "@/lib/dl-data";
 import { usePageTitle } from "@/lib/use-page-title";
 
@@ -141,7 +142,13 @@ function ChampionshipBlock({
   const current = events.find((e) => e.id === active) ?? events[0];
 
   return (
-    <section className="overflow-hidden rounded-xl border border-border bg-card">
+    // Each box wears its competition's colours, a tradition the user set
+    // (lib/championship-themes.ts). The tokens are scoped to the box, so the
+    // ResultComparison inside it is re-dressed without knowing it.
+    <section
+      className="overflow-hidden rounded-xl border border-border bg-card text-foreground"
+      style={championshipTheme(champ.theme)?.box}
+    >
       <button
         type="button"
         onClick={() => !pending && setOpen((v) => !v)}
@@ -238,7 +245,10 @@ function ChampionshipBlock({
                 {discName(t, e.id, e.label)}
                 <span
                   className={`nums ml-1.5 ${
-                    e.id === current.id ? "text-primary-foreground/75" : "text-muted-foreground"
+                    // Full strength on the selected pill. At 75% it measured
+                    // 4.16:1 on the Ultimate box's violet, and every box on
+                    // this page now wears a championship's own fill.
+                    e.id === current.id ? "text-primary-foreground" : "text-muted-foreground"
                   }`}
                 >
                   {e.result.podiumHits}/{e.result.podiumSize}
