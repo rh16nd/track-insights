@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import type { Discipline, ResultRow } from "@/lib/dl-data";
 import { Panel } from "./shell";
 import { useT } from "@/lib/i18n";
-import { discName, ordinalIn } from "@/lib/dl-data";
+import { chanceLabel, discName, ordinalIn } from "@/lib/dl-data";
 import { NatFlag } from "./nat-flag";
 
 /* The result of a Final read against the model's FROZEN pre-final call.
@@ -71,7 +71,7 @@ function ModelCall({ row }: { row: ResultRow }) {
           ? t("table.resultRanked", { rank: ordinalIn(lang, row.predictedRank) })
           : t("table.resultPredicted", {
               rank: ordinalIn(lang, row.predictedRank),
-              prob: row.predictedProb,
+              prob: chanceLabel(lang, row.predictedProb),
             })}
       </span>
     );

@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ChampionshipCall } from "@/lib/dl-data";
-import { ordinalIn } from "@/lib/dl-data";
-import { localeTag } from "@/lib/dates";
+import { chanceLabel, ordinalIn } from "@/lib/dl-data";
 import { useT } from "@/lib/i18n";
 import { Panel } from "./shell";
 
@@ -13,12 +12,7 @@ import { Panel } from "./shell";
  * model called the event, or why they could not be ranked at all. */
 export function ChampionshipCallPanel({ call }: { call: ChampionshipCall }) {
   const { t, lang } = useT();
-  const chance =
-    call.podiumChance === null
-      ? "—"
-      : new Intl.NumberFormat(localeTag(lang), { maximumFractionDigits: 1 }).format(
-          call.podiumChance,
-        );
+  const chance = call.podiumChance === null ? "—" : chanceLabel(lang, call.podiumChance);
   const sentence =
     call.rank === null
       ? t(`championship.projection.unranked.${call.unranked ?? "noMark"}`)

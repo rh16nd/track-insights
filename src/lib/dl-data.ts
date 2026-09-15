@@ -652,6 +652,17 @@ export const discName = (
 export const ordinalIn = (lang: string, n: number): string =>
   lang === "fr" ? (n === 1 ? `${n}er` : `${n}e`) : ordinal(n);
 
+/** A podium chance as the page prints it, without the "%", which each sentence
+ * places its own way. ">99" and "<1" at the ends, as the user chose on
+ * 2026-09-15: the model tested slightly overconfident at the top (96% predicted,
+ * 92% observed), so it has not earned a flat 100 or 0. Otherwise the reader's
+ * decimal mark: "12.5", "12,5". */
+export const chanceLabel = (lang: string, value: number): string => {
+  if (value > 99) return ">99";
+  if (value < 1) return "<1";
+  return new Intl.NumberFormat(lang, { maximumFractionDigits: 1 }).format(value);
+};
+
 /** Discipline vs discipline — the third level of the site, after the field
  * and the athlete.
  *

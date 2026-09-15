@@ -4,7 +4,8 @@ import { Link } from "@tanstack/react-router";
 import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
 import { NatFlag } from "./nat-flag";
 import { InfoTip } from "./info-tip";
-import { discName } from "@/lib/dl-data";
+import { useT } from "@/lib/i18n";
+import { chanceLabel, discName } from "@/lib/dl-data";
 import type { CallMethod, UltimateProjection } from "@/lib/dl-data";
 
 /** World Athletics writes a single-named athlete with a placeholder given name,
@@ -388,6 +389,7 @@ function ProjectionRow({
   t: (k: string, v?: Record<string, string | number>) => string;
   dimmed?: boolean;
 }) {
+  const { lang } = useT();
   return (
     <tr
       className={`stagger-item transition-colors hover:bg-secondary/40 ${
@@ -463,9 +465,8 @@ function ProjectionRow({
       <td className={`py-3 pl-4 text-[12px] text-muted-foreground ${method ? "nums" : ""}`}>
         {method ? (a.mark ?? "—") : a.qualifiedBy}
         {/* A mark from last season: what an entrant with no mark this season is
-            ranked on, and in the 5000m and 10,000m anyone whose last season was
-            better. Tagged on the row, so the order never reads a 2025 mark as
-            this year's. */}
+            read on. Tagged on the row, so the order never passes a 2025 mark
+            off as this year's. */}
         {method && a.markSeason ? (
           <span
             title={t("championship.projection.markSeason", { year: a.markSeason })}
@@ -487,7 +488,7 @@ function ProjectionRow({
           <div className="flex items-center justify-end gap-2.5">
             <ProbabilityBar value={a.podiumChance / 100} trackHeight="h-1.5" />
             <span className="nums w-12 text-right text-[12.5px] font-semibold text-foreground">
-              {a.podiumChance}%
+              {chanceLabel(lang, a.podiumChance)}%
             </span>
           </div>
         )}
