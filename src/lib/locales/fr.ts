@@ -397,7 +397,7 @@ export const fr: Record<string, string> = {
   "rankings.subtitle.pointsOnly":
     "Classé selon les points World Athletics, le score de la meilleure performance de la saison. Cette épreuve n’a pas d’évaluation du modèle : elle ne figure pas au programme de la Diamond League, et nous n’avons donc aucun résultat passé sur lequel l’évaluer.",
   "rankings.subtitle.field":
-    "Classé selon la chance de podium donnée par le modèle de finale : si ces 20 athlètes disputaient une même finale, la probabilité pour chacun de finir dans les trois premiers. Il compare la meilleure marque de la saison, le record personnel, la saison passée et l’âge de chaque athlète au reste du plateau. En test, il a désigné à peu près autant de médaillés qu’un classement aux points, pas davantage.",
+    "Classé selon la chance de podium donnée par le modèle de finale : si ces 20 athlètes disputaient une même finale, la probabilité pour chacun de finir dans les trois premiers. Il juge d’abord la saison en cours, à partir de la moyenne des cinq meilleures marques de chaque athlète, de sa forme récente, de ses podiums dans les grands meetings et de son bilan face aux plus forts, et tient compte aussi de son record personnel, de sa saison passée et de son âge. Sur des finales de championnat qu’il n’avait jamais vues, il a désigné plus de médaillés qu’un classement aux points.",
   "rankings.toggle.label": "Méthode de classement",
   "rankings.toggle.model": "Éval. du modèle",
   "rankings.toggle.chance": "Chance de podium",
@@ -557,12 +557,12 @@ export const fr: Record<string, string> = {
   // How it works (inline emphasis uses **bold** / *italic*, see lib/rich-text)
   "howItWorks.eyebrow": "À propos du modèle",
   "howItWorks.description":
-    "PodiumCall prédit le podium de chaque épreuve de la finale de la Diamond League 2026, à partir de vrais résultats World Athletics, avant le premier départ. Voici exactement comment il s’y prend, et ce qu’il vaut.",
+    "PodiumCall pronostique le podium des grands championnats d’athlétisme et évalue les meilleurs mondiaux de chaque épreuve, à partir de vrais résultats World Athletics, avant le premier départ. Voici exactement comment il s’y prend, et ce qu’il vaut.",
   "howItWorks.s1.title": "Ce qu’il prédit",
   "howItWorks.s1.p1":
-    "Pour chacune des **32 épreuves** de la finale de Bruxelles, le modèle donne à chaque prétendant un seul chiffre : sa chance de finir **dans le top trois**. Il ne désigne jamais un vainqueur unique.",
+    "Pour chaque épreuve qu’il pronostique, le modèle donne à chaque athlète sa chance de finir **dans le top trois**. Lors d’un championnat, il donne aussi sa chance de **gagner**, qui montre si un favori se détache ou s’il fait partie de plusieurs noms proches.",
   "howItWorks.s1.p2":
-    "C’est délibéré. Le jour J, le qualifié le plus rapide peut faire un faux départ, se faire enfermer ou être repris sur la ligne : prédire le vainqueur exact tient donc presque du pile ou face entre trois ou quatre noms. Prédire qui monte sur le podium est une question plus juste, et que l’on peut vérifier face au résultat ensuite. Chaque chiffre du site porte donc sur le top trois, jamais sur la seule médaille d’or.",
+    "Le top trois passe en premier, et c’est voulu. Le jour J, l’athlète le plus rapide peut faire un faux départ, se faire enfermer ou être repris sur la ligne, si bien que le vainqueur exact se joue souvent entre trois ou quatre noms. Savoir qui monte sur le podium est une question plus juste, et que l’on peut vérifier face au résultat ensuite. La chance de victoire dit à quel point la course est ouverte, pas qui va gagner.",
   "howItWorks.s2.title": "Comment le modèle apprend",
   "howItWorks.s2.p1":
     "Le modèle apprend des podiums réels de chaque finale de Diamond League, des Jeux olympiques, des Championnats du monde, des Championnats d’Europe et de la Coupe continentale, de **2018 à 2025** (2020 a été annulée). Ce sont de vrais résultats, tirés directement de World Athletics, pas l’avis de quiconque sur qui aurait dû gagner. Chaque athlète n’est jugé que sur ce qu’il avait accompli **avant que cette finale ait lieu** : une finale de juillet n’est jamais évaluée avec une course d’août.",
@@ -593,14 +593,14 @@ export const fr: Record<string, string> = {
   "howItWorks.s5.b1":
     "Il lit **la forme, pas l’avenir**. Une blessure de dernière minute, un forfait annoncé le matin même, ou une course tactique lente décidée au sprint final peuvent tous démentir les chiffres le jour J.",
   "howItWorks.s5.b2":
-    "Il prédit **qui monte sur le podium, pas le 1-2-3 exact**, et il ne prétend jamais savoir qui gagne.",
+    "Il donne **des chances, pas des certitudes**. Un favori avec 60 % de chances de victoire perd encore quatre fois sur dix, et le modèle ne prétend jamais connaître le 1-2-3 exact.",
   "howItWorks.s5.b3":
     "Il n’est **pas affilié à World Athletics** ni à la Wanda Diamond League. Il se contente de lire leurs données publiques.",
   "howItWorks.s6.title": "Rechercher par pays",
   "howItWorks.s6.p1":
     "La recherche trouve **les pays autant que les athlètes**. Tapez une nation — « Jamaïque », « KEN », « Norvège » — et elle apparaît dans les résultats à côté des athlètes dont le nom correspond, avec le nombre d’athlètes classés et d’épreuves de cette nation cette saison.",
   "howItWorks.s6.p2":
-    "En ouvrir une donne à cette nation sa propre page : tous ses athlètes classés, leurs marques et leurs scores, ses trois meilleures performances de la saison, et ceux qu’elle a qualifiés pour le Championnat Ultimate. La page porte les couleurs du pays, tirées de son drapeau.",
+    "En ouvrir une donne à cette nation sa propre page : tous ses athlètes classés, leurs marques et leurs scores, ses trois meilleures performances de la saison, et ses athlètes au championnat en cours. La page porte les couleurs du pays, tirées de son drapeau.",
 
   // Qualifying
   "qual.num.6": "Six",
@@ -910,7 +910,7 @@ export const fr: Record<string, string> = {
   "disc.top.disagreeSubtitleModel":
     "Les mêmes {{n}} athlètes, classés cette fois selon la chance de podium du modèle de finale plutôt que selon leur score de la saison. Un athlète qui monte ou descend nettement est un athlète sur lequel les deux mesures ne s’accordent pas.",
   "disc.top.disagreeNote":
-    "Classé par score World Athletics. Le pourcentage est la chance, selon le modèle de finale, que cet athlète finisse dans le top trois si les 20 meilleurs mondiaux disputaient une même finale, pas une chance de victoire. Cette épreuve ne figure pas au programme de la Diamond League et n’a donc pas d’évaluation du modèle de la Diamond League. En test, le modèle de finale a désigné à peu près autant de médaillés qu’un classement aux points, pas davantage.",
+    "Classé par score World Athletics. Le pourcentage est la chance, selon le modèle de finale, que cet athlète finisse dans le top trois si les 20 meilleurs mondiaux disputaient une même finale, pas une chance de victoire. Cette épreuve ne figure pas au programme de la Diamond League et n’a donc pas d’évaluation du modèle de la Diamond League. Sur des finales de championnat qu’il n’avait jamais vues, le modèle de finale a désigné plus de médaillés qu’un classement aux points.",
 
   "fa.vsThisField": "face à ce plateau",
 
@@ -984,9 +984,9 @@ export const fr: Record<string, string> = {
   "ath.figSeasonBest": "Meilleure perf. saison",
   "ath.figPersonalBest": "Record personnel",
   "ath.figRacesIn": "Courses en {{year}}",
-  "ath.model": "Modèle PodiumCall",
+  "ath.model": "Modèle Diamond League",
   "ath.modelBefore":
-    " % de chance de finir sur le podium, pas de gagner. Le modèle prédit l’appartenance au top trois.",
+    " % de chance de finir dans les trois premiers d’une finale de Diamond League, pas de gagner. Ce modèle lit la forme sur le circuit de la Diamond League, et peut donc différer nettement d’un pronostic de championnat.",
   "ath.modelScoreBefore": " Le ",
   "ath.modelScoreMid": " vaut ",
   "ath.modelScoreAfter": " points World Athletics, soit le ",

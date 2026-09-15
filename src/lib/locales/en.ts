@@ -396,7 +396,7 @@ export const en: Record<string, string> = {
   "rankings.subtitle.pointsOnly":
     "Ordered by World Athletics points, the score of each athlete's season best. This event has no model rating: it is not on the Diamond League programme, so we hold no past results to rate it on.",
   "rankings.subtitle.field":
-    "Ordered by the field model's podium chance: if these 20 met in one final, how likely each is to finish in the top three. It reads each athlete's season best, career best, last season and age against the rest of the field. In testing it picked about as many medallists as a points ranking, not more.",
+    "Ordered by the field model's podium chance: if these 20 met in one final, how likely each is to finish in the top three. It judges this season first, from the average of each athlete's five best marks, their recent form, their podiums at major meetings and their record against the strongest, and also reads their career best, last season and age. On championship finals it had not seen, it named more medallists than a ranking by points.",
   "rankings.toggle.label": "Ranking method",
   "rankings.toggle.model": "Model rating",
   "rankings.toggle.chance": "Podium chance",
@@ -554,12 +554,12 @@ export const en: Record<string, string> = {
   // How it works (inline emphasis uses **bold** / *italic*, see lib/rich-text)
   "howItWorks.eyebrow": "About the model",
   "howItWorks.description":
-    "PodiumCall calls the podium for every event at the 2026 Diamond League Final, from real World Athletics results, before anyone races. Here's exactly how it does that, and how well it works.",
+    "PodiumCall calls the podium at the big athletics championships and rates the world's best in every event, from real World Athletics results, before anyone races. Here's exactly how it does that, and how well it works.",
   "howItWorks.s1.title": "What it predicts",
   "howItWorks.s1.p1":
-    "For every one of the **32 events** at the Brussels Final, the model gives each contender a single number: their chance of finishing **in the top three**. It never names one winner.",
+    "For every event it calls, the model gives each athlete a chance of finishing **in the top three**. At a championship it also gives a chance of **winning**, which shows whether a favourite is clear of the rest or one of several close names.",
   "howItWorks.s1.p2":
-    "That's deliberate. On the day, the fastest qualifier can false-start, get blocked in, or be caught on the line, so picking the exact winner is close to a coin toss between three or four names. Picking who makes the podium is a fairer question, and one you can check against the result afterwards. So every number on the site is about the top three, never the gold medal alone.",
+    "The top three comes first on purpose. On the day, the fastest athlete can false-start, get blocked in, or be caught on the line, so the exact winner is often close between three or four names. Who makes the podium is a fairer question, and one you can check against the result afterwards. The win chance says how open that race is, not who will win.",
   "howItWorks.s2.title": "How the model learns",
   "howItWorks.s2.p1":
     "The model learns from the real podiums of every Diamond League Final, Olympic Games, World Championships, European Championships and Continental Cup from **2018 to 2025** (2020 was cancelled). These are actual results, taken straight from World Athletics, not anyone's opinion of who should have won. Each athlete is judged only on what they had done **before that final was run**, so a July final is never scored using an August race.",
@@ -588,14 +588,14 @@ export const en: Record<string, string> = {
   "howItWorks.s5.b1":
     "It reads **form, not the future**. A last-minute injury, a withdrawal announced on the morning, or a slow tactical race decided by a final sprint can all beat the numbers on the day.",
   "howItWorks.s5.b2":
-    "It predicts **who makes the podium, not the exact 1-2-3**, and it never claims to know who wins.",
+    "It gives **chances, not certainties**: a favourite with a 60% chance of winning still loses four times in ten, and it never claims to know the exact 1-2-3.",
   "howItWorks.s5.b3":
     "It's **not affiliated with World Athletics** or the Wanda Diamond League. It just reads their public data.",
   "howItWorks.s6.title": "Searching by country",
   "howItWorks.s6.p1":
     "The search box finds **countries as well as athletes**. Type a nation — “Jamaica”, “KEN”, “Norway” — and it appears in the results alongside any athletes whose name matches, with how many ranked athletes and how many events that nation has this season.",
   "howItWorks.s6.p2":
-    "Opening one gives that nation its own page: every ranked athlete it has, their marks and scores, its three best performances of the season, and whoever it has qualified for the Ultimate Championship. The page wears the country's own colours, taken from its flag.",
+    "Opening one gives that nation its own page: every ranked athlete it has, their marks and scores, its three best performances of the season, and its athletes at the current championship. The page wears the country's own colours, taken from its flag.",
 
   // Qualifying
   "qual.num.6": "Six",
@@ -902,7 +902,7 @@ export const en: Record<string, string> = {
   "disc.top.disagreeSubtitleModel":
     "The same {{n}} athletes, now ordered by the field model's podium chance instead of their season score. Where an athlete jumps up or down the list, the two measures disagree about them.",
   "disc.top.disagreeNote":
-    "Ordered by World Athletics score. The percentage is the field model's chance of a top-three finish if the world's top 20 met in one final, not a chance of winning. This event is not on the Diamond League programme, so it has no Diamond League model rating. In testing the field model picked about as many medallists as a points ranking, not more.",
+    "Ordered by World Athletics score. The percentage is the field model's chance of a top-three finish if the world's top 20 met in one final, not a chance of winning. This event is not on the Diamond League programme, so it has no Diamond League model rating. On championship finals it had not seen, the field model named more medallists than a ranking by points.",
 
   "fa.vsThisField": "vs. this field",
 
@@ -976,9 +976,9 @@ export const en: Record<string, string> = {
   "ath.figSeasonBest": "Season best",
   "ath.figPersonalBest": "Personal best",
   "ath.figRacesIn": "Races in {{year}}",
-  "ath.model": "PodiumCall model",
+  "ath.model": "Diamond League model",
   "ath.modelBefore":
-    "% chance of finishing on the podium, not of winning. The model predicts top-three membership.",
+    "% chance of a top-three finish at a Diamond League Final, not a chance of winning. This model reads form on the Diamond League circuit, so it can differ a lot from a championship call.",
   "ath.modelScoreBefore": " The ",
   "ath.modelScoreMid": " scores ",
   "ath.modelScoreAfter": " World Athletics points, the ",
