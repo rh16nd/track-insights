@@ -4,11 +4,44 @@ import { Link } from "@tanstack/react-router";
 import { PodiumCallMark } from "./logo";
 import { InfoGlyph } from "./info-tip";
 import { useT } from "@/lib/i18n";
+import { useChampionshipSummary } from "@/hooks/useChampionship";
 
 /** Bumped if the intro copy changes enough to be worth re-showing everyone. */
 const SEEN_KEY = "podiumcall:welcome:v1";
 
 const POINT_KEYS = ["welcome.point1", "welcome.point2", "welcome.point3"];
+
+/** The intro and its three points. The championship and its tab are named from
+ * the summary, never written into the copy: the modal still said "Next up: the
+ * Ultimate Championship in Budapest" after the site had moved on (2026-09-15).
+ * Its own component so the summary is fetched when the modal opens, not on
+ * every dashboard load. "Next up" is left out once the championship is over. */
+function WelcomeCopy({ descId }: { descId: string }) {
+  const { t } = useT();
+  const summary = useChampionshipSummary();
+  const champ = summary.status === "ok" ? summary.data : undefined;
+  const upcoming = champ !== undefined && champ.endDate >= new Date().toISOString().slice(0, 10);
+  const tab = t(champ?.navKey ?? "nav.championship");
+  return (
+    <>
+      <p id={descId} className="mt-3 text-[15px] leading-relaxed text-foreground">
+        {t("welcome.intro")}
+        {champ && upcoming
+          ? ` ${t("welcome.nextUp", { championship: t(champ.labelKey), city: champ.city })}`
+          : null}
+      </p>
+
+      <ul className="mt-5 flex flex-col gap-3">
+        {POINT_KEYS.map((k) => (
+          <li key={k} className="flex gap-3 text-[14px] leading-relaxed text-foreground">
+            <span className="mt-[7px] size-1.5 flex-none rounded-full bg-terracotta" />
+            <span>{t(k, { tab })}</span>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
 
 /** First-run onboarding for the dashboard. It's a modal because the user asked
  * for one, so it's built to behave: it traps focus, closes on Escape or a
@@ -98,18 +131,7 @@ export function WelcomeModal({ open, onClose }: { open: boolean; onClose: () => 
           {t("welcome.title")}
         </h2>
 
-        <p id={descId} className="mt-3 text-[15px] leading-relaxed text-foreground">
-          {t("welcome.intro")}
-        </p>
-
-        <ul className="mt-5 flex flex-col gap-3">
-          {POINT_KEYS.map((k) => (
-            <li key={k} className="flex gap-3 text-[14px] leading-relaxed text-foreground">
-              <span className="mt-[7px] size-1.5 flex-none rounded-full bg-terracotta" />
-              <span>{t(k)}</span>
-            </li>
-          ))}
-        </ul>
+        <WelcomeCopy descId={descId} />
 
         <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Link

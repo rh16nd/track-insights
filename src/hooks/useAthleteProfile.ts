@@ -22,6 +22,9 @@ export type AthleteNotInField = {
   disc: string;
   discKey: string;
   seasonBest: string | null;
+  /** The season `seasonBest` is from. This season, except for a championship
+   * entrant the call ranked on an earlier season's mark. */
+  seasonBestYear?: number | null;
   worldRank: number | null;
   waUrl: string | null;
   reason: string;

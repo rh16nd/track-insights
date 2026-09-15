@@ -901,6 +901,7 @@ export const fr: Record<string, string> = {
     "{{rank}} choix du modèle sur {{n}} engagés classés, avec {{chance}} % de chances de podium.",
   "ath.champ.link": "Voir le pronostic de chaque épreuve",
   "ath.seasonBest2026": "Meilleure perf. 2026",
+  "ath.seasonBestIn": "Meilleure perf. {{year}}",
   "ath.worldRank": "Rang mondial",
   "ath.thisSeasonToplist": "classement de cette saison",
   "ath.careerBest": "Record en carrière",
@@ -1150,11 +1151,12 @@ export const fr: Record<string, string> = {
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "Les meilleurs mondiaux, vus par le modèle.",
   "welcome.intro":
-    "PodiumCall classe les meilleurs athlètes de chaque épreuve à partir de vraies données World Athletics — selon les points marqués, et selon l’évaluation du modèle, apprise sur huit ans de vraies finales de championnat. À venir : le Championnat Ultimate à Budapest.",
+    "PodiumCall classe les meilleurs athlètes de chaque épreuve à partir de vraies données World Athletics : selon les points marqués, et selon l’évaluation du modèle, apprise sur huit ans de vraies finales de championnat.",
+  "welcome.nextUp": "À venir : {{championship}} à {{city}}.",
   "welcome.point1":
     "Chaque chiffre est une vraie statistique extraite de World Athletics. Rien n’est saisi à la main ni inventé.",
   "welcome.point2":
-    "Parcourez le top 20 par épreuve sous Piste et Concours, suivez la montée en puissance sous Ultimate, ou ouvrez la fiche d’un athlète pour ses résultats, ses confrontations directes et ses records.",
+    "Parcourez le top 20 par épreuve sous Piste et Concours, consultez le pronostic de chaque épreuve sous {{tab}}, ou ouvrez la fiche d’un athlète pour ses résultats, ses confrontations directes et ses records.",
   "welcome.point3":
     "Touchez le petit ⓘ à côté d’une statistique pour lire exactement ce qu’elle signifie.",
   "welcome.howItWorks": "Comment ça marche, en détail →",

@@ -296,7 +296,15 @@ export function UltimateProjections({
                       —
                     </td>
                     <td className="py-2.5 pl-3 text-[13px] font-medium text-foreground">
-                      {u.profileUrl ? (
+                      {u.hasPage ? (
+                        <Link
+                          to="/athlete/$discKey/$name"
+                          params={{ discKey: current.discKey, name: u.name }}
+                          className="transition-colors hover:text-terracotta-strong hover:underline"
+                        >
+                          {displayName(u.name)}
+                        </Link>
+                      ) : u.profileUrl ? (
                         <a
                           href={u.profileUrl}
                           target="_blank"

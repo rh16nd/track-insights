@@ -205,8 +205,14 @@ function NotInField({
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
         <Panel title={t("ath.seasonStats")}>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {/* A championship entrant the call ranked on last season's mark:
+                the label says which season, so it never reads as this one. */}
             <StatBlock
-              label={t("ath.seasonBest2026")}
+              label={
+                data.seasonBestYear != null && data.seasonBestYear !== 2026
+                  ? t("ath.seasonBestIn", { year: data.seasonBestYear })
+                  : t("ath.seasonBest2026")
+              }
               value={data.seasonBest ?? "—"}
               icon="target"
             />

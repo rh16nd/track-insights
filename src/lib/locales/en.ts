@@ -893,6 +893,7 @@ export const en: Record<string, string> = {
     "The model's {{rank}} pick of {{n}} ranked entrants, with a {{chance}}% chance of a podium.",
   "ath.champ.link": "See the call for every event",
   "ath.seasonBest2026": "2026 season best",
+  "ath.seasonBestIn": "{{year}} season best",
   "ath.worldRank": "World rank",
   "ath.thisSeasonToplist": "this season's toplist",
   "ath.careerBest": "Career best",
@@ -1133,11 +1134,12 @@ export const en: Record<string, string> = {
   "welcome.eyebrow": "PodiumCall",
   "welcome.title": "The world's best, read by the model.",
   "welcome.intro":
-    "PodiumCall ranks the best athletes in every event from real World Athletics data — by the points they've scored, and by the model's own rating, learned from eight years of real championship finals. Next up: the Ultimate Championship in Budapest.",
+    "PodiumCall ranks the best athletes in every event from real World Athletics data: by the points they've scored, and by the model's own rating, learned from eight years of real championship finals.",
+  "welcome.nextUp": "Next up: {{championship}} in {{city}}.",
   "welcome.point1":
     "Every number is a real, scraped stat from World Athletics. Nothing is typed in by hand or made up.",
   "welcome.point2":
-    "Browse the top 20 by event under Track and Field, follow the build-up under Ultimate, or open any athlete for their results, head-to-head record and career bests.",
+    "Browse the top 20 by event under Track and Field, see the call for every event under {{tab}}, or open any athlete for their results, head-to-head record and career bests.",
   "welcome.point3": "Tap the small ⓘ next to a stat to read exactly what it means.",
   "welcome.howItWorks": "How it works, in full →",
   "welcome.explore": "Explore the board",

@@ -884,6 +884,9 @@ export type UltimateProjection = {
     nat: string | null;
     reason: UnrankedReason;
     profileUrl: string | null;
+    /** True when they have a World Athletics profile, which is all a page on
+     * this site needs. Absent on calls built before 2026-09-15. */
+    hasPage?: boolean;
   }[];
   /** Qualified for this event but absent from World Athletics' published
    * ENTRY list. Qualification says who is eligible; entries say who is
@@ -1014,6 +1017,9 @@ export type ChampionshipCall = {
   podiumChance: number | null;
   rankingScore: number | null;
   unranked: UnrankedReason | null;
+  /** The mark the call read, and its season when that is not this one. */
+  mark?: string | null;
+  markSeason?: number | null;
 };
 
 /** Name, place, dates and theme, from /api/championship/summary. */
