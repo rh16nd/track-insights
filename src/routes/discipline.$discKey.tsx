@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { disciplineLabel, pageHead } from "@/lib/seo";
 import { usePageTitle } from "@/lib/use-page-title";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, ProbabilityBar } from "@/components/dl/shell";
 import { InfoTip } from "@/components/dl/info-tip";
 import { FieldAnalysisBlock } from "@/components/dl/field-analysis";
@@ -10,10 +10,19 @@ import { TrajectoryOverlayChart } from "@/components/dl/trajectory-overlay-chart
 import { StorylineCards } from "@/components/dl/storyline-cards";
 import { useDiscipline } from "@/hooks/useDiscipline";
 import type { DepthVerdict, DisciplineReport, FieldScore } from "@/lib/dl-data";
-import { discName, ordinalIn } from "@/lib/dl-data";
+import { RANKING_ONLY_DISCIPLINES, discName, ordinalIn } from "@/lib/dl-data";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/discipline/$discKey")({
+  // The hammer and the 10,000m have no discipline page, and the Performance
+  // Index, the dashboard and old links all pointed at one that could not load
+  // (2026-09-15). Their page is the Track or Field ranking, opened at the event.
+  beforeLoad: ({ params }) => {
+    const disc = params.discKey;
+    const ranking = RANKING_ONLY_DISCIPLINES[disc];
+    if (ranking === "/field") throw redirect({ to: "/field", search: { disc } });
+    if (ranking === "/track") throw redirect({ to: "/track", search: { disc } });
+  },
   // head() runs before the data loads, so the label is derived from the
   // param rather than waiting for the API. 32 real pages, each previously
   // sharing one title with the whole site.

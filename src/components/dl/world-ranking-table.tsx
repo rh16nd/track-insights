@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import type { WorldRankings } from "@/lib/dl-data";
-import { discName } from "@/lib/dl-data";
+import { chanceLabel, discName } from "@/lib/dl-data";
 import { Panel } from "./shell";
 import { NatFlag } from "./nat-flag";
 import { InfoTip } from "./info-tip";
@@ -38,7 +38,7 @@ export function WorldRankingTable({
   activeId: string;
   onActiveChange: (id: string) => void;
 }) {
-  const { t } = useT();
+  const { t, lang } = useT();
   // Points first, not the model. The page promises "the world's best", and
   // points is the ordering that actually answers that — it ranks the marks.
   // The model answers a narrower question (who would podium at a Diamond
@@ -55,11 +55,14 @@ export function WorldRankingTable({
 
   const currentId = keys.includes(activeId) ? activeId : (keys[0] ?? "");
   const current = rankings[currentId];
-  // The hammer and the 10,000m have no model rating at all: they are not
-  // Diamond League events, so there are no past results to rate them on. They
-  // show points with no toggle and no rating column, whichever view the reader
-  // last picked on another discipline.
+  // An event with no model view shows points with no toggle and no rating
+  // column, whichever view the reader last picked on another discipline.
   const modelAvailable = current?.modelAvailable !== false;
+  // The hammer and the 10,000m are not Diamond League events, so the Diamond
+  // League model has never seen them. Their model view is the field model's
+  // podium chance for the top 20 as if they met in one final (2026-09-15),
+  // which is a different number and is labelled as one.
+  const fieldModel = current?.modelKind === "field";
   const shown: View = modelAvailable ? view : "points";
   // Memoised so the empty-case `[]` literal is not a new array every render,
   // which would make maxRating recompute (and its dep change) on each pass.
@@ -69,6 +72,7 @@ export function WorldRankingTable({
   if (!current) return null;
 
   const label = discName(t, currentId, currentId);
+  const ratingLabel = t(fieldModel ? "rankings.colChance" : "rankings.colRating");
 
   return (
     <>
@@ -122,7 +126,9 @@ export function WorldRankingTable({
           !modelAvailable
             ? "rankings.subtitle.pointsOnly"
             : shown === "model"
-              ? "rankings.subtitle.model"
+              ? fieldModel
+                ? "rankings.subtitle.field"
+                : "rankings.subtitle.model"
               : "rankings.subtitle.points",
         )}
         className="mt-4"
@@ -146,7 +152,13 @@ export function WorldRankingTable({
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {t(v === "model" ? "rankings.toggle.model" : "rankings.toggle.points")}
+                  {t(
+                    v === "points"
+                      ? "rankings.toggle.points"
+                      : fieldModel
+                        ? "rankings.toggle.chance"
+                        : "rankings.toggle.model",
+                  )}
                 </button>
               ))}
             </div>
@@ -195,9 +207,9 @@ export function WorldRankingTable({
                     className={`w-40 pb-3 pl-6 text-right font-semibold ${shown === "model" ? "text-foreground" : ""}`}
                   >
                     <span className="inline-flex items-center gap-1 justify-end">
-                      {t("rankings.colRating")}
-                      <InfoTip label={t("figure.about", { label: t("rankings.colRating") })}>
-                        {t("rankings.ratingHint")}
+                      {ratingLabel}
+                      <InfoTip label={t("figure.about", { label: ratingLabel })}>
+                        {t(fieldModel ? "rankings.chanceHint" : "rankings.ratingHint")}
                       </InfoTip>
                     </span>
                   </th>
@@ -268,7 +280,11 @@ export function WorldRankingTable({
                         <span
                           className={`nums w-10 text-right text-[12.5px] ${shown === "model" ? "font-semibold text-foreground" : "text-muted-foreground"}`}
                         >
-                          {r.ratingPct === null ? "—" : `${r.ratingPct}%`}
+                          {/* A field-model chance shows as >99% or <1% at the
+                              ends, the user's rule for podium chances. */}
+                          {r.ratingPct === null
+                            ? "—"
+                            : `${fieldModel ? chanceLabel(lang, r.ratingPct) : r.ratingPct}%`}
                         </span>
                       </div>
                     </td>

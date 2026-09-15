@@ -12,7 +12,7 @@ export const en: Record<string, string> = {
   "nav.ultimate": "Ultimate",
   "nav.asianGames": "Asian Games",
   "nav.championship": "Championship",
-  "nav.stats": "Stats",
+  "nav.stats": "Performance",
   "nav.schedule": "Schedule",
   "nav.results": "Results",
   "results.title": "How the last predictions turned out",
@@ -390,18 +390,24 @@ export const en: Record<string, string> = {
     "Ordered by World Athletics points — the score of each athlete's season best. No model involved.",
   "rankings.subtitle.pointsOnly":
     "Ordered by World Athletics points, the score of each athlete's season best. This event has no model rating: it is not on the Diamond League programme, so we hold no past results to rate it on.",
+  "rankings.subtitle.field":
+    "Ordered by the field model's podium chance: if these 20 met in one final, how likely each is to finish in the top three. It reads each athlete's season best, career best, last season and age against the rest of the field. In testing it picked about as many medallists as a points ranking, not more.",
   "rankings.toggle.label": "Ranking method",
   "rankings.toggle.model": "Model rating",
+  "rankings.toggle.chance": "Podium chance",
   "rankings.toggle.points": "By points",
   "rankings.colMark": "Mark",
   "rankings.colPoints": "Points",
   "rankings.colMeets": "Meets",
   "rankings.colRating": "Model rating",
+  "rankings.colChance": "Podium chance",
   "rankings.pointsHint": "World Athletics' performance score for the athlete's season best.",
   "rankings.meetsHint":
-    "Meets we can see this athlete contest this event in 2026, from the season list, the Diamond League log and the wider race log. It is a floor, not a full record: a 1 means one meeting we can see, not necessarily one meeting run. Worth reading next to the rating — a rating built on a single outing is a thinner thing than one built on a season.",
+    "Meets we can see this athlete contest this event in 2026, from the season list, the Diamond League log, the wider race log and the athlete's World Athletics results where we hold them. It is a floor, not a full record: a 1 means one meeting we can see, not necessarily one meeting run. Worth reading next to the rating, since a rating built on a single outing is thinner than one built on a season.",
   "rankings.ratingHint":
     "The model's rating of this athlete's chance of a podium at a championship final. It learned from the real podiums of every Diamond League Final, Olympics, World and European Championships and Continental Cup since 2018, scored only on what each athlete had done before each of those finals was run. It is not an official world ranking, and it is a read on one race rather than a season.",
+  "rankings.chanceHint":
+    "The chance of a top-three finish if these 20 met in one final. The column adds up to 300, one hundred for each podium place. This event is not on the Diamond League programme, so it has no model rating. This figure comes from the field model, which learned from championship finals in every event.",
 
   // Discipline table (shared by Track and Field)
   "table.subtitle.rank":

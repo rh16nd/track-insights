@@ -1250,12 +1250,26 @@ export type WorldRankingRow = {
 
 export type DisciplineRankings = {
   isField: boolean;
-  /** False for a discipline the model has never seen (the hammer and the
-   * 10,000m, added 2026-09-14): `model` is empty and the page ranks it on
-   * points alone. Absent from a snapshot built before then, which means true. */
+  /** False when there is no model view, and `model` is empty. Absent from a
+   * snapshot built before 2026-09-14, which means true. */
   modelAvailable?: boolean;
+  /** Which model made `model`. "form" is the Diamond League model's rating.
+   * "field" is the field model's podium chance for the top 20 by points, as if
+   * they met in one final: the hammer and the 10,000m, which the Diamond League
+   * model has never seen (2026-09-15). Absent means "form". */
+  modelKind?: "form" | "field" | null;
   model: WorldRankingRow[];
   points: WorldRankingRow[];
+};
+
+/** Events with no discipline page, because they are not on the Diamond League
+ * programme: their page is the Track or Field ranking. The discipline route
+ * redirects them there, so a link to one lands somewhere real. */
+export const RANKING_ONLY_DISCIPLINES: Record<string, "/track" | "/field"> = {
+  men_HT: "/field",
+  women_HT: "/field",
+  men_10000m: "/track",
+  women_10000m: "/track",
 };
 
 /** discipline key -> its two ranked lists. */

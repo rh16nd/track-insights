@@ -98,6 +98,10 @@ function buildFavourites(
 ): Favourite[] {
   const rows: Favourite[] = [];
   for (const [key, r] of Object.entries(rankings)) {
+    // The field model's podium chance is not the Diamond League rating, and
+    // sorting the two on one scale would put the hammer first on a different
+    // measure. Those events keep their pick on the Field and Track pages.
+    if (r.modelKind === "field") continue;
     const top = r.model[0];
     if (!top || top.ratingPct === null) continue;
     rows.push({
@@ -123,6 +127,8 @@ function buildDisagreements(
 ) {
   const rows = [];
   for (const [key, r] of Object.entries(rankings)) {
+    // Same reason as the favourites: a field-model chance is another measure.
+    if (r.modelKind === "field") continue;
     const m = r.model[0];
     const p = r.points[0];
     if (!m || !p || m.name === p.name || m.ratingPct === null) continue;

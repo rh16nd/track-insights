@@ -11,7 +11,7 @@ export const fr: Record<string, string> = {
   "nav.asianGames": "Jeux asiatiques",
   "nav.championship": "Championnat",
   "results.meet.asianGames": "Jeux asiatiques 2026",
-  "nav.stats": "Stats",
+  "nav.stats": "Performances",
   "nav.schedule": "Calendrier",
   "nav.results": "Résultats",
   "results.title": "Ce que les derniers pronostics ont donné",
@@ -391,19 +391,25 @@ export const fr: Record<string, string> = {
     "Classé selon les points World Athletics — le score de la meilleure performance de la saison. Aucun modèle ici.",
   "rankings.subtitle.pointsOnly":
     "Classé selon les points World Athletics, le score de la meilleure performance de la saison. Cette épreuve n’a pas d’évaluation du modèle : elle ne figure pas au programme de la Diamond League, et nous n’avons donc aucun résultat passé sur lequel l’évaluer.",
+  "rankings.subtitle.field":
+    "Classé selon la chance de podium donnée par le modèle de finale : si ces 20 athlètes disputaient une même finale, la probabilité pour chacun de finir dans les trois premiers. Il compare la meilleure marque de la saison, le record personnel, la saison passée et l’âge de chaque athlète au reste du plateau. En test, il a désigné à peu près autant de médaillés qu’un classement aux points, pas davantage.",
   "rankings.toggle.label": "Méthode de classement",
   "rankings.toggle.model": "Éval. du modèle",
+  "rankings.toggle.chance": "Chance de podium",
   "rankings.toggle.points": "Par points",
   "rankings.colMark": "Marque",
   "rankings.colPoints": "Points",
   "rankings.colMeets": "Meetings",
   "rankings.colRating": "Éval. modèle",
+  "rankings.colChance": "Chance de podium",
   "rankings.pointsHint":
     "Le score de performance World Athletics pour la meilleure marque de la saison.",
   "rankings.meetsHint":
-    "Meetings où nous pouvons voir cet athlète disputer cette épreuve en 2026, d’après la liste de la saison, le journal de la Diamond League et le journal élargi des courses. C’est un minimum, pas un relevé complet : un 1 signifie un meeting visible, pas forcément un seul disputé. À lire à côté de l’évaluation — une évaluation bâtie sur une seule sortie est plus fragile qu’une évaluation bâtie sur une saison.",
+    "Meetings où nous pouvons voir cet athlète disputer cette épreuve en 2026, d’après la liste de la saison, le journal de la Diamond League, le journal élargi des courses et les résultats World Athletics de l’athlète quand nous les détenons. C’est un minimum, pas un relevé complet : un 1 signifie un meeting visible, pas forcément un seul disputé. À lire à côté de l’évaluation, car une évaluation bâtie sur une seule sortie est plus fragile qu’une évaluation bâtie sur une saison.",
   "rankings.ratingHint":
     "L’évaluation par le modèle des chances de cet athlète de monter sur le podium d’une finale de championnat. Il a appris sur les vrais podiums de chaque finale de Diamond League, des Jeux olympiques, des Championnats du monde et d’Europe et de la Coupe continentale depuis 2018, en n’évaluant chaque athlète que sur ce qu’il avait accompli avant chacune de ces finales. Ce n’est pas un classement mondial officiel, et cela porte sur une course, pas sur une saison.",
+  "rankings.chanceHint":
+    "La chance de finir dans les trois premiers si ces 20 athlètes disputaient une même finale. La colonne totalise 300, cent par place sur le podium. Cette épreuve ne figure pas au programme de la Diamond League et n’a donc pas d’évaluation du modèle. Ce chiffre vient du modèle de finale, qui a appris sur des finales de championnat dans toutes les épreuves.",
 
   // Discipline table (shared by Track and Field)
   "table.subtitle.rank":
