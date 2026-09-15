@@ -39,18 +39,22 @@ export function AsianGamesBody({ ev, lang, t }: { ev: ChampionshipEvent; lang: L
             {[
               t("asianGames.how.field"),
               t("asianGames.how.model"),
-              // Said in as many words, because it is the honest answer to "is
-              // this better than sorting by points?": in testing, about the same.
+              // Said in as many words: how the model tested on finals kept aside
+              // while it was built, against the model it replaced and a ranking
+              // by points, including the Asian finals, where points did better.
+              // An older report, without the model it replaced, keeps its wording.
               ...(test
                 ? [
-                    t("asianGames.how.test", {
+                    t(test.previous != null ? "asianGames.how.testHeld" : "asianGames.how.test", {
                       finals: test.finals,
                       from: test.years[0] ?? "",
                       to: test.years[test.years.length - 1] ?? "",
                       model: pct(test.model),
+                      previous: test.previous != null ? pct(test.previous) : "",
                       points: pct(test.points),
                       asiaFinals: test.asiaFinals,
                       asiaModel: pct(test.asiaModel),
+                      asiaPrevious: test.asiaPrevious != null ? pct(test.asiaPrevious) : "",
                       asiaPoints: pct(test.asiaPoints),
                     }),
                   ]

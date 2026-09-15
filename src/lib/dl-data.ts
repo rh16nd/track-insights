@@ -1127,9 +1127,13 @@ export type ChampionshipEvent = Partial<UltimateEvent> & {
     backtest?: {
       finals: number;
       model: number;
+      /** The model it replaced, on the same finals: set when the test was a
+       * one-time run on finals kept aside while the model was built. */
+      previous?: number | null;
       points: number;
       asiaFinals: number;
       asiaModel: number;
+      asiaPrevious?: number | null;
       asiaPoints: number;
       years: number[];
     } | null;

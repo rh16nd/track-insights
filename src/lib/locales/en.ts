@@ -107,9 +107,11 @@ export const en: Record<string, string> = {
   "asianGames.how.field":
     "The field is the organisers' official entry list, so nobody here is a guess.",
   "asianGames.how.model":
-    "Every event is called by one model. It compares each athlete with the others entered, using their best mark this season, their career best, their best last season, how long ago they set their best mark, and their age. An athlete who has competed only once or twice this year is judged on their record, not just those outings.",
+    "Every event is called by one model, which compares each athlete with the others entered. This season counts most: the average of their five best marks, their form over the last six weeks, their podiums at major meetings such as the Diamond League, and their record against the strongest entrants in finals they have shared. Their career best, last season and age count too, so an athlete with only one or two outings this year is also judged on their record.",
   "asianGames.how.test":
     "We tested it on {{finals}} past championship finals from {{from}} to {{to}}. It picked {{model}}% of the medallists, and simply ranking by World Athletics points picked {{points}}%: about the same, not better. On the {{asiaFinals}} Asian finals it picked {{asiaModel}}%, against {{asiaPoints}}% for points.",
+  "asianGames.how.testHeld":
+    "We tested it on the {{finals}} championship finals of {{from}} and {{to}}, kept aside while it was built, each year called only from the years before. It named {{model}}% of the medallists, against {{previous}}% for the model it replaced and {{points}}% for a ranking by World Athletics points. On the {{asiaFinals}} Asian finals it named {{asiaModel}}%, against {{asiaPrevious}}% for the old model, though a ranking by points named {{asiaPoints}}% there.",
   "asianGames.field.pending":
     "The call is not built yet. The field and the call appear here once it is.",
   "asianGames.notCalled.title": "Events without a call",

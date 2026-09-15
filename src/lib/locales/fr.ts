@@ -107,7 +107,9 @@ export const fr: Record<string, string> = {
   "asianGames.how.field":
     "Le plateau est la liste officielle des inscrits, publiée par les organisateurs : personne n’y figure au hasard.",
   "asianGames.how.model":
-    "Toutes les épreuves sont pronostiquées par un seul modèle. Il compare chaque athlète aux autres engagés à partir de sa meilleure marque de la saison, de son record personnel, de sa meilleure marque de la saison passée, de l’ancienneté de cette meilleure marque et de son âge. Un athlète qui n’a disputé qu’une ou deux compétitions cette année est jugé sur son parcours, pas seulement sur ces compétitions.",
+    "Toutes les épreuves sont pronostiquées par un seul modèle, qui compare chaque athlète aux autres engagés. La saison en cours compte le plus : la moyenne de ses cinq meilleures marques, sa forme sur les six dernières semaines, ses podiums dans les grands meetings comme la Diamond League et son bilan face aux engagés les plus forts dans les finales qu’ils ont disputées ensemble. Son record personnel, sa saison passée et son âge comptent aussi : un athlète qui n’a disputé qu’une ou deux compétitions cette année est également jugé sur son parcours.",
+  "asianGames.how.testHeld":
+    "Nous l’avons testé sur les {{finals}} finales de championnats de {{from}} et {{to}}, mises de côté pendant sa construction, chaque année pronostiquée uniquement à partir des années précédentes. Il a désigné {{model}} % des médaillés, contre {{previous}} % pour le modèle qu’il remplace et {{points}} % pour un classement aux points World Athletics. Sur les {{asiaFinals}} finales asiatiques, il en a désigné {{asiaModel}} %, contre {{asiaPrevious}} % pour l’ancien modèle, mais un classement aux points en a désigné {{asiaPoints}} %.",
   "asianGames.how.test":
     "Nous l’avons testé sur {{finals}} finales de championnats passées, de {{from}} à {{to}}. Il a désigné {{model}} % des médaillés, contre {{points}} % pour un simple classement aux points World Athletics : à peu près autant, pas mieux. Sur les {{asiaFinals}} finales asiatiques, il en a désigné {{asiaModel}} %, contre {{asiaPoints}} % pour les points.",
   "asianGames.field.pending":
