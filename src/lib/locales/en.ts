@@ -483,7 +483,7 @@ export const en: Record<string, string> = {
   "schedule.upcoming.cta": "See the field",
   "schedule.season.title": "The 2026 season",
   "schedule.season.subtitle":
-    "The Diamond League road that led to the Ultimate — every meeting scored, the Final complete.",
+    "The Diamond League season, with every meeting scored and the Final complete.",
   "schedule.description":
     "The full Wanda Diamond League season, from the opener to the Final in Brussels.",
   "schedule.descriptionWithCount":
