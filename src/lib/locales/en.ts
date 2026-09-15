@@ -113,6 +113,8 @@ export const en: Record<string, string> = {
     "We tested it on {{finals}} past championship finals from {{from}} to {{to}}. It picked {{model}}% of the medallists, and simply ranking by World Athletics points picked {{points}}%: about the same, not better. On the {{asiaFinals}} Asian finals it picked {{asiaModel}}%, against {{asiaPoints}}% for points.",
   "asianGames.how.testHeld":
     "We tested it on the {{finals}} championship finals of {{from}} and {{to}}, kept aside while it was built, each year called only from the years before. It named {{model}}% of the medallists, against {{previous}}% for the model it replaced and {{points}}% for a ranking by World Athletics points. On the {{asiaFinals}} Asian finals it named {{asiaModel}}%, against {{asiaPrevious}}% for the old model, though a ranking by points named {{asiaPoints}}% there.",
+  "asianGames.how.testAllSeasons":
+    "We tested {{versions}} versions of the model on the {{finals}} championship finals from {{from}} to {{to}}, calling each season only from the seasons before it, and kept the one that named the most medallists: {{model}}%, against {{points}}% for a ranking by World Athletics points. On the {{asiaFinals}} Asian finals it named {{asiaModel}}%, against {{asiaPoints}}% for points. Those same seasons were used to choose it, so the Asian Games will be its first real test.",
   "asianGames.field.pending":
     "The call is not built yet. The field and the call appear here once it is.",
   "asianGames.notCalled.title": "Events without a call",

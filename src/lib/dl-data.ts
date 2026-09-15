@@ -1125,6 +1125,10 @@ export type ChampionshipEvent = Partial<UltimateEvent> & {
     method?: "field";
     cutoff?: string;
     backtest?: {
+      /** "allSeasons": the version field_model.py --all-seasons kept, tested on
+       * every past season against `versions` - 1 others. Absent for older tests. */
+      method?: "allSeasons";
+      versions?: number;
       finals: number;
       model: number;
       /** The model it replaced, on the same finals: set when the test was a

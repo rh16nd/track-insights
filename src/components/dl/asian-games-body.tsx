@@ -39,24 +39,32 @@ export function AsianGamesBody({ ev, lang, t }: { ev: ChampionshipEvent; lang: L
             {[
               t("asianGames.how.field"),
               t("asianGames.how.model"),
-              // Said in as many words: how the model tested on finals kept aside
-              // while it was built, against the model it replaced and a ranking
-              // by points, including the Asian finals, where points did better.
-              // An older report, without the model it replaced, keeps its wording.
+              // Said in as many words: how the model tested. Since 2026-09-16 the
+              // versions tried on every past season and the one kept; before
+              // that, finals kept aside while it was built, against the model it
+              // replaced and a ranking by points. An older report keeps its wording.
               ...(test
                 ? [
-                    t(test.previous != null ? "asianGames.how.testHeld" : "asianGames.how.test", {
-                      finals: test.finals,
-                      from: test.years[0] ?? "",
-                      to: test.years[test.years.length - 1] ?? "",
-                      model: pct(test.model),
-                      previous: test.previous != null ? pct(test.previous) : "",
-                      points: pct(test.points),
-                      asiaFinals: test.asiaFinals,
-                      asiaModel: pct(test.asiaModel),
-                      asiaPrevious: test.asiaPrevious != null ? pct(test.asiaPrevious) : "",
-                      asiaPoints: pct(test.asiaPoints),
-                    }),
+                    t(
+                      test.method === "allSeasons"
+                        ? "asianGames.how.testAllSeasons"
+                        : test.previous != null
+                          ? "asianGames.how.testHeld"
+                          : "asianGames.how.test",
+                      {
+                        versions: test.versions ?? "",
+                        finals: pct(test.finals),
+                        from: test.years[0] ?? "",
+                        to: test.years[test.years.length - 1] ?? "",
+                        model: pct(test.model),
+                        previous: test.previous != null ? pct(test.previous) : "",
+                        points: pct(test.points),
+                        asiaFinals: pct(test.asiaFinals),
+                        asiaModel: pct(test.asiaModel),
+                        asiaPrevious: test.asiaPrevious != null ? pct(test.asiaPrevious) : "",
+                        asiaPoints: pct(test.asiaPoints),
+                      },
+                    ),
                   ]
                 : []),
             ].map((line, i) => (
