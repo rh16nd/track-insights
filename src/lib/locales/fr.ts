@@ -877,6 +877,35 @@ export const fr: Record<string, string> = {
   "disc.spreadCaption": "Le score World Athletics de chaque finaliste",
   "disc.spreadNote":
     "L’or marque le meilleur score du plateau. Des points regroupés signalent un plateau homogène ; un point isolé signifie que quelqu’un se détache du reste.",
+  "disc.top.eyebrow":
+    "Discipline contre discipline · top {{n}} mondial, plus serré que {{wider}} des {{of}} finales",
+  "disc.top.description":
+    "Une épreuve lue comme un plateau et non comme une liste. Elle n’a pas de finale de Diamond League : le plateau est donc ici l’élite mondiale aux points World Athletics, autant d’athlètes qu’une finale de ce type. Est-ce disputé de bout en bout, ou un seul athlète et le vide derrière ?",
+  "disc.top.levelSubtitle":
+    "Le meilleur score de la saison de chacun des {{n}} premiers mondiaux, du plus fort au plus faible. L’écart entre les deux extrémités est comparé aux {{of}} finales de Diamond League.",
+  "disc.top.verdict.level.basis": "aussi serré que le tiers le plus serré des {{of}} finales",
+  "disc.top.verdict.mixed.basis": "au niveau du tiers intermédiaire des {{of}} finales",
+  "disc.top.verdict.topHeavy.basis": "aussi large que le tiers le plus large des {{of}} finales",
+  "disc.top.statSpreadNote": "plus serré que {{wider}} des {{of}} finales",
+  "disc.top.statSpreadHint":
+    "L’écart de points entre le plus fort et le plus faible des {{size}} premiers mondiaux. Un petit écart signifie un plateau serré et homogène ; un grand écart, un leader nettement devant.",
+  "disc.top.statStrongest": "Le plus fort cette saison",
+  "disc.top.statMedianClear": "le plus fort a {{n}} d’avance",
+  "disc.top.statMedianHint":
+    "Le score du milieu parmi les 100 meilleurs mondiaux de l’épreuve cette année. Il montre à quelle hauteur les {{size}} premiers se situent face au reste du monde.",
+  "disc.top.statScoredEvery": "tous, sans exception",
+  "disc.top.statScoredHint":
+    "Combien des {{size}} premiers mondiaux ont un score World Athletics cette saison. Rien n’est estimé pour ceux qui n’en ont pas.",
+  "disc.top.spreadCaption": "Le score World Athletics de chaque athlète",
+  "disc.top.whyScore":
+    "Ceci utilise les points World Athletics, pas les pourcentages du modèle. Un pourcentage ne compare que des athlètes d’une même épreuve : il ne peut donc pas classer une épreuve par rapport à une autre. Un score en points le peut, car chaque marque est cotée de la même façon.",
+  "disc.top.disagreeTitle": "Là où le modèle de finale diverge des performances",
+  "disc.top.disagreeSubtitle":
+    "La chance de podium donnée par le modèle de finale à côté du score de la saison de chaque athlète, pour les mêmes {{n}} athlètes. C’est la chance affichée sur les pages Piste et Concours, où les 20 meilleurs mondiaux disputent une même finale.",
+  "disc.top.disagreeSubtitleModel":
+    "Les mêmes {{n}} athlètes, classés cette fois selon la chance de podium du modèle de finale plutôt que selon leur score de la saison. Un athlète qui monte ou descend nettement est un athlète sur lequel les deux mesures ne s’accordent pas.",
+  "disc.top.disagreeNote":
+    "Classé par score World Athletics. Le pourcentage est la chance, selon le modèle de finale, que cet athlète finisse dans le top trois si les 20 meilleurs mondiaux disputaient une même finale, pas une chance de victoire. Cette épreuve ne figure pas au programme de la Diamond League et n’a donc pas d’évaluation du modèle de la Diamond League. En test, le modèle de finale a désigné à peu près autant de médaillés qu’un classement aux points, pas davantage.",
 
   "fa.vsThisField": "face à ce plateau",
 

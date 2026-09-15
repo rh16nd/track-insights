@@ -235,7 +235,8 @@ export const statusLabel: Record<MeetStatus, string> = {
 export type Trajectory = {
   name: string;
   rank: number;
-  prob: number;
+  /** Null where the field model gave no chance (the hammer and 10,000m pages). */
+  prob: number | null;
   historyYear: number | null;
   history: MeetMark[];
 };
@@ -697,9 +698,13 @@ export type DepthRow = {
   /** The world top-100 median for this event, so the field can be read
    * against the discipline it is drawn from. */
   toplistMedian: number | null;
-  favouriteProb: number;
+  favouriteProb: number | null;
   probGap: number | null;
   spreadRank: number;
+  /** For an event with no Diamond League Final (the hammer and the 10,000m): how
+   * many of the finals have a wider spread. Its field is set against them, not
+   * ranked among them. */
+  finalsWider?: number;
 };
 
 export type DepthIndexData = {
@@ -745,7 +750,7 @@ export type ResultsHistory = {
 export type FieldScore = {
   name: string;
   score: number;
-  prob: number;
+  prob: number | null;
 };
 
 export type DisciplineReport = {
@@ -761,6 +766,11 @@ export type DisciplineReport = {
   depth: (DepthRow & { verdict: DepthVerdict | null; of: number }) | null;
   scores: FieldScore[];
   fieldAnalysis: FieldAnalysis | null;
+  /** "toplist" for an event with no Diamond League Final (the hammer and the
+   * 10,000m): the field is the world's top N on points, and `prob` is the field
+   * model's podium chance from the Track and Field list. Absent means a Final. */
+  fieldSource?: "final" | "toplist";
+  modelKind?: "form" | "field" | null;
 };
 
 // --- World Athletics Ultimate Championship (Budapest, 11-13 Sep 2026) --------
@@ -1143,10 +1153,6 @@ export type CountryAthlete = {
   worldRank: number | null;
   profileUrl: string | null;
   isField?: boolean;
-  /** False for the hammer and the 10,000m, which have no discipline page (no
-   * model field): the row links their Track or Field ranking instead. Absent
-   * from a countries file built before 2026-09-14, which means true. */
-  hasDisciplinePage?: boolean;
   /** Headshot for the three athletes the country page leads with, attached
    * by the API from the warmed card cache. */
   photoUrl?: string | null;
@@ -1262,15 +1268,10 @@ export type DisciplineRankings = {
   points: WorldRankingRow[];
 };
 
-/** Events with no discipline page, because they are not on the Diamond League
- * programme: their page is the Track or Field ranking. The discipline route
- * redirects them there, so a link to one lands somewhere real. */
-export const RANKING_ONLY_DISCIPLINES: Record<string, "/track" | "/field"> = {
-  men_HT: "/field",
-  women_HT: "/field",
-  men_10000m: "/track",
-  women_10000m: "/track",
-};
+/** Events with no Diamond League Final: the hammer and the 10,000m. Their
+ * discipline page reads the world's top athletes on points instead of a
+ * Final's field (api.ranking_only_report). */
+export const NO_FINAL_DISCIPLINES = new Set(["men_HT", "women_HT", "men_10000m", "women_10000m"]);
 
 /** discipline key -> its two ranked lists. */
 export type WorldRankings = Record<string, DisciplineRankings>;

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 import { disciplineLabel, pageHead } from "@/lib/seo";
 import { usePageTitle } from "@/lib/use-page-title";
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, ProbabilityBar } from "@/components/dl/shell";
 import { InfoTip } from "@/components/dl/info-tip";
 import { FieldAnalysisBlock } from "@/components/dl/field-analysis";
@@ -10,27 +10,20 @@ import { TrajectoryOverlayChart } from "@/components/dl/trajectory-overlay-chart
 import { StorylineCards } from "@/components/dl/storyline-cards";
 import { useDiscipline } from "@/hooks/useDiscipline";
 import type { DepthVerdict, DisciplineReport, FieldScore } from "@/lib/dl-data";
-import { RANKING_ONLY_DISCIPLINES, discName, ordinalIn } from "@/lib/dl-data";
+import { NO_FINAL_DISCIPLINES, chanceLabel, discName, ordinalIn } from "@/lib/dl-data";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/discipline/$discKey")({
-  // The hammer and the 10,000m have no discipline page, and the Performance
-  // Index, the dashboard and old links all pointed at one that could not load
-  // (2026-09-15). Their page is the Track or Field ranking, opened at the event.
-  beforeLoad: ({ params }) => {
-    const disc = params.discKey;
-    const ranking = RANKING_ONLY_DISCIPLINES[disc];
-    if (ranking === "/field") throw redirect({ to: "/field", search: { disc } });
-    if (ranking === "/track") throw redirect({ to: "/track", search: { disc } });
-  },
   // head() runs before the data loads, so the label is derived from the
-  // param rather than waiting for the API. 32 real pages, each previously
+  // param rather than waiting for the API. 36 real pages, each previously
   // sharing one title with the whole site.
   head: ({ params }) => {
     const label = disciplineLabel(params.discKey);
     return pageHead(
       label,
-      `Is the ${label} at the 2026 Diamond League Final a contest all the way down, or one athlete and a gap? Field depth, form and every head-to-head.`,
+      NO_FINAL_DISCIPLINES.has(params.discKey)
+        ? `How level is the ${label} among the world's best this season, or is it one athlete and a gap? Field depth, season form and podium chances.`
+        : `Is the ${label} at the 2026 Diamond League Final a contest all the way down, or one athlete and a gap? Field depth, form and every head-to-head.`,
     );
   },
   component: DisciplinePage,
@@ -51,6 +44,14 @@ const VERDICT_TONE: Record<DepthVerdict["key"], string> = {
   topHeavy: "text-gold-strong",
 };
 
+/** The copy key for this page. An event with no Diamond League Final (the
+ * hammer and the 10,000m, 2026-09-15) reads its field as the world's top
+ * athletes on points, so each sentence that says "finalist" or ranks the event
+ * among the finals has its own wording under `disc.top.*`. */
+function copyKey(top: boolean, key: string): string {
+  return top ? key.replace(/^disc\./, "disc.top.") : key;
+}
+
 function DisciplinePage() {
   const { t, lang } = useT();
   const { discKey } = Route.useParams();
@@ -60,26 +61,31 @@ function DisciplinePage() {
   usePageTitle(discName(t, discKey, disciplineLabel(discKey)));
   const state = useDiscipline(discKey);
   const data = state.status === "ok" ? state.data : undefined;
+  // From the key while loading, so the description is right before the data.
+  const top = data ? data.fieldSource === "toplist" : NO_FINAL_DISCIPLINES.has(discKey);
+  const k = (key: string) => copyKey(top, key);
 
   return (
     <Shell
       title={data ? discName(t, data.discKey, data.disc) : t("disc.titleFallback")}
       eyebrow={
         data?.depth
-          ? t("disc.eyebrow", {
+          ? t(k("disc.eyebrow"), {
               rank: ordinalIn(lang, data.depth.spreadRank),
               of: data.depth.of,
+              n: data.depth.fieldSize,
+              wider: data.depth.finalsWider ?? 0,
             })
           : t("disc.eyebrowBare")
       }
-      description={t("disc.description")}
+      description={t(k("disc.description"))}
     >
       {state.status === "loading" && <PanelSkeleton title={t("disc.depthSkeleton")} rows={6} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
 
       {data && (
         <>
-          <DepthPanel data={data} />
+          <DepthPanel data={data} top={top} />
 
           {/* Real per-meet marks and computed storylines, both moved here
               from the old Projections page. Order follows v0: the field and
@@ -119,9 +125,10 @@ function DisciplinePage() {
   );
 }
 
-function DepthPanel({ data }: { data: DisciplineReport }) {
+function DepthPanel({ data, top }: { data: DisciplineReport; top: boolean }) {
   const { t, lang } = useT();
   const { depth, scores } = data;
+  const k = (key: string) => copyKey(top, key);
 
   if (!depth || scores.length < 2) {
     return (
@@ -136,10 +143,14 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
   // Field events start 6 and the long-distance races 10, so every count in
   // the copy below is read from the data -- a hardcoded "eight athletes"
   // would be wrong on 20 of the 32 disciplines.
+  const size = depth.fieldSize;
 
   return (
     <>
-      <Panel title={t("disc.levelTitle")} subtitle={t("disc.levelSubtitle", { of: depth.of })}>
+      <Panel
+        title={t("disc.levelTitle")}
+        subtitle={t(k("disc.levelSubtitle"), { of: depth.of, n: size })}
+      >
         <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
           {verdict && (
             <p className={`dg text-[30px] leading-none font-semibold ${VERDICT_TONE[verdict.key]}`}>
@@ -150,7 +161,7 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
             {verdict && (
               <>
                 {(() => {
-                  const basis = t(`disc.verdict.${verdict.key}.basis`);
+                  const basis = t(k(`disc.verdict.${verdict.key}.basis`), { of: depth.of });
                   return basis.charAt(0).toUpperCase() + basis.slice(1);
                 })()}
                 {". "}
@@ -169,14 +180,15 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
           <Stat
             label={t("disc.statSpread")}
             value={t("disc.statSpreadValue", { n: depth.spread })}
-            note={t("disc.statSpreadNote", {
+            note={t(k("disc.statSpreadNote"), {
               rank: ordinalIn(lang, depth.spreadRank),
               of: depth.of,
+              wider: depth.finalsWider ?? 0,
             })}
-            hint={t("disc.statSpreadHint")}
+            hint={t(k("disc.statSpreadHint"), { size })}
           />
           <Stat
-            label={t("disc.statStrongest")}
+            label={t(k("disc.statStrongest"))}
             value={String(depth.bestScore)}
             note={shortName(depth.bestAthlete)}
           />
@@ -186,30 +198,31 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
             note={
               headroom === null
                 ? t("disc.statMedianNoScore")
-                : t("disc.statMedianClear", { n: headroom })
+                : t(k("disc.statMedianClear"), { n: headroom })
             }
-            hint={t("disc.statMedianHint")}
+            hint={t(k("disc.statMedianHint"), { size })}
           />
           <Stat
             label={t("disc.statScored")}
-            value={`${depth.scored}/${depth.fieldSize}`}
-            note={
-              depth.scored === depth.fieldSize
-                ? t("disc.statScoredEvery")
-                : t("disc.statScoredSome")
-            }
-            hint={t("disc.statScoredHint")}
+            value={`${depth.scored}/${size}`}
+            note={depth.scored === size ? t(k("disc.statScoredEvery")) : t("disc.statScoredSome")}
+            hint={t(k("disc.statScoredHint"), { size })}
           />
         </dl>
 
-        <ScoreSpread scores={scores} />
+        <ScoreSpread scores={scores} top={top} />
 
         <p className="mt-5 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-          {t("disc.whyScore")}
+          {t(k("disc.whyScore"))}
         </p>
       </Panel>
 
-      <ModelVsPoints scores={scores} discKey={data.discKey} />
+      <ModelVsPoints
+        scores={scores}
+        discKey={data.discKey}
+        top={top}
+        fieldModel={data.modelKind === "field"}
+      />
     </>
   );
 }
@@ -228,19 +241,36 @@ type Ranking = "points" | "model";
  * toggle changes is the order and which column is emphasised, so at any moment
  * one of them is clearly the one in charge. Same control the Track and Field
  * pages use, deliberately -- a reader who has met it once should not have to
- * learn it again. */
-function ModelVsPoints({ scores, discKey }: { scores: FieldScore[]; discKey: string }) {
-  const { t } = useT();
+ * learn it again.
+ *
+ * On the hammer and 10,000m pages the chance is the field model's, shown with
+ * >99% and <1% at the ends, and an athlete it gave no chance reads "—". */
+function ModelVsPoints({
+  scores,
+  discKey,
+  top,
+  fieldModel,
+}: {
+  scores: FieldScore[];
+  discKey: string;
+  top: boolean;
+  fieldModel: boolean;
+}) {
+  const { t, lang } = useT();
+  const k = (key: string) => copyKey(top, key);
   const [by, setBy] = useState<Ranking>("points");
   const ordered = useMemo(
-    () => [...scores].sort((a, b) => (by === "points" ? b.score - a.score : b.prob - a.prob)),
+    () =>
+      [...scores].sort((a, b) =>
+        by === "points" ? b.score - a.score : (b.prob ?? -1) - (a.prob ?? -1),
+      ),
     [scores, by],
   );
 
   return (
     <Panel
-      title={t("disc.disagreeTitle")}
-      subtitle={t(by === "points" ? "disc.disagreeSubtitle" : "disc.disagreeSubtitleModel", {
+      title={t(k("disc.disagreeTitle"))}
+      subtitle={t(k(by === "points" ? "disc.disagreeSubtitle" : "disc.disagreeSubtitleModel"), {
         n: scores.length,
       })}
       className="mt-6"
@@ -307,20 +337,20 @@ function ModelVsPoints({ scores, discKey }: { scores: FieldScore[]; discKey: str
               {s.score}
             </span>
             <span className="hidden w-28 shrink-0 sm:block">
-              <ProbabilityBar value={s.prob} trackHeight="h-1.5" />
+              <ProbabilityBar value={s.prob ?? 0} trackHeight="h-1.5" />
             </span>
             <span
               className={`nums w-12 shrink-0 text-right text-[13.5px] ${
                 by === "model" ? "font-semibold text-foreground" : "text-muted-foreground"
               }`}
             >
-              {s.prob}%
+              {s.prob === null ? "—" : `${fieldModel ? chanceLabel(lang, s.prob) : s.prob}%`}
             </span>
           </li>
         ))}
       </ol>
       <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-        {t("disc.disagreeNote")}
+        {t(k("disc.disagreeNote"))}
       </p>
     </Panel>
   );
@@ -329,21 +359,21 @@ function ModelVsPoints({ scores, discKey }: { scores: FieldScore[]; discKey: str
 /** The spread drawn against its own range rather than against zero. WA scores
  * across a field sit between roughly 1000 and 1350, so a zero-anchored bar
  * would render every field as one flat block and show nothing. */
-function ScoreSpread({ scores }: { scores: FieldScore[] }) {
-  const top = scores[0]?.score ?? 0;
+function ScoreSpread({ scores, top }: { scores: FieldScore[]; top: boolean }) {
+  const topScore = scores[0]?.score ?? 0;
   const { t } = useT();
   const bottom = scores[scores.length - 1]?.score ?? 0;
-  const range = Math.max(top - bottom, 1);
+  const range = Math.max(topScore - bottom, 1);
 
   return (
     <figure className="mt-6">
       <figcaption className="label-caps mb-3 text-muted-foreground">
-        {t("disc.spreadCaption")}
+        {t(copyKey(top, "disc.spreadCaption"))}
       </figcaption>
       <div className="relative h-14 rounded-[12px] bg-secondary/50">
         {scores.map((s) => {
           const pct = ((s.score - bottom) / range) * 100;
-          const best = s.score === top;
+          const best = s.score === topScore;
           return (
             <span
               key={s.name}
@@ -362,7 +392,7 @@ function ScoreSpread({ scores }: { scores: FieldScore[] }) {
           {bottom} · {shortName(scores[scores.length - 1]?.name ?? "")}
         </span>
         <span className="nums">
-          {shortName(scores[0]?.name ?? "")} · {top}
+          {shortName(scores[0]?.name ?? "")} · {topScore}
         </span>
       </div>
       <p className="mt-2 text-[12px] text-muted-foreground">{t("disc.spreadNote")}</p>

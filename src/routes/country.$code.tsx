@@ -366,35 +366,15 @@ function AthleteRow({
         </Link>
       </td>
       <td className="py-2.5 pl-3 text-[13px] text-muted-foreground">
-        {a.hasDisciplinePage === false ? (
-          // No discipline page for the hammer or the 10,000m, so their ranking
-          // on Track or Field, opened at the event.
-          a.isField ? (
-            <Link
-              to="/field"
-              search={{ disc: a.discKey }}
-              className="transition-colors hover:text-terracotta-strong hover:underline"
-            >
-              {discName(t, a.discKey, a.disc)}
-            </Link>
-          ) : (
-            <Link
-              to="/track"
-              search={{ disc: a.discKey }}
-              className="transition-colors hover:text-terracotta-strong hover:underline"
-            >
-              {discName(t, a.discKey, a.disc)}
-            </Link>
-          )
-        ) : (
-          <Link
-            to="/discipline/$discKey"
-            params={{ discKey: a.discKey }}
-            className="transition-colors hover:text-terracotta-strong hover:underline"
-          >
-            {discName(t, a.discKey, a.disc)}
-          </Link>
-        )}
+        {/* Every event has a discipline page, the hammer and the 10,000m
+            included since 2026-09-15. */}
+        <Link
+          to="/discipline/$discKey"
+          params={{ discKey: a.discKey }}
+          className="transition-colors hover:text-terracotta-strong hover:underline"
+        >
+          {discName(t, a.discKey, a.disc)}
+        </Link>
       </td>
       <td className="nums py-2.5 pl-3 text-right text-[13px] text-foreground">{a.mark ?? "—"}</td>
       <td className="nums py-2.5 pl-3 text-right text-[13px] font-semibold text-foreground">

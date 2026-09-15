@@ -869,6 +869,35 @@ export const en: Record<string, string> = {
   "disc.spreadCaption": "Each finalist’s World Athletics score",
   "disc.spreadNote":
     "Gold marks the strongest score in the field. Dots that bunch mean a level field; a dot out on its own means someone is clear of the rest.",
+  "disc.top.eyebrow":
+    "Discipline vs discipline · world top {{n}}, tighter than {{wider}} of the {{of}} finals",
+  "disc.top.description":
+    "One event read as a field rather than a list. It has no Diamond League Final, so the field here is the world's best on World Athletics points, as many athletes as a final of its kind. Is it a contest all the way down, or one athlete and a gap?",
+  "disc.top.levelSubtitle":
+    "The best score this season of each of the world's top {{n}}, strongest to weakest. The gap between the two ends is set against the {{of}} Diamond League finals.",
+  "disc.top.verdict.level.basis": "as tight as the tightest third of the {{of}} finals",
+  "disc.top.verdict.mixed.basis": "level with the middle third of the {{of}} finals",
+  "disc.top.verdict.topHeavy.basis": "as wide as the widest third of the {{of}} finals",
+  "disc.top.statSpreadNote": "tighter than {{wider}} of the {{of}} finals",
+  "disc.top.statSpreadHint":
+    "The points gap between the strongest and the weakest of the world's top {{size}}. A small gap means a close, even field; a big gap means the leader is well ahead.",
+  "disc.top.statStrongest": "Strongest this season",
+  "disc.top.statMedianClear": "the strongest is {{n}} clear",
+  "disc.top.statMedianHint":
+    "The middle score among the world's top 100 in this event this year. It shows how far the top {{size}} sit above the wider world.",
+  "disc.top.statScoredEvery": "every one of them",
+  "disc.top.statScoredHint":
+    "How many of the world's top {{size}} have a World Athletics score this season. Nothing is estimated for anyone who doesn't.",
+  "disc.top.spreadCaption": "Each athlete's World Athletics score",
+  "disc.top.whyScore":
+    "This uses World Athletics' points, not the model's percentages. A percentage only compares athletes within the same event, so it can't rank one event against another. A points score can, because every mark is scored the same way.",
+  "disc.top.disagreeTitle": "Where the field model disagrees with the marks",
+  "disc.top.disagreeSubtitle":
+    "The field model's podium chance next to each athlete's season score, for the same {{n}} athletes. It is the chance shown on the Track and Field pages, where the world's top 20 meet in one final.",
+  "disc.top.disagreeSubtitleModel":
+    "The same {{n}} athletes, now ordered by the field model's podium chance instead of their season score. Where an athlete jumps up or down the list, the two measures disagree about them.",
+  "disc.top.disagreeNote":
+    "Ordered by World Athletics score. The percentage is the field model's chance of a top-three finish if the world's top 20 met in one final, not a chance of winning. This event is not on the Diamond League programme, so it has no Diamond League model rating. In testing the field model picked about as many medallists as a points ranking, not more.",
 
   "fa.vsThisField": "vs. this field",
 
