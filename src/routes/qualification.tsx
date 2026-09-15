@@ -294,7 +294,7 @@ function QualificationPage() {
             }
             className="mt-6"
           >
-            <div className="overflow-x-auto">
+            <div className="relative overflow-x-auto">
               <table className="w-full min-w-[680px]">
                 <caption className="sr-only">
                   {t("qual.caption", { disc: discName(t, current.discKey, current.disc) })}

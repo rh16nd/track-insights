@@ -55,7 +55,7 @@ export function FieldAnalysisBlock({
           </InfoTip>
         }
       >
-        <div className="overflow-x-auto">
+        <div className="relative overflow-x-auto">
           <table className="border-collapse text-left">
             {/* A grid this shape is unreadable without a caption: every cell
                 is a win-loss record whose meaning depends on which athlete
@@ -150,7 +150,7 @@ export function FieldAnalysisBlock({
         subtitle={t("fa.separatesSubtitle")}
         className="mt-6"
       >
-        <div className="overflow-x-auto">
+        <div className="relative overflow-x-auto">
           <table className="w-full min-w-[620px] border-collapse text-left">
             <caption className="sr-only">
               {t("fa.separatesCaption", { disc: discLabel })}

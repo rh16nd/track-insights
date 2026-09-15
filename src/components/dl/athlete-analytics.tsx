@@ -268,7 +268,7 @@ function FormTable({
   const worst = measured.length ? Math.max(...measured.map((f) => f.consistency as number)) : 0;
 
   return (
-    <div className="overflow-x-auto">
+    <div className="relative overflow-x-auto">
       <table className="w-full min-w-[460px] border-collapse text-left">
         <caption className="sr-only">
           {t("aa.seasonTableCaption")}

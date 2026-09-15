@@ -165,7 +165,7 @@ export function WorldRankingTable({
           ) : undefined
         }
       >
-        <div className="overflow-x-auto">
+        <div className="relative overflow-x-auto">
           <table className="w-full min-w-[720px]">
             <caption className="sr-only">{t("rankings.caption", { label })}</caption>
             <thead>

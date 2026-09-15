@@ -188,7 +188,10 @@ export function UltimateProjections({
             })}
           </p>
         )}
-        <div className="overflow-x-auto">
+        {/* relative, so the table's sr-only labels are clipped by this scroller.
+            Without it their containing block was <main>, and a label in a
+            right-hand column made the whole page 410px wide on a 360px phone. */}
+        <div className="relative overflow-x-auto">
           <table className={`w-full ${showWin ? "min-w-[720px]" : "min-w-[620px]"}`}>
             <caption className="sr-only">
               {t(

@@ -135,7 +135,7 @@ export function ResultComparison({ current }: { current: Discipline }) {
       <p className="mb-3 max-w-2xl text-[12px] leading-snug text-muted-foreground">
         {t("table.resultNote")}
       </p>
-      <div className="overflow-x-auto">
+      <div className="relative overflow-x-auto">
         <table className="w-full min-w-[680px]">
           <caption className="sr-only">{t("table.resultCaption", { label })}</caption>
           <thead>
