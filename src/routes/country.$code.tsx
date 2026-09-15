@@ -225,7 +225,7 @@ function CountryBody({
       figures={
         <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
           <span className="flex items-center gap-3">
-            <NatFlag nat={c.code} />
+            <NatFlag nat={c.code} showCode={false} />
             <span className="label-caps text-white/92">{c.code}</span>
           </span>
           <Figure label={t("country.athletes")} value={c.athleteCount} />

@@ -253,7 +253,7 @@ export function Shell({
                     { name: crumb ?? title, path: pathname },
                   ])}
                 />
-                {back}
+                {back && <div className="mb-3">{back}</div>}
                 <nav
                   aria-label="Breadcrumb"
                   className="dg text-[12.5px] tracking-[0.04em] text-white/92"

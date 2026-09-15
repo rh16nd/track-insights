@@ -718,7 +718,7 @@ export const en: Record<string, string> = {
     "Not enough of this field carries a World Athletics score this season to measure how level it is. Nothing is estimated in its place.",
   "disc.levelTitle": "How level this field is",
   "disc.levelSubtitle":
-    "Every finalist's best score this season, strongest to weakest. The gap between the two ends is what ranks this event against the other {{of}}.",
+    "Every finalist's best score this season, strongest to weakest. The gap between the two ends is what ranks this event among the {{of}} finals.",
   "disc.verdict.level.label": "LEVEL FIELD",
   "disc.verdict.level.basis": "one of the tightest thirds of the 32 finals",
   "disc.verdict.mixed.label": "A TOP AND A TAIL",

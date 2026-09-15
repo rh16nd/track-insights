@@ -725,7 +725,7 @@ export const fr: Record<string, string> = {
     "Trop peu d’athlètes de ce plateau ont un score World Athletics cette saison pour mesurer son homogénéité. Rien n’est estimé à la place.",
   "disc.levelTitle": "L’homogénéité de ce plateau",
   "disc.levelSubtitle":
-    "Le meilleur score de chaque finaliste cette saison, du plus fort au plus faible. C’est l’écart entre les deux extrémités qui classe cette épreuve face aux {{of}} autres.",
+    "Le meilleur score de chaque finaliste cette saison, du plus fort au plus faible. C’est l’écart entre les deux extrémités qui classe cette épreuve parmi les {{of}} finales.",
   "disc.verdict.level.label": "PLATEAU HOMOGÈNE",
   "disc.verdict.level.basis": "l’un des tiers les plus serrés des 32 finales",
   "disc.verdict.mixed.label": "DEUX GROUPES",

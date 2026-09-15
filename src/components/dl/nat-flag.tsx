@@ -12,7 +12,16 @@ import { IOC_TO_ISO2 } from "@/lib/flags";
  * A hairline ring contains flags whose own edge is white or pale (Japan, the
  * Nordic crosses) against the cream card, so they read as a distinct object
  * rather than bleeding into the surface. */
-export function NatFlag({ nat, className = "" }: { nat: string; className?: string }) {
+export function NatFlag({
+  nat,
+  className = "",
+  showCode = true,
+}: {
+  nat: string;
+  className?: string;
+  /** False where the caller prints the code itself, so it does not appear twice. */
+  showCode?: boolean;
+}) {
   const iso = IOC_TO_ISO2[nat];
   return (
     <span className={`inline-flex items-center gap-1.5 ${className}`}>
@@ -27,7 +36,7 @@ export function NatFlag({ nat, className = "" }: { nat: string; className?: stri
           className="h-3 w-4 shrink-0 rounded-[2px] object-cover ring-1 ring-black/[0.08]"
         />
       )}
-      <span className="nums text-[12px] text-muted-foreground">{nat}</span>
+      {showCode && <span className="nums text-[12px] text-muted-foreground">{nat}</span>}
     </span>
   );
 }

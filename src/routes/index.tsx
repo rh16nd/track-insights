@@ -201,10 +201,6 @@ function Landing() {
   // 4,000 when the uniform figure is 3,200.
   const stats = useStats();
   const accuracy = state.status === "ok" ? state.data.modelAccuracy : null;
-  const disciplineCount =
-    state.status === "ok"
-      ? state.data.trackDisciplines.length + state.data.fieldDisciplines.length
-      : 32;
   // The badge counts down to whatever championship is next, not to a Diamond
   // League Final that has already been run. It reads from the event payload,
   // so when the next championship takes over it re-points itself.
@@ -229,6 +225,14 @@ function Landing() {
   // unchanged.
   const rankingsState = useWorldRankings();
   const rankings = rankingsState.status === "ok" ? rankingsState.data : undefined;
+  // Every event with a page, counted the way the dashboard counts them: the
+  // world rankings carry the hammer and the 10,000m, while the predictions
+  // payload lists only the 32 Diamond League events.
+  const disciplineCount = rankings
+    ? Object.keys(rankings).length
+    : state.status === "ok"
+      ? state.data.trackDisciplines.length + state.data.fieldDisciplines.length
+      : 32;
   const bestByModel = useMemo<TopWinner[]>(() => {
     if (!rankings) return [];
     const rows: TopWinner[] = [];
