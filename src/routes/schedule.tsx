@@ -167,7 +167,10 @@ function SchedulePage() {
       crumb={t("nav.schedule")}
       eyebrow={
         ev
-          ? t("schedule.eyebrowNext", { n: daysTo(ev.startDate), city: ev.city })
+          ? t(daysTo(ev.startDate) === 1 ? "schedule.eyebrowNextOne" : "schedule.eyebrowNext", {
+              n: daysTo(ev.startDate),
+              city: ev.city,
+            })
           : t("schedule.eyebrowBare")
       }
       description={t("schedule.descriptionNext")}

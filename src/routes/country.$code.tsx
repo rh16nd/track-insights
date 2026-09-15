@@ -215,8 +215,12 @@ function CountryBody({
       back={<BackButton fallbackTo="/stats" fallbackLabel={t("country.backToStats")} />}
       eyebrow={c.area ?? undefined}
       description={t("country.lede", {
-        n: c.athleteCount,
-        d: c.disciplineCount,
+        athletes: t(c.athleteCount === 1 ? "common.rankedAthleteOne" : "common.rankedAthleteMany", {
+          n: c.athleteCount,
+        }),
+        events: t(c.disciplineCount === 1 ? "common.eventOne" : "common.eventMany", {
+          n: c.disciplineCount,
+        }),
       })}
       figures={
         <div className="flex flex-wrap items-center gap-x-8 gap-y-4">

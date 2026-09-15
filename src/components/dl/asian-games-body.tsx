@@ -105,7 +105,10 @@ function AsianGamesHero({
   const { phase, days } = phaseOf(ev);
   const chip =
     phase === "upcoming"
-      ? t("championship.chip.days", { n: days, city: ev.city })
+      ? t(days === 1 ? "championship.chip.dayOne" : "championship.chip.days", {
+          n: days,
+          city: ev.city,
+        })
       : phase === "live"
         ? t("championship.chip.live", { city: ev.city })
         : t("championship.chip.done", { city: ev.city });
@@ -146,9 +149,10 @@ function AsianGamesHero({
       />
 
       <div className="relative max-w-xl">
-        <h1 className="dg text-[34px] font-bold leading-[1.02] tracking-[-0.02em] sm:text-[54px]">
+        {/* h2: the head band above already carries the page's h1. */}
+        <h2 className="dg text-[34px] font-bold leading-[1.02] tracking-[-0.02em] sm:text-[54px]">
           {t("asianGames.hero.headline", { city: ev.city })}
-        </h1>
+        </h2>
         <p className="mt-3 text-[14px] leading-relaxed text-white/70">
           {ev.entrants != null && ev.federations != null
             ? t("asianGames.hero.body", {

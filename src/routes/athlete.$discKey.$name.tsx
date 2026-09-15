@@ -168,7 +168,7 @@ function NotInField({
           <CountryTag nat={data.nat} />
           {data.dl && (
             <Tag>
-              {t("ath.onDlPoints", {
+              {t(data.dl.points === 1 ? "ath.onDlPointOne" : "ath.onDlPoints", {
                 rank: ordinalIn(lang, data.dl.rank),
                 points: data.dl.points ?? "—",
               })}
@@ -325,7 +325,9 @@ function NotInField({
             <SeasonTrendChart history={data.history} year={data.historyYear} />
           ) : (
             <div className="text-[12.5px] text-muted-foreground">
-              No {data.historyYear ?? "recent"} meet history on record for this athlete.
+              {data.historyYear != null
+                ? t("ath.noHistoryYear", { year: data.historyYear })
+                : t("ath.noHistoryRecent")}
             </div>
           )}
         </Panel>
@@ -809,9 +811,7 @@ function AthleteProfilePage() {
           {a.history.length > 0 ? (
             <SeasonTrendChart history={a.history} year={a.historyYear} />
           ) : (
-            <div className="text-[12.5px] text-muted-foreground">
-              No prior-season meet history on record for this athlete.
-            </div>
+            <div className="text-[12.5px] text-muted-foreground">{t("ath.noHistoryPrior")}</div>
           )}
         </Panel>
       </div>

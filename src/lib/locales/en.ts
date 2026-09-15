@@ -55,6 +55,7 @@ export const en: Record<string, string> = {
   "ultimate.stat.days": "Days to Budapest",
   "championship.stat.daysTo": "Days to {{city}}",
   "championship.chip.days": "{{n}} days to {{city}}",
+  "championship.chip.dayOne": "1 day to {{city}}",
   "championship.chip.live": "Live in {{city}}",
   "championship.chip.done": "{{city}} is over",
   "championship.projection.titlePoints": "Ranked on points · {{disc}}",
@@ -176,11 +177,11 @@ export const en: Record<string, string> = {
   "country.filterPlaceholder": "Filter by name or event…",
   "country.noMatch": "No athlete here matches “{{query}}”.",
   "country.showAll": "Show all {{n}} more",
-  "country.backToStats": "← All countries",
+  "country.backToStats": "← Back to the Performance Index",
   "country.athletes": "Athletes",
   "country.disciplines": "Events",
   "country.bestScore": "Best score",
-  "country.lede": "{{n}} ranked athletes across {{d}} events this season.",
+  "country.lede": "{{athletes}} across {{events}} this season.",
   "country.notFoundTitle": "No athletes on file",
   "country.notFound":
     "No athlete from {{code}} appears in this season's world lists, so there is nothing to show yet.",
@@ -255,7 +256,7 @@ export const en: Record<string, string> = {
   "search.searching": "Searching…",
   "search.noMatch": "No athlete matches “{{query}}”.",
   "search.worldRank": "world #{{rank}}",
-  "search.countryHint": "{{n}} ranked athletes · {{d}} events",
+  "search.countryHint": "{{athletes}} · {{events}}",
 
   // Footer (the source name is a link rendered between these two)
   "footer.scrapedFrom": "Data scraped from",
@@ -281,6 +282,10 @@ export const en: Record<string, string> = {
   // Common
   "common.tryAgain": "Try again",
   "common.back": "Back",
+  "common.rankedAthleteOne": "1 ranked athlete",
+  "common.rankedAthleteMany": "{{n}} ranked athletes",
+  "common.eventOne": "1 event",
+  "common.eventMany": "{{n}} events",
   "common.backToDashboard": "Back to dashboard",
   "common.loading": "Loading…",
 
@@ -476,6 +481,7 @@ export const en: Record<string, string> = {
   "schedule.descriptionNext":
     "The next big championship, and the 2026 Diamond League season that led up to it.",
   "schedule.eyebrowNext": "{{n}} days to {{city}}",
+  "schedule.eyebrowNextOne": "1 day to {{city}}",
   "schedule.figNext": "Next championship",
   "schedule.figSeasonRun": "DL meetings run",
   "schedule.upcoming.title": "Next championship",
@@ -821,7 +827,7 @@ export const en: Record<string, string> = {
   // Athlete analytics
   "aa.recordTitle": "Competition record",
   "aa.recordSubtitle":
-    "Every final on record: {{n}} {{noun}} across {{seasons}} seasons. A season best is a single result; this is how they performed the rest of the time.",
+    "Every final on record: {{n}} {{noun}} across {{seasons}} {{seasonWord}}. A season best is a single result; this is how they performed the rest of the time.",
   "aa.wins": "Wins",
   "aa.ofStarts": "{{pct}}% of starts",
   "aa.podiums": "Podiums",
@@ -994,6 +1000,10 @@ export const en: Record<string, string> = {
   "ath.viewFullProfile": "View full profile on World Athletics →",
 
   "ath.onDlPoints": "{{rank}} on {{points}} DL points",
+  "ath.onDlPointOne": "{{rank}} on 1 DL point",
+  "ath.noHistoryYear": "No {{year}} meet history on record for this athlete.",
+  "ath.noHistoryRecent": "No recent meet history on record for this athlete.",
+  "ath.noHistoryPrior": "No prior-season meet history on record for this athlete.",
   "ath.worldRankTag": "World #{{n}}",
 
   // Athlete career, season trend and head-to-head charts
@@ -1034,6 +1044,7 @@ export const en: Record<string, string> = {
   "landing.tagline": "Athletics predictions from real results",
   "landing.badgeBare": "PodiumCall",
   "landing.badgeCountdown": "PodiumCall · {{n}} days to {{city}}",
+  "landing.badgeCountdownOne": "PodiumCall · 1 day to {{city}}",
   "landing.badgeLive": "PodiumCall · Live in {{city}}",
   "landing.badgeDone": "PodiumCall · {{city}} complete",
   "landing.h1a": "We make the",

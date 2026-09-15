@@ -47,8 +47,9 @@ export function AthleteAnalyticsBlock({
           title={t("aa.recordTitle")}
           subtitle={t("aa.recordSubtitle", {
             n: record.races,
-            noun: t(startNounKey(isField)),
+            noun: t(startNounKey(isField, record.races)),
             seasons: record.seasons,
+            seasonWord: t(record.seasons === 1 ? "aa.season" : "aa.seasons"),
           })}
           className="mt-6"
         >

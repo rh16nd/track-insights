@@ -53,6 +53,7 @@ export const fr: Record<string, string> = {
   "ultimate.stat.days": "Jours avant Budapest",
   "championship.stat.daysTo": "Jours avant {{city}}",
   "championship.chip.days": "J-{{n}} avant {{city}}",
+  "championship.chip.dayOne": "J-1 avant {{city}}",
   "championship.chip.live": "En direct de {{city}}",
   "championship.chip.done": "{{city}}, c’est terminé",
   "championship.projection.titlePoints": "Classement aux points · {{disc}}",
@@ -178,11 +179,11 @@ export const fr: Record<string, string> = {
   "country.filterPlaceholder": "Filtrer par nom ou épreuve…",
   "country.noMatch": "Aucun athlète ici ne correspond à « {{query}} ».",
   "country.showAll": "Afficher les {{n}} autres",
-  "country.backToStats": "← Tous les pays",
+  "country.backToStats": "← Retour à l’indice de performance",
   "country.athletes": "Athlètes",
   "country.disciplines": "Épreuves",
   "country.bestScore": "Meilleur score",
-  "country.lede": "{{n}} athlètes classés dans {{d}} épreuves cette saison.",
+  "country.lede": "{{athletes}} dans {{events}} cette saison.",
   "country.notFoundTitle": "Aucun athlète référencé",
   "country.notFound":
     "Aucun athlète de {{code}} n’apparaît dans les listes mondiales de la saison, il n’y a donc rien à afficher.",
@@ -258,7 +259,7 @@ export const fr: Record<string, string> = {
   "search.searching": "Recherche…",
   "search.noMatch": "Aucun athlète ne correspond à « {{query}} ».",
   "search.worldRank": "n°{{rank}} mondial",
-  "search.countryHint": "{{n}} athlètes classés · {{d}} épreuves",
+  "search.countryHint": "{{athletes}} · {{events}}",
 
   // Footer (the source name is a link rendered between these two)
   "footer.scrapedFrom": "Données extraites de",
@@ -284,6 +285,10 @@ export const fr: Record<string, string> = {
   // Common
   "common.tryAgain": "Réessayer",
   "common.back": "Retour",
+  "common.rankedAthleteOne": "1 athlète classé",
+  "common.rankedAthleteMany": "{{n}} athlètes classés",
+  "common.eventOne": "1 épreuve",
+  "common.eventMany": "{{n}} épreuves",
   "common.backToDashboard": "Retour au tableau de bord",
   "common.loading": "Chargement…",
 
@@ -478,6 +483,7 @@ export const fr: Record<string, string> = {
   "schedule.descriptionNext":
     "Le prochain grand championnat, et la saison Diamond League 2026 qui y a mené.",
   "schedule.eyebrowNext": "J-{{n}} avant {{city}}",
+  "schedule.eyebrowNextOne": "J-1 avant {{city}}",
   "schedule.figNext": "Prochain championnat",
   "schedule.figSeasonRun": "Meetings DL disputés",
   "schedule.upcoming.title": "Prochain championnat",
@@ -829,7 +835,7 @@ export const fr: Record<string, string> = {
   // Athlete analytics
   "aa.recordTitle": "Bilan en compétition",
   "aa.recordSubtitle":
-    "Toutes les finales enregistrées : {{n}} {{noun}} sur {{seasons}} saisons. Une meilleure performance de la saison n’est qu’un résultat ; voici le niveau tenu le reste du temps.",
+    "Toutes les finales enregistrées : {{n}} {{noun}} sur {{seasons}} {{seasonWord}}. Une meilleure performance de la saison n’est qu’un résultat ; voici le niveau tenu le reste du temps.",
   "aa.wins": "Victoires",
   "aa.ofStarts": "{{pct}} % des départs",
   "aa.podiums": "Podiums",
@@ -1004,6 +1010,10 @@ export const fr: Record<string, string> = {
   "ath.viewFullProfile": "Voir la fiche complète sur World Athletics →",
 
   "ath.onDlPoints": "{{rank}} avec {{points}} points DL",
+  "ath.onDlPointOne": "{{rank}} avec 1 point DL",
+  "ath.noHistoryYear": "Aucun résultat de meeting en {{year}} pour cet athlète.",
+  "ath.noHistoryRecent": "Aucun résultat de meeting récent pour cet athlète.",
+  "ath.noHistoryPrior": "Aucun résultat de meeting de la saison précédente pour cet athlète.",
   "ath.worldRankTag": "n°{{n}} mondial",
 
   // Athlete career, season trend and head-to-head charts
@@ -1044,6 +1054,7 @@ export const fr: Record<string, string> = {
   "landing.tagline": "Des pronostics d’athlétisme fondés sur de vrais résultats",
   "landing.badgeBare": "PodiumCall",
   "landing.badgeCountdown": "PodiumCall · J-{{n}} avant {{city}}",
+  "landing.badgeCountdownOne": "PodiumCall · J-1 avant {{city}}",
   "landing.badgeLive": "PodiumCall · En direct de {{city}}",
   "landing.badgeDone": "PodiumCall · {{city}} terminé",
   "landing.h1a": "Nous faisons le",

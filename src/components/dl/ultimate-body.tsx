@@ -42,9 +42,10 @@ function UltimateHero({ ev, lang }: { ev: UltimateEvent; lang: Lang }) {
         {t("ultimate.hero.kicker", { short: ev.shortName, dates: dateRange(ev, lang) })}
       </span>
 
-      <h1 className="dg mt-5 max-w-3xl text-[34px] font-bold leading-[1.02] tracking-[-0.02em] sm:text-[54px]">
+      {/* h2: the head band above already carries the page's h1. */}
+      <h2 className="dg mt-5 max-w-3xl text-[34px] font-bold leading-[1.02] tracking-[-0.02em] sm:text-[54px]">
         {t("ultimate.hero.headline")}
-      </h1>
+      </h2>
       <p className="mt-3 max-w-xl text-[14px] leading-relaxed text-white/70">
         {t("ultimate.about.body", { venue: ev.venue, city: ev.city, dates: dateRange(ev, lang) })}
       </p>

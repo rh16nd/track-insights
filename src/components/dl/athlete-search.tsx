@@ -247,8 +247,18 @@ export function AthleteSearch({
                     </span>
                     <span className="block text-[11.5px] text-muted-foreground">
                       {t("search.countryHint", {
-                        n: item.country.athleteCount,
-                        d: item.country.disciplineCount,
+                        athletes: t(
+                          item.country.athleteCount === 1
+                            ? "common.rankedAthleteOne"
+                            : "common.rankedAthleteMany",
+                          { n: item.country.athleteCount },
+                        ),
+                        events: t(
+                          item.country.disciplineCount === 1
+                            ? "common.eventOne"
+                            : "common.eventMany",
+                          { n: item.country.disciplineCount },
+                        ),
                       })}
                     </span>
                   </span>

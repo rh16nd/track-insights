@@ -108,8 +108,11 @@ export function TopNav({
             mark visually -- the 2026-08-24 critique measured this link at a
             bare 24x24px on mobile, the single element every visitor taps to
             get home. */}
+        {/* Named here because the mark is aria-hidden and the word is hidden
+            below sm, which left the link with no name on a phone. */}
         <Link
           to="/"
+          aria-label="PodiumCall"
           className="-m-2.5 flex shrink-0 items-center gap-2 justify-self-start p-2.5 transition-transform duration-150 active:scale-90"
         >
           <PodiumCallMark className="size-6" />

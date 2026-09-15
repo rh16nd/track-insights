@@ -217,8 +217,9 @@ function Landing() {
     const end = new Date(`${ev.endDate}T23:59:59`).getTime();
     if (now > end) return t("landing.badgeDone", { city: ev.city });
     if (now >= start) return t("landing.badgeLive", { city: ev.city });
-    return t("landing.badgeCountdown", {
-      n: Math.max(0, Math.ceil((start - now) / 86_400_000)),
+    const days = Math.max(0, Math.ceil((start - now) / 86_400_000));
+    return t(days === 1 ? "landing.badgeCountdownOne" : "landing.badgeCountdown", {
+      n: days,
       city: ev.city,
     });
   })();
