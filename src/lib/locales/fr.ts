@@ -57,21 +57,17 @@ export const fr: Record<string, string> = {
   "championship.chip.done": "{{city}}, c’est terminé",
   "championship.projection.titlePoints": "Classement aux points · {{disc}}",
   "championship.projection.subtitle": "{{n}} athlètes inscrits, {{ranked}} classés ci-dessous.",
-  "championship.projection.whyModel":
-    "{{n}} des {{of}} premiers inscrits aux points ont un historique chez nous : c’est donc le modèle qui fait ce pronostic.",
-  "championship.projection.whyPoints":
-    "Seuls {{n}} des {{of}} premiers inscrits aux points ont un historique chez nous. Le modèle en demande {{needed}} : cette épreuve est donc classée aux points.",
-  "championship.projection.whyFloor":
-    "{{n}} des {{of}} premiers inscrits aux points ont un historique chez nous, mais le favori du modèle n’a que {{chance}} % de chances de podium, sous les {{floor}} % requis. Cette épreuve est donc classée aux points.",
+  "championship.projection.whyTooFew":
+    "Seuls {{n}} athlètes inscrits ici ont une marque que le modèle peut lire. Il lui en faut {{needed}} pour pronostiquer une épreuve : celle-ci est donc classée aux points.",
   "championship.projection.colMark": "Meilleure marque",
   "championship.projection.markHint":
-    "La meilleure marque de l’athlète dans cette épreuve en 2026, d’après le bilan asiatique de World Athletics ou son propre profil World Athletics. Un athlète sans marque en 2026 est classé sur sa meilleure marque de 2025, signalée 2025. Sur 5 000 m et 10 000 m, des distances que l’on ne court que quelques fois par an, c’est la meilleure des deux saisons qui compte pour tous.",
+    "La meilleure marque de l’athlète dans cette épreuve en 2026, d’après le bilan asiatique de World Athletics ou son propre profil World Athletics. Un athlète sans marque en 2026 est jugé sur sa meilleure marque de 2025, signalée 2025.",
   "championship.projection.markSeason": "Marque de {{year}}",
   "championship.projection.colPoints": "Points",
   "championship.projection.pointsHint":
     "Les points World Athletics de la meilleure marque affichée. Plus de points signifie une meilleure marque. Cette colonne est un classement, pas un pronostic.",
   "championship.projection.chanceHint":
-    "La probabilité, selon le modèle, que cet athlète finisse dans les trois premiers. C’est la chance propre à chacun : la colonne ne totalise donc pas 100.",
+    "La probabilité, selon le modèle, que cet athlète finisse dans les trois premiers. La colonne totalise 300 sur l’ensemble des engagés, et non 100 : cent par médaille.",
   "championship.projection.unrankedTitle": "Engagés, non classés ({{n}})",
   "championship.projection.unrankedHint":
     "Ces athlètes figurent sur la liste des engagés des organisateurs, mais nous n’avons trouvé aucune marque pour les classer. Chaque ligne en donne la raison. Ils n’occupent aucune place dans l’ordre ci-dessus.",
@@ -82,18 +78,16 @@ export const fr: Record<string, string> = {
   "championship.projection.unranked.lookupFailed":
     "World Athletics n’a pas répondu lors de notre vérification",
   "championship.projection.unranked.notScored":
-    "A une marque en 2026, mais il manque au modèle une donnée pour l’évaluer",
-  "championship.projection.unranked.lastSeasonOnly":
-    "Seulement une marque de 2025, et le modèle en demande une de 2026",
+    "A une marque, mais le modèle n’a pas pu la rattacher au dossier de l’athlète",
   "championship.projection.unscored":
     "Inscrits, sans marque 2026 trouvée dans cette épreuve : {{names}}.",
   "championship.projection.noteModel":
-    "La liste des inscrits est celle des organisateurs. Seul l’ordre est celui du modèle.",
+    "La liste des inscrits est celle des organisateurs. L’ordre et les probabilités sont ceux du modèle.",
   "championship.projection.notePoints":
     "La liste des inscrits est celle des organisateurs. L’ordre suit les points World Athletics de la meilleure marque de chacun : ce n’est pas un pronostic.",
   "championship.projection.byModel": "pronostic du modèle",
   "championship.projection.captionModel":
-    "Tous les inscrits du {{disc}} ayant une marque en 2026, classés selon leur chance de podium",
+    "Tous les inscrits du {{disc}} ayant une marque en 2026 ou en 2025, classés selon leur chance de podium",
   "championship.projection.captionPoints":
     "Tous les inscrits du {{disc}} ayant une marque en 2026 ou en 2025, classés selon leurs points World Athletics",
   "asianGames.title": "Les Jeux asiatiques",
@@ -110,11 +104,9 @@ export const fr: Record<string, string> = {
   "asianGames.how.field":
     "Le plateau est la liste officielle des inscrits, publiée par les organisateurs : personne n’y figure au hasard.",
   "asianGames.how.model":
-    "Le modèle pronostique une épreuve quand au moins {{needed}} de ses {{of}} premiers inscrits aux points ont un historique chez nous : un bilan mondial, une finale de championnat ou un meeting de Diamond League.",
-  "asianGames.how.modelFloor":
-    "Le modèle pronostique une épreuve quand au moins {{needed}} de ses {{of}} premiers inscrits aux points ont un historique chez nous (un bilan mondial, une finale de championnat ou un meeting de Diamond League) et que son propre favori a au moins {{floor}} % de chances de podium.",
-  "asianGames.how.points":
-    "Les autres épreuves sont classées selon les points World Athletics de la meilleure marque de chaque athlète, et une épreuve ne mélange jamais les deux. Un athlète sans marque en 2026 est classé sur sa meilleure marque de 2025. Sur 5 000 m et 10 000 m, des distances que l’on ne court que quelques fois par an, c’est la meilleure des deux saisons qui compte.",
+    "Toutes les épreuves sont pronostiquées par un seul modèle. Il compare chaque athlète aux autres engagés à partir de sa meilleure marque de la saison, de son record personnel, de sa meilleure marque de la saison passée, de l’ancienneté de cette meilleure marque et de son âge. Un athlète qui n’a disputé qu’une ou deux compétitions cette année est jugé sur son parcours, pas seulement sur ces compétitions.",
+  "asianGames.how.test":
+    "Nous l’avons testé sur {{finals}} finales de championnats passées, de {{from}} à {{to}}. Il a désigné {{model}} % des médaillés, contre {{points}} % pour un simple classement aux points World Athletics : à peu près autant, pas mieux. Sur les {{asiaFinals}} finales asiatiques, il en a désigné {{asiaModel}} %, contre {{asiaPoints}} % pour les points.",
   "asianGames.field.pending":
     "Le pronostic n’est pas encore prêt. Le plateau et le pronostic apparaîtront ici.",
   "asianGames.notCalled.title": "Épreuves sans pronostic",

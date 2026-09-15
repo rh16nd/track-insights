@@ -4,8 +4,6 @@ import { Link } from "@tanstack/react-router";
 import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
 import { NatFlag } from "./nat-flag";
 import { InfoTip } from "./info-tip";
-import { useT, type Lang } from "@/lib/i18n";
-import { localeTag } from "@/lib/dates";
 import { discName } from "@/lib/dl-data";
 import type { CallMethod, UltimateProjection } from "@/lib/dl-data";
 
@@ -14,11 +12,6 @@ import type { CallMethod, UltimateProjection } from "@/lib/dl-data";
  * and is dropped where a reader sees it. */
 function displayName(name: string): string {
   return name.replace(/^\.\s+/, "");
-}
-
-/** A percentage the way the reader writes it: "0.4" in English, "0,4" in French. */
-function formatPercent(value: number, lang: Lang): string {
-  return new Intl.NumberFormat(localeTag(lang), { maximumFractionDigits: 1 }).format(value);
 }
 
 /** The model's call on each event at the Ultimate Championship.
@@ -41,7 +34,6 @@ export function UltimateProjections({
   projections: UltimateProjection[];
   t: (k: string, v?: Record<string, string | number>) => string;
 }) {
-  const { lang } = useT();
   const sorted = useMemo(
     () =>
       [...projections].sort((a, b) =>
@@ -173,22 +165,12 @@ export function UltimateProjections({
         {/* Why this event was called the way it was, and above the table: the
             reader has to know whether the last column is a chance or a score
             before reading down it. */}
-        {current.methodEvidence && (
+        {current.methodEvidence?.reason === "tooFew" && (
           <p className="mb-3 max-w-3xl text-[12.5px] leading-snug text-foreground">
-            {t(
-              current.method === "model"
-                ? "championship.projection.whyModel"
-                : current.methodEvidence.reason === "floor"
-                  ? "championship.projection.whyFloor"
-                  : "championship.projection.whyPoints",
-              {
-                n: current.methodEvidence.withHistory.length,
-                of: current.methodEvidence.considered.length,
-                needed: current.methodEvidence.needed,
-                chance: formatPercent(current.methodEvidence.topChance ?? 0, lang),
-                floor: formatPercent(current.methodEvidence.floor ?? 0, lang),
-              },
-            )}
+            {t("championship.projection.whyTooFew", {
+              n: current.scored,
+              needed: current.methodEvidence.needed ?? 3,
+            })}
           </p>
         )}
         {/* Above the table, not below it. A reader who meets this after

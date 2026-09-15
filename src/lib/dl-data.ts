@@ -888,17 +888,16 @@ export type UltimateProjection = {
    * of its leading entrants have a record we hold; otherwise it is ranked by
    * World Athletics Results Score, and never a mix of the two. */
   method?: CallMethod;
-  /** Why: the top entrants by points, and which of them have a record. */
+  /** Why an event is called the way it is. `reason` is null for a model event,
+   * and "tooFew" when fewer than `needed` entrants had a mark for the model to
+   * read, so the event is ranked on points. "history" and "floor" belong to
+   * the rule before 2026-09-15, kept so a call frozen under it still reads. */
   methodEvidence?: {
-    considered: string[];
-    withHistory: string[];
-    needed: number;
-    of: number;
-    /** Why an event went to points: too few records ("history"), or the
-     * model's favourite under the floor ("floor"). Null for a model event. */
-    reason?: "history" | "floor" | null;
-    /** The model's highest podium chance, whenever the history rule let it
-     * score the event. */
+    reason?: "tooFew" | "history" | "floor" | null;
+    needed?: number;
+    considered?: string[];
+    withHistory?: string[];
+    of?: number;
     topChance?: number;
     floor?: number;
   };
@@ -987,8 +986,7 @@ export type CallMethod = "model" | "points";
  * athlete matches the entry. "noMark": World Athletics has them, with no 2026
  * result in the event. "lookupFailed": the check itself failed. "notScored": a
  * 2026 mark the model could not score. */
-export type UnrankedReason =
-  "notFound" | "noMark" | "lookupFailed" | "notScored" | "lastSeasonOnly";
+export type UnrankedReason = "notFound" | "noMark" | "lookupFailed" | "notScored";
 
 /** The current championship's call on one athlete in one event, for their
  * page (api.py championship_call). Absent once the championship has ended. */
@@ -1089,7 +1087,21 @@ export type ChampionshipEvent = Partial<UltimateEvent> & {
   /** The Asian Games only, from here down. */
   field?: ChampionshipFieldEvent[];
   notCalled?: NotCalledEvent[];
-  rule?: { needed: number; of: number; floor?: number };
+  /** How the call was made: one model for every event, and how that model
+   * tested against a ranking by points, for the page to state plainly. */
+  rule?: {
+    method?: "field";
+    cutoff?: string;
+    backtest?: {
+      finals: number;
+      model: number;
+      points: number;
+      asiaFinals: number;
+      asiaModel: number;
+      asiaPoints: number;
+      years: number[];
+    } | null;
+  };
   entrants?: number;
   federations?: number;
   entriesSource?: string;

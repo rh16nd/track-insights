@@ -25,6 +25,9 @@ export function AsianGamesBody({ ev, lang, t }: { ev: ChampionshipEvent; lang: L
     points: projections.filter((p) => p.method === "points").length,
     none: notCalled.length,
   };
+  const test = ev.rule?.backtest;
+  const pct = (value: number) =>
+    new Intl.NumberFormat(localeTag(lang), { maximumFractionDigits: 1 }).format(value);
 
   return (
     <div className="space-y-6">
@@ -35,14 +38,23 @@ export function AsianGamesBody({ ev, lang, t }: { ev: ChampionshipEvent; lang: L
           <ol className="max-w-3xl space-y-3 text-[13.5px] leading-snug text-foreground">
             {[
               t("asianGames.how.field"),
-              ev.rule.floor != null
-                ? t("asianGames.how.modelFloor", {
-                    needed: ev.rule.needed,
-                    of: ev.rule.of,
-                    floor: new Intl.NumberFormat(localeTag(lang)).format(ev.rule.floor),
-                  })
-                : t("asianGames.how.model", { needed: ev.rule.needed, of: ev.rule.of }),
-              t("asianGames.how.points"),
+              t("asianGames.how.model"),
+              // Said in as many words, because it is the honest answer to "is
+              // this better than sorting by points?": in testing, about the same.
+              ...(test
+                ? [
+                    t("asianGames.how.test", {
+                      finals: test.finals,
+                      from: test.years[0] ?? "",
+                      to: test.years[test.years.length - 1] ?? "",
+                      model: pct(test.model),
+                      points: pct(test.points),
+                      asiaFinals: test.asiaFinals,
+                      asiaModel: pct(test.asiaModel),
+                      asiaPoints: pct(test.asiaPoints),
+                    }),
+                  ]
+                : []),
             ].map((line, i) => (
               <li key={i} className="flex gap-2.5">
                 <span className="nums mt-0.5 font-semibold text-terracotta-strong">{i + 1}</span>
