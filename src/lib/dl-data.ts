@@ -945,6 +945,9 @@ export type UltimateProjection = {
     profileUrl?: string | null;
     /** Null in an event ranked by points, which states an order, not a chance. */
     podiumChance: number | null;
+    /** The same model's chance of winning, adding up to 100 across the field.
+     * Absent on calls made before 2026-09-15, such as the frozen Ultimate. */
+    winChance?: number | null;
     /** Set by api.py from injury_flags.json when the injury check has matched
      * a headline for this athlete. Flagged, never dropped: this field is
      * World Athletics' published qualification list, so removing a row would
@@ -1025,6 +1028,8 @@ export type ChampionshipCall = {
   /** Null for an entrant the call could not rank; `unranked` says why. */
   rank: number | null;
   podiumChance: number | null;
+  /** Absent or null on a call that carries no win chance. */
+  winChance?: number | null;
   rankingScore: number | null;
   unranked: UnrankedReason | null;
   /** The mark the call read, and its season when that is not this one. */

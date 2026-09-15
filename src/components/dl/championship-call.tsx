@@ -13,6 +13,7 @@ import { Panel } from "./shell";
 export function ChampionshipCallPanel({ call }: { call: ChampionshipCall }) {
   const { t, lang } = useT();
   const chance = call.podiumChance === null ? "—" : chanceLabel(lang, call.podiumChance);
+  const win = call.winChance == null ? null : chanceLabel(lang, call.winChance);
   const sentence =
     call.rank === null
       ? t(`championship.projection.unranked.${call.unranked ?? "noMark"}`)
@@ -22,7 +23,14 @@ export function ChampionshipCallPanel({ call }: { call: ChampionshipCall }) {
             n: call.ranked,
             score: call.rankingScore ?? "—",
           })
-        : t("ath.champ.model", { rank: ordinalIn(lang, call.rank), n: call.ranked, chance });
+        : win === null
+          ? t("ath.champ.model", { rank: ordinalIn(lang, call.rank), n: call.ranked, chance })
+          : t("ath.champ.modelWin", {
+              rank: ordinalIn(lang, call.rank),
+              n: call.ranked,
+              chance,
+              win,
+            });
 
   return (
     <Panel title={t(call.labelKey)} subtitle={t("ath.champ.subtitle")} className="mt-6">

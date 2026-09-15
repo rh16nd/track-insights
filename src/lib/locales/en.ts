@@ -70,6 +70,9 @@ export const en: Record<string, string> = {
     "World Athletics points for the best mark shown. More points means a better mark. This column is an order, not a forecast.",
   "championship.projection.chanceHint":
     "The model's chance that this athlete finishes in the top three. The column adds up to 300 across the field, not 100: one hundred for each medal.",
+  "championship.projection.colWin": "Win chance",
+  "championship.projection.winHint":
+    "The model's chance that this athlete wins. The column adds up to 100 across the field.",
   "championship.projection.unrankedTitle": "Entered, not ranked ({{n}})",
   "championship.projection.unrankedHint":
     "These athletes are on the organisers' entry list, but we found no mark to rank them by. Each row says why. They take no place in the order above.",
@@ -926,6 +929,8 @@ export const en: Record<string, string> = {
     "{{rank}} of {{n}} ranked entrants on World Athletics points ({{score}}). This event is called on points, not by the model.",
   "ath.champ.model":
     "The model's {{rank}} pick of {{n}} ranked entrants, with a {{chance}}% chance of a podium.",
+  "ath.champ.modelWin":
+    "The model's {{rank}} pick of {{n}} ranked entrants, with a {{chance}}% chance of a podium and a {{win}}% chance of winning.",
   "ath.champ.link": "See the call for every event",
   "ath.seasonBest2026": "2026 season best",
   "ath.seasonBestIn": "{{year}} season best",

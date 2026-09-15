@@ -68,6 +68,9 @@ export const fr: Record<string, string> = {
     "Les points World Athletics de la meilleure marque affichée. Plus de points signifie une meilleure marque. Cette colonne est un classement, pas un pronostic.",
   "championship.projection.chanceHint":
     "La probabilité, selon le modèle, que cet athlète finisse dans les trois premiers. La colonne totalise 300 sur l’ensemble des engagés, et non 100 : cent par médaille.",
+  "championship.projection.colWin": "Chance de victoire",
+  "championship.projection.winHint":
+    "La probabilité, selon le modèle, que cet athlète gagne. La colonne totalise 100 sur l’ensemble des engagés.",
   "championship.projection.unrankedTitle": "Engagés, non classés ({{n}})",
   "championship.projection.unrankedHint":
     "Ces athlètes figurent sur la liste des engagés des organisateurs, mais nous n’avons trouvé aucune marque pour les classer. Chaque ligne en donne la raison. Ils n’occupent aucune place dans l’ordre ci-dessus.",
@@ -934,6 +937,8 @@ export const fr: Record<string, string> = {
     "{{rank}} sur {{n}} engagés classés selon les points World Athletics ({{score}}). Cette épreuve est pronostiquée aux points, pas par le modèle.",
   "ath.champ.model":
     "{{rank}} choix du modèle sur {{n}} engagés classés, avec {{chance}} % de chances de podium.",
+  "ath.champ.modelWin":
+    "{{rank}} choix du modèle sur {{n}} engagés classés, avec {{chance}} % de chances de podium et {{win}} % de chances de victoire.",
   "ath.champ.link": "Voir le pronostic de chaque épreuve",
   "ath.seasonBest2026": "Meilleure perf. 2026",
   "ath.seasonBestIn": "Meilleure perf. {{year}}",

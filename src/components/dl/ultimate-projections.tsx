@@ -87,6 +87,11 @@ export function UltimateProjections({
             ? "championship.projection.chanceHint"
             : "ultimate.projection.chanceHint",
         };
+  // A podium chance cannot say whether the favourite is clear: three close
+  // athletes can each be near-certain of a medal. The win chance beside it
+  // splits between them, and a clear leader takes most of it. Only on calls
+  // that carry one (from 2026-09-15), so the frozen Ultimate keeps its table.
+  const showWin = current.method === "model" && current.athletes.some((a) => a.winChance != null);
 
   return (
     <>
@@ -184,7 +189,7 @@ export function UltimateProjections({
           </p>
         )}
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[620px]">
+          <table className={`w-full ${showWin ? "min-w-[720px]" : "min-w-[620px]"}`}>
             <caption className="sr-only">
               {t(
                 current.method === "model"
@@ -222,6 +227,18 @@ export function UltimateProjections({
                     </InfoTip>
                   </span>
                 </th>
+                {showWin && (
+                  <th scope="col" className="w-28 pb-3 pl-4 text-right font-semibold">
+                    <span className="inline-flex items-center justify-end gap-1">
+                      {t("championship.projection.colWin")}
+                      <InfoTip
+                        label={t("figure.about", { label: t("championship.projection.colWin") })}
+                      >
+                        {t("championship.projection.winHint")}
+                      </InfoTip>
+                    </span>
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -234,13 +251,14 @@ export function UltimateProjections({
                   discKey={current.discKey}
                   t={t}
                   method={current.method}
+                  showWin={showWin}
                 />
               ))}
             </tbody>
             {flagged.length > 0 && (
               <tbody className="divide-y divide-border">
                 <tr>
-                  <th scope="colgroup" colSpan={5} className="pt-5 pb-2 text-left">
+                  <th scope="colgroup" colSpan={showWin ? 6 : 5} className="pt-5 pb-2 text-left">
                     <span className="label-caps inline-flex items-center gap-1 text-muted-foreground">
                       {t("ultimate.projection.flaggedTitle")}
                       <InfoTip
@@ -262,6 +280,7 @@ export function UltimateProjections({
                     discKey={current.discKey}
                     t={t}
                     method={current.method}
+                    showWin={showWin}
                     dimmed
                   />
                 ))}
@@ -273,7 +292,7 @@ export function UltimateProjections({
             {unranked.length > 0 && (
               <tbody className="divide-y divide-border">
                 <tr>
-                  <th scope="colgroup" colSpan={5} className="pt-5 pb-2 text-left">
+                  <th scope="colgroup" colSpan={showWin ? 6 : 5} className="pt-5 pb-2 text-left">
                     <span className="label-caps inline-flex items-center gap-1 text-muted-foreground">
                       {t("championship.projection.unrankedTitle", { n: unranked.length })}
                       <InfoTip
@@ -320,7 +339,10 @@ export function UltimateProjections({
                     <td className="py-2.5 pl-4">
                       <NatFlag nat={u.nat ?? "—"} />
                     </td>
-                    <td colSpan={2} className="py-2.5 pl-4 text-[12px] text-muted-foreground">
+                    <td
+                      colSpan={showWin ? 3 : 2}
+                      className="py-2.5 pl-4 text-[12px] text-muted-foreground"
+                    >
                       {t(`championship.projection.unranked.${u.reason}`)}
                     </td>
                   </tr>
@@ -380,12 +402,15 @@ function ProjectionRow({
   discKey,
   t,
   method,
+  showWin = false,
   dimmed = false,
 }: {
   a: UltimateProjection["athletes"][number];
   i: number;
   /** How the event was called; absent on the Ultimate. */
   method?: CallMethod | undefined;
+  /** Whether the table has a win chance column (see UltimateProjections). */
+  showWin?: boolean;
   /** The number in the # column. In the main list it is the athlete's position
    * among those expected to start, counted 1..N so the list has no holes in
    * it -- moving a flagged athlete down used to leave the 100m reading 2, 3, 4.
@@ -501,6 +526,11 @@ function ProjectionRow({
           </div>
         )}
       </td>
+      {showWin && (
+        <td className="nums py-3 pl-4 text-right text-[12.5px] font-semibold text-foreground">
+          {a.winChance == null ? "—" : `${chanceLabel(lang, a.winChance)}%`}
+        </td>
+      )}
     </tr>
   );
 }
