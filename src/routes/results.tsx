@@ -15,6 +15,7 @@ export const Route = createFileRoute("/results")({
     pageHead(
       "How the last predictions turned out",
       "Every championship the model called in advance, with the projection frozen before the meet and the result that followed.",
+      "/results",
     ),
   component: ResultsPage,
 });

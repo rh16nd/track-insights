@@ -11,6 +11,7 @@ export const Route = createFileRoute("/field")({
     pageHead(
       "Field events",
       "The world's best in every field discipline, ranked by World Athletics points or by the model's rating for a championship final podium.",
+      "/field",
     ),
   validateSearch: (search: Record<string, unknown>): { disc?: string | undefined } => ({
     disc: typeof search["disc"] === "string" ? (search["disc"] as string) : undefined,

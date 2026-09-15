@@ -79,10 +79,12 @@ def build():
     bold, semi, small = font("segoeuib.ttf", 76), font("seguisb.ttf", 30), font("seguisb.ttf", 23)
     d.text((84, 232), "We make the call", font=bold, fill=CREAM + (255,))
     d.text((84, 316), "before the gun.", font=bold, fill=GOLD + (255,))
-    d.text((84, 428), "Real-data podium predictions for all 32 disciplines", font=semi,
+    # About the site, not one meeting: the card said "the 2026 Diamond League
+    # Final, Brussels" until 2026-09-15, weeks after that Final was run.
+    d.text((84, 428), "Podium predictions for the Diamond League and the", font=semi,
            fill=CREAM + (225,))
-    d.text((84, 466), "at the 2026 Diamond League Final, Brussels.", font=semi, fill=CREAM + (225,))
-    d.text((84, 540), "Scraped from World Athletics  ·  walk-forward validated", font=small,
+    d.text((84, 466), "major championships, event by event.", font=semi, fill=CREAM + (225,))
+    d.text((84, 540), "Built on World Athletics results  ·  tested on past finals", font=small,
            fill=GOLD + (220,))
 
     out = os.path.join(os.path.dirname(__file__), "..", "public", "og.png")

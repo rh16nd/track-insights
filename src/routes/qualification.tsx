@@ -13,7 +13,8 @@ export const Route = createFileRoute("/qualification")({
   head: () =>
     pageHead(
       "Qualifying",
-      "Diamond League standings, the points cut for each discipline, and who makes the Final in Brussels.",
+      "Diamond League standings, the points cut for each discipline, and who made the Final in Brussels.",
+      "/qualification",
     ),
   // Same URL-as-state convention Track/Field use, so clicking into an
   // athlete and hitting Back restores the discipline you were reading.

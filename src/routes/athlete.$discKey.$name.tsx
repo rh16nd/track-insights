@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { disciplineLabel, pageHead, titleName } from "@/lib/seo";
+import { disciplineLabel, pageHead, pathSegment, titleName } from "@/lib/seo";
 import { usePageTitle } from "@/lib/use-page-title";
 import { createFileRoute, Link, useCanGoBack, useRouter } from "@tanstack/react-router";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, WatchBadge } from "@/components/dl/shell";
@@ -402,11 +402,13 @@ export const Route = createFileRoute("/athlete/$discKey/$name")({
   // caps convention still applies, so it is title-cased for the tab and the
   // search result the same way the dossier headline is.
   head: ({ params }) => {
-    const name = titleName(decodeURIComponent(params.name));
+    const raw = decodeURIComponent(params.name);
+    const name = titleName(raw);
     const label = disciplineLabel(params.discKey);
     return pageHead(
       `${name} — ${label}`,
-      `${name}'s ${label} form for the 2026 Diamond League Final: season and career bests, real per-meeting results, head-to-head record and World Athletics ranking.`,
+      `${name}'s ${label} this season: season and career bests, results meet by meet, head-to-head record and World Athletics ranking.`,
+      `/athlete/${params.discKey}/${pathSegment(raw)}`,
     );
   },
   component: AthleteProfilePage,

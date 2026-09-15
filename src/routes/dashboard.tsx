@@ -21,6 +21,7 @@ export const Route = createFileRoute("/dashboard")({
     pageHead(
       "Dashboard",
       "The model's read on the world's best across every event, with the next championship days away.",
+      "/dashboard",
     ),
   component: Dashboard,
 });

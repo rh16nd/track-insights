@@ -12,7 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { JsonLd } from "@/components/dl/json-ld";
 import { Analytics } from "@vercel/analytics/react";
-import { websiteSchema } from "@/lib/seo";
+import { absoluteUrl, websiteSchema } from "@/lib/seo";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider, useT } from "@/lib/i18n";
 
@@ -119,28 +119,30 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         ? [{ name: "google-site-verification", content: GOOGLE_SITE_VERIFICATION }]
         : []),
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "PodiumCall — 2026 Diamond League Predictions" },
+      { title: "PodiumCall · Athletics podium predictions" },
       {
         name: "description",
         content:
-          "Real-data predictions for the 2026 Wanda Diamond League Final, trained on results scraped directly from World Athletics.",
+          "Podium predictions for the Diamond League and the major athletics championships, event by event, built on World Athletics results.",
       },
-      { property: "og:title", content: "PodiumCall — 2026 Diamond League Predictions" },
+      { property: "og:title", content: "PodiumCall · Athletics podium predictions" },
       {
         property: "og:description",
         content:
-          "Real-data predictions for the 2026 Wanda Diamond League Final, trained on results scraped directly from World Athletics.",
+          "Podium predictions for the Diamond League and the major athletics championships, event by event, built on World Athletics results.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       // twitter:card promised a large image and none was ever set, so every
       // share rendered blank. Drawn from the app's own palette and lane
       // motif (scripts/make-og.py) rather than a stock graphic.
-      { property: "og:image", content: "/og.png" },
+      // Absolute when the origin is known: Facebook, LinkedIn and X read
+      // og:image as a full URL and can drop a relative one.
+      { property: "og:image", content: absoluteUrl("/og.png") ?? "/og.png" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "PodiumCall — We make the call before the gun." },
-      { name: "twitter:image", content: "/og.png" },
+      { property: "og:image:alt", content: "PodiumCall: we make the call before the gun." },
+      { name: "twitter:image", content: absoluteUrl("/og.png") ?? "/og.png" },
       { property: "og:site_name", content: "PodiumCall" },
       // Colours the browser chrome (Android address bar, iOS PWA) to the
       // logo's dark ground rather than a default white.

@@ -15,6 +15,7 @@ export const Route = createFileRoute("/how-it-works")({
     pageHead(
       "How it works",
       "How PodiumCall predicts the podium: what the model learns, how accurate it is, and where the data comes from.",
+      "/how-it-works",
     ),
   component: HowItWorksPage,
 });

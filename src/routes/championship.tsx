@@ -15,6 +15,7 @@ export const Route = createFileRoute("/championship")({
     pageHead(
       "The championship we are calling",
       "The next major athletics championship: its field, how each event is called, and the call itself, made before the first session.",
+      "/championship",
     ),
   component: ChampionshipPage,
 });

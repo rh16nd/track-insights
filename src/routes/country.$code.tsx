@@ -16,7 +16,9 @@ export const Route = createFileRoute("/country/$code")({
   head: ({ params }) =>
     pageHead(
       params.code.toUpperCase(),
-      `Every ranked athlete from ${params.code.toUpperCase()} this season, their marks, and their places at the World Athletics Ultimate Championship.`,
+      `Every ranked athlete from ${params.code.toUpperCase()} this season, with their marks and their events.`,
+      // Upper case, as every link on the site writes the code.
+      `/country/${params.code.toUpperCase()}`,
     ),
   component: CountryPage,
 });

@@ -24,6 +24,7 @@ export const Route = createFileRoute("/stats")({
     pageHead(
       "Performance Index",
       "Which athletics events are genuinely deep and which are one athlete and a gap, scored on World Athletics' own points table.",
+      "/stats",
     ),
   component: StatsPage,
 });

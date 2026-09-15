@@ -27,6 +27,7 @@ export const Route = createFileRoute("/")({
     pageHead(
       "The world's best, read by the model",
       "Real-data athletics rankings across 36 disciplines and podium predictions for 32, trained on results scraped from World Athletics. Plus a call on every event at the next major championship.",
+      "/",
     ),
   component: Landing,
 });

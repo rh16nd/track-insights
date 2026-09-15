@@ -14,6 +14,7 @@ export const Route = createFileRoute("/schedule")({
     pageHead(
       "Schedule",
       "The next big championship, and the 2026 Diamond League season that led up to it.",
+      "/schedule",
     ),
   component: SchedulePage,
 });

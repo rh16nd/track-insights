@@ -64,16 +64,34 @@ export const SUFFIX = "PodiumCall";
 /** One place that builds the tags, so title and og:title cannot drift apart
  * — the failure mode where a page looks right in a tab and wrong when
  * shared. */
-export function pageHead(title: string, description: string) {
+export function pageHead(title: string, description: string, path?: string) {
   const full = `${title} · ${SUFFIX}`;
+  const url = path === undefined ? undefined : absoluteUrl(path);
   return {
     meta: [
       { title: full },
       { name: "description", content: description },
       { property: "og:title", content: full },
       { property: "og:description", content: description },
+      ...(url ? [{ property: "og:url", content: url }] : []),
     ],
+    // The canonical link and og:url waited on a domain (see below) and were
+    // never added once there was one, so Google kept the vercel.app address it
+    // indexed first (found 2026-09-15). `path` carries no query string:
+    // /field?disc=men_HT is the /field page, which is what the sitemap lists.
+    links: url ? [{ rel: "canonical", href: url }] : [],
   };
+}
+
+/** One path segment encoded the way scripts/make-sitemap.py encodes it
+ * (Python's quote with safe=""), so a canonical link and the sitemap name an
+ * athlete page with the same bytes. encodeURIComponent alone leaves ! ' ( ) *
+ * as they are, and "Ja'Kobe THARP" would differ. */
+export function pathSegment(value: string): string {
+  return encodeURIComponent(value).replace(
+    /[!'()*]/g,
+    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+  );
 }
 
 /* -- Structured data (JSON-LD) -------------------------------------------
@@ -116,7 +134,7 @@ export function websiteSchema(): JsonLdGraph {
     "@type": "WebSite",
     name: SUFFIX,
     description:
-      "Real-data podium predictions for the 2026 Wanda Diamond League Final, trained on results scraped from World Athletics.",
+      "Podium predictions for the Diamond League and the major athletics championships, event by event, built on World Athletics results.",
     inLanguage: "en",
     url: absoluteUrl("/"),
   };

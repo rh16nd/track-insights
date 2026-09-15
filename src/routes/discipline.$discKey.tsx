@@ -23,7 +23,8 @@ export const Route = createFileRoute("/discipline/$discKey")({
       label,
       NO_FINAL_DISCIPLINES.has(params.discKey)
         ? `How level is the ${label} among the world's best this season, or is it one athlete and a gap? Field depth, season form and podium chances.`
-        : `Is the ${label} at the 2026 Diamond League Final a contest all the way down, or one athlete and a gap? Field depth, form and every head-to-head.`,
+        : `Is the ${label} a contest all the way down, or one athlete and a gap? Field depth, season form and every head-to-head.`,
+      `/discipline/${params.discKey}`,
     );
   },
   component: DisciplinePage,
