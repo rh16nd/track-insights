@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://podiumcall.vercel.app/sitemap.xml
+Sitemap: https://www.podiumcall.cc/sitemap.xml
