@@ -494,6 +494,17 @@ function ProjectionRow({
             )}
           </span>
         ) : null}
+        {/* Why the model read them as it did: which older mark counted, and
+            how much of it. Only on the rows where one did, so the table stays
+            quiet for everyone judged on this season alone. */}
+        {a.oldMarks?.fromSeason ? (
+          <span className="mt-0.5 block text-[11.5px] leading-snug text-muted-foreground">
+            {t("championship.projection.oldMarks", {
+              year: a.oldMarks.fromSeason,
+              percent: a.oldMarks.percent,
+            })}
+          </span>
+        ) : null}
       </td>
       <td className="py-3 pl-4">
         <NatFlag nat={a.nat ?? "—"} />

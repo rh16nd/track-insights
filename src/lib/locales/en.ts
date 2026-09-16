@@ -66,6 +66,8 @@ export const en: Record<string, string> = {
   "championship.projection.markHint":
     "The athlete's best mark in this event in 2026, from World Athletics' Asian toplist or the athlete's own World Athletics profile. An athlete with no 2026 mark is judged on their 2025 best, tagged 2025.",
   "championship.projection.markSeason": "Mark from {{year}}",
+  "championship.projection.oldMarks":
+    "This season, plus {{percent}}% of a better mark from {{year}}",
   "championship.projection.colPoints": "Points",
   "championship.projection.pointsHint":
     "World Athletics points for the best mark shown. More points means a better mark. This column is an order, not a forecast.",
@@ -108,11 +110,13 @@ export const en: Record<string, string> = {
   "asianGames.how.field":
     "The field is the organisers' official entry list, so nobody here is a guess.",
   "asianGames.how.model":
-    "Every event is called by one model, which compares each athlete with the others entered. This season counts most: the average of their five best marks, their form over the last six weeks, their podiums at major meetings such as the Diamond League, and their record against the strongest entrants in finals they have shared. Their career best, last season and age count too, so an athlete with only one or two outings this year is also judged on their record.",
+    "Every event is called by one model, which compares each athlete with the others entered. This season counts in full and counts most: the average of their five best marks, their form over the last six weeks, their podiums at major meetings such as the Diamond League, and their record against the strongest entrants in finals they have shared. An older mark counts only where it still beats what they have done this year, counts for less the older it is, and never counts for enough to put them ahead of someone faster this season.",
   "asianGames.how.test":
     "We tested it on {{finals}} past championship finals from {{from}} to {{to}}. It picked {{model}}% of the medallists, and simply ranking by World Athletics points picked {{points}}%: about the same, not better. On the {{asiaFinals}} Asian finals it picked {{asiaModel}}%, against {{asiaPoints}}% for points.",
   "asianGames.how.testHeld":
     "We tested it on the {{finals}} championship finals of {{from}} and {{to}}, kept aside while it was built, each year called only from the years before. It named {{model}}% of the medallists, against {{previous}}% for the model it replaced and {{points}}% for a ranking by World Athletics points. On the {{asiaFinals}} Asian finals it named {{asiaModel}}%, against {{asiaPrevious}}% for the old model, though a ranking by points named {{asiaPoints}}% there.",
+  "asianGames.how.testOldMarks":
+    "We tried {{versions}} ways of counting old marks on the {{finals}} championship finals from {{from}} to {{to}}, calling each season only from the seasons before it, and kept the most accurate one that follows that rule. It named {{model}}% of the medallists, against {{previous}}% for the model it replaces, which let an old mark outweigh this season, and {{points}}% for a ranking by World Athletics points. On the {{asiaFinals}} Asian finals it named {{asiaModel}}%, against {{asiaPoints}}% for points. Those same seasons were used to choose it, so the Asian Games will be its first real test.",
   "asianGames.how.testAllSeasons":
     "We tested {{versions}} versions of the model on the {{finals}} championship finals from {{from}} to {{to}}, calling each season only from the seasons before it, and kept the one that named the most medallists: {{model}}%, against {{points}}% for a ranking by World Athletics points. On the {{asiaFinals}} Asian finals it named {{asiaModel}}%, against {{asiaPoints}}% for points. Those same seasons were used to choose it, so the Asian Games will be its first real test.",
   "asianGames.field.pending":
@@ -403,7 +407,7 @@ export const en: Record<string, string> = {
   "rankings.subtitle.pointsOnly":
     "Ordered by World Athletics points, the score of each athlete's season best. This event has no model rating: it is not on the Diamond League programme, so we hold no past results to rate it on.",
   "rankings.subtitle.field":
-    "Ordered by the field model's podium chance: if these 20 met in one final, how likely each is to finish in the top three. It judges this season first, from the average of each athlete's five best marks, their recent form, their podiums at major meetings and their record against the strongest, and also reads their career best, last season and age. On championship finals it had not seen, it named more medallists than a ranking by points.",
+    "Ordered by the field model's podium chance: if these 20 met in one final, how likely each is to finish in the top three. It judges this season first, from the average of each athlete's five best marks, their recent form, their podiums at major meetings and their record against the strongest. An older mark counts only where it still beats their season, and for less the older it is. Called one season at a time across every championship final from 2012 to 2026, it named more medallists than a ranking by points, and those same seasons chose it.",
   "rankings.toggle.label": "Ranking method",
   "rankings.toggle.model": "Model rating",
   "rankings.toggle.chance": "Podium chance",
@@ -910,7 +914,7 @@ export const en: Record<string, string> = {
   "disc.top.disagreeSubtitleModel":
     "The same {{n}} athletes, now ordered by the field model's podium chance instead of their season score. Where an athlete jumps up or down the list, the two measures disagree about them.",
   "disc.top.disagreeNote":
-    "Ordered by World Athletics score. The percentage is the field model's chance of a top-three finish if the world's top 20 met in one final, not a chance of winning. This event is not on the Diamond League programme, so it has no Diamond League model rating. On championship finals it had not seen, the field model named more medallists than a ranking by points.",
+    "Ordered by World Athletics score. The percentage is the field model's chance of a top-three finish if the world's top 20 met in one final, not a chance of winning. This event is not on the Diamond League programme, so it has no Diamond League model rating. The field model judges this season first, and an older mark counts for less the older it is; across every championship final from 2012 to 2026 it named more medallists than a ranking by points.",
 
   "fa.vsThisField": "vs. this field",
 
@@ -941,6 +945,11 @@ export const en: Record<string, string> = {
     "The model's {{rank}} pick of {{n}} ranked entrants, with a {{chance}}% chance of a podium.",
   "ath.champ.modelWin":
     "The model's {{rank}} pick of {{n}} ranked entrants, with a {{chance}}% chance of a podium and a {{win}}% chance of winning.",
+  "ath.champ.oldMarks":
+    "Called on this season's marks, plus {{percent}}% of a better mark from {{year}}.",
+  "ath.champ.seasonOnly":
+    "Called on this season's marks alone: nothing older of theirs stands above them.",
+  "ath.champ.seasonOnlyPb": "Called on this season's marks alone, led by a personal best.",
   "ath.champ.link": "See the call for every event",
   "ath.seasonBest2026": "2026 season best",
   "ath.seasonBestIn": "{{year}} season best",

@@ -35,6 +35,18 @@ export function ChampionshipCallPanel({ call }: { call: ChampionshipCall }) {
   return (
     <Panel title={t(call.labelKey)} subtitle={t("ath.champ.subtitle")} className="mt-6">
       <p className="max-w-2xl text-[14px] leading-relaxed text-foreground">{sentence}</p>
+      {/* How their old marks counted, in the model's own terms: the reader can
+          see that a big mark from years ago did not decide this. */}
+      {call.oldMarks && call.method !== "points" && call.rank !== null ? (
+        <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-muted-foreground">
+          {call.oldMarks.fromSeason
+            ? t("ath.champ.oldMarks", {
+                year: call.oldMarks.fromSeason,
+                percent: call.oldMarks.percent,
+              })
+            : t(call.oldMarks.personalBest ? "ath.champ.seasonOnlyPb" : "ath.champ.seasonOnly")}
+        </p>
+      ) : null}
       <Link
         to="/championship"
         className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-terracotta/40 px-3.5 py-1.5 text-[12.5px] font-semibold text-terracotta-strong transition-[transform,background-color,border-color] duration-150 ease-out hover:border-terracotta hover:bg-terracotta/[0.07] active:scale-[0.97]"

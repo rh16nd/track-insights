@@ -64,6 +64,8 @@ export const fr: Record<string, string> = {
   "championship.projection.markHint":
     "La meilleure marque de l’athlète dans cette épreuve en 2026, d’après le bilan asiatique de World Athletics ou son propre profil World Athletics. Un athlète sans marque en 2026 est jugé sur sa meilleure marque de 2025, signalée 2025.",
   "championship.projection.markSeason": "Marque de {{year}}",
+  "championship.projection.oldMarks":
+    "Cette saison, plus {{percent}} % d'une meilleure marque de {{year}}",
   "championship.projection.colPoints": "Points",
   "championship.projection.pointsHint":
     "Les points World Athletics de la meilleure marque affichée. Plus de points signifie une meilleure marque. Cette colonne est un classement, pas un pronostic.",
@@ -108,9 +110,11 @@ export const fr: Record<string, string> = {
   "asianGames.how.field":
     "Le plateau est la liste officielle des inscrits, publiée par les organisateurs : personne n’y figure au hasard.",
   "asianGames.how.model":
-    "Toutes les épreuves sont pronostiquées par un seul modèle, qui compare chaque athlète aux autres engagés. La saison en cours compte le plus : la moyenne de ses cinq meilleures marques, sa forme sur les six dernières semaines, ses podiums dans les grands meetings comme la Diamond League et son bilan face aux engagés les plus forts dans les finales qu’ils ont disputées ensemble. Son record personnel, sa saison passée et son âge comptent aussi : un athlète qui n’a disputé qu’une ou deux compétitions cette année est également jugé sur son parcours.",
+    "Toutes les épreuves sont pronostiquées par un seul modèle, qui compare chaque athlète aux autres engagés. La saison en cours compte en entier, et c’est elle qui pèse le plus : la moyenne de ses cinq meilleures marques, sa forme sur les six dernières semaines, ses podiums dans les grands meetings comme la Diamond League et son bilan face aux engagés les plus forts dans les finales qu’ils ont disputées ensemble. Une marque plus ancienne ne compte que si elle dépasse encore ce qu’il a fait cette année, compte de moins en moins avec les années, et jamais assez pour le placer devant un athlète plus rapide cette saison.",
   "asianGames.how.testHeld":
     "Nous l’avons testé sur les {{finals}} finales de championnats de {{from}} et {{to}}, mises de côté pendant sa construction, chaque année pronostiquée uniquement à partir des années précédentes. Il a désigné {{model}} % des médaillés, contre {{previous}} % pour le modèle qu’il remplace et {{points}} % pour un classement aux points World Athletics. Sur les {{asiaFinals}} finales asiatiques, il en a désigné {{asiaModel}} %, contre {{asiaPrevious}} % pour l’ancien modèle, mais un classement aux points en a désigné {{asiaPoints}} %.",
+  "asianGames.how.testOldMarks":
+    "Nous avons essayé {{versions}} façons de compter les marques anciennes sur les {{finals}} finales de championnat de {{from}} à {{to}}, en pronostiquant chaque saison uniquement à partir des saisons précédentes, et gardé la plus juste qui respecte cette règle. Elle a désigné {{model}} % des médaillés, contre {{previous}} % pour le modèle qu’elle remplace, qui laissait une vieille marque peser plus que la saison en cours, et {{points}} % pour un classement aux points World Athletics. Sur les {{asiaFinals}} finales asiatiques, elle en a désigné {{asiaModel}} %, contre {{asiaPoints}} % pour les points. Ces mêmes saisons ont servi à la choisir : les Jeux asiatiques seront son premier vrai test.",
   "asianGames.how.testAllSeasons":
     "Nous avons testé {{versions}} versions du modèle sur les {{finals}} finales de championnat de {{from}} à {{to}}, en pronostiquant chaque saison uniquement à partir des saisons précédentes, et gardé celle qui a désigné le plus de médaillés : {{model}} %, contre {{points}} % pour un classement aux points World Athletics. Sur les {{asiaFinals}} finales asiatiques, elle en a désigné {{asiaModel}} %, contre {{asiaPoints}} % pour les points. Ces mêmes saisons ont servi à la choisir : les Jeux asiatiques seront son premier vrai test.",
   "asianGames.how.test":
@@ -404,7 +408,7 @@ export const fr: Record<string, string> = {
   "rankings.subtitle.pointsOnly":
     "Classé selon les points World Athletics, le score de la meilleure performance de la saison. Cette épreuve n’a pas d’évaluation du modèle : elle ne figure pas au programme de la Diamond League, et nous n’avons donc aucun résultat passé sur lequel l’évaluer.",
   "rankings.subtitle.field":
-    "Classé selon la chance de podium donnée par le modèle de finale : si ces 20 athlètes disputaient une même finale, la probabilité pour chacun de finir dans les trois premiers. Il juge d’abord la saison en cours, à partir de la moyenne des cinq meilleures marques de chaque athlète, de sa forme récente, de ses podiums dans les grands meetings et de son bilan face aux plus forts, et tient compte aussi de son record personnel, de sa saison passée et de son âge. Sur des finales de championnat qu’il n’avait jamais vues, il a désigné plus de médaillés qu’un classement aux points.",
+    "Classé selon la chance de podium donnée par le modèle de finale : si ces 20 athlètes disputaient une même finale, la probabilité pour chacun de finir dans les trois premiers. Il juge d’abord la saison en cours, à partir de la moyenne des cinq meilleures marques de chaque athlète, de sa forme récente, de ses podiums dans les grands meetings et de son bilan face aux plus forts. Une marque plus ancienne ne compte que si elle dépasse encore sa saison, et de moins en moins avec les années. Pronostiquées une saison après l’autre, sur toutes les finales de championnat de 2012 à 2026, il a désigné plus de médaillés qu’un classement aux points ; ces mêmes saisons ont servi à le choisir.",
   "rankings.toggle.label": "Méthode de classement",
   "rankings.toggle.model": "Éval. du modèle",
   "rankings.toggle.chance": "Chance de podium",
@@ -918,7 +922,7 @@ export const fr: Record<string, string> = {
   "disc.top.disagreeSubtitleModel":
     "Les mêmes {{n}} athlètes, classés cette fois selon la chance de podium du modèle de finale plutôt que selon leur score de la saison. Un athlète qui monte ou descend nettement est un athlète sur lequel les deux mesures ne s’accordent pas.",
   "disc.top.disagreeNote":
-    "Classé par score World Athletics. Le pourcentage est la chance, selon le modèle de finale, que cet athlète finisse dans le top trois si les 20 meilleurs mondiaux disputaient une même finale, pas une chance de victoire. Cette épreuve ne figure pas au programme de la Diamond League et n’a donc pas d’évaluation du modèle de la Diamond League. Sur des finales de championnat qu’il n’avait jamais vues, le modèle de finale a désigné plus de médaillés qu’un classement aux points.",
+    "Classé par score World Athletics. Le pourcentage est la chance, selon le modèle de finale, que cet athlète finisse dans le top trois si les 20 meilleurs mondiaux disputaient une même finale, pas une chance de victoire. Cette épreuve ne figure pas au programme de la Diamond League et n’a donc pas d’évaluation du modèle de la Diamond League. Le modèle de finale juge d’abord la saison en cours, et une marque plus ancienne compte de moins en moins avec les années ; sur toutes les finales de championnat de 2012 à 2026, il a désigné plus de médaillés qu’un classement aux points.",
 
   "fa.vsThisField": "face à ce plateau",
 
@@ -949,6 +953,12 @@ export const fr: Record<string, string> = {
     "{{rank}} choix du modèle sur {{n}} engagés classés, avec {{chance}} % de chances de podium.",
   "ath.champ.modelWin":
     "{{rank}} choix du modèle sur {{n}} engagés classés, avec {{chance}} % de chances de podium et {{win}} % de chances de victoire.",
+  "ath.champ.oldMarks":
+    "Jugé sur ses marques de cette saison, plus {{percent}} % d'une meilleure marque de {{year}}.",
+  "ath.champ.seasonOnly":
+    "Jugé uniquement sur ses marques de cette saison : rien de plus ancien ne les dépasse.",
+  "ath.champ.seasonOnlyPb":
+    "Jugé uniquement sur ses marques de cette saison, avec un record personnel.",
   "ath.champ.link": "Voir le pronostic de chaque épreuve",
   "ath.seasonBest2026": "Meilleure perf. 2026",
   "ath.seasonBestIn": "Meilleure perf. {{year}}",

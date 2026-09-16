@@ -46,11 +46,13 @@ export function AsianGamesBody({ ev, lang, t }: { ev: ChampionshipEvent; lang: L
               ...(test
                 ? [
                     t(
-                      test.method === "allSeasons"
-                        ? "asianGames.how.testAllSeasons"
-                        : test.previous != null
-                          ? "asianGames.how.testHeld"
-                          : "asianGames.how.test",
+                      test.method === "oldMarks"
+                        ? "asianGames.how.testOldMarks"
+                        : test.method === "allSeasons"
+                          ? "asianGames.how.testAllSeasons"
+                          : test.previous != null
+                            ? "asianGames.how.testHeld"
+                            : "asianGames.how.test",
                       {
                         versions: test.versions ?? "",
                         finals: pct(test.finals),

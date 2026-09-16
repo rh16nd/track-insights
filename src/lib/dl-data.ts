@@ -939,6 +939,9 @@ export type UltimateProjection = {
      * 5000m and 10,000m everyone takes the better of the two. Null for a mark
      * from this season. */
     markSeason?: number | null;
+    /** How the athlete's older marks counted. Absent on a call made by a model
+     * that does not read old marks that way, such as the frozen Ultimate. */
+    oldMarks?: OldMarksReason | null;
     /** False for an athlete on no world toplist, whom the site has no page
      * for; the row then links to `profileUrl` on World Athletics instead. */
     hasPage?: boolean;
@@ -1035,6 +1038,23 @@ export type ChampionshipCall = {
   /** The mark the call read, and its season when that is not this one. */
   mark?: string | null;
   markSeason?: number | null;
+  /** How the athlete's older marks counted, where the model reads them that way. */
+  oldMarks?: OldMarksReason | null;
+};
+
+/** How an athlete's older marks counted, under the rule the user set on
+ * 2026-09-16: this season counts in full, and an older best only where it still
+ * stands above it, faded by its age and capped so it cannot carry them past
+ * someone ahead of them this season.
+ *
+ * `fromSeason` is the season the mark that counted came from, null for an
+ * athlete read on this season alone. `percent` is the share of the distance
+ * between that mark and this season's level that actually counted, after the
+ * cap, so the page never claims more than the model used. */
+export type OldMarksReason = {
+  personalBest: boolean;
+  fromSeason: number | null;
+  percent: number;
 };
 
 /** Name, place, dates and theme, from /api/championship/summary. */
@@ -1126,8 +1146,11 @@ export type ChampionshipEvent = Partial<UltimateEvent> & {
     cutoff?: string;
     backtest?: {
       /** "allSeasons": the version field_model.py --all-seasons kept, tested on
-       * every past season against `versions` - 1 others. Absent for older tests. */
-      method?: "allSeasons";
+       * every past season against `versions` - 1 others. "oldMarks": the
+       * setting field_model.py --old-marks kept, the most accurate of
+       * `versions` that follow the user's rule for old marks. Absent for older
+       * tests. */
+      method?: "allSeasons" | "oldMarks";
       versions?: number;
       finals: number;
       model: number;
