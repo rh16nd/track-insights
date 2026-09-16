@@ -575,14 +575,23 @@ export const fr: Record<string, string> = {
     "Pour chaque épreuve qu’il pronostique, le modèle donne à chaque athlète sa chance de finir **dans le top trois**. Lors d’un championnat, il donne aussi sa chance de **gagner**, qui montre si un favori se détache ou s’il fait partie de plusieurs noms proches.",
   "howItWorks.s1.p2":
     "Le top trois passe en premier, et c’est voulu. Le jour J, l’athlète le plus rapide peut faire un faux départ, se faire enfermer ou être repris sur la ligne, si bien que le vainqueur exact se joue souvent entre trois ou quatre noms. Savoir qui monte sur le podium est une question plus juste, et que l’on peut vérifier face au résultat ensuite. La chance de victoire dit à quel point la course est ouverte, pas qui va gagner.",
-  "howItWorks.s2.title": "Comment le modèle apprend",
+  "howItWorks.champ.title": "Comment un championnat est pronostiqué",
+  "howItWorks.champ.p1":
+    "Un championnat comme les Jeux asiatiques a son propre modèle, conçu pour une seule question : parmi les athlètes réellement engagés, qui finit dans les trois premiers ? Il compare chaque athlète **uniquement aux autres engagés de ce plateau**.",
+  "howItWorks.champ.p2":
+    "**La saison en cours compte le plus, et en entier** : la moyenne des cinq meilleures marques de l’athlète, sa forme sur les six dernières semaines, ses podiums dans les grands meetings et son bilan face aux engagés les plus forts dans les finales disputées ensemble. **Une marque plus ancienne ne compte que si elle dépasse encore la saison en cours.** Elle compte de moins en moins avec les années, et jamais assez pour placer un athlète devant un autre plus rapide cette saison : une saison record n’est jamais effacée par une grosse marque d’il y a deux ans.",
+  "howItWorks.champ.test":
+    "Pour le tester, nous avons essayé **{{versions}} façons de compter les marques anciennes** sur {{finals}} finales de championnat de {{from}} à {{to}}, en pronostiquant chaque saison uniquement à partir des saisons précédentes, et gardé la plus juste qui respecte cette règle. Il a désigné **{{model}} % des médaillés**, contre {{points}} % pour un classement aux points World Athletics. Ces mêmes saisons ont servi à le choisir : le championnat qu’il pronostique aujourd’hui est donc son premier vrai test.",
+  "howItWorks.champ.p3":
+    "Le même modèle donne les chances de podium du lancer du marteau et du 10 000 m sur les pages des épreuves de piste et de concours, puisqu’aucune de ces deux épreuves ne figure au programme de la Diamond League.",
+  "howItWorks.s2.title": "Comment apprend le modèle de la Diamond League",
   "howItWorks.s2.p1":
     "Le modèle apprend des podiums réels de chaque finale de Diamond League, des Jeux olympiques, des Championnats du monde, des Championnats d’Europe et de la Coupe continentale, de **2018 à 2025** (2020 a été annulée). Ce sont de vrais résultats, tirés directement de World Athletics, pas l’avis de quiconque sur qui aurait dû gagner. Chaque athlète n’est jugé que sur ce qu’il avait accompli **avant que cette finale ait lieu** : une finale de juillet n’est jamais évaluée avec une course d’août.",
   "howItWorks.s2.p2":
     "Pour chaque athlète en lice, le modèle calcule **18 signaux** à partir de sa vraie saison : sa meilleure marque de l’année et son record en carrière, sa régularité d’un meeting à l’autre, la tendance de sa forme, sa fréquence de compétition, l’ancienneté de sa meilleure marque, son retard sur le meilleur du plateau, et son bilan **en confrontation directe avec ce plateau précis**. Une **forêt aléatoire**, un modèle qui pèse de nombreux signaux ensemble, transforme le tout en un seul chiffre : la chance de podium. Elle les pèse ensemble parce que les signaux s’influencent les uns les autres. Une superbe meilleure performance compte moins, par exemple, si l’athlète n’a presque pas concouru de l’année.",
   "howItWorks.s2.p3":
     "Et il est testé honnêtement, par **validation glissante** : le modèle n’est entraîné que sur des saisons *antérieures* à l’année sur laquelle il est évalué, la précision ci-dessous provient donc entièrement de finales qu’il n’avait jamais vues. C’est toute la différence entre une vraie prévision et un modèle qui a simplement appris les réponses par cœur.",
-  "howItWorks.s3.title": "Sa précision",
+  "howItWorks.s3.title": "La précision du modèle de la Diamond League",
   "howItWorks.s3.basisFallback":
     "Taux de réussite du podium parmi les athlètes qui atteignent réellement la finale",
   "howItWorks.s3.toplistCaption":

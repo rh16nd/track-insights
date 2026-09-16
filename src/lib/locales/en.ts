@@ -572,14 +572,23 @@ export const en: Record<string, string> = {
     "For every event it calls, the model gives each athlete a chance of finishing **in the top three**. At a championship it also gives a chance of **winning**, which shows whether a favourite is clear of the rest or one of several close names.",
   "howItWorks.s1.p2":
     "The top three comes first on purpose. On the day, the fastest athlete can false-start, get blocked in, or be caught on the line, so the exact winner is often close between three or four names. Who makes the podium is a fairer question, and one you can check against the result afterwards. The win chance says how open that race is, not who will win.",
-  "howItWorks.s2.title": "How the model learns",
+  "howItWorks.champ.title": "How a championship is called",
+  "howItWorks.champ.p1":
+    "A championship such as the Asian Games has its own model, made for one question: of the athletes actually entered, who finishes in the top three? It compares each athlete **only with the others in that field**.",
+  "howItWorks.champ.p2":
+    "**This season counts most, and in full**: the average of an athlete's five best marks, their form over the last six weeks, their podiums at major meetings, and their record against the strongest entrants in finals they have shared. **An older mark counts only where it still beats this season.** It counts for less the older it is, and never for enough to put an athlete ahead of someone faster this season, so a record-breaking season is never outweighed by a big mark from two years ago.",
+  "howItWorks.champ.test":
+    "To test it, we tried **{{versions}} ways of counting old marks** on {{finals}} championship finals from {{from}} to {{to}}, calling each season only from the seasons before it, and kept the most accurate one that follows that rule. It named **{{model}}% of the medallists**, against {{points}}% for a ranking by World Athletics points. Those same seasons were used to choose it, so the championship it is calling now is its first real test.",
+  "howItWorks.champ.p3":
+    "The same model gives the podium chances for the hammer throw and the 10,000m on the Track and Field pages, since neither event is on the Diamond League programme.",
+  "howItWorks.s2.title": "How the Diamond League model learns",
   "howItWorks.s2.p1":
     "The model learns from the real podiums of every Diamond League Final, Olympic Games, World Championships, European Championships and Continental Cup from **2018 to 2025** (2020 was cancelled). These are actual results, taken straight from World Athletics, not anyone's opinion of who should have won. Each athlete is judged only on what they had done **before that final was run**, so a July final is never scored using an August race.",
   "howItWorks.s2.p2":
     "For each athlete in the running, the model works out **18 signals** from their real season: their best mark this year and their career best, how steady they've been from meeting to meeting, which way their form is heading, how often they've raced, how long ago they set that best mark, how far behind the fastest in the field they sit, and their record **head-to-head against this exact field**. A **random forest**, a model that weighs many signals together, turns all of it into one number: the chance of a podium. It weighs them together because the signals affect each other. A superb season best counts for less, for example, if the athlete has barely raced all year.",
   "howItWorks.s2.p3":
     "And it's tested honestly, using **walk-forward validation**: the model is only ever trained on seasons *before* the year it's scored on, so the accuracy below comes entirely from Finals it had never seen. That's the difference between a real forecast and a model that has simply memorised the answers.",
-  "howItWorks.s3.title": "How accurate it is",
+  "howItWorks.s3.title": "How accurate the Diamond League model is",
   "howItWorks.s3.basisFallback": "Podium hit rate among the athletes who actually reach the Final",
   "howItWorks.s3.toplistCaption":
     "A much harder test: picking the 3 medallists out of a discipline's full ranking list of about 100 athletes, which the site never actually does.",

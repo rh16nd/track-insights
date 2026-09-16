@@ -200,12 +200,18 @@ function Landing() {
   // were being read 500 deep instead of 100, which had the site quoting
   // 4,000 when the uniform figure is 3,200.
   const stats = useStats();
-  const accuracy = state.status === "ok" ? state.data.modelAccuracy : null;
+  const dlAccuracy = state.status === "ok" ? state.data.modelAccuracy : null;
   // The badge counts down to whatever championship is next, not to a Diamond
   // League Final that has already been run. It reads from the event payload,
   // so when the next championship takes over it re-points itself.
   const championshipState = useChampionshipSummary();
   const ev = championshipState.status === "ok" ? championshipState.data : undefined;
+  // The headline figure belongs to the model that made the call this page
+  // counts down to: the championship's own test when its call carries one (the
+  // Asian Games, called by the field model), the Diamond League model's
+  // otherwise. The other model's number beside this call would claim a test the
+  // call never had.
+  const accuracy = ev?.callTest?.model ?? dlAccuracy;
   const countdownLabel = (() => {
     if (!ev) return t("landing.badgeBare");
     const now = Date.now();

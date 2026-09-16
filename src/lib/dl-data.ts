@@ -1072,6 +1072,18 @@ export type ChampionshipSummary = {
   startDate: string;
   endDate: string;
   eventCount: number;
+  /** How the model that made this championship's call was tested, when its
+   * saved call carries a test; null otherwise, as for the Ultimate's frozen
+   * call. Absent from summaries built before 2026-09-16. */
+  callTest?: {
+    method: string | null;
+    model: number;
+    points: number | null;
+    finals: number | null;
+    versions: number | null;
+    from: number | null;
+    to: number | null;
+  } | null;
 };
 
 /** One entrant as the organisers' entry list has them, with their 2026 season

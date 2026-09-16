@@ -4,6 +4,7 @@ import { pageHead } from "@/lib/seo";
 import { Shell } from "@/components/dl/shell";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useStats } from "@/hooks/useStats";
+import { useChampionshipSummary } from "@/hooks/useChampionship";
 import { WaSourceLink } from "@/components/dl/wa-link";
 import { useT } from "@/lib/i18n";
 import { Rich } from "@/lib/rich-text";
@@ -47,6 +48,8 @@ function HowItWorksPage() {
   usePageTitle(t("nav.howItWorks"));
   const preds = usePredictions();
   const stats = useStats();
+  const champ = useChampionshipSummary();
+  const test = champ.status === "ok" ? (champ.data.callTest ?? null) : null;
 
   const accuracy = preds.status === "ok" ? preds.data.modelAccuracy : null;
   const basis = preds.status === "ok" ? preds.data.modelAccuracyBasis : null;
@@ -72,6 +75,40 @@ function HowItWorksPage() {
               </p>
               <p>
                 <Rich text={t("howItWorks.s1.p2")} />
+              </p>
+            </div>
+          </Section>
+
+          {/* A championship is called by its own model, not the Diamond League
+              one the next two sections describe, and during a championship its
+              call is what readers came for. The test figures come from the
+              championship's saved call, so they appear once that call carries a
+              test; the Ultimate's frozen call does not. Years are not run
+              through num(), which would print 2012 as "2,012". */}
+          <Section title={t("howItWorks.champ.title")}>
+            <div className="mt-3.5 flex flex-col gap-3.5 text-[15px] leading-relaxed text-foreground">
+              <p>
+                <Rich text={t("howItWorks.champ.p1")} />
+              </p>
+              <p>
+                <Rich text={t("howItWorks.champ.p2")} />
+              </p>
+              {test && (
+                <p>
+                  <Rich
+                    text={t("howItWorks.champ.test", {
+                      versions: num(test.versions),
+                      finals: num(test.finals),
+                      from: test.from ?? "—",
+                      to: test.to ?? "—",
+                      model: num(test.model),
+                      points: num(test.points),
+                    })}
+                  />
+                </p>
+              )}
+              <p>
+                <Rich text={t("howItWorks.champ.p3")} />
               </p>
             </div>
           </Section>
