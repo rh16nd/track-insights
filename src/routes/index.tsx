@@ -10,14 +10,13 @@ import { useInView } from "@/hooks/useInView";
 import { useCountUp } from "@/hooks/useCountUp";
 import { PodiumCallMark } from "@/components/dl/logo";
 import { AthleteAvatar, ProbabilityBar, WatchBadge } from "@/components/dl/shell";
-import { Podium } from "@/components/dl/podium";
+import { Podium, type PodiumPick } from "@/components/dl/podium";
 import { WaSourceLink } from "@/components/dl/wa-link";
 import { useT, type TFunc } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/dl/language-switcher";
 import { FeedbackLink } from "@/components/dl/feedback-modal";
 import { IntroVideo } from "@/components/dl/intro-video";
-import { discName } from "@/lib/dl-data";
-import type { TopWinner } from "@/lib/dl-data";
+import { chanceLabel, discName } from "@/lib/dl-data";
 import { TrackCircuit } from "@/components/dl/track-circuit";
 import { localeTag } from "@/lib/dates";
 import { usePageTitle } from "@/lib/use-page-title";
@@ -26,7 +25,7 @@ export const Route = createFileRoute("/")({
   head: () =>
     pageHead(
       "The world's best, read by the model",
-      "Real-data athletics rankings across 36 disciplines and podium predictions for 32, trained on results scraped from World Athletics. Plus a call on every event at the next major championship.",
+      "Real-data athletics rankings across 36 disciplines and the model's rating of the world's top 20 in each, from results scraped from World Athletics. Plus a call on every event at the next major championship.",
       "/",
     ),
   component: Landing,
@@ -226,9 +225,9 @@ function Landing() {
     });
   })();
   // The landing showcases the model's read on the WORLD now, not the finished
-  // Diamond League field: each discipline's top-rated athlete, strongest first.
-  // Shaped as TopWinner so the podium and the dashboard preview below render it
-  // unchanged.
+  // Diamond League field: each discipline's highest model rating, from the model
+  // that calls the championships, highest first, as on the dashboard. A rating
+  // and never a podium chance, which is named only for a real competition.
   const rankingsState = useWorldRankings();
   const rankings = rankingsState.status === "ok" ? rankingsState.data : undefined;
   // Every event with a page, counted the way the dashboard counts them: the
@@ -239,12 +238,12 @@ function Landing() {
     : state.status === "ok"
       ? state.data.trackDisciplines.length + state.data.fieldDisciplines.length
       : 32;
-  const bestByModel = useMemo<TopWinner[]>(() => {
+  const bestByModel = useMemo<PodiumPick[]>(() => {
     if (!rankings) return [];
-    const rows: TopWinner[] = [];
+    const rows: PodiumPick[] = [];
     for (const [key, r] of Object.entries(rankings)) {
       const top = r.model[0];
-      if (!top || top.ratingPct === null) continue;
+      if (!top || top.ratingPct == null) continue;
       rows.push({
         rank: 0,
         name: top.name,
@@ -268,7 +267,10 @@ function Landing() {
   const ticker = bestByModel;
   const tickerRange =
     ticker.length > 0
-      ? { lo: Math.min(...ticker.map((c) => c.prob)), hi: Math.max(...ticker.map((c) => c.prob)) }
+      ? {
+          lo: chanceLabel(lang, Math.min(...ticker.map((c) => c.prob))),
+          hi: chanceLabel(lang, Math.max(...ticker.map((c) => c.prob))),
+        }
       : null;
   const demoInView = useInView<HTMLElement>();
   const marksScored =
@@ -543,7 +545,7 @@ function Landing() {
                       className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
                     >
                       <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
-                        {c.prob}%
+                        {chanceLabel(lang, c.prob)}%
                       </span>
                       {c.name}
                       <span className="text-[var(--landing-muted)]">
@@ -558,7 +560,7 @@ function Landing() {
                       className="label-caps flex shrink-0 items-center gap-2 rounded-full border border-[var(--landing-border)] bg-[var(--landing-card)] px-4 py-2 text-[var(--landing-fg)]"
                     >
                       <span className="nums font-semibold text-[var(--landing-accent-text-gold)]">
-                        {c.prob}%
+                        {chanceLabel(lang, c.prob)}%
                       </span>
                       {c.name}
                       <span className="text-[var(--landing-muted)]">
@@ -693,7 +695,7 @@ function Landing() {
                     {t("landing.modelRating")}
                   </span>
                   <span className="nums text-[18px] font-semibold text-[var(--landing-accent-text)]">
-                    {topPick.prob}%
+                    {chanceLabel(lang, topPick.prob)}%
                   </span>
                 </div>
                 <div className="mt-2 h-1.5 w-full rounded-full bg-[var(--landing-border)]">
@@ -842,7 +844,7 @@ function Landing() {
                         </div>
                         <div className="w-24">
                           <div className="nums text-right text-[12px] font-semibold text-[var(--landing-accent-text)]">
-                            {w.prob}%
+                            {chanceLabel(lang, w.prob)}%
                           </div>
                           <ProbabilityBar
                             value={w.prob}

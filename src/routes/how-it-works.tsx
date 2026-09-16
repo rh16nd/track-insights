@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { pageHead } from "@/lib/seo";
 import { Shell } from "@/components/dl/shell";
-import { usePredictions } from "@/hooks/usePredictions";
 import { useStats } from "@/hooks/useStats";
 import { useChampionshipSummary } from "@/hooks/useChampionship";
 import { WaSourceLink } from "@/components/dl/wa-link";
@@ -15,7 +14,7 @@ export const Route = createFileRoute("/how-it-works")({
   head: () =>
     pageHead(
       "How it works",
-      "How PodiumCall predicts the podium: what the model learns, how accurate it is, and where the data comes from.",
+      "How PodiumCall predicts the podium: what its numbers mean, what the model looks at, how well it works, and where the data comes from.",
       "/how-it-works",
     ),
   component: HowItWorksPage,
@@ -28,7 +27,12 @@ export const Route = createFileRoute("/how-it-works")({
  * contrast — so "no boxes" means one continuous sheet, not text on the canvas.
  * Every number is read live from the same API the rest of the site uses, so
  * this page can't drift from the model; the prose renders before the API
- * answers. */
+ * answers.
+ *
+ * Since 2026-09-17 one model makes every number on the site, so the page
+ * explains that one model around a reader's questions (what the numbers mean,
+ * what it looks at, how well it works, what it can't know) instead of one
+ * section per model. */
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="border-t border-border py-8 first:border-t-0 sm:py-11">
@@ -46,18 +50,19 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 function HowItWorksPage() {
   const { t, lang } = useT();
   usePageTitle(t("nav.howItWorks"));
-  const preds = usePredictions();
   const stats = useStats();
   const champ = useChampionshipSummary();
   const test = champ.status === "ok" ? (champ.data.callTest ?? null) : null;
-
-  const accuracy = preds.status === "ok" ? preds.data.modelAccuracy : null;
-  const basis = preds.status === "ok" ? preds.data.modelAccuracyBasis : null;
-  const toplist = preds.status === "ok" ? preds.data.modelAccuracyToplist : null;
   const corpus = stats.status === "ok" ? stats.data.corpus : null;
+  const comparison = stats.status === "ok" ? (stats.data.modelComparison ?? null) : null;
 
   const num = (n: number | null | undefined) =>
     n == null ? "—" : n.toLocaleString(localeTag(lang));
+  // Percentages keep their decimal, so 62.0 does not print as "62" beside 54.8.
+  const pct = (n: number | null | undefined) =>
+    n == null
+      ? "—"
+      : n.toLocaleString(localeTag(lang), { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
   return (
     <Shell
@@ -74,41 +79,10 @@ function HowItWorksPage() {
                 <Rich text={t("howItWorks.s1.p1")} />
               </p>
               <p>
+                <Rich text={t("howItWorks.s1.world")} />
+              </p>
+              <p>
                 <Rich text={t("howItWorks.s1.p2")} />
-              </p>
-            </div>
-          </Section>
-
-          {/* A championship is called by its own model, not the Diamond League
-              one the next two sections describe, and during a championship its
-              call is what readers came for. The test figures come from the
-              championship's saved call, so they appear once that call carries a
-              test; the Ultimate's frozen call does not. Years are not run
-              through num(), which would print 2012 as "2,012". */}
-          <Section title={t("howItWorks.champ.title")}>
-            <div className="mt-3.5 flex flex-col gap-3.5 text-[15px] leading-relaxed text-foreground">
-              <p>
-                <Rich text={t("howItWorks.champ.p1")} />
-              </p>
-              <p>
-                <Rich text={t("howItWorks.champ.p2")} />
-              </p>
-              {test && (
-                <p>
-                  <Rich
-                    text={t("howItWorks.champ.test", {
-                      versions: num(test.versions),
-                      finals: num(test.finals),
-                      from: test.from ?? "—",
-                      to: test.to ?? "—",
-                      model: num(test.model),
-                      points: num(test.points),
-                    })}
-                  />
-                </p>
-              )}
-              <p>
-                <Rich text={t("howItWorks.champ.p3")} />
               </p>
             </div>
           </Section>
@@ -121,50 +95,73 @@ function HowItWorksPage() {
               <p>
                 <Rich text={t("howItWorks.s2.p2")} />
               </p>
-              <p>
-                <Rich text={t("howItWorks.s2.p3")} />
-              </p>
             </div>
           </Section>
 
+          {/* Both figures are read, not typed: the test from the current
+              championship's saved call, the comparison from the head-to-head
+              run's report. Each paragraph appears once its figures exist.
+              Years are not run through num(), which would print 2012 as
+              "2,012". */}
           <Section title={t("howItWorks.s3.title")}>
-            <div className="mt-5 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-              <div>
-                <div className="nums text-[2.5rem] font-bold leading-none text-terracotta-strong">
-                  {accuracy == null ? "—" : `${accuracy}%`}
-                </div>
-                <div className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
-                  {/* `basis` is prose the Python API writes, and it only
-                      writes English. Use its wording when the UI is in the
-                      language it was written in; otherwise use our own
-                      sentence, which says the same thing. Showing an English
-                      caption under a French heading is worse than losing the
-                      season range it carries. */}
-                  {lang === "en"
-                    ? (basis ?? t("howItWorks.s3.basisFallback"))
-                    : t("howItWorks.s3.basisFallback")}
-                </div>
-              </div>
-              <div>
-                <div className="nums text-[2.5rem] font-bold leading-none text-foreground">
-                  {toplist == null ? "—" : `${toplist}%`}
-                </div>
-                <div className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
-                  {t("howItWorks.s3.toplistCaption")}
-                </div>
-              </div>
+            <div className="mt-3.5 flex flex-col gap-3.5 text-[15px] leading-relaxed text-foreground">
+              {test && (
+                <p>
+                  <Rich
+                    text={t("howItWorks.s3.test", {
+                      versions: num(test.versions),
+                      finals: num(test.finals),
+                      from: test.from ?? "—",
+                      to: test.to ?? "—",
+                      model: pct(test.model),
+                      points: pct(test.points),
+                    })}
+                  />
+                </p>
+              )}
+              {comparison && (
+                <p>
+                  <Rich
+                    text={t("howItWorks.s3.compare", {
+                      finals: num(comparison.finals),
+                      from: comparison.from,
+                      to: comparison.to,
+                      model: pct(comparison.model),
+                      previous: pct(comparison.previous),
+                      champModel: pct(comparison.championships.model),
+                      champPrevious: pct(comparison.championships.previous),
+                    })}
+                  />
+                </p>
+              )}
+              {/* What no accuracy figure covers: every final in both tests
+                  is scored on the athletes who reached the start line, so a
+                  withdrawal is invisible to them by construction. */}
+              <p className="text-[14px] text-muted-foreground">{t("howItWorks.s3.withdrawals")}</p>
             </div>
-            <p className="mt-6 text-[14px] leading-relaxed text-muted-foreground">
-              {t("howItWorks.s3.note")}
-            </p>
-            {/* What the figure does NOT cover. Three of the model's projected
-                winners for Budapest are flagged as out or doubtful, and no
-                accuracy number could ever have caught that: both are scored
-                only on athletes who reached a start line, so a withdrawal is
-                invisible to them by construction. */}
-            <p className="mt-3 text-[14px] leading-relaxed text-muted-foreground">
-              {t("howItWorks.s3.withdrawals")}
-            </p>
+          </Section>
+
+          <Section title={t("howItWorks.s5.title")}>
+            <ul className="mt-3.5 flex flex-col gap-3 text-[15px] leading-relaxed text-foreground">
+              <li className="flex gap-3">
+                <span className="mt-[9px] size-1.5 flex-none rounded-full bg-terracotta" />
+                <span>
+                  <Rich text={t("howItWorks.s5.b1")} />
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <span className="mt-[9px] size-1.5 flex-none rounded-full bg-terracotta" />
+                <span>
+                  <Rich text={t("howItWorks.s5.b2")} />
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <span className="mt-[9px] size-1.5 flex-none rounded-full bg-terracotta" />
+                <span>
+                  <Rich text={t("howItWorks.s5.b3")} />
+                </span>
+              </li>
+            </ul>
           </Section>
 
           <Section title={t("howItWorks.s4.title")}>
@@ -200,29 +197,6 @@ function HowItWorksPage() {
                 ))}
               </div>
             )}
-          </Section>
-
-          <Section title={t("howItWorks.s5.title")}>
-            <ul className="mt-3.5 flex flex-col gap-3 text-[15px] leading-relaxed text-foreground">
-              <li className="flex gap-3">
-                <span className="mt-[9px] size-1.5 flex-none rounded-full bg-terracotta" />
-                <span>
-                  <Rich text={t("howItWorks.s5.b1")} />
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <span className="mt-[9px] size-1.5 flex-none rounded-full bg-terracotta" />
-                <span>
-                  <Rich text={t("howItWorks.s5.b2")} />
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <span className="mt-[9px] size-1.5 flex-none rounded-full bg-terracotta" />
-                <span>
-                  <Rich text={t("howItWorks.s5.b3")} />
-                </span>
-              </li>
-            </ul>
           </Section>
 
           {/* Added because the search quietly grew a second thing it can find

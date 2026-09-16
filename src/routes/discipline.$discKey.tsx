@@ -7,10 +7,9 @@ import { Shell, Panel, PanelSkeleton, ErrorPanel, ProbabilityBar } from "@/compo
 import { InfoTip } from "@/components/dl/info-tip";
 import { FieldAnalysisBlock } from "@/components/dl/field-analysis";
 import { TrajectoryOverlayChart } from "@/components/dl/trajectory-overlay-chart";
-import { StorylineCards } from "@/components/dl/storyline-cards";
 import { useDiscipline } from "@/hooks/useDiscipline";
 import type { DepthVerdict, DisciplineReport, FieldScore } from "@/lib/dl-data";
-import { NO_FINAL_DISCIPLINES, chanceLabel, discName, ordinalIn } from "@/lib/dl-data";
+import { chanceLabel, discName, ordinalIn } from "@/lib/dl-data";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/discipline/$discKey")({
@@ -21,37 +20,26 @@ export const Route = createFileRoute("/discipline/$discKey")({
     const label = disciplineLabel(params.discKey);
     return pageHead(
       label,
-      NO_FINAL_DISCIPLINES.has(params.discKey)
-        ? `How level is the ${label} among the world's best this season, or is it one athlete and a gap? Field depth, season form and podium chances.`
-        : `Is the ${label} a contest all the way down, or one athlete and a gap? Field depth, season form and every head-to-head.`,
+      `How level is the ${label} among the world's best this season, or is one athlete clear of the rest? Field depth, season form and the model's ratings.`,
       `/discipline/${params.discKey}`,
     );
   },
   component: DisciplinePage,
 });
 
-/** Why the verdict is not built on the model's probabilities.
+/** Why the verdict is built on World Athletics' score, not the model ratings.
  *
- * The model's target is top-three membership and each athlete is scored
- * independently, so a field's probabilities sum to no fixed total — across
- * the 32 real 2026 fields they run from 31 to 320. A discipline where nobody
- * clears 40% may be wide open or may just be one the model is unsure about,
- * and nothing in the number tells the two apart. WA's score has neither
- * problem: it is scraped, present on every toplist row, and the one figure in
- * this data that compares a shot putter to a 1500m runner. */
+ * Every event's top 20 share the same 300 points of rating, so the ratings say
+ * who leads inside an event but not how far apart an event's athletes are.
+ * WA's score does: it is scraped, present on every toplist row, and the one
+ * figure in this data that compares a shot putter to a 1500m runner. (Until
+ * 2026-09-17 the percentages were the Diamond League model's, which summed to
+ * anything from 31 to 320 a field.) */
 const VERDICT_TONE: Record<DepthVerdict["key"], string> = {
   level: "text-terracotta-strong",
   mixed: "text-foreground",
   topHeavy: "text-gold-strong",
 };
-
-/** The copy key for this page. An event with no Diamond League Final (the
- * hammer and the 10,000m, 2026-09-15) reads its field as the world's top
- * athletes on points, so each sentence that says "finalist" or ranks the event
- * among the finals has its own wording under `disc.top.*`. */
-function copyKey(top: boolean, key: string): string {
-  return top ? key.replace(/^disc\./, "disc.top.") : key;
-}
 
 function DisciplinePage() {
   const { t, lang } = useT();
@@ -60,18 +48,17 @@ function DisciplinePage() {
   // while the page loads -- the same reason the country page reads its theme
   // from the code in the URL.
   usePageTitle(discName(t, discKey, disciplineLabel(discKey)));
+  // Every event reads the world's top athletes on points since 2026-09-17, so
+  // one set of copy serves all 36 pages, including while the data loads.
   const state = useDiscipline(discKey);
   const data = state.status === "ok" ? state.data : undefined;
-  // From the key while loading, so the description is right before the data.
-  const top = data ? data.fieldSource === "toplist" : NO_FINAL_DISCIPLINES.has(discKey);
-  const k = (key: string) => copyKey(top, key);
 
   return (
     <Shell
       title={data ? discName(t, data.discKey, data.disc) : t("disc.titleFallback")}
       eyebrow={
         data?.depth
-          ? t(k("disc.eyebrow"), {
+          ? t("disc.eyebrow", {
               rank: ordinalIn(lang, data.depth.spreadRank),
               of: data.depth.of,
               n: data.depth.fieldSize,
@@ -79,19 +66,20 @@ function DisciplinePage() {
             })
           : t("disc.eyebrowBare")
       }
-      description={t(k("disc.description"))}
+      description={t("disc.description")}
     >
       {state.status === "loading" && <PanelSkeleton title={t("disc.depthSkeleton")} rows={6} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
 
       {data && (
         <>
-          <DepthPanel data={data} top={top} />
+          <DepthPanel data={data} />
 
-          {/* Real per-meet marks and computed storylines, both moved here
-              from the old Projections page. Order follows v0: the field and
-              how level it is, then how they got here, then the matrix as the
-              closing centrepiece. */}
+          {/* Real per-meet marks, moved here from the old Projections page.
+              Order follows v0: the field and how level it is, then how they
+              got here, then the matrix as the closing centrepiece. The
+              storylines went on 2026-09-17: each one read the Diamond League
+              Final's projected field, which these pages no longer show. */}
           {data.trajectories && data.trajectories.length > 0 && (
             <Panel
               title={t("disc.seasonForm", { disc: discName(t, data.discKey, data.disc) })}
@@ -99,16 +87,6 @@ function DisciplinePage() {
               className="mt-6"
             >
               <TrajectoryOverlayChart trajectories={data.trajectories} discKey={data.discKey} />
-            </Panel>
-          )}
-
-          {data.storylines && data.storylines.length > 0 && (
-            <Panel
-              title={t("disc.storylines", { disc: discName(t, data.discKey, data.disc) })}
-              subtitle={t("disc.storylinesSubtitle")}
-              className="mt-6"
-            >
-              <StorylineCards storylines={data.storylines} discKey={data.discKey} />
             </Panel>
           )}
 
@@ -126,10 +104,9 @@ function DisciplinePage() {
   );
 }
 
-function DepthPanel({ data, top }: { data: DisciplineReport; top: boolean }) {
+function DepthPanel({ data }: { data: DisciplineReport }) {
   const { t, lang } = useT();
   const { depth, scores } = data;
-  const k = (key: string) => copyKey(top, key);
 
   if (!depth || scores.length < 2) {
     return (
@@ -150,7 +127,7 @@ function DepthPanel({ data, top }: { data: DisciplineReport; top: boolean }) {
     <>
       <Panel
         title={t("disc.levelTitle")}
-        subtitle={t(k("disc.levelSubtitle"), { of: depth.of, n: size })}
+        subtitle={t("disc.levelSubtitle", { of: depth.of, n: size })}
       >
         <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
           {verdict && (
@@ -162,7 +139,7 @@ function DepthPanel({ data, top }: { data: DisciplineReport; top: boolean }) {
             {verdict && (
               <>
                 {(() => {
-                  const basis = t(k(`disc.verdict.${verdict.key}.basis`), { of: depth.of });
+                  const basis = t(`disc.verdict.${verdict.key}.basis`, { of: depth.of });
                   return basis.charAt(0).toUpperCase() + basis.slice(1);
                 })()}
                 {". "}
@@ -181,15 +158,15 @@ function DepthPanel({ data, top }: { data: DisciplineReport; top: boolean }) {
           <Stat
             label={t("disc.statSpread")}
             value={t("disc.statSpreadValue", { n: depth.spread })}
-            note={t(k("disc.statSpreadNote"), {
+            note={t("disc.statSpreadNote", {
               rank: ordinalIn(lang, depth.spreadRank),
               of: depth.of,
               wider: depth.finalsWider ?? 0,
             })}
-            hint={t(k("disc.statSpreadHint"), { size })}
+            hint={t("disc.statSpreadHint", { size })}
           />
           <Stat
-            label={t(k("disc.statStrongest"))}
+            label={t("disc.statStrongest")}
             value={String(depth.bestScore)}
             note={shortName(depth.bestAthlete)}
           />
@@ -199,31 +176,26 @@ function DepthPanel({ data, top }: { data: DisciplineReport; top: boolean }) {
             note={
               headroom === null
                 ? t("disc.statMedianNoScore")
-                : t(k("disc.statMedianClear"), { n: headroom })
+                : t("disc.statMedianClear", { n: headroom })
             }
-            hint={t(k("disc.statMedianHint"), { size })}
+            hint={t("disc.statMedianHint", { size })}
           />
           <Stat
             label={t("disc.statScored")}
             value={`${depth.scored}/${size}`}
-            note={depth.scored === size ? t(k("disc.statScoredEvery")) : t("disc.statScoredSome")}
-            hint={t(k("disc.statScoredHint"), { size })}
+            note={depth.scored === size ? t("disc.statScoredEvery") : t("disc.statScoredSome")}
+            hint={t("disc.statScoredHint", { size })}
           />
         </dl>
 
-        <ScoreSpread scores={scores} top={top} />
+        <ScoreSpread scores={scores} />
 
         <p className="mt-5 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-          {t(k("disc.whyScore"))}
+          {t("disc.whyScore")}
         </p>
       </Panel>
 
-      <ModelVsPoints
-        scores={scores}
-        discKey={data.discKey}
-        top={top}
-        fieldModel={data.modelKind === "field"}
-      />
+      <ModelVsPoints scores={scores} discKey={data.discKey} />
     </>
   );
 }
@@ -244,21 +216,11 @@ type Ranking = "points" | "model";
  * pages use, deliberately -- a reader who has met it once should not have to
  * learn it again.
  *
- * On the hammer and 10,000m pages the chance is the field model's, shown with
- * >99% and <1% at the ends, and an athlete it gave no chance reads "—". */
-function ModelVsPoints({
-  scores,
-  discKey,
-  top,
-  fieldModel,
-}: {
-  scores: FieldScore[];
-  discKey: string;
-  top: boolean;
-  fieldModel: boolean;
-}) {
+ * The percentage is the championship model's rating, shown with >99% and <1% at
+ * the ends and labelled a rating, never a podium chance, which the site names
+ * only for a real competition. An athlete it gave no rating reads "—". */
+function ModelVsPoints({ scores, discKey }: { scores: FieldScore[]; discKey: string }) {
   const { t, lang } = useT();
-  const k = (key: string) => copyKey(top, key);
   const [by, setBy] = useState<Ranking>("points");
   const ordered = useMemo(
     () =>
@@ -270,8 +232,8 @@ function ModelVsPoints({
 
   return (
     <Panel
-      title={t(k("disc.disagreeTitle"))}
-      subtitle={t(k(by === "points" ? "disc.disagreeSubtitle" : "disc.disagreeSubtitleModel"), {
+      title={t("disc.disagreeTitle")}
+      subtitle={t(by === "points" ? "disc.disagreeSubtitle" : "disc.disagreeSubtitleModel", {
         n: scores.length,
       })}
       className="mt-6"
@@ -310,7 +272,7 @@ function ModelVsPoints({
         </span>
         <span className="hidden w-28 shrink-0 sm:block" />
         <span className={`w-12 shrink-0 text-right ${by === "model" ? "text-foreground" : ""}`}>
-          {t("disc.disagreeColChance")}
+          {t("disc.disagreeColRating")}
         </span>
       </div>
       <ol className="divide-y divide-border">
@@ -345,13 +307,13 @@ function ModelVsPoints({
                 by === "model" ? "font-semibold text-foreground" : "text-muted-foreground"
               }`}
             >
-              {s.prob === null ? "—" : `${fieldModel ? chanceLabel(lang, s.prob) : s.prob}%`}
+              {s.prob == null ? "—" : `${chanceLabel(lang, s.prob)}%`}
             </span>
           </li>
         ))}
       </ol>
       <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-        {t(k("disc.disagreeNote"))}
+        {t("disc.disagreeNote")}
       </p>
     </Panel>
   );
@@ -360,7 +322,7 @@ function ModelVsPoints({
 /** The spread drawn against its own range rather than against zero. WA scores
  * across a field sit between roughly 1000 and 1350, so a zero-anchored bar
  * would render every field as one flat block and show nothing. */
-function ScoreSpread({ scores, top }: { scores: FieldScore[]; top: boolean }) {
+function ScoreSpread({ scores }: { scores: FieldScore[] }) {
   const topScore = scores[0]?.score ?? 0;
   const { t } = useT();
   const bottom = scores[scores.length - 1]?.score ?? 0;
@@ -369,7 +331,7 @@ function ScoreSpread({ scores, top }: { scores: FieldScore[]; top: boolean }) {
   return (
     <figure className="mt-6">
       <figcaption className="label-caps mb-3 text-muted-foreground">
-        {t(copyKey(top, "disc.spreadCaption"))}
+        {t("disc.spreadCaption")}
       </figcaption>
       <div className="relative h-14 rounded-[12px] bg-secondary/50">
         {scores.map((s) => {

@@ -2,7 +2,7 @@ import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
 import { Shell, Panel, PanelSkeleton, ErrorPanel, HeadFigure } from "@/components/dl/shell";
-import { discName } from "@/lib/dl-data";
+import { chanceLabel, discName } from "@/lib/dl-data";
 import type { ChampionshipSummary, WorldRankings } from "@/lib/dl-data";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useChampionshipSummary } from "@/hooks/useChampionship";
@@ -116,12 +116,10 @@ function buildFavourites(
 ): Favourite[] {
   const rows: Favourite[] = [];
   for (const [key, r] of Object.entries(rankings)) {
-    // The field model's podium chance is not the Diamond League rating, and
-    // sorting the two on one scale would put the hammer first on a different
-    // measure. Those events keep their pick on the Field and Track pages.
-    if (r.modelKind === "field") continue;
+    // Every event's rating comes from one model and each top 20's add up to
+    // 300, so a favourite in the hammer compares with one in the 100m.
     const top = r.model[0];
-    if (!top || top.ratingPct === null) continue;
+    if (!top || top.ratingPct == null) continue;
     rows.push({
       discKey: key,
       disc: discName(t, key, key),
@@ -145,11 +143,9 @@ function buildDisagreements(
 ) {
   const rows = [];
   for (const [key, r] of Object.entries(rankings)) {
-    // Same reason as the favourites: a field-model chance is another measure.
-    if (r.modelKind === "field") continue;
     const m = r.model[0];
     const p = r.points[0];
-    if (!m || !p || m.name === p.name || m.ratingPct === null) continue;
+    if (!m || !p || m.name === p.name || m.ratingPct == null) continue;
     rows.push({
       discKey: key,
       disc: discName(t, key, key),
@@ -169,13 +165,13 @@ function buildDisagreements(
  * restyled here, so this and the country pages cannot drift into two cards
  * that merely resemble each other. */
 function FavouriteCard({ f, index }: { f: Favourite; index: number }) {
-  const { t } = useT();
+  const { t, lang } = useT();
   return (
     <AthleteCard
       name={f.name}
       nat={f.nat}
       discipline={f.disc}
-      stat={`${f.ratingPct}%`}
+      stat={`${chanceLabel(lang, f.ratingPct)}%`}
       statLabel={t("dashboard.fav.rating")}
       sub={f.mark}
       photoUrl={f.photoUrl}

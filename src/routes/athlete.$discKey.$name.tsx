@@ -10,7 +10,7 @@ import { AthleteAnalyticsBlock } from "@/components/dl/athlete-analytics";
 import { AthleteCareerBlock } from "@/components/dl/athlete-career";
 import { ChampionshipCallPanel } from "@/components/dl/championship-call";
 import { InfoTip } from "@/components/dl/info-tip";
-import { discName, ordinalIn, type PhotoCredit as PhotoCreditT } from "@/lib/dl-data";
+import { chanceLabel, discName, ordinalIn, type PhotoCredit as PhotoCreditT } from "@/lib/dl-data";
 import { localizeDate } from "@/lib/dates";
 import { useT, type TFunc } from "@/lib/i18n";
 
@@ -178,16 +178,15 @@ function NotInField({
         </div>
       </div>
 
-      {/* The model really did score this athlete -- run.py runs the same
-          forest over the near-miss group. Kept, with an explicitly
-          conditional label, because it is not a forecast about the Final:
-          they are not in it. */}
-      {data.hypotheticalProb != null && (
+      {/* The model rating, the one Track, Field and the event page show. A
+          rating, not a podium chance: that is named only in a real
+          competition's call, above. Absent outside the world's top 20. */}
+      {data.prob != null && (
         <div className="rounded-[20px] border border-white/20 bg-white/10 px-6 py-5">
-          <div className="label-caps text-gold-on-canvas">{t("ath.ifQualified")}</div>
+          <div className="label-caps text-gold-on-canvas">{t("ath.model")}</div>
           <p className="mt-2 text-[14px] leading-relaxed text-white/92">
-            <span className="nums font-semibold text-white">{data.hypotheticalProb}</span>
-            {t("ath.ifQualifiedBefore")}
+            <span className="nums font-semibold text-white">{chanceLabel(lang, data.prob)}</span>
+            {t("ath.modelBefore")}
           </p>
         </div>
       )}
@@ -667,7 +666,7 @@ function AthleteProfilePage() {
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <CountryTag nat={a.nat} />
           {a.age != null && <Tag>{t("ath.age", { n: Math.round(a.age) })}</Tag>}
-          <Tag>{t("ath.rankInField", { n: a.rank })}</Tag>
+          {a.worldRank != null && <Tag>{t("ath.worldRankTag", { n: a.worldRank })}</Tag>}
           {a.injuryWatch && <WatchBadge reason={a.injuryReason} url={a.injuryUrl} tone="dark" />}
         </div>
         <div className="mt-6 flex flex-wrap gap-x-7 gap-y-5">
@@ -683,28 +682,39 @@ function AthleteProfilePage() {
             label={t("ath.figRacesIn", { year: a.historyYear ?? "" }).trim()}
             value={String(a.racesThisSeason)}
           />
-          <DossierFigure label={t("ath.model")} value={`${a.prob}%`} gold />
+          {/* The championship model's rating in the world's top 20, the one
+              every other page shows. Hidden outside that top 20 rather than
+              read as 0%. */}
+          {a.prob != null && (
+            <DossierFigure
+              label={t("ath.modelRating")}
+              value={`${chanceLabel(lang, a.prob)}%`}
+              gold
+            />
+          )}
         </div>
       </div>
 
-      <div className="rounded-[20px] border border-white/20 bg-white/10 px-6 py-5">
-        <div className="label-caps text-gold-on-canvas">{t("ath.model")}</div>
-        <p className="mt-2 text-[14px] leading-relaxed text-white/92">
-          <span className="nums font-semibold text-white">{a.prob}</span>
-          {t("ath.modelBefore")}
-          {a.scoreContext && (
-            <>
-              {t("ath.modelScoreBefore")}
-              <span className="nums">{a.mark}</span>
-              {t("ath.modelScoreMid")}
-              <span className="nums">{a.scoreContext.score}</span>
-              {t("ath.modelScoreAfter")}
-              <span className="nums">{ordinalIn(lang, a.scoreContext.discPercentile)}</span>
-              {t("ath.modelScoreEnd")}
-            </>
-          )}
-        </p>
-      </div>
+      {a.prob != null && (
+        <div className="rounded-[20px] border border-white/20 bg-white/10 px-6 py-5">
+          <div className="label-caps text-gold-on-canvas">{t("ath.model")}</div>
+          <p className="mt-2 text-[14px] leading-relaxed text-white/92">
+            <span className="nums font-semibold text-white">{chanceLabel(lang, a.prob)}</span>
+            {t("ath.modelBefore")}
+            {a.scoreContext && (
+              <>
+                {t("ath.modelScoreBefore")}
+                <span className="nums">{a.mark}</span>
+                {t("ath.modelScoreMid")}
+                <span className="nums">{a.scoreContext.score}</span>
+                {t("ath.modelScoreAfter")}
+                <span className="nums">{ordinalIn(lang, a.scoreContext.discPercentile)}</span>
+                {t("ath.modelScoreEnd")}
+              </>
+            )}
+          </p>
+        </div>
+      )}
     </div>
   );
 

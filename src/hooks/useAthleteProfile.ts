@@ -76,10 +76,10 @@ export type AthleteNotInField = {
    * athlete_profile_scraper covers the athletes the site renders pages for,
    * not all 7,628 in the race log. */
   career: AthleteCareer | null;
-  /** The model's podium chance IF this athlete were in the field. Real
-   * output from the same forest, but conditional -- never label it as a
-   * prediction about the actual Final. Null when run.py never scored them. */
-  hypotheticalProb: number | null;
+  /** The model rating in the world's top 20 for this event, as on the in-field
+   * profile. Null outside that top 20. Replaced the Diamond League model's "if
+   * they had qualified" chance on 2026-09-17. */
+  prob: number | null;
   /** Record against the athletes who did qualify. */
   h2h: H2hMatchup[];
   /** The same analyst material an in-field profile gets. None of it depends

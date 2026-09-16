@@ -142,7 +142,11 @@ export type AthleteProfile = {
   /** The current championship's call on them in this event, when entered. */
   championship?: ChampionshipCall | null;
   nat: string;
+  /** Their place in the Diamond League model's projected Final field. Not
+   * shown since 2026-09-17; the page shows `worldRank` and `prob`. */
   rank: number;
+  /** Their place on this season's world list. Null when they have no row. */
+  worldRank: number | null;
   mark: string;
   careerBest: string | null;
   pbGap: number | null;
@@ -158,7 +162,11 @@ export type AthleteProfile = {
    * only. Reported separately rather than replacing it: the two count
    * different things and the tiles say which. */
   racesThisSeason: number;
-  prob: number;
+  /** The model rating: the championship model's chance of a top three if the
+   * world's top 20 in this event met in one final, the rating Track, Field,
+   * the event page and the dashboard show. Never labelled a podium chance,
+   * which the site names only for a real competition. Null outside that top 20. */
+  prob: number | null;
   waUrl: string;
   photoUrl: string | null;
   photoFocus: { x: number; y: number } | null;
@@ -235,7 +243,8 @@ export const statusLabel: Record<MeetStatus, string> = {
 export type Trajectory = {
   name: string;
   rank: number;
-  /** Null where the field model gave no chance (the hammer and 10,000m pages). */
+  /** The model rating (a Diamond League Final projection's chance before
+   * 2026-09-17). Null where the model gave none. */
   prob: number | null;
   historyYear: number | null;
   history: MeetMark[];
@@ -383,6 +392,21 @@ export type StatsData = {
     lastSeason: number | null;
     venues: number;
     competitions: number;
+  } | null;
+  /** The test that moved the whole site to the championship model
+   * (src/model_head_to_head.py, 2026-09-16): the share of medallists it and
+   * the Diamond League model (`previous`) each named on the same past finals.
+   * Read from that run's report. Null until the report exists. */
+  modelComparison?: {
+    finals: number;
+    from: number;
+    to: number;
+    model: number;
+    previous: number;
+    points: number;
+    championships: { finals: number; model: number; previous: number; points: number };
+    dlFinals: { finals: number; model: number; previous: number; points: number };
+    tunedOnTheseSeasons: boolean;
   } | null;
 };
 
@@ -750,6 +774,7 @@ export type ResultsHistory = {
 export type FieldScore = {
   name: string;
   score: number;
+  /** The model rating, or null outside the world's top 20. */
   prob: number | null;
 };
 
@@ -759,18 +784,20 @@ export type DisciplineReport = {
   isField: boolean;
   season: number;
   athletes: Athlete[];
-  /** Both moved here from /api/projections/<key> when the two pages merged
-   * into one page per event. */
+  /** Moved here from /api/projections/<key> when the two pages merged into
+   * one page per event. */
   trajectories: Trajectory[] | null;
-  storylines: Storyline[] | null;
   depth: (DepthRow & { verdict: DepthVerdict | null; of: number }) | null;
   scores: FieldScore[];
   fieldAnalysis: FieldAnalysis | null;
-  /** "toplist" for an event with no Diamond League Final (the hammer and the
-   * 10,000m): the field is the world's top N on points, and `prob` is the field
-   * model's podium chance from the Track and Field list. Absent means a Final. */
+  /** Always "toplist" since 2026-09-17: the field is the world's top N on
+   * points, and each athlete's `prob` is the championship model's rating from
+   * the Track and Field list. Until then the 32 Diamond League events read
+   * their Final's projected field ("final"), with the Diamond League model's
+   * chances and storylines. */
   fieldSource?: "final" | "toplist";
-  modelKind?: "form" | "field" | null;
+  /** "field" when the model rated the list; null when it could not. */
+  modelKind?: "field" | null;
 };
 
 // --- World Athletics Ultimate Championship (Budapest, 11-13 Sep 2026) --------
@@ -1266,30 +1293,22 @@ export type WorldRankingRow = {
   mark: string | null;
   /** World Athletics points for that season best (the "by points" ordering). */
   score: number | null;
-  /** The model's rating as a percentage (the "by model" ordering).
-   *
-   * NOT a read of who is strongest in the world, and must not be labelled as
-   * one. The model was trained on Diamond League Final podiums and every form
-   * feature it uses comes from the DL circuit, so an athlete who skipped the
-   * circuit rates near zero however fast they have run: across the 32 top-20s
-   * the mean rating climbs 1.2% -> 28.8% from 0 to 5 DL meetings while the
-   * mean World Athletics score hardly moves. That is why `dlRaces` sits next
-   * to it in the table. Null in a discipline the model does not rate
-   * (`modelAvailable` false). */
+  /** The model rating as a percentage (the "by model" ordering), carried on
+   * the points list too: the championship model's chance of a top three if
+   * these 20 met in one final, so an event's 20 add up to 300 and a rating in
+   * one event compares with one in another. Labelled a rating and never a
+   * podium chance, which the site names only for a real competition (the
+   * user's rule, 2026-09-17). Null when the model could not read the event
+   * (`modelAvailable` false). Until 2026-09-17 the 32 Diamond League events
+   * carried the Diamond League model's rating, which followed meetings raced
+   * more than marks. */
   ratingPct: number | null;
-  /** Diamond League meetings contested in 2026. Still what the model's
-   * meets_count feature reads, but NOT what the table shows: the Diamond
-   * League contests each discipline at only a few of its meetings — the men's
-   * 400m hurdles at 5 of the 14 in 2026 — so a 0 means "no Diamond League
-   * 400mH", not "did not run". 28% of the athletes in the top-20s read 0. */
-  dlRaces: number | null;
   /** Meets we can see this athlete contest this discipline, across the season
    * toplist, the Diamond League meeting log and the wider race log
    * (src/season_activity.py). A FLOOR, not a census — none of the three covers
    * every meeting, so a 1 means one meeting we can see rather than one
    * meeting run. Shown so a rating built on a single visible outing does not
-   * read like one built on a season: Rai Benjamin is third in the 400mH on
-   * exactly one. */
+   * read like one built on a season. */
   racesOnRecord: number | null;
   profileUrl: string | null;
   /** Headshot, attached by the API from the warmed card cache
@@ -1307,19 +1326,37 @@ export type DisciplineRankings = {
   /** False when there is no model view, and `model` is empty. Absent from a
    * snapshot built before 2026-09-14, which means true. */
   modelAvailable?: boolean;
-  /** Which model made `model`. "form" is the Diamond League model's rating.
-   * "field" is the field model's podium chance for the top 20 by points, as if
-   * they met in one final: the hammer and the 10,000m, which the Diamond League
-   * model has never seen (2026-09-15). Absent means "form". */
-  modelKind?: "form" | "field" | null;
+  /** "field" when `model` holds the championship model's ratings: every event
+   * since 2026-09-17. Null when there is no model view. */
+  modelKind?: "field" | null;
   model: WorldRankingRow[];
   points: WorldRankingRow[];
 };
 
-/** Events with no Diamond League Final: the hammer and the 10,000m. Their
- * discipline page reads the world's top athletes on points instead of a
- * Final's field (api.ranking_only_report). */
-export const NO_FINAL_DISCIPLINES = new Set(["men_HT", "women_HT", "men_10000m", "women_10000m"]);
+/** Where an event sits in any list of events: track before field; track events
+ * men's then women's, each from the shortest race to the longest, with the flat
+ * race before the hurdles over the same distance and the steeplechase after
+ * them. Sorted by name, "10,000m" sat between "100m" and "110m Hurdles" (user,
+ * 2026-09-16), so the Track page and the championship call both use this (user,
+ * 2026-09-17). Keys look like men_100m, women_100h, men_3000sc; a field event
+ * or a key this cannot read goes after the track events. */
+export function eventOrder(key: string): [number, number, number, number] {
+  const [sex, event = ""] = key.split("_");
+  const match = /^(\d+)(m|h|sc)$/.exec(event);
+  return [
+    match ? 0 : 1,
+    sex === "women" ? 1 : 0,
+    match ? Number(match[1]) : 0,
+    match ? ["m", "h", "sc"].indexOf(match[2] ?? "m") : 0,
+  ];
+}
+
+/** Sort two events by eventOrder, then by their displayed names (the field
+ * events, which the user left to any order). */
+export function compareEvents(a: string, b: string, nameA: string, nameB: string): number {
+  const [x, y] = [eventOrder(a), eventOrder(b)];
+  return x[0] - y[0] || x[1] - y[1] || x[2] - y[2] || x[3] - y[3] || nameA.localeCompare(nameB);
+}
 
 /** discipline key -> its two ranked lists. */
 export type WorldRankings = Record<string, DisciplineRankings>;

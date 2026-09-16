@@ -10,7 +10,7 @@ export const Route = createFileRoute("/track")({
   head: () =>
     pageHead(
       "Track events",
-      "The world's best in every track discipline, ranked by World Athletics points or by the model's rating for a championship final podium.",
+      "The world's best in every track discipline, ranked by World Athletics points or by the rating from the model that calls the championships.",
       "/track",
     ),
   validateSearch: (search: Record<string, unknown>): { disc?: string | undefined } => ({

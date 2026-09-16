@@ -5,7 +5,7 @@ import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
 import { NatFlag } from "./nat-flag";
 import { InfoTip } from "./info-tip";
 import { useT } from "@/lib/i18n";
-import { chanceLabel, discName } from "@/lib/dl-data";
+import { chanceLabel, compareEvents, discName } from "@/lib/dl-data";
 import type { CallMethod, UltimateProjection } from "@/lib/dl-data";
 
 /** World Athletics writes a single-named athlete with a placeholder given name,
@@ -37,8 +37,13 @@ export function UltimateProjections({
 }) {
   const sorted = useMemo(
     () =>
+      // Track events from the shortest race to the longest, as on the Track
+      // page, then the field events (user, 2026-09-17).
       [...projections].sort((a, b) =>
-        discName(t, a.discKey, a.disciplineLabel).localeCompare(
+        compareEvents(
+          a.discKey,
+          b.discKey,
+          discName(t, a.discKey, a.disciplineLabel),
           discName(t, b.discKey, b.disciplineLabel),
         ),
       ),

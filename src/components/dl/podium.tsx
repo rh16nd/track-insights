@@ -6,20 +6,23 @@ import { discName } from "@/lib/dl-data";
 import { useCountUp } from "@/hooks/useCountUp";
 import { WatchBadge } from "./shell";
 import type { TopWinner } from "@/lib/dl-data";
+
+/** One plaque: the athlete the championship model rates highest in an event,
+ * with that model rating. A rating and never a podium chance, which the site
+ * names only for a real competition (2026-09-17). */
+export type PodiumPick = TopWinner;
 import { WaAthleteLink } from "./wa-link";
 
-/** The projected podium — the landing page's signature block, ported from
- * the v0 "Race Programme" direction.
+/** The model's favourites as a podium — the landing page's signature block,
+ * ported from the v0 "Race Programme" direction.
  *
- * Reads the SAME `topWinners` the dashboard panel reads, so the two cannot
- * disagree. That list is already ordered by podium probability and routed
- * through the API's `discipline_favourite()` helper, which is the fix for
- * the mark-vs-strength bug that has now surfaced six times — do not re-sort
- * or re-index it here.
+ * Reads the same favourites the dashboard reads (each event's highest model
+ * rating), in the same order: highest rating first. Do not re-sort or re-index
+ * them here.
  *
  * The one thing a podium shape asserts that a list does not: that these
- * three are ranked against each other. They are not — each is the strongest
- * call in a DIFFERENT discipline, so the footnote saying so is load-bearing,
+ * three are ranked against each other. They are not — each is the favourite
+ * in a DIFFERENT discipline, so the footnote saying so is load-bearing,
  * exactly as it is on the dashboard and in the landing's preview panel.
  *
  * Every class below is written out in full. Tailwind reads source as text,
@@ -64,7 +67,7 @@ const STEPS: Step[] = [
   },
 ];
 
-export function Podium({ winners }: { winners: TopWinner[] }) {
+export function Podium({ winners }: { winners: PodiumPick[] }) {
   // Replay remounts the subtree by changing its key rather than toggling a
   // class and forcing a reflow the way the static mockup had to.
   const [run, setRun] = useState(0);
@@ -130,7 +133,7 @@ function Plaque({
   delay,
   run,
 }: {
-  winner: TopWinner;
+  winner: PodiumPick;
   lead: boolean;
   delay: string;
   run: number;
@@ -190,10 +193,9 @@ function Plaque({
           %
         </span>
       </div>
-      {/* v0 labelled this "Win probability". The model's target is dl_top3 —
-          top-three membership, not the winner — so the label was corrected
-          rather than ported. */}
-      <div className="label-caps mt-1 text-muted-foreground">{t("podium.chanceOfPodium")}</div>
+      {/* v0 labelled this "Win probability". It is the model rating: a podium
+          chance is named only in a real competition's call. */}
+      <div className="label-caps mt-1 text-muted-foreground">{t("podium.rating")}</div>
       {/* The page stakes its credibility on these three names and, before
           this, gave the reader nothing to check them against. The season
           best above is the claim most worth following up. */}
