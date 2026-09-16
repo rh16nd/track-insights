@@ -72,8 +72,25 @@ function StatIcon({ kind }: { kind: "flag" | "calendar" | "grid" | "target" }) {
   );
 }
 
-function CountUpValue({ value }: { value: number }) {
-  return <>{Math.round(useCountUp(value))}</>;
+function CountUpValue({
+  value,
+  decimals = 0,
+  locale,
+}: {
+  value: number;
+  decimals?: number;
+  locale?: string;
+}) {
+  const counted = useCountUp(value);
+  if (!decimals) return <>{Math.round(counted)}</>;
+  return (
+    <>
+      {counted.toLocaleString(locale, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      })}
+    </>
+  );
 }
 
 function daysTo(startDate: string): number {
@@ -180,7 +197,14 @@ function Dashboard() {
   const ev: ChampionshipSummary | undefined =
     championshipState.status === "ok" ? championshipState.data : undefined;
   const rankings = rankingsState.status === "ok" ? rankingsState.data : undefined;
-  const accuracy = predictions.status === "ok" ? Math.round(predictions.data.modelAccuracy) : null;
+  // The same figure as the landing's: the test of the model that made the call
+  // for the championship this page counts down to, or the Diamond League
+  // model's when that call carries no test. Until 2026-09-16 this showed the
+  // Diamond League figure, rounded to a whole number, beside a countdown to a
+  // championship another model calls, so the two pages disagreed.
+  const callTest = ev?.callTest ?? null;
+  const accuracy =
+    callTest?.model ?? (predictions.status === "ok" ? predictions.data.modelAccuracy : null);
   const lastUpdated = predictions.status === "ok" ? predictions.data.lastUpdated : undefined;
 
   const favourites = rankings ? buildFavourites(rankings, t) : [];
@@ -203,10 +227,18 @@ function Dashboard() {
         />
         {accuracy !== null && (
           <HeadFigure
-            value={<CountUpValue value={accuracy} />}
+            value={<CountUpValue value={accuracy} decimals={1} locale={localeTag(lang)} />}
             unit="%"
             label={t("dashboard.stat.hitRate")}
-            hint={t("dashboard.stat.hitRateHint")}
+            hint={
+              callTest
+                ? t("dashboard.stat.hitRateHintChampionship", {
+                    finals: callTest.finals?.toLocaleString(localeTag(lang)) ?? "—",
+                    from: callTest.from ?? "—",
+                    to: callTest.to ?? "—",
+                  })
+                : t("dashboard.stat.hitRateHint")
+            }
             icon={<StatIcon kind="target" />}
           />
         )}

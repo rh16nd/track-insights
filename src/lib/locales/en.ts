@@ -339,6 +339,8 @@ export const en: Record<string, string> = {
   "dashboard.stat.hitRate": "Top-3 hit rate",
   "dashboard.stat.hitRateHint":
     "How often the model's projected top three matches the real medallists, counting only the athletes who reach a Final. It's tested only on past years the model never learned from, so the number isn't flattering itself.",
+  "dashboard.stat.hitRateHintChampionship":
+    "How often the model's top three matched the real medallists across {{finals}} past championship finals from {{from}} to {{to}}, each season called only from the seasons before it. Those same seasons were used to choose the model, so this championship is its first real test.",
   "dashboard.stat.disciplines": "Disciplines",
   "dashboard.stat.meetingsRun": "Meetings run",
   "dashboard.surest": "#{{n}} surest",

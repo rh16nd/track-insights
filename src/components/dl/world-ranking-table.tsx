@@ -27,6 +27,21 @@ type View = "model" | "points";
  * meetings in 2026, and 28% of the athletes here read 0. Counting every
  * source instead puts Rai Benjamin at 1 rather than 0, which is the number
  * that explains why third place rests on a single afternoon. */
+/** Where a track event sits in the list: men's events, then women's, each from
+ * the shortest race to the longest, with the flat race before the hurdles over
+ * the same distance. Sorted by name, "10,000m" sat between "100m" and "110m
+ * Hurdles" (user, 2026-09-16). Keys look like men_100m, women_100h, men_3000sc;
+ * one this cannot read goes last, in name order. */
+function trackOrder(key: string): [number, number, number] {
+  const [sex, event = ""] = key.split("_");
+  const match = /^(\d+)(m|h|sc)$/.exec(event);
+  return [
+    sex === "women" ? 1 : 0,
+    match ? Number(match[1]) : Number.POSITIVE_INFINITY,
+    match ? ["m", "h", "sc"].indexOf(match[2] ?? "m") : 0,
+  ];
+}
+
 export function WorldRankingTable({
   rankings,
   isField,
@@ -49,7 +64,13 @@ export function WorldRankingTable({
     () =>
       Object.keys(rankings)
         .filter((k) => rankings[k]!.isField === isField)
-        .sort((a, b) => discName(t, a, a).localeCompare(discName(t, b, b))),
+        .sort((a, b) => {
+          const byName = discName(t, a, a).localeCompare(discName(t, b, b));
+          if (isField) return byName;
+          const [x, y] = [trackOrder(a), trackOrder(b)];
+          // NaN (two events with no distance) is falsy, so it falls through.
+          return x[0] - y[0] || x[1] - y[1] || x[2] - y[2] || byName;
+        }),
     [rankings, isField, t],
   );
 

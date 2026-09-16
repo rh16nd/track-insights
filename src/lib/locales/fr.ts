@@ -342,6 +342,8 @@ export const fr: Record<string, string> = {
   "dashboard.stat.hitRate": "Taux de réussite top 3",
   "dashboard.stat.hitRateHint":
     "À quelle fréquence le top trois projeté par le modèle correspond aux vrais médaillés, en ne comptant que les athlètes qui atteignent une finale. Il n’est mesuré que sur des saisons passées, jamais montrées au modèle pendant son entraînement : le chiffre n’est donc pas flatté.",
+  "dashboard.stat.hitRateHintChampionship":
+    "À quelle fréquence le top trois du modèle a correspondu aux vrais médaillés, sur {{finals}} finales de championnat passées de {{from}} à {{to}}, chaque saison pronostiquée uniquement à partir des saisons précédentes. Ces mêmes saisons ont servi à choisir le modèle : ce championnat est donc son premier vrai test.",
   "dashboard.stat.disciplines": "Disciplines",
   "dashboard.stat.meetingsRun": "Meetings disputés",
   "dashboard.surest": "n°{{n}} le plus sûr",
