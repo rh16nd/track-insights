@@ -74,6 +74,7 @@ function StatsPage() {
   return (
     <Shell
       title={t("stats.title")}
+      photo="stats"
       eyebrow={
         data && scale
           ? t("stats.eyebrow", {

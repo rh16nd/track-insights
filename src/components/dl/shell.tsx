@@ -544,8 +544,8 @@ export function AthleteAvatar({
   // rescue white text would have made it indistinguishable from the standard
   // terracotta disc. Dark-on-gold measures ~8:1 and reads like a medal.
   const tone = highlight
-    ? "bg-[linear-gradient(135deg,var(--gold-light),oklch(0.72_0.13_66))] text-foreground"
-    : "bg-[linear-gradient(135deg,var(--terracotta),var(--brick))] text-white";
+    ? "bg-[linear-gradient(135deg,var(--gold-light),oklch(0.72_0.13_66))] text-[var(--primary-foreground)]"
+    : "bg-[linear-gradient(135deg,var(--terracotta-ink),var(--brick))] text-white";
   return (
     <span
       aria-hidden="true"

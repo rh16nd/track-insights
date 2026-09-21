@@ -145,6 +145,7 @@ function QualificationPage() {
 
   return (
     <Shell
+      photo="qualification"
       title={
         current
           ? placesHeadline(current.qualLimit, current.isField, t)

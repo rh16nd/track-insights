@@ -9,7 +9,7 @@ import { FieldAnalysisBlock } from "@/components/dl/field-analysis";
 import { TrajectoryOverlayChart } from "@/components/dl/trajectory-overlay-chart";
 import { useDiscipline } from "@/hooks/useDiscipline";
 import type { DepthVerdict, DisciplineReport, FieldScore } from "@/lib/dl-data";
-import { chanceLabel, discName, ordinalIn } from "@/lib/dl-data";
+import { chanceLabel, discName, eventOrder, ordinalIn } from "@/lib/dl-data";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/discipline/$discKey")({
@@ -56,6 +56,8 @@ function DisciplinePage() {
   return (
     <Shell
       title={data ? discName(t, data.discKey, data.disc) : t("disc.titleFallback")}
+      // A track event opens on the track photo, a field event on the field one.
+      photo={eventOrder(discKey)[0] === 0 ? "track" : "field"}
       eyebrow={
         data?.depth
           ? t("disc.eyebrow", {

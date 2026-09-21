@@ -138,7 +138,7 @@ function Timeline({ meets }: { meets: Meet[] }) {
             <span
               className={`label-caps hidden shrink-0 rounded-full px-3 py-1.5 sm:inline-flex ${
                 isFinal
-                  ? "bg-[linear-gradient(100deg,var(--terracotta)_0%,var(--gold-strong)_100%)] text-card"
+                  ? "bg-[linear-gradient(100deg,var(--terracotta)_0%,var(--gold-strong)_100%)] text-[var(--primary-foreground)]"
                   : "bg-secondary text-muted-foreground"
               }`}
             >
@@ -164,6 +164,7 @@ function SchedulePage() {
   return (
     <Shell
       title={t("schedule.titleNext")}
+      photo="schedule"
       crumb={t("nav.schedule")}
       eyebrow={
         ev

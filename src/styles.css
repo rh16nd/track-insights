@@ -1130,6 +1130,21 @@ html {
     );
 }
 
+/* On a phone the text runs the full width and most of the header's height,
+   so there is no quiet corner of the photo for it to sit in: the wash is
+   evenly heavier instead. Measured over every page's photo at 360px. */
+@media (max-width: 639px) {
+  .page-head-scrim {
+    background: linear-gradient(
+      to bottom,
+      oklch(0.14 0.02 40 / 0.7) 0%,
+      oklch(0.14 0.02 40 / 0.58) 35%,
+      oklch(0.14 0.02 40 / 0.66) 70%,
+      var(--page-ground, var(--background)) 100%
+    );
+  }
+}
+
 /* An athlete's own photo carries the stats ribbon on its lower half, and a
    portrait's brightest colours (a jersey, a flag) sit right there, so its wash
    is much heavier at the foot. */

@@ -33,7 +33,7 @@ export function NatFlag({
           height={12}
           loading="lazy"
           decoding="async"
-          className="h-3 w-4 shrink-0 rounded-[2px] object-cover ring-1 ring-black/[0.08]"
+          className="h-3 w-4 shrink-0 rounded-[2px] object-cover ring-1 ring-white/15"
         />
       )}
       {showCode && <span className="nums text-[12px] text-muted-foreground">{nat}</span>}

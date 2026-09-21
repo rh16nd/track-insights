@@ -35,7 +35,7 @@ export function HeadToHeadChart({
                 <span className="inline-block size-2 rounded-full bg-terracotta" /> {t("h2h.wins")}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <span className="inline-block size-2 rounded-full bg-border" /> {t("h2h.losses")}
+                <span className="inline-block size-2 rounded-full bg-[var(--chart-neutral)]" /> {t("h2h.losses")}
               </span>
             </div>
           )}
@@ -110,7 +110,7 @@ export function HeadToHeadChart({
                   )}
                   {m.losses > 0 && (
                     <div
-                      className="h-full rounded-full bg-border"
+                      className="h-full rounded-full bg-[var(--chart-neutral)]"
                       style={{ width: `${lossPct}%` }}
                     />
                   )}

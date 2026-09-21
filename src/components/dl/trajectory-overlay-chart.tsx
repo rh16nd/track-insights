@@ -22,8 +22,8 @@ const PAD_RIGHT = 108; // room for end-of-line direct labels
 const SERIES_COLORS = [
   "var(--terracotta)",
   "var(--gold-strong)",
-  "oklch(0.5 0.14 250)",
-  "oklch(0.5 0.13 155)",
+  "var(--chart-3)",
+  "var(--chart-4)",
 ];
 
 // Series were previously separated by hue alone, which fails for colour-blind

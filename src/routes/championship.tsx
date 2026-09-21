@@ -80,7 +80,7 @@ function ChampionshipPage() {
     <Shell title={t(titleKey)} crumb={t(navKey)} theme={ground ?? "default"}>
       {state.status === "loading" && (
         <div className="mt-2 space-y-6">
-          <div className="skeleton-pulse h-64 rounded-[28px] bg-white/60" />
+          <div className="skeleton-pulse h-64 rounded-[28px] bg-white/10" />
           <PanelSkeleton rows={8} />
         </div>
       )}

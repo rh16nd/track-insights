@@ -67,6 +67,7 @@ function HowItWorksPage() {
   return (
     <Shell
       title={t("nav.howItWorks")}
+      photo="how"
       crumb={t("nav.howItWorks")}
       eyebrow={t("howItWorks.eyebrow")}
       description={t("howItWorks.description")}

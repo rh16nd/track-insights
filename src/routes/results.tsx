@@ -79,6 +79,7 @@ function ResultsPage() {
   return (
     <Shell
       title={t("results.title")}
+      photo="results"
       eyebrow={t("results.eyebrow")}
       description={t("results.description")}
       figures={figures}

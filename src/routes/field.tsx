@@ -31,6 +31,7 @@ function FieldPage() {
   return (
     <Shell
       title={t("field.title")}
+      photo="field"
       eyebrow={count !== undefined ? t("field.eyebrow", { n: count }) : undefined}
       description={t("field.description")}
     >
