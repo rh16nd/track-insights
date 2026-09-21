@@ -19,16 +19,10 @@ import type { AthleteAnalytics, CareerSeason, SeasonForm } from "@/lib/dl-data";
 export function AthleteAnalyticsBlock({
   analytics,
   isField,
-  rivalNames = [],
   careerSeasons = [],
 }: {
   analytics: AthleteAnalytics;
   isField: boolean;
-  /** Opponents this athlete is projected to meet at the Final. Marked in
-   * the list rather than split into their own panel: they are the same
-   * records either way, and two panels of the same numbers was exactly the
-   * duplication this replaced. */
-  rivalNames?: string[];
   /** Season bests from the toplist. Folded into the form table as one
    * column rather than getting its own chart -- the profile already has a
    * season-form chart above, and a second line chart of nine points was
@@ -37,7 +31,6 @@ export function AthleteAnalyticsBlock({
 }) {
   const { t } = useT();
   const { record, form, seasonShape, headToHead, coverage } = analytics;
-  const rivals = new Set(rivalNames);
   const bestByYear = new Map<number, CareerSeason>(careerSeasons.map((s) => [s.year, s]));
 
   return (
@@ -132,10 +125,7 @@ export function AthleteAnalyticsBlock({
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
         {form.length > 0 && (
-          <Panel
-            title={t("aa.seasonBySeason")}
-            subtitle={t("aa.seasonBySeasonSubtitle")}
-          >
+          <Panel title={t("aa.seasonBySeason")} subtitle={t("aa.seasonBySeasonSubtitle")}>
             <FormTable form={form} isField={isField} bestByYear={bestByYear} />
           </Panel>
         )}
@@ -143,9 +133,7 @@ export function AthleteAnalyticsBlock({
         {seasonShape && seasonShape.byMonth.length > 0 && (
           <Panel
             title={t("aa.seasonShape")}
-            subtitle={t(
-              isField ? "aa.seasonShapeSubtitleField" : "aa.seasonShapeSubtitleTrack",
-            )}
+            subtitle={t(isField ? "aa.seasonShapeSubtitleField" : "aa.seasonShapeSubtitleTrack")}
           >
             <SeasonShapeChart shape={seasonShape} isField={isField} />
           </Panel>
@@ -167,14 +155,6 @@ export function AthleteAnalyticsBlock({
               >
                 <span className="flex min-w-0 flex-1 items-center gap-2">
                   <span className="truncate text-[13.5px] text-foreground">{h.name}</span>
-                  {rivals.has(h.name) && (
-                    <span
-                      title={t("aa.inFieldTitle")}
-                      className="label-caps shrink-0 rounded-full bg-terracotta/12 px-1.5 py-0.5 text-terracotta-strong"
-                    >
-                      {t("aa.inField")}
-                    </span>
-                  )}
                 </span>
                 <span className="nums w-20 shrink-0 text-right text-[13px] font-semibold text-foreground">
                   {h.wins}–{h.losses}
@@ -191,11 +171,7 @@ export function AthleteAnalyticsBlock({
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-[11.5px] leading-snug text-muted-foreground">
-            {t("aa.h2hNoteBefore")}
-            <span className="font-medium text-foreground">{t("aa.inField")}</span>
-            {t("aa.h2hNoteAfter")}
-          </p>
+          <p className="mt-3 text-[11.5px] leading-snug text-muted-foreground">{t("aa.h2hNote")}</p>
         </Panel>
       )}
 
@@ -270,9 +246,7 @@ function FormTable({
   return (
     <div className="relative overflow-x-auto">
       <table className="w-full min-w-[460px] border-collapse text-left">
-        <caption className="sr-only">
-          {t("aa.seasonTableCaption")}
-        </caption>
+        <caption className="sr-only">{t("aa.seasonTableCaption")}</caption>
         <thead>
           <tr className="label-caps border-b border-border text-muted-foreground">
             <th scope="col" className="pb-2 pr-2 font-semibold">

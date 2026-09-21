@@ -192,67 +192,88 @@ function NotInField({
       {/* Same two-panel row, same StatBlock grid and same chart the in-field
           profile uses. None of these numbers stop being true because the
           athlete missed the cut, and the page read as a stub without them. */}
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
+      <div
+        className={`mt-6 grid grid-cols-1 gap-6 ${data.history.length > 0 ? "lg:grid-cols-[1fr_1fr]" : ""}`}
+      >
         <Panel title={t("ath.seasonStats")}>
+          {/* Only the figures this athlete has. A grid of dashes read as a
+              broken page, and the user's rule (2026-09-21) is that a figure
+              appears when we know it and is left out when we don't. */}
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {/* A championship entrant the call ranked on last season's mark:
                 the label says which season, so it never reads as this one. */}
-            <StatBlock
-              label={
-                data.seasonBestYear != null && data.seasonBestYear !== 2026
-                  ? t("ath.seasonBestIn", { year: data.seasonBestYear })
-                  : t("ath.seasonBest2026")
-              }
-              value={data.seasonBest ?? "—"}
-              icon="target"
-            />
-            <StatBlock
-              label={t("ath.worldRank")}
-              value={data.worldRank != null ? `#${data.worldRank}` : "—"}
-              sub={t("ath.thisSeasonToplist")}
-              icon="trophy"
-            />
-            <StatBlock label={t("ath.careerBest")} value={data.careerBest ?? "—"} icon="trophy" />
-            <StatBlock
-              label={t("ath.pbGap")}
-              value={
-                data.pbGap != null
-                  ? `${data.pbGap.toFixed(2)}${FIELD_EVENT_KEYS.has(data.discKey) ? "m" : "s"}`
-                  : "—"
-              }
-              sub={t("ath.offCareerBest")}
-              icon="ruler"
-              hint={t(
-                FIELD_EVENT_KEYS.has(data.discKey) ? "ath.pbGapHintMetres" : "ath.pbGapHintSeconds",
-              )}
-            />
-            <StatBlock
-              label={t("ath.ageLabel")}
-              value={data.age != null ? String(Math.round(data.age)) : "—"}
-              icon="calendar"
-            />
-            <StatBlock
-              label={t("ath.meetsThisSeason")}
-              value={data.meetsCount != null ? String(data.meetsCount) : "—"}
-              sub={t("ath.dlMeetings")}
-              icon="grid"
-            />
-            <StatBlock
-              label={
-                FIELD_EVENT_KEYS.has(data.discKey)
-                  ? t("ath.competitionsThisSeason")
-                  : t("ath.racesThisSeason")
-              }
-              value={String(data.racesThisSeason)}
-              sub={t("ath.allCompetitions")}
-              icon="grid"
-            />
-            <StatBlock
-              label={t("ath.lastCompeted")}
-              value={data.daysSinceLast != null ? t("ath.daysAgo", { n: data.daysSinceLast }) : "—"}
-              {...(data.lastRaceDate ? { sub: localizeDate(lang, data.lastRaceDate) } : {})}
-              icon="clock"
-            />
+            {data.seasonBest && (
+              <StatBlock
+                label={
+                  data.seasonBestYear != null && data.seasonBestYear !== 2026
+                    ? t("ath.seasonBestIn", { year: data.seasonBestYear })
+                    : t("ath.seasonBest2026")
+                }
+                value={data.seasonBest}
+                icon="target"
+              />
+            )}
+            {data.worldRank != null && (
+              <StatBlock
+                label={t("ath.worldRank")}
+                value={`#${data.worldRank}`}
+                sub={t("ath.thisSeasonToplist")}
+                icon="trophy"
+              />
+            )}
+            {data.careerBest && (
+              <StatBlock label={t("ath.careerBest")} value={data.careerBest} icon="trophy" />
+            )}
+            {data.pbGap != null && (
+              <StatBlock
+                label={t("ath.pbGap")}
+                value={`${data.pbGap.toFixed(2)}${FIELD_EVENT_KEYS.has(data.discKey) ? "m" : "s"}`}
+                sub={t("ath.offCareerBest")}
+                icon="ruler"
+                hint={t(
+                  FIELD_EVENT_KEYS.has(data.discKey)
+                    ? "ath.pbGapHintMetres"
+                    : "ath.pbGapHintSeconds",
+                )}
+              />
+            )}
+            {data.age != null && (
+              <StatBlock
+                label={t("ath.ageLabel")}
+                value={String(Math.round(data.age))}
+                icon="calendar"
+              />
+            )}
+            {/* Diamond League meetings only when there were some: a 0 for an
+                athlete who never raced the circuit says nothing about them. */}
+            {(data.meetsCount ?? 0) > 0 && (
+              <StatBlock
+                label={t("ath.meetsThisSeason")}
+                value={String(data.meetsCount)}
+                sub={t("ath.dlMeetings")}
+                icon="grid"
+              />
+            )}
+            {data.racesThisSeason > 0 && (
+              <StatBlock
+                label={
+                  FIELD_EVENT_KEYS.has(data.discKey)
+                    ? t("ath.competitionsThisSeason")
+                    : t("ath.racesThisSeason")
+                }
+                value={String(data.racesThisSeason)}
+                sub={t("ath.allCompetitions")}
+                icon="grid"
+              />
+            )}
+            {data.daysSinceLast != null && (
+              <StatBlock
+                label={t("ath.lastCompeted")}
+                value={t("ath.daysAgo", { n: data.daysSinceLast })}
+                {...(data.lastRaceDate ? { sub: localizeDate(lang, data.lastRaceDate) } : {})}
+                icon="clock"
+              />
+            )}
             {/* The same World Athletics score the in-field profile carries,
                 and it lands harder here: it is the number that says how good
                 this athlete is in absolute terms, next to a page explaining
@@ -280,47 +301,21 @@ function NotInField({
               {data.scoreContext.indoor && t("ath.setIndoors")}
             </p>
           )}
-          {/* Career best, PB gap, meets and last-competed come from run.py's
-              scoring pass, which only covers the field plus the near-miss
-              group. Further down the toplist they are genuinely unknown, and
-              saying so beats a grid of silent dashes. */}
-          {/* Covers both shapes of the same gap: an athlete World Athletics
-              has no individual results for at all, and one whose results are
-              all from earlier seasons. Either way the blank is "not known",
-              which is a different statement from "did not race" and has to
-              be said rather than left as a dash. */}
-          {data.daysSinceLast == null && (
-            <p className="mt-4 max-w-md text-[12px] leading-relaxed text-muted-foreground">
-              {t("ath.noDatedResults", {
-                extra: data.racesOnRecord > 0 ? t("ath.noDatedResultsExtra") : "",
-              })}
-            </p>
-          )}
-          {data.careerBest === null && (
-            <p className="mt-4 text-[12px] leading-relaxed text-muted-foreground">
-              {t("ath.notComputed")}
-            </p>
-          )}
         </Panel>
 
-        <Panel
-          title={t("ath.realSeasonForm")}
-          subtitle={
-            data.historyCondensed
-              ? t("ath.seasonFormCondensed", { n: data.historyRaces ?? 0 })
-              : t("ath.seasonFormAll", { n: data.history.length })
-          }
-        >
-          {data.history.length > 0 ? (
+        {/* The season chart only when there are races to plot. */}
+        {data.history.length > 0 && (
+          <Panel
+            title={t("ath.realSeasonForm")}
+            subtitle={
+              data.historyCondensed
+                ? t("ath.seasonFormCondensed", { n: data.historyRaces ?? 0 })
+                : t("ath.seasonFormAll", { n: data.history.length })
+            }
+          >
             <SeasonTrendChart history={data.history} year={data.historyYear} />
-          ) : (
-            <div className="text-[12.5px] text-muted-foreground">
-              {data.historyYear != null
-                ? t("ath.noHistoryYear", { year: data.historyYear })
-                : t("ath.noHistoryRecent")}
-            </div>
-          )}
-        </Panel>
+          </Panel>
+        )}
       </div>
 
       {/* The near-miss page gets the same analyst block as an in-field one.
@@ -337,23 +332,14 @@ function NotInField({
         <AthleteAnalyticsBlock
           analytics={data.analytics}
           isField={FIELD_EVENT_KEYS.has(data.discKey)}
-          rivalNames={data.rivalNames}
           careerSeasons={data.careerSeasons}
         />
-      ) : // An empty record "against the projected field" means nothing for the
-      // hammer or the 10,000m, which never had one, or for a championship
-      // entrant the Diamond League field has no bearing on. A real record
-      // still shows.
-      data.h2h.length > 0 ||
-        (data.reasonCode !== "points_only" && data.reasonCode !== "championship_entrant") ? (
+      ) : // Without the race log's analytics, the record against this year's
+      // Diamond League finalists, and only when there is one: an empty panel
+      // said nothing and read as a fault.
+      data.h2h.length > 0 ? (
         <Panel title={t("ath.h2hTitle")} subtitle={t("ath.h2hSubtitle")} className="mt-6">
-          {data.h2h.length > 0 ? (
-            <HeadToHeadChart matchups={data.h2h} opponentsLabel="the qualified field" />
-          ) : (
-            <div className="text-[12.5px] text-muted-foreground">
-              No qualifying head-to-head record against this discipline&apos;s projected field.
-            </div>
-          )}
+          <HeadToHeadChart matchups={data.h2h} opponentsLabel={t("ath.h2hOpponents")} />
         </Panel>
       ) : null}
 
@@ -629,13 +615,15 @@ function AthleteProfilePage() {
           </button>
         ) : (
           <Link
-            to="/dashboard"
+            to={FIELD_EVENT_KEYS.has(a.discKey) ? "/field" : "/track"}
             className="label-caps -m-2 p-2 text-white/80 transition-colors hover:text-white"
           >
-            {t("nav.back")} to dashboard
+            {t(FIELD_EVENT_KEYS.has(a.discKey) ? "ath.backToField" : "ath.backToTrack")}
           </Link>
         )}
-        <div className="label-caps mt-3 text-gold-on-canvas">Athlete dossier · {a.disc}</div>
+        <div className="label-caps mt-3 text-gold-on-canvas">
+          {t("ath.dossier", { disc: discName(t, a.discKey, a.disc) })}
+        </div>
         <h1 className="page-title mt-3.5 text-[clamp(40px,7vw,92px)] leading-[0.95] text-white">
           {forename}
           {surname && (
@@ -660,10 +648,12 @@ function AthleteProfilePage() {
               value={localizeDate(lang, a.lastRaceDate)}
             />
           )}
-          <DossierFigure
-            label={t("ath.figRacesIn", { year: a.historyYear ?? "" }).trim()}
-            value={String(a.racesThisSeason)}
-          />
+          {a.racesThisSeason > 0 && (
+            <DossierFigure
+              label={t("ath.figRacesIn", { year: a.historyYear ?? "" }).trim()}
+              value={String(a.racesThisSeason)}
+            />
+          )}
           {/* The championship model's rating in the world's top 20, the one
               every other page shows. Hidden outside that top 20 rather than
               read as 0%. */}
@@ -703,57 +693,68 @@ function AthleteProfilePage() {
   return (
     <Shell title={a.name} crumb={a.name} hero={hero} headBackdrop={backdrop}>
       {a.championship && <ChampionshipCallPanel call={a.championship} />}
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
+      <div
+        className={`mt-6 grid grid-cols-1 gap-6 ${a.history.length > 0 ? "lg:grid-cols-[1fr_1fr]" : ""}`}
+      >
         <Panel title={t("ath.seasonStats")}>
+          {/* Only the figures this athlete has (the user's rule, 2026-09-21). */}
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             <StatBlock label={t("ath.seasonBest2026")} value={a.mark} icon="target" />
-            <StatBlock label={t("ath.careerBest")} value={a.careerBest ?? "—"} icon="trophy" />
-            <StatBlock
-              label={t("ath.pbGap")}
-              value={
-                a.pbGap != null
-                  ? `${a.pbGap.toFixed(2)}${FIELD_EVENT_KEYS.has(a.discKey) ? "m" : "s"}`
-                  : "—"
-              }
-              sub={t("ath.offCareerBest")}
-              icon="ruler"
-              hint={t(
-                FIELD_EVENT_KEYS.has(a.discKey) ? "ath.pbGapHintMetres" : "ath.pbGapHintSeconds",
-              )}
-            />
-            <StatBlock
-              label={t("ath.ageLabel")}
-              value={a.age != null ? String(Math.round(a.age)) : "—"}
-              icon="calendar"
-            />
+            {a.careerBest && (
+              <StatBlock label={t("ath.careerBest")} value={a.careerBest} icon="trophy" />
+            )}
+            {a.pbGap != null && (
+              <StatBlock
+                label={t("ath.pbGap")}
+                value={`${a.pbGap.toFixed(2)}${FIELD_EVENT_KEYS.has(a.discKey) ? "m" : "s"}`}
+                sub={t("ath.offCareerBest")}
+                icon="ruler"
+                hint={t(
+                  FIELD_EVENT_KEYS.has(a.discKey) ? "ath.pbGapHintMetres" : "ath.pbGapHintSeconds",
+                )}
+              />
+            )}
+            {a.age != null && (
+              <StatBlock
+                label={t("ath.ageLabel")}
+                value={String(Math.round(a.age))}
+                icon="calendar"
+              />
+            )}
             {/* Scoped to THIS discipline, and saying so matters now that the
                 Mile no longer counts as a 1500m (2026-08-24 scraper fix):
                 Josh Kerr's whole 2026 Diamond League 1500m season was Miles,
                 so this legitimately reads 0 next to a "last competed" figure
                 that came from his toplist mark. Same situation for anyone who
                 switches events mid-season. */}
-            <StatBlock
-              label={t("ath.meetsThisSeason")}
-              value={a.meetsCount != null ? String(a.meetsCount) : "—"}
-              sub={t("ath.dlMeetings")}
-              icon="grid"
-            />
-            <StatBlock
-              label={
-                FIELD_EVENT_KEYS.has(a.discKey)
-                  ? t("ath.competitionsThisSeason")
-                  : t("ath.racesThisSeason")
-              }
-              value={String(a.racesThisSeason)}
-              sub={t("ath.allCompetitions")}
-              icon="grid"
-            />
-            <StatBlock
-              label={t("ath.lastCompeted")}
-              value={a.daysSinceLast != null ? t("ath.daysAgo", { n: a.daysSinceLast }) : "—"}
-              {...(a.lastRaceDate ? { sub: localizeDate(lang, a.lastRaceDate) } : {})}
-              icon="clock"
-            />
+            {(a.meetsCount ?? 0) > 0 && (
+              <StatBlock
+                label={t("ath.meetsThisSeason")}
+                value={String(a.meetsCount)}
+                sub={t("ath.dlMeetings")}
+                icon="grid"
+              />
+            )}
+            {a.racesThisSeason > 0 && (
+              <StatBlock
+                label={
+                  FIELD_EVENT_KEYS.has(a.discKey)
+                    ? t("ath.competitionsThisSeason")
+                    : t("ath.racesThisSeason")
+                }
+                value={String(a.racesThisSeason)}
+                sub={t("ath.allCompetitions")}
+                icon="grid"
+              />
+            )}
+            {a.daysSinceLast != null && (
+              <StatBlock
+                label={t("ath.lastCompeted")}
+                value={t("ath.daysAgo", { n: a.daysSinceLast })}
+                {...(a.lastRaceDate ? { sub: localizeDate(lang, a.lastRaceDate) } : {})}
+                icon="clock"
+              />
+            )}
             {/* World Athletics' own scoring-table points. The only number on
                 this page that means anything outside this event -- a 1269 in
                 the 100m and a 1269 in the shot put are the same quality of
@@ -792,20 +793,18 @@ function AthleteProfilePage() {
           </a>
         </Panel>
 
-        <Panel
-          title={t("ath.realSeasonForm")}
-          subtitle={
-            a.historyCondensed
-              ? t("ath.seasonFormCondensed", { n: a.historyRaces ?? 0 })
-              : t("ath.seasonFormAll", { n: a.history.length })
-          }
-        >
-          {a.history.length > 0 ? (
+        {a.history.length > 0 && (
+          <Panel
+            title={t("ath.realSeasonForm")}
+            subtitle={
+              a.historyCondensed
+                ? t("ath.seasonFormCondensed", { n: a.historyRaces ?? 0 })
+                : t("ath.seasonFormAll", { n: a.history.length })
+            }
+          >
             <SeasonTrendChart history={a.history} year={a.historyYear} />
-          ) : (
-            <div className="text-[12.5px] text-muted-foreground">{t("ath.noHistoryPrior")}</div>
-          )}
-        </Panel>
+          </Panel>
+        )}
       </div>
 
       {a.career && <AthleteCareerBlock career={a.career} />}
@@ -814,7 +813,6 @@ function AthleteProfilePage() {
         <AthleteAnalyticsBlock
           analytics={a.analytics}
           isField={FIELD_EVENT_KEYS.has(a.discKey)}
-          rivalNames={a.rivalNames}
           careerSeasons={a.careerSeasons}
         />
       )}

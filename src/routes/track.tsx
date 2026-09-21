@@ -34,6 +34,7 @@ function TrackPage() {
       photo="track"
       eyebrow={count !== undefined ? t("track.eyebrow", { n: count }) : undefined}
       description={t("track.description")}
+      layout="open"
     >
       {state.status === "loading" && <PanelSkeleton title={t("rankings.loading")} rows={10} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}

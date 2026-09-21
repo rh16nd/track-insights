@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
+import { BareFrame } from "./bare-frame";
 import { NatFlag } from "./nat-flag";
 import { InfoTip } from "./info-tip";
 import { useT } from "@/lib/i18n";
@@ -431,33 +432,6 @@ function FrameTarget({ id, children }: { id: string | undefined; children: React
     <div id={id} tabIndex={-1} className="scroll-mt-28 outline-none">
       {children}
     </div>
-  );
-}
-
-/** The table's heading and notes without a panel around them. */
-function BareFrame({
-  title,
-  subtitle,
-  children,
-  className = "",
-}: {
-  title: string;
-  subtitle?: string;
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <section className={className}>
-      <h3 className="hero-serif text-[clamp(26px,3vw,36px)] leading-tight text-foreground">
-        {title}
-      </h3>
-      {subtitle && (
-        <p className="mt-2 max-w-[70ch] text-[13.5px] leading-relaxed text-muted-foreground">
-          {subtitle}
-        </p>
-      )}
-      <div className="mt-6">{children}</div>
-    </section>
   );
 }
 

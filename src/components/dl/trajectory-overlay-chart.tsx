@@ -12,26 +12,26 @@ const PAD_TOP = 20;
 const PAD_BOTTOM = 32;
 const PAD_RIGHT = 108; // room for end-of-line direct labels
 
-// Fixed-order categorical palette for up to 4 real athletes -- the first
-// two reuse the app's own terracotta/gold brand accents (already the
-// identity color for rank #1/#2 elsewhere in the app); the other two are
-// new cool hues added specifically for this multi-series chart, spaced far
-// from the warm brand hues and from each other for real distinguishability
-// (not validated against the full six-checks script, but chosen at a
-// matching lightness/chroma band to the existing accents on purpose).
-const SERIES_COLORS = [
-  "var(--terracotta)",
-  "var(--gold-strong)",
-  "var(--chart-3)",
-  "var(--chart-4)",
-];
+// Eight athletes since 2026-09-21 (the user asked for the top 8), so eight
+// fixed-order hues, --series-1..8 in styles.css. Validated with the dataviz
+// skill's six-checks script on the dark page ground (#140e0b): every hue in
+// the dark lightness band and at 3:1 or better, worst adjacent colour-blind
+// separation 12.9 (target 8), worst normal-vision 21.9 (floor 15). The order
+// is the safety mechanism, so it is fixed, and a hue follows the athlete's
+// place in the event's list, never their place among those plotted.
+const SERIES_COLORS = Array.from({ length: 8 }, (_, i) => `var(--series-${i + 1})`);
 
 // Series were previously separated by hue alone, which fails for colour-blind
 // readers and in greyscale print: two of the four accents sit at a matching
 // lightness/chroma band by design, so they converge without colour. Each
 // series now also carries its own dash signature, and the same signature is
 // mirrored in the table view's legend swatch so the two views agree.
-const SERIES_DASH = ["", "7 4", "2 3", "10 3 2 3"];
+const SERIES_DASH = ["", "7 4", "2 3", "10 3 2 3", "", "7 4", "2 3", "10 3 2 3"];
+
+/** Up to this many lines carry a name at their end. Past it the labels
+ * collide, so the legend names every line and only the one being read gets
+ * its label. */
+const DIRECT_LABELS_MAX = 4;
 
 function parseDate(d: string): number {
   // "23 AUG 2026" -> real timestamp, so multiple athletes' actual meet
@@ -57,6 +57,9 @@ export function TrajectoryOverlayChart({
 }) {
   const { t, lang } = useT();
   const [hover, setHover] = useState<{ series: number; point: number } | null>(null);
+  // The line being read, from a point or from the legend: it comes forward
+  // and the others step back, which is what keeps eight lines legible.
+  const [focus, setFocus] = useState<number | null>(null);
   const [tableView, setTableView] = useState(false);
 
   if (trajectories.length === 0) return null;
@@ -112,19 +115,24 @@ export function TrajectoryOverlayChart({
   };
   const valueTicks = Array.from({ length: 4 }, (_, i) => minV + ((maxV - minV) * i) / 3);
 
-  const series = comparable.map((tr, i) => {
+  const series = comparable.map((tr) => {
     const pts = tr.history.map((h) => ({
       ...h,
       x: xFor(parseDate(h.date)),
       y: yFor(h.markValue ?? minV),
     }));
+    // By place in the whole list, so an athlete keeps their colour whoever
+    // else is plotted beside them.
+    const slot = trajectories.indexOf(tr);
     return {
       trajectory: tr,
-      color: SERIES_COLORS[i % SERIES_COLORS.length],
-      dash: SERIES_DASH[i % SERIES_DASH.length],
+      color: SERIES_COLORS[slot] ?? "var(--muted-foreground)",
+      dash: SERIES_DASH[slot] ?? "",
       pts,
     };
   });
+  const active = hover?.series ?? focus;
+  const labelled = (si: number) => series.length <= DIRECT_LABELS_MAX || active === si;
 
   // A handful of evenly-spaced real date ticks along the shared timeline.
   const tickCount = Math.min(5, Math.max(2, new Set(allDates).size));
@@ -253,31 +261,39 @@ export function TrajectoryOverlayChart({
                 })}
               </text>
             ))}
-            {series.map((s, si) => {
-              const path = s.pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
-              const lastPt = s.pts[s.pts.length - 1];
-              return (
-                <g key={si}>
-                  <path
-                    d={path}
-                    fill="none"
-                    stroke={s.color}
-                    strokeWidth={2}
-                    strokeLinejoin="round"
-                    strokeLinecap={s.dash ? "butt" : "round"}
-                    strokeDasharray={s.dash || undefined}
-                  />
-                  {s.pts.map((p, pi) => (
-                    <circle
-                      key={pi}
-                      cx={p.x}
-                      cy={p.y}
-                      r={4}
-                      fill={s.color}
-                      stroke="var(--card)"
-                      strokeWidth={1.5}
-                      tabIndex={0}
-                      /* role="img", not "button". These are focusable so a
+            {/* The line being read is drawn last, so it sits on top. */}
+            {series
+              .map((s, si) => ({ s, si }))
+              .sort((a, b) => Number(a.si === active) - Number(b.si === active))
+              .map(({ s, si }) => {
+                const path = s.pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
+                const lastPt = s.pts[s.pts.length - 1];
+                return (
+                  <g
+                    key={si}
+                    opacity={active === null || active === si ? 1 : 0.22}
+                    style={{ transition: "opacity 150ms ease" }}
+                  >
+                    <path
+                      d={path}
+                      fill="none"
+                      stroke={s.color}
+                      strokeWidth={2}
+                      strokeLinejoin="round"
+                      strokeLinecap={s.dash ? "butt" : "round"}
+                      strokeDasharray={s.dash || undefined}
+                    />
+                    {s.pts.map((p, pi) => (
+                      <circle
+                        key={pi}
+                        cx={p.x}
+                        cy={p.y}
+                        r={4}
+                        fill={s.color}
+                        stroke="var(--page-ground, var(--background))"
+                        strokeWidth={1.5}
+                        tabIndex={0}
+                        /* role="img", not "button". These are focusable so a
                          keyboard user can reach each data point and have
                          onFocus surface the same tooltip a mouse gets on
                          hover -- but nothing activates. Calling them buttons
@@ -286,29 +302,29 @@ export function TrajectoryOverlayChart({
                          graphics, and the label is the reading of the point.
                          The focus ring is unaffected: styles.css targets
                          [tabindex]:not([tabindex="-1"]), not the role. */
-                      role="img"
-                      aria-label={`${s.trajectory.name}, ${p.mark}, ${localizeDate(lang, p.date)}, ${p.venue}`}
-                      onMouseEnter={() => setHover({ series: si, point: pi })}
-                      onMouseLeave={() => setHover(null)}
-                      onFocus={() => setHover({ series: si, point: pi })}
-                      onBlur={() => setHover(null)}
-                      style={{ cursor: "pointer", outlineColor: s.color }}
-                    />
-                  ))}
-                  {lastPt && (
-                    <text
-                      x={lastPt.x + 8}
-                      y={lastPt.y + 3}
-                      fontSize={11}
-                      fontWeight={600}
-                      fill={s.color}
-                    >
-                      {s.trajectory.name.split(" ").pop()}
-                    </text>
-                  )}
-                </g>
-              );
-            })}
+                        role="img"
+                        aria-label={`${s.trajectory.name}, ${p.mark}, ${localizeDate(lang, p.date)}, ${p.venue}`}
+                        onMouseEnter={() => setHover({ series: si, point: pi })}
+                        onMouseLeave={() => setHover(null)}
+                        onFocus={() => setHover({ series: si, point: pi })}
+                        onBlur={() => setHover(null)}
+                        style={{ cursor: "pointer", outlineColor: s.color }}
+                      />
+                    ))}
+                    {lastPt && labelled(si) && (
+                      <text
+                        x={lastPt.x + 8}
+                        y={lastPt.y + 3}
+                        fontSize={11}
+                        fontWeight={600}
+                        fill={s.color}
+                      >
+                        {s.trajectory.name.split(" ").pop()}
+                      </text>
+                    )}
+                  </g>
+                );
+              })}
           </svg>
           {hover &&
             (() => {
@@ -340,7 +356,13 @@ export function TrajectoryOverlayChart({
             key={i}
             to="/athlete/$discKey/$name"
             params={{ discKey, name: s.trajectory.name }}
-            className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground transition-colors hover:text-terracotta-strong"
+            onMouseEnter={() => setFocus(i)}
+            onMouseLeave={() => setFocus(null)}
+            onFocus={() => setFocus(i)}
+            onBlur={() => setFocus(null)}
+            className={`flex items-center gap-1.5 text-[11.5px] transition-colors hover:text-foreground ${
+              active === i ? "text-foreground" : "text-muted-foreground"
+            }`}
           >
             {/* Swatch shows the series' dash signature, not just its hue, so
                 the legend still identifies each line without colour. */}

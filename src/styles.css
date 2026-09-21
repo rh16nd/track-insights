@@ -137,6 +137,18 @@
   --chart-3: oklch(0.72 0.1 250);
   --chart-4: oklch(0.74 0.11 155);
   --chart-neutral: oklch(0.5 0.015 60);
+  /* An event page's season form, up to eight athletes, in this fixed order.
+     Validated with the dataviz skill's six checks on the page ground:
+     lightness band, chroma, 3:1 contrast, adjacent colour-blind separation
+     (worst 12.9) and normal vision (worst 21.9). Change one, run it again. */
+  --series-1: #e06131;
+  --series-2: #01a0ad;
+  --series-3: #ba8100;
+  --series-4: #2191f0;
+  --series-5: #1ba951;
+  --series-6: #9f71e4;
+  --series-7: #869901;
+  --series-8: #d95a93;
 }
 
 /* Scoped to the "/" landing page -- a deliberately bold front door

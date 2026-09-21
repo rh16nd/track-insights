@@ -397,7 +397,7 @@ export const fr: Record<string, string> = {
     "Vrais titres de presse repérés par la vérification automatique des blessures · dernière analyse le {{date}}",
   "news.loading": "Chargement des actualités…",
   "news.empty":
-    "Aucun titre de blessure ou de forfait ne correspond à un athlète du plateau projeté.",
+    "Aucun titre sur une blessure ou un forfait ne concerne un athlète que nous suivons.",
   "news.removed": "Annoncé forfait",
   "watch.badgeOut": "Forfait",
   "news.reportOne": "1 article",
@@ -866,11 +866,8 @@ export const fr: Record<string, string> = {
   "aa.h2hTitle": "Bilan des confrontations directes",
   "aa.h2hSubtitle":
     "Établi uniquement sur des affrontements réels en {{noun}} : même meeting, même jour, places comparées. Rien ici n’est déduit.",
-  "aa.inFieldTitle": "Projeté dans le plateau de la finale",
-  "aa.inField": "Dans le plateau",
-  "aa.h2hNoteBefore":
-    "Trié par nombre de rencontres, pas par bilan, car les rivalités les plus fournies sont les plus instructives. Les défaites sont montrées aussi clairement que les victoires. Les adversaires marqués ",
-  "aa.h2hNoteAfter": " sont projetés au départ de la finale.",
+  "aa.h2hNote":
+    "Trié par nombre de rencontres, pas par bilan, car ce sont les rivalités les plus fournies qui en disent le plus. Les défaites sont montrées aussi clairement que les victoires.",
   "aa.coverageBefore":
     "Calculé à partir de {{races}} finales extraites ({{withPlace}} avec une place enregistrée) sur {{n}} {{seasonWord}} : {{seasons}}. Ce sont tous les meetings dont World Athletics publie les résultats dans les groupes de compétition seniors en plein air, pas la carrière complète d’un athlète ; une sortie en {{noun}} hors de ces groupes n’est pas comptée.",
   "aa.season": "saison",
@@ -956,19 +953,15 @@ export const fr: Record<string, string> = {
   "ath.percentileBefore": "{{ord}} centile au sein du {{disc}}, où la médiane est de ",
   "ath.percentileAfter": ".",
   "ath.setIndoors": " Cette performance a été réalisée en salle.",
-  "ath.noDatedResults":
-    "World Athletics recense une meilleure performance de la saison pour cet athlète mais aucun résultat daté cette saison{{extra}} : le nombre de meetings et la dernière sortie sont donc inconnus ici, et non nuls.",
-  "ath.noDatedResultsExtra": " (ses résultats enregistrés datent d’années antérieures)",
-  "ath.notComputed":
-    "Le record en carrière, l’écart au record et l’activité ne sont pas calculés pour des athlètes aussi éloignés du plateau. Le modèle n’évalue que les finalistes projetés et leurs plus proches poursuivants.",
   "ath.realSeasonForm": "Forme réelle de la saison",
   "ath.seasonFormAll":
     "Toutes les compétitions disputées cette saison — {{n}} au total — en salle comme en plein air, pas seulement la Diamond League. Le palmarès ci-dessous ne compte que les finales, d’où des totaux différents.",
   "ath.seasonFormCondensed":
     "Sa meilleure performance de chaque mois. {{n}} courses cette saison, trop pour les afficher une à une : chaque mois disputé est représenté par son meilleur résultat.",
-  "ath.h2hTitle": "Confrontations directes face au plateau projeté",
+  "ath.h2hTitle": "Bilan des confrontations directes",
   "ath.h2hSubtitle":
-    "Confrontations réelles face aux athlètes qui se sont qualifiés, d’après les résultats World Athletics.",
+    "Confrontations réelles avec les athlètes qualifiés pour la finale de la Diamond League cette année, d’après les résultats World Athletics.",
+  "ath.h2hOpponents": "finalistes de la Diamond League cette année",
   "ath.figSeasonBest": "Meilleure perf. saison",
   "ath.figPersonalBest": "Record personnel",
   "ath.figRacesIn": "Courses en {{year}}",

@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
-import { Panel, ProbabilityBar } from "@/components/dl/shell";
+import { ProbabilityBar } from "@/components/dl/shell";
+import { BareFrame } from "@/components/dl/bare-frame";
 import { InfoTip } from "@/components/dl/info-tip";
 import { ordinalIn, startNounKey, startVerbKey } from "@/lib/dl-data";
 import { localizeDate, localizeMonth } from "@/lib/dates";
@@ -36,217 +37,227 @@ export function FieldAnalysisBlock({
   const { t, lang } = useT();
   const { matrix, comparison } = analysis;
   const byName = new Map(comparison.map((c) => [c.name, c]));
+  // Each section only with something in it (the user, 2026-09-21): the grid
+  // when at least one pair has met, the table for the athletes with a race on
+  // record, and only when there are two of them to set side by side. The
+  // 10,000m's grid met in none of its 45 pairings and drew a square of dashes.
+  const raced = matrix.names.filter((name) => (byName.get(name)?.races ?? 0) > 0);
+  if (matrix.pairsMet === 0 && raced.length < 2) return null;
 
   return (
     <>
-      <Panel
-        title={t("fa.pairingsTitle", { disc: discLabel })}
-        subtitle={t("fa.pairingsSubtitle", {
-          noun: t(startNounKey(isField)),
-          met: matrix.pairsMet,
-          possible: matrix.pairsPossible,
-        })}
-        className="mt-6"
-        action={
-          <InfoTip label={t("fa.howToRead")}>
-            {t("fa.howToReadBefore")}
-            <b>3–1</b>
-            {t("fa.howToReadAfter", { noun: t(startNounKey(isField)) })}
-          </InfoTip>
-        }
-      >
-        <div className="relative overflow-x-auto">
-          <table className="border-collapse text-left">
-            {/* A grid this shape is unreadable without a caption: every cell
+      {matrix.pairsMet > 0 && (
+        <BareFrame
+          level={2}
+          title={t("fa.pairingsTitle", { disc: discLabel })}
+          subtitle={t("fa.pairingsSubtitle", {
+            noun: t(startNounKey(isField)),
+            met: matrix.pairsMet,
+            possible: matrix.pairsPossible,
+          })}
+          className="mt-14 border-t border-border pt-12"
+          action={
+            <InfoTip label={t("fa.howToRead")}>
+              {t("fa.howToReadBefore")}
+              <b>3–1</b>
+              {t("fa.howToReadAfter", { noun: t(startNounKey(isField)) })}
+            </InfoTip>
+          }
+        >
+          <div className="relative overflow-x-auto">
+            <table className="border-collapse text-left">
+              {/* A grid this shape is unreadable without a caption: every cell
                 is a win-loss record whose meaning depends on which athlete
                 owns the row and which owns the column. */}
-            <caption className="sr-only">
-              {t("fa.gridCaption", { disc: discLabel, noun: t(startNounKey(isField)) })}
-            </caption>
-            <thead>
-              <tr>
-                <th
-                  scope="col"
-                  className="label-caps sticky left-0 z-10 bg-card pb-2.5 pr-6 text-muted-foreground"
-                >
-                  {t("table.colAthlete")}
-                </th>
-                {matrix.names.map((n) => (
+              <caption className="sr-only">
+                {t("fa.gridCaption", { disc: discLabel, noun: t(startNounKey(isField)) })}
+              </caption>
+              <thead>
+                <tr>
                   <th
-                    key={n}
                     scope="col"
-                    className="label-caps w-16 px-2 pb-2.5 text-center font-semibold text-muted-foreground"
-                    title={n}
+                    className="label-caps sticky left-0 z-10 bg-card pb-2.5 pr-6 text-muted-foreground"
                   >
-                    {surname(n)}
+                    {t("table.colAthlete")}
                   </th>
-                ))}
-                <th
-                  scope="col"
-                  className="label-caps w-28 pb-2 pl-4 text-right text-muted-foreground"
-                >
-                  {t("fa.vsThisField")}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {matrix.rows.map((row, i) => (
-                <tr
-                  key={row.name}
-                  className="stagger-item"
-                  style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
-                >
-                  <th
-                    scope="row"
-                    className="sticky left-0 z-10 whitespace-nowrap bg-card py-2.5 pr-6 text-left text-[13px] font-medium text-foreground"
-                  >
-                    <Link
-                      to="/athlete/$discKey/$name"
-                      params={{ discKey, name: row.name }}
-                      className="transition-colors hover:text-terracotta-strong hover:underline"
+                  {matrix.names.map((n) => (
+                    <th
+                      key={n}
+                      scope="col"
+                      className="label-caps w-16 px-2 pb-2.5 text-center font-semibold text-muted-foreground"
+                      title={n}
                     >
-                      {row.name}
-                    </Link>
-                  </th>
-                  {row.cells.map((cell, j) => (
-                    <MatrixCell
-                      key={matrix.names[j]}
-                      cell={cell}
-                      self={i === j}
-                      a={row.name}
-                      b={matrix.names[j] ?? ""}
-                      isField={isField}
-                    />
+                      {surname(n)}
+                    </th>
                   ))}
-                  <td className="py-2 pl-6">
-                    <FormStrip form={byName.get(row.name)?.recentForm ?? []} />
-                  </td>
-                  <td className="py-2 pl-4 text-right">
-                    {row.winRate === null ? (
-                      <span className="text-[11.5px] text-muted-foreground">never met</span>
-                    ) : (
-                      <span className="flex items-center justify-end gap-2">
-                        <span className="hidden w-14 sm:block">
-                          <ProbabilityBar value={row.winRate} trackHeight="h-1.5" />
-                        </span>
-                        <span className="nums text-[13px] font-semibold text-foreground">
-                          {row.wins}–{row.losses}
-                        </span>
-                      </span>
-                    )}
-                  </td>
+                  <th
+                    scope="col"
+                    className="label-caps w-28 pb-2 pl-4 text-right text-muted-foreground"
+                  >
+                    {t("fa.vsThisField")}
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="mt-3 max-w-3xl text-[11.5px] leading-relaxed text-muted-foreground">
-          {t("fa.blankCellNote", { verb: t(startVerbKey(isField)) })}
-        </p>
-      </Panel>
-
-      <Panel
-        title={t("fa.separatesTitle")}
-        subtitle={t("fa.separatesSubtitle")}
-        className="mt-6"
-      >
-        <div className="relative overflow-x-auto">
-          <table className="w-full min-w-[620px] border-collapse text-left">
-            <caption className="sr-only">
-              {t("fa.separatesCaption", { disc: discLabel })}
-            </caption>
-            <thead>
-              <tr className="label-caps border-b border-border text-muted-foreground">
-                <th scope="col" className="pb-2 pr-2 font-semibold">
-                  {t("table.colAthlete")}
-                </th>
-                <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
-                  <span className="inline-flex items-center gap-1 whitespace-nowrap">
-                    {t("fa.colTop3")}
-                    <InfoTip label={t("figure.about", { label: t("fa.colTop3") })}>
-                      {t("fa.colTop3Hint")}
-                    </InfoTip>
-                  </span>
-                </th>
-                <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
-                  <span className="inline-flex items-center gap-1 whitespace-nowrap">
-                    {t("fa.colSteadiness")}
-                    <InfoTip label={t("figure.about", { label: t("fa.colSteadiness") })}>
-                      {t("fa.colSteadinessHint")}
-                    </InfoTip>
-                  </span>
-                </th>
-                <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
-                  <span className="inline-flex items-center gap-1 whitespace-nowrap">
-                    {t(isField ? "fa.colComps" : "fa.colRaces")}
-                    <InfoTip
-                      label={t("figure.about", {
-                        label: t(isField ? "fa.colComps" : "fa.colRaces"),
-                      })}
-                    >
-                      {t("fa.colStartsHint")}
-                    </InfoTip>
-                  </span>
-                </th>
-                <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
-                  <span className="inline-flex items-center gap-1 whitespace-nowrap">
-                    {t("fa.colPodium")}
-                    <InfoTip label={t("figure.about", { label: t("fa.colPodium") })}>
-                      {t("fa.colPodiumHint")}
-                    </InfoTip>
-                  </span>
-                </th>
-                <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
-                  <span className="inline-flex items-center gap-1 whitespace-nowrap">
-                    {t("fa.colPeaked")}
-                    <InfoTip label={t("figure.about", { label: t("fa.colPeaked") })}>
-                      {t("fa.colPeakedHint")}
-                    </InfoTip>
-                  </span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {matrix.names.map((name, i) => {
-                const c = byName.get(name);
-                return (
+              </thead>
+              <tbody className="divide-y divide-border">
+                {matrix.rows.map((row, i) => (
                   <tr
-                    key={name}
-                    className="stagger-item transition-colors hover:bg-secondary/40"
+                    key={row.name}
+                    className="stagger-item"
                     style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
                   >
-                    <td className="py-2.5 pr-2 text-[13px] font-medium text-foreground">
+                    <th
+                      scope="row"
+                      className="sticky left-0 z-10 whitespace-nowrap bg-card py-2.5 pr-6 text-left text-[13px] font-medium text-foreground"
+                    >
                       <Link
                         to="/athlete/$discKey/$name"
-                        params={{ discKey, name }}
+                        params={{ discKey, name: row.name }}
                         className="transition-colors hover:text-terracotta-strong hover:underline"
                       >
-                        {name}
+                        {row.name}
                       </Link>
+                    </th>
+                    {row.cells.map((cell, j) => (
+                      <MatrixCell
+                        key={matrix.names[j]}
+                        cell={cell}
+                        self={i === j}
+                        a={row.name}
+                        b={matrix.names[j] ?? ""}
+                        isField={isField}
+                      />
+                    ))}
+                    <td className="py-2 pl-6">
+                      <FormStrip form={byName.get(row.name)?.recentForm ?? []} />
                     </td>
-                    <td className="nums py-2.5 pl-3 text-right text-[13px] font-semibold text-foreground">
-                      {c?.top3Average != null ? formatMarkish(c.top3Average, isField) : "—"}
-                    </td>
-                    <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
-                      {c?.consistency != null ? `${c.consistency.toFixed(2)}%` : "—"}
-                    </td>
-                    <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
-                      {c?.seasonRaces ?? 0}
-                      <span className="text-muted-foreground"> / {c?.races ?? 0}</span>
-                    </td>
-                    <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
-                      {c?.podiumRate != null ? `${c.podiumRate}%` : "—"}
-                    </td>
-                    <td className="py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
-                      {c?.bestMonth ? localizeMonth(lang, c.bestMonth) : "—"}
+                    <td className="py-2 pl-4 text-right">
+                      {row.winRate === null ? (
+                        <span className="text-[11.5px] text-muted-foreground">never met</span>
+                      ) : (
+                        <span className="flex items-center justify-end gap-2">
+                          <span className="hidden w-14 sm:block">
+                            <ProbabilityBar value={row.winRate} trackHeight="h-1.5" />
+                          </span>
+                          <span className="nums text-[13px] font-semibold text-foreground">
+                            {row.wins}–{row.losses}
+                          </span>
+                        </span>
+                      )}
                     </td>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </Panel>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 max-w-3xl text-[11.5px] leading-relaxed text-muted-foreground">
+            {t("fa.blankCellNote", { verb: t(startVerbKey(isField)) })}
+          </p>
+        </BareFrame>
+      )}
+
+      {raced.length >= 2 && (
+        <BareFrame
+          level={2}
+          title={t("fa.separatesTitle")}
+          subtitle={t("fa.separatesSubtitle")}
+          className="mt-14 border-t border-border pt-12"
+        >
+          <div className="relative overflow-x-auto">
+            <table className="w-full min-w-[620px] border-collapse text-left">
+              <caption className="sr-only">{t("fa.separatesCaption", { disc: discLabel })}</caption>
+              <thead>
+                <tr className="label-caps border-b border-border text-muted-foreground">
+                  <th scope="col" className="pb-2 pr-2 font-semibold">
+                    {t("table.colAthlete")}
+                  </th>
+                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                    <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                      {t("fa.colTop3")}
+                      <InfoTip label={t("figure.about", { label: t("fa.colTop3") })}>
+                        {t("fa.colTop3Hint")}
+                      </InfoTip>
+                    </span>
+                  </th>
+                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                    <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                      {t("fa.colSteadiness")}
+                      <InfoTip label={t("figure.about", { label: t("fa.colSteadiness") })}>
+                        {t("fa.colSteadinessHint")}
+                      </InfoTip>
+                    </span>
+                  </th>
+                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                    <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                      {t(isField ? "fa.colComps" : "fa.colRaces")}
+                      <InfoTip
+                        label={t("figure.about", {
+                          label: t(isField ? "fa.colComps" : "fa.colRaces"),
+                        })}
+                      >
+                        {t("fa.colStartsHint")}
+                      </InfoTip>
+                    </span>
+                  </th>
+                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                    <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                      {t("fa.colPodium")}
+                      <InfoTip label={t("figure.about", { label: t("fa.colPodium") })}>
+                        {t("fa.colPodiumHint")}
+                      </InfoTip>
+                    </span>
+                  </th>
+                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                    <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                      {t("fa.colPeaked")}
+                      <InfoTip label={t("figure.about", { label: t("fa.colPeaked") })}>
+                        {t("fa.colPeakedHint")}
+                      </InfoTip>
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {raced.map((name, i) => {
+                  const c = byName.get(name);
+                  return (
+                    <tr
+                      key={name}
+                      className="stagger-item transition-colors hover:bg-secondary/40"
+                      style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
+                    >
+                      <td className="py-2.5 pr-2 text-[13px] font-medium text-foreground">
+                        <Link
+                          to="/athlete/$discKey/$name"
+                          params={{ discKey, name }}
+                          className="transition-colors hover:text-terracotta-strong hover:underline"
+                        >
+                          {name}
+                        </Link>
+                      </td>
+                      <td className="nums py-2.5 pl-3 text-right text-[13px] font-semibold text-foreground">
+                        {c?.top3Average != null ? formatMarkish(c.top3Average, isField) : "—"}
+                      </td>
+                      <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+                        {c?.consistency != null ? `${c.consistency.toFixed(2)}%` : "—"}
+                      </td>
+                      <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+                        {c?.seasonRaces ?? 0}
+                        <span className="text-muted-foreground"> / {c?.races ?? 0}</span>
+                      </td>
+                      <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+                        {c?.podiumRate != null ? `${c.podiumRate}%` : "—"}
+                      </td>
+                      <td className="py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+                        {c?.bestMonth ? localizeMonth(lang, c.bestMonth) : "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </BareFrame>
+      )}
     </>
   );
 }

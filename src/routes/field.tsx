@@ -34,6 +34,7 @@ function FieldPage() {
       photo="field"
       eyebrow={count !== undefined ? t("field.eyebrow", { n: count }) : undefined}
       description={t("field.description")}
+      layout="open"
     >
       {state.status === "loading" && <PanelSkeleton title={t("rankings.loading")} rows={10} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}

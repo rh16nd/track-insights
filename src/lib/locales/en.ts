@@ -393,7 +393,7 @@ export const en: Record<string, string> = {
   "news.subtitleWithDate":
     "Real headlines matched by the automatic injury check · last run {{date}}",
   "news.loading": "Loading news…",
-  "news.empty": "No injury or withdrawal headlines matched any athlete in the projected field.",
+  "news.empty": "No injury or withdrawal headlines matched any athlete we follow.",
   // Was "Removed from field". Nothing is removed any more -- a flagged
   // athlete keeps their place and their number, so the label has to say
   // what is known about the athlete instead of what the table did.
@@ -860,11 +860,8 @@ export const en: Record<string, string> = {
   "aa.h2hTitle": "Head-to-head record",
   "aa.h2hSubtitle":
     "Derived from actually sharing a {{noun}}: same meeting, same day, compared on finishing position. Nothing here is inferred.",
-  "aa.inFieldTitle": "Projected to be in the Final field",
-  "aa.inField": "In field",
-  "aa.h2hNoteBefore":
-    "Sorted by how often they've met, not by record, since the deepest rivalries are the informative ones. Losses are shown as plainly as wins. Opponents marked ",
-  "aa.h2hNoteAfter": " are projected to line up in the Final.",
+  "aa.h2hNote":
+    "Sorted by how often they've met, not by record, since the deepest rivalries tell you the most. Losses are shown as plainly as wins.",
   "aa.coverageBefore":
     "Computed from {{races}} scraped finals ({{withPlace}} with a recorded finishing position) across {{n}} {{seasonWord}}: {{seasons}}. This is every meeting World Athletics publishes results for in the senior outdoor competition groups, not an athlete's complete career; a {{noun}} outside those groups isn't counted.",
   "aa.season": "season",
@@ -949,19 +946,15 @@ export const en: Record<string, string> = {
   "ath.percentileBefore": "{{ord}} percentile within {{disc}}, where the median is ",
   "ath.percentileAfter": ".",
   "ath.setIndoors": " This mark was set indoors.",
-  "ath.noDatedResults":
-    "World Athletics lists a season best for this athlete but no dated results this season{{extra}}, so meetings and last-competed are unknown here rather than zero.",
-  "ath.noDatedResultsExtra": " (their results on record are from earlier years)",
-  "ath.notComputed":
-    "Career best, PB gap and activity aren't computed for athletes this far outside the field. The model only scores the projected finalists and the closest challengers.",
   "ath.realSeasonForm": "Real season form",
   "ath.seasonFormAll":
     "Every meeting this athlete has contested this season — {{n}} of them — indoors and out, not just the Diamond League. The competition record below counts finals only, so its totals differ.",
   "ath.seasonFormCondensed":
     "Their best mark in each month. {{n}} races this season is too many to plot one by one, so every month they competed in is here, represented by its best result.",
-  "ath.h2hTitle": "Head-to-head vs the projected field",
+  "ath.h2hTitle": "Head-to-head record",
   "ath.h2hSubtitle":
-    "Real meetings against the athletes who did qualify, from World Athletics results.",
+    "Real meetings with the athletes who made this year's Diamond League Final, from World Athletics results.",
+  "ath.h2hOpponents": "this year's Diamond League finalists",
   "ath.figSeasonBest": "Season best",
   "ath.figPersonalBest": "Personal best",
   "ath.figRacesIn": "Races in {{year}}",

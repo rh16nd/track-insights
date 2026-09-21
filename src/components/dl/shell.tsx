@@ -146,8 +146,10 @@ export function Shell({
   cover?: ReactNode;
   /** "bleed" lets the page's sections run edge to edge: <main> drops the
    * site's width, gutters and the lift over the header, and each section sets
-   * its own. */
-  layout?: "default" | "bleed";
+   * its own. "open" keeps the width and gutters but not the lift: a page whose
+   * sections sit straight on the ground has no panel to cover the seam where
+   * the header meets the page, so its first heading starts below it. */
+  layout?: "default" | "bleed" | "open";
 }) {
   /* Mirrors the visible breadcrumb below. Read from the router rather than
      passed in, so the two cannot drift: a page that changes its crumb gets
@@ -360,7 +362,9 @@ export function Shell({
           className={
             layout === "bleed"
               ? "relative z-[2] outline-none"
-              : "relative z-[2] mx-auto -mt-[34px] max-w-[1600px] px-6 pb-[90px] sm:px-8 lg:px-12"
+              : layout === "open"
+                ? "relative z-[2] mx-auto max-w-[1600px] px-6 pt-6 pb-[90px] sm:px-8 lg:px-12"
+                : "relative z-[2] mx-auto -mt-[34px] max-w-[1600px] px-6 pb-[90px] sm:px-8 lg:px-12"
           }
           style={custom?.surface}
         >

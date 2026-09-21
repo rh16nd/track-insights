@@ -1,15 +1,16 @@
-import { useMemo, useState } from "react";
-import type { CSSProperties } from "react";
 import { disciplineLabel, pageHead } from "@/lib/seo";
 import { usePageTitle } from "@/lib/use-page-title";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Shell, Panel, PanelSkeleton, ErrorPanel, ProbabilityBar } from "@/components/dl/shell";
+import { createFileRoute } from "@tanstack/react-router";
+import { Shell, PanelSkeleton, ErrorPanel } from "@/components/dl/shell";
+import { BareFrame } from "@/components/dl/bare-frame";
 import { InfoTip } from "@/components/dl/info-tip";
 import { FieldAnalysisBlock } from "@/components/dl/field-analysis";
 import { TrajectoryOverlayChart } from "@/components/dl/trajectory-overlay-chart";
+import { WorldRankingTable } from "@/components/dl/world-ranking-table";
 import { useDiscipline } from "@/hooks/useDiscipline";
+import { useWorldRankings } from "@/hooks/useWorldRankings";
 import type { DepthVerdict, DisciplineReport, FieldScore } from "@/lib/dl-data";
-import { chanceLabel, discName, eventOrder, ordinalIn } from "@/lib/dl-data";
+import { discName, eventOrder, ordinalIn } from "@/lib/dl-data";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/discipline/$discKey")({
@@ -69,13 +70,23 @@ function DisciplinePage() {
           : t("disc.eyebrowBare")
       }
       description={t("disc.description")}
+      layout="open"
     >
       {state.status === "loading" && <PanelSkeleton title={t("disc.depthSkeleton")} rows={6} />}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
 
+      {/* Every section straight on the page, with a hairline between them,
+          like the Asian Games page (the user, 2026-09-21: "don't put them in
+          a box"). */}
       {data && (
         <>
           <DepthPanel data={data} />
+
+          {/* All of the world's top 20, the list Track and Field show, with the
+              same points-or-rating toggle. It replaced a shorter list of the
+              same comparison over the Final-sized field above (the user,
+              2026-09-21: "all 20 athletes listed"). */}
+          <TopTwenty discKey={data.discKey} isField={data.isField} />
 
           {/* Real per-meet marks, moved here from the old Projections page.
               Order follows v0: the field and how level it is, then how they
@@ -83,13 +94,14 @@ function DisciplinePage() {
               storylines went on 2026-09-17: each one read the Diamond League
               Final's projected field, which these pages no longer show. */}
           {data.trajectories && data.trajectories.length > 0 && (
-            <Panel
+            <BareFrame
+              level={2}
               title={t("disc.seasonForm", { disc: discName(t, data.discKey, data.disc) })}
               subtitle={t("disc.seasonFormSubtitle")}
-              className="mt-6"
+              className="mt-14 border-t border-border pt-12"
             >
               <TrajectoryOverlayChart trajectories={data.trajectories} discKey={data.discKey} />
-            </Panel>
+            </BareFrame>
           )}
 
           {data.fieldAnalysis && (
@@ -112,9 +124,9 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
 
   if (!depth || scores.length < 2) {
     return (
-      <Panel title={t("disc.depthTitle")} subtitle={t("disc.depthNeeds")}>
-        <p className="py-6 text-[13px] text-muted-foreground">{t("disc.depthNotEnough")}</p>
-      </Panel>
+      <BareFrame level={2} title={t("disc.depthTitle")} subtitle={t("disc.depthNeeds")}>
+        <p className="text-[13px] text-muted-foreground">{t("disc.depthNotEnough")}</p>
+      </BareFrame>
     );
   }
 
@@ -126,198 +138,93 @@ function DepthPanel({ data }: { data: DisciplineReport }) {
   const size = depth.fieldSize;
 
   return (
-    <>
-      <Panel
-        title={t("disc.levelTitle")}
-        subtitle={t("disc.levelSubtitle", { of: depth.of, n: size })}
-      >
-        <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
-          {verdict && (
-            <p className={`dg text-[30px] leading-none font-semibold ${VERDICT_TONE[verdict.key]}`}>
-              {t(`disc.verdict.${verdict.key}.label`)}
-            </p>
-          )}
-          <p className="text-[13px] text-muted-foreground">
-            {verdict && (
-              <>
-                {(() => {
-                  const basis = t(`disc.verdict.${verdict.key}.basis`, { of: depth.of });
-                  return basis.charAt(0).toUpperCase() + basis.slice(1);
-                })()}
-                {". "}
-              </>
-            )}
-            <span className="nums font-medium text-foreground">{depth.spread}</span>
-            {t("disc.spreadSentenceMid")}
-            {shortName(depth.bestAthlete)}
-            {t("disc.spreadSentenceDown")}
-            <span className="nums">{depth.scored}</span>
-            {t("disc.spreadSentenceEnd")}
+    <BareFrame
+      level={2}
+      title={t("disc.levelTitle")}
+      subtitle={t("disc.levelSubtitle", { of: depth.of, n: size })}
+    >
+      <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+        {verdict && (
+          <p className={`dg text-[30px] leading-none font-semibold ${VERDICT_TONE[verdict.key]}`}>
+            {t(`disc.verdict.${verdict.key}.label`)}
           </p>
-        </div>
-
-        <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
-          <Stat
-            label={t("disc.statSpread")}
-            value={t("disc.statSpreadValue", { n: depth.spread })}
-            note={t("disc.statSpreadNote", {
-              rank: ordinalIn(lang, depth.spreadRank),
-              of: depth.of,
-              wider: depth.finalsWider ?? 0,
-            })}
-            hint={t("disc.statSpreadHint", { size })}
-          />
-          <Stat
-            label={t("disc.statStrongest")}
-            value={String(depth.bestScore)}
-            note={shortName(depth.bestAthlete)}
-          />
-          <Stat
-            label={t("disc.statMedian")}
-            value={depth.toplistMedian === null ? "—" : String(depth.toplistMedian)}
-            note={
-              headroom === null
-                ? t("disc.statMedianNoScore")
-                : t("disc.statMedianClear", { n: headroom })
-            }
-            hint={t("disc.statMedianHint", { size })}
-          />
-          <Stat
-            label={t("disc.statScored")}
-            value={`${depth.scored}/${size}`}
-            note={depth.scored === size ? t("disc.statScoredEvery") : t("disc.statScoredSome")}
-            hint={t("disc.statScoredHint", { size })}
-          />
-        </dl>
-
-        <ScoreSpread scores={scores} />
-
-        <p className="mt-5 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-          {t("disc.whyScore")}
+        )}
+        <p className="text-[13px] text-muted-foreground">
+          {verdict && (
+            <>
+              {(() => {
+                const basis = t(`disc.verdict.${verdict.key}.basis`, { of: depth.of });
+                return basis.charAt(0).toUpperCase() + basis.slice(1);
+              })()}
+              {". "}
+            </>
+          )}
+          <span className="nums font-medium text-foreground">{depth.spread}</span>
+          {t("disc.spreadSentenceMid")}
+          {shortName(depth.bestAthlete)}
+          {t("disc.spreadSentenceDown")}
+          <span className="nums">{depth.scored}</span>
+          {t("disc.spreadSentenceEnd")}
         </p>
-      </Panel>
+      </div>
 
-      <ModelVsPoints scores={scores} discKey={data.discKey} />
-    </>
+      <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
+        <Stat
+          label={t("disc.statSpread")}
+          value={t("disc.statSpreadValue", { n: depth.spread })}
+          note={t("disc.statSpreadNote", {
+            rank: ordinalIn(lang, depth.spreadRank),
+            of: depth.of,
+            wider: depth.finalsWider ?? 0,
+          })}
+          hint={t("disc.statSpreadHint", { size })}
+        />
+        <Stat
+          label={t("disc.statStrongest")}
+          value={String(depth.bestScore)}
+          note={shortName(depth.bestAthlete)}
+        />
+        <Stat
+          label={t("disc.statMedian")}
+          value={depth.toplistMedian === null ? "—" : String(depth.toplistMedian)}
+          note={
+            headroom === null
+              ? t("disc.statMedianNoScore")
+              : t("disc.statMedianClear", { n: headroom })
+          }
+          hint={t("disc.statMedianHint", { size })}
+        />
+        <Stat
+          label={t("disc.statScored")}
+          value={`${depth.scored}/${size}`}
+          note={depth.scored === size ? t("disc.statScoredEvery") : t("disc.statScoredSome")}
+          hint={t("disc.statScoredHint", { size })}
+        />
+      </dl>
+
+      <ScoreSpread scores={scores} />
+
+      <p className="mt-5 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
+        {t("disc.whyScore")}
+      </p>
+    </BareFrame>
   );
 }
 
-type Ranking = "points" | "model";
-
-/** The two rankings side by side, with a toggle for which one orders them.
- *
- * This panel exists to show that the marks and the model disagree, and it used
- * to make that point with two unlabelled numbers in a row -- "1355" and "45%"
- * -- ordered by one of them without saying which. Reported as confusing, and
- * fairly: a reader had no way to tell which column they were looking at, let
- * alone which one the list was sorted by.
- *
- * Both numbers still show, because the comparison IS the panel. What the
- * toggle changes is the order and which column is emphasised, so at any moment
- * one of them is clearly the one in charge. Same control the Track and Field
- * pages use, deliberately -- a reader who has met it once should not have to
- * learn it again.
- *
- * The percentage is the championship model's rating, shown with >99% and <1% at
- * the ends and labelled a rating, never a podium chance, which the site names
- * only for a real competition. An athlete it gave no rating reads "—". */
-function ModelVsPoints({ scores, discKey }: { scores: FieldScore[]; discKey: string }) {
-  const { t, lang } = useT();
-  const [by, setBy] = useState<Ranking>("points");
-  const ordered = useMemo(
-    () =>
-      [...scores].sort((a, b) =>
-        by === "points" ? b.score - a.score : (b.prob ?? -1) - (a.prob ?? -1),
-      ),
-    [scores, by],
-  );
-
+/** The event's own top 20, from the list Track and Field read. */
+function TopTwenty({ discKey, isField }: { discKey: string; isField: boolean }) {
+  const state = useWorldRankings();
+  if (state.status !== "ok" || !state.data[discKey]) return null;
   return (
-    <Panel
-      title={t("disc.disagreeTitle")}
-      subtitle={t(by === "points" ? "disc.disagreeSubtitle" : "disc.disagreeSubtitleModel", {
-        n: scores.length,
-      })}
-      className="mt-6"
-      action={
-        <div
-          role="tablist"
-          aria-label={t("disc.disagreeToggleLabel")}
-          className="inline-flex rounded-full border border-border bg-card p-0.5"
-        >
-          {(["points", "model"] as Ranking[]).map((v) => (
-            <button
-              key={v}
-              role="tab"
-              aria-selected={by === v}
-              type="button"
-              onClick={() => setBy(v)}
-              className={`rounded-full px-3 py-1 text-[12px] font-semibold transition-colors ${
-                by === v
-                  ? "bg-terracotta text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t(v === "points" ? "disc.disagreeByPoints" : "disc.disagreeByModel")}
-            </button>
-          ))}
-        </div>
-      }
-    >
-      {/* Named columns, which is the other half of the fix: a toggle tells you
-          what the list is sorted by, a header tells you what each number IS. */}
-      <div className="label-caps flex items-center gap-3 border-b border-border pb-2 text-muted-foreground">
-        <span className="w-6 shrink-0" />
-        <span className="min-w-0 flex-1">{t("table.colAthlete")}</span>
-        <span className={`w-14 shrink-0 text-right ${by === "points" ? "text-foreground" : ""}`}>
-          {t("disc.disagreeColScore")}
-        </span>
-        <span className="hidden w-28 shrink-0 sm:block" />
-        <span className={`w-12 shrink-0 text-right ${by === "model" ? "text-foreground" : ""}`}>
-          {t("disc.disagreeColRating")}
-        </span>
-      </div>
-      <ol className="divide-y divide-border">
-        {ordered.map((s, i) => (
-          <li
-            key={s.name}
-            className="stagger-item flex items-center gap-3 py-2.5 last:pb-0"
-            style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
-          >
-            <span className="nums w-6 shrink-0 text-[12px] text-muted-foreground">
-              {String(i + 1).padStart(2, "0")}
-            </span>
-            <Link
-              to="/athlete/$discKey/$name"
-              params={{ discKey, name: s.name }}
-              className="min-w-0 flex-1 truncate text-[13.5px] font-medium text-foreground transition-colors hover:text-terracotta-strong hover:underline"
-            >
-              {s.name}
-            </Link>
-            <span
-              className={`nums w-14 shrink-0 text-right text-[12.5px] ${
-                by === "points" ? "font-semibold text-foreground" : "text-muted-foreground"
-              }`}
-            >
-              {s.score}
-            </span>
-            <span className="hidden w-28 shrink-0 sm:block">
-              <ProbabilityBar value={s.prob ?? 0} trackHeight="h-1.5" />
-            </span>
-            <span
-              className={`nums w-12 shrink-0 text-right text-[13.5px] ${
-                by === "model" ? "font-semibold text-foreground" : "text-muted-foreground"
-              }`}
-            >
-              {s.prob == null ? "—" : `${chanceLabel(lang, s.prob)}%`}
-            </span>
-          </li>
-        ))}
-      </ol>
-      <p className="mt-4 max-w-3xl text-[12px] leading-relaxed text-muted-foreground">
-        {t("disc.disagreeNote")}
-      </p>
-    </Panel>
+    <div className="mt-14 border-t border-border pt-12">
+      <WorldRankingTable
+        rankings={state.data}
+        isField={isField}
+        activeId={discKey}
+        onActiveChange={() => undefined}
+        onlyId={discKey}
+      />
+    </div>
   );
 }
 

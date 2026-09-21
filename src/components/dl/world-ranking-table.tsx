@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { Link } from "@tanstack/react-router";
 import type { WorldRankings } from "@/lib/dl-data";
 import { chanceLabel, compareEvents, discName } from "@/lib/dl-data";
-import { Panel } from "./shell";
+import { BareFrame } from "./bare-frame";
 import { NatFlag } from "./nat-flag";
 import { InfoTip } from "./info-tip";
 import { useT } from "@/lib/i18n";
@@ -29,11 +29,15 @@ export function WorldRankingTable({
   isField,
   activeId,
   onActiveChange,
+  onlyId,
 }: {
   rankings: WorldRankings;
   isField: boolean;
   activeId: string;
   onActiveChange: (id: string) => void;
+  /** One event only, with no picker: an event page's own top 20 (the user,
+   * 2026-09-21: "all 20 athletes listed"). */
+  onlyId?: string | undefined;
 }) {
   const { t, lang } = useT();
   // Points first, not the model. The page promises "the world's best", and
@@ -50,7 +54,7 @@ export function WorldRankingTable({
     [rankings, isField, t],
   );
 
-  const currentId = keys.includes(activeId) ? activeId : (keys[0] ?? "");
+  const currentId = onlyId ?? (keys.includes(activeId) ? activeId : (keys[0] ?? ""));
   const current = rankings[currentId];
   // An event with no model view shows points with no toggle and no model
   // column, whichever view the reader last picked on another discipline.
@@ -69,50 +73,57 @@ export function WorldRankingTable({
   return (
     <>
       {/* Discipline picker — a real select on mobile, pills on desktop, same
-          pattern the projected-field table uses. */}
-      <div className="sm:hidden">
-        <label className="label-caps mb-1.5 block text-white/90" htmlFor="rk-discipline">
-          {t("rankings.discipline")}
-        </label>
-        <select
-          id="rk-discipline"
-          value={currentId}
-          onChange={(e) => onActiveChange(e.target.value)}
-          className="w-full rounded-md border border-border bg-card px-3 py-3 text-[13.5px] font-medium text-foreground"
-        >
-          {keys.map((k) => (
-            <option key={k} value={k}>
-              {discName(t, k, k)}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="hidden flex-wrap gap-2 sm:flex">
-        {keys.map((k) => (
-          <button
-            key={k}
-            type="button"
-            onClick={() => onActiveChange(k)}
-            className={`rounded-full border px-3.5 py-1.5 text-[12.5px] font-medium transition-[transform,background-color,color,border-color] duration-150 ease-out active:scale-[0.97] ${
-              k === currentId
-                ? "border-transparent text-primary-foreground shadow-sm"
-                : "border-border bg-card text-muted-foreground hover:border-terracotta/40 hover:text-foreground"
-            }`}
-            style={
-              k === currentId
-                ? {
-                    backgroundImage:
-                      "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
-                  }
-                : undefined
-            }
-          >
-            {discName(t, k, k)}
-          </button>
-        ))}
-      </div>
+          pattern the projected-field table uses. None on an event's own page. */}
+      {!onlyId && (
+        <>
+          <div className="sm:hidden">
+            <label className="label-caps mb-1.5 block text-white/90" htmlFor="rk-discipline">
+              {t("rankings.discipline")}
+            </label>
+            <select
+              id="rk-discipline"
+              value={currentId}
+              onChange={(e) => onActiveChange(e.target.value)}
+              className="w-full rounded-md border border-border bg-card px-3 py-3 text-[13.5px] font-medium text-foreground"
+            >
+              {keys.map((k) => (
+                <option key={k} value={k}>
+                  {discName(t, k, k)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="hidden flex-wrap gap-2 sm:flex">
+            {keys.map((k) => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => onActiveChange(k)}
+                className={`rounded-full border px-3.5 py-1.5 text-[12.5px] font-medium transition-[transform,background-color,color,border-color] duration-150 ease-out active:scale-[0.97] ${
+                  k === currentId
+                    ? "border-transparent text-primary-foreground shadow-sm"
+                    : "border-border bg-card text-muted-foreground hover:border-terracotta/40 hover:text-foreground"
+                }`}
+                style={
+                  k === currentId
+                    ? {
+                        backgroundImage:
+                          "linear-gradient(100deg, var(--terracotta) 0%, var(--gold-strong) 100%)",
+                      }
+                    : undefined
+                }
+              >
+                {discName(t, k, k)}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
 
-      <Panel
+      {/* No box around the table, like the Asian Games page's full field (the
+          user, 2026-09-21: "don't put them in a box"). */}
+      <BareFrame
+        level={2}
         title={t("rankings.panelTitle", { label })}
         subtitle={t(
           !modelAvailable
@@ -121,7 +132,7 @@ export function WorldRankingTable({
               ? "rankings.subtitle.model"
               : "rankings.subtitle.points",
         )}
-        className="mt-4"
+        className={onlyId ? "" : "mt-8"}
         action={
           modelAvailable ? (
             <div
@@ -276,7 +287,7 @@ export function WorldRankingTable({
             </tbody>
           </table>
         </div>
-      </Panel>
+      </BareFrame>
     </>
   );
 }
