@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import type { CSSProperties, ReactNode } from "react";
 import { pageHead } from "@/lib/seo";
 import { Shell } from "@/components/dl/shell";
 import { useStats } from "@/hooks/useStats";
@@ -9,6 +9,9 @@ import { useT } from "@/lib/i18n";
 import { Rich } from "@/lib/rich-text";
 import { localeTag } from "@/lib/dates";
 import { usePageTitle } from "@/lib/use-page-title";
+import { dateRange, phaseOf } from "@/lib/championship-dates";
+import { CLOSING_PHOTO } from "@/lib/closing-photo";
+import { FeedbackLink } from "@/components/dl/feedback-modal";
 
 export const Route = createFileRoute("/how-it-works")({
   head: () =>
@@ -20,11 +23,11 @@ export const Route = createFileRoute("/how-it-works")({
   component: HowItWorksPage,
 });
 
-/** One flowing explainer rather than a stack of cards: the page reads as a
- * single sheet, its sections divided by hairline rules and the numbers set
- * inline as plain figures, not boxed stat tiles. It still lives on a cream
- * surface because the terracotta canvas can't host body text at a readable
- * contrast — so "no boxes" means one continuous sheet, not text on the canvas.
+/** One flowing explainer rather than a stack of cards: the page reads as one
+ * column straight on the page, with no box around it (the user, 2026-09-22),
+ * its sections divided by hairline rules and the numbers set inline as plain
+ * figures, not boxed stat tiles. It ends on what comes next and a closing
+ * band with the way into the call.
  * Every number is read live from the same API the rest of the site uses, so
  * this page can't drift from the model; the prose renders before the API
  * answers.
@@ -35,11 +38,8 @@ export const Route = createFileRoute("/how-it-works")({
  * section per model. */
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="border-t border-border py-8 first:border-t-0 sm:py-11">
-      <h2
-        className="text-[19px] font-bold tracking-tight text-foreground sm:text-[21px]"
-        style={{ fontFamily: "var(--font-display)" }}
-      >
+    <section className="border-t border-border py-10 first:border-t-0 first:pt-2 sm:py-12">
+      <h2 className="hero-serif text-balance text-[clamp(26px,3vw,34px)] leading-tight text-foreground">
         {title}
       </h2>
       {children}
@@ -53,6 +53,7 @@ function HowItWorksPage() {
   const stats = useStats();
   const champ = useChampionshipSummary();
   const test = champ.status === "ok" ? (champ.data.callTest ?? null) : null;
+  const current = champ.status === "ok" ? champ.data : null;
   const corpus = stats.status === "ok" ? stats.data.corpus : null;
   const comparison = stats.status === "ok" ? (stats.data.modelComparison ?? null) : null;
 
@@ -71,8 +72,9 @@ function HowItWorksPage() {
       crumb={t("nav.howItWorks")}
       eyebrow={t("howItWorks.eyebrow")}
       description={t("howItWorks.description")}
+      layout="open"
     >
-      <article className="card-surface card-shadow mx-auto max-w-[760px] rounded-[26px] bg-card px-6 sm:px-11">
+      <article className="mx-auto max-w-[760px]">
         <div>
           <Section title={t("howItWorks.s1.title")}>
             <div className="mt-3.5 flex flex-col gap-3.5 text-[15px] leading-relaxed text-foreground">
@@ -211,8 +213,129 @@ function HowItWorksPage() {
               <Rich text={t("howItWorks.s6.p2")} />
             </p>
           </Section>
+
+          {/* What comes next, read off the current championship so it moves on
+              with the data (the user, 2026-09-22). Only what is planned: the
+              call stands, each final is graded, the hit rate joins the rest. */}
+          {current && <WhatsNext current={current} />}
         </div>
       </article>
+
+      <ClosingBand />
     </Shell>
+  );
+}
+
+function WhatsNext({
+  current,
+}: {
+  current: { navKey: string | null; city: string; startDate: string; endDate: string };
+}) {
+  const { t, lang } = useT();
+  const name = t(current.navKey ?? "nav.championship");
+  const done = phaseOf(current).phase === "done";
+  const lines = done
+    ? [t("howItWorks.next.done1", { name }), t("howItWorks.next.done2")]
+    : [
+        t("howItWorks.next.upcoming1", {
+          name,
+          dates: dateRange(current, lang),
+          city: current.city,
+        }),
+        t("howItWorks.next.upcoming2"),
+        t("howItWorks.next.upcoming3"),
+      ];
+  return (
+    <Section title={t("howItWorks.next.title")}>
+      <ol className="mt-5 flex flex-col gap-5">
+        {lines.map((line, i) => (
+          <li key={i} className="grid grid-cols-[2.25rem_minmax(0,1fr)] gap-3">
+            <span
+              aria-hidden="true"
+              className="hero-serif text-[32px] leading-[0.9] text-gold-strong"
+              style={{ fontVariantNumeric: "lining-nums" }}
+            >
+              {i + 1}
+            </span>
+            <p className="text-[15px] leading-relaxed text-foreground">
+              <Rich text={line} />
+            </p>
+          </li>
+        ))}
+      </ol>
+    </Section>
+  );
+}
+
+/** The landing's closing band, on its stadium photo: one line and the two ways
+ * on from here, the call and a word back to us. */
+function ClosingBand() {
+  const { t } = useT();
+  const title = t("howItWorks.close.title").split("**");
+  return (
+    <section
+      className="relative isolate -mx-6 mt-16 -mb-[90px] overflow-hidden sm:-mx-8 lg:-mx-12"
+      // The scrim fades into the landing's ground; here that is the page's.
+      style={{ "--terra-bg": "var(--page-ground, var(--background))" } as CSSProperties}
+    >
+      <img
+        src={CLOSING_PHOTO.large}
+        srcSet={`${CLOSING_PHOTO.small} 1200w, ${CLOSING_PHOTO.large} 2400w`}
+        sizes="100vw"
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_65%]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-[oklch(0.52_0.105_40_/_0.3)] mix-blend-multiply"
+      />
+      <div aria-hidden="true" className="closing-scrim absolute inset-0 -z-10" />
+      <div className="mx-auto flex max-w-4xl flex-col items-center px-5 py-24 text-center sm:px-10 sm:py-32">
+        <h2 className="hero-serif text-balance text-[clamp(34px,5vw,60px)] leading-[1.05] text-white">
+          {title.map((part, i) =>
+            i % 2 ? (
+              <span key={i} className="text-gold-on-canvas">
+                {part}
+              </span>
+            ) : (
+              part
+            ),
+          )}
+        </h2>
+        <p className="mt-5 max-w-[46ch] text-[17px] leading-relaxed text-white/88">
+          {t("howItWorks.close.lede")}
+        </p>
+        <div className="mt-9 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
+          <Link
+            to="/championship"
+            className="inline-flex w-full max-w-[320px] items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-[15px] font-semibold text-terracotta-strong shadow-[0_10px_30px_oklch(0.2_0.05_40/0.35)] transition-transform hover:-translate-y-0.5 active:scale-[0.98] sm:w-auto"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {t("howItWorks.close.call")}
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.2}
+              className="size-[18px]"
+              aria-hidden="true"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </Link>
+          <FeedbackLink className="hero-glass inline-flex w-full max-w-[320px] items-center justify-center rounded-full px-7 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-white/20 active:scale-[0.98] sm:w-auto" />
+        </div>
+      </div>
+      <a
+        href={CLOSING_PHOTO.source}
+        target="_blank"
+        rel="noreferrer"
+        className="absolute bottom-4 right-5 text-[11px] text-white/60 hover:text-white/90 hover:underline sm:right-10"
+      >
+        {t("ath.photoCredit", { author: CLOSING_PHOTO.author, license: CLOSING_PHOTO.license })}
+      </a>
+    </section>
   );
 }

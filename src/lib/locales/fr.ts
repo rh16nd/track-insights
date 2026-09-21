@@ -351,6 +351,10 @@ export const fr: Record<string, string> = {
   "dashboard.favourites.subtitle":
     "L’athlète que le modèle évalue le mieux dans chaque épreuve. Il pèse toute la saison : ce n’est donc pas toujours celui qui a la meilleure marque.",
   "dashboard.favourites.cta": "Tous les classements",
+  "dashboard.favourites.prev": "Favoris précédents",
+  "dashboard.favourites.next": "Favoris suivants",
+  "dashboard.favourites.stripLabel":
+    "Le favori de chaque épreuve, de la meilleure évaluation à la plus basse",
   "dashboard.fav.rating": "éval.",
   "dashboard.disagree.title": "Là où le modèle diverge",
   "dashboard.disagree.subtitle":
@@ -630,6 +634,21 @@ export const fr: Record<string, string> = {
     "La recherche trouve **les pays autant que les athlètes**. Tapez une nation — « Jamaïque », « KEN », « Norvège » — et elle apparaît dans les résultats à côté des athlètes dont le nom correspond, avec le nombre d’athlètes classés et d’épreuves de cette nation cette saison.",
   "howItWorks.s6.p2":
     "En ouvrir une donne à cette nation sa propre page : tous ses athlètes classés, leurs marques et leurs scores, ses trois meilleures performances de la saison, et ses athlètes au championnat en cours. La page porte les couleurs du pays, tirées de son drapeau.",
+  "howItWorks.next.title": "La suite",
+  "howItWorks.next.upcoming1":
+    "**{{name}}** : {{dates}}, à {{city}}. Le pronostic de chaque épreuve a été fait avant la première session et ne changera plus.",
+  "howItWorks.next.upcoming2":
+    "Chaque finale rejoint la page Résultats une fois disputée, à côté du pronostic : on voit ce que le modèle a vu juste et ce qu’il a manqué.",
+  "howItWorks.next.upcoming3":
+    "Une fois la dernière finale disputée, le taux de réussite du pronostic rejoint celui des championnats précédents sur la page Résultats.",
+  "howItWorks.next.done1":
+    "Chaque finale des **{{name}}** est notée sur la page Résultats, à côté du pronostic fait avant elle.",
+  "howItWorks.next.done2":
+    "Le pronostic du prochain championnat sera publié sur sa page dès que sa liste des engagés le sera.",
+  "howItWorks.close.title": "Le pronostic est fait. **Reste à le voir se jouer.**",
+  "howItWorks.close.lede":
+    "Suivez le pronostic épreuve par épreuve, et dites-nous ce que vous aimeriez voir sur le site.",
+  "howItWorks.close.call": "Voir le pronostic",
 
   // Qualifying
   "qual.num.6": "Six",

@@ -18,6 +18,7 @@ import { Podium, type PodiumPick } from "@/components/dl/podium";
 import { chanceLabel, discName } from "@/lib/dl-data";
 import { localeTag } from "@/lib/dates";
 import { usePageTitle } from "@/lib/use-page-title";
+import { CLOSING_PHOTO } from "@/lib/closing-photo";
 
 export const Route = createFileRoute("/")({
   head: () =>
@@ -103,18 +104,6 @@ function BigNumber({
 }
 
 const FAQ_KEYS = ["rating", "chance", "accuracy", "data", "injuries", "free", "affiliated"];
-
-/** The closing band's photo: the Jāņa Daliņa stadium in Valmiera, Latvia, from
- * Wikimedia Commons under CC BY-SA 4.0, so it carries its credit. Saved to
- * public/landing/ in two sizes. Terra ends on a landscape; this page ends on a
- * real athletics stadium. */
-const CLOSING_PHOTO = {
-  small: "/landing/closing-stadium-1200.webp",
-  large: "/landing/closing-stadium-2400.webp",
-  author: "KristersHC",
-  license: "CC BY-SA 4.0",
-  source: "https://commons.wikimedia.org/wiki/File:J%C4%81%C5%86a_Dali%C5%86a_stadions.jpg",
-};
 
 function Landing() {
   const { t, lang } = useT();

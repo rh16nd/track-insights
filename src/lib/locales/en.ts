@@ -348,6 +348,9 @@ export const en: Record<string, string> = {
   "dashboard.favourites.subtitle":
     "The athlete the model rates highest in each event. It weighs the whole season, so it isn't always the athlete with the best mark.",
   "dashboard.favourites.cta": "All rankings",
+  "dashboard.favourites.prev": "Previous favourites",
+  "dashboard.favourites.next": "Next favourites",
+  "dashboard.favourites.stripLabel": "Each event's favourite, highest rating first",
   "dashboard.fav.rating": "rating",
   "dashboard.disagree.title": "Where the model disagrees",
   "dashboard.disagree.subtitle":
@@ -626,6 +629,21 @@ export const en: Record<string, string> = {
     "The search box finds **countries as well as athletes**. Type a nation — “Jamaica”, “KEN”, “Norway” — and it appears in the results alongside any athletes whose name matches, with how many ranked athletes and how many events that nation has this season.",
   "howItWorks.s6.p2":
     "Opening one gives that nation its own page: every ranked athlete it has, their marks and scores, its three best performances of the season, and its athletes at the current championship. The page wears the country's own colours, taken from its flag.",
+  "howItWorks.next.title": "What's next",
+  "howItWorks.next.upcoming1":
+    "**{{name}}**: {{dates}}, in {{city}}. The call for every event was made before the first session and won't change.",
+  "howItWorks.next.upcoming2":
+    "Each final goes on the Results page once it's run, next to the call, so you can see what the model got right and what it missed.",
+  "howItWorks.next.upcoming3":
+    "Once the last final is run, the call's hit rate joins the earlier championships on the Results page.",
+  "howItWorks.next.done1":
+    "Every final from **{{name}}** is graded on the Results page, next to the call made before it.",
+  "howItWorks.next.done2":
+    "The next championship's call goes up on its page once its entry list is published.",
+  "howItWorks.close.title": "The call is in. **Watch it play out.**",
+  "howItWorks.close.lede":
+    "Follow the call event by event, and tell us what you'd like the site to do next.",
+  "howItWorks.close.call": "See the call",
 
   // Qualifying
   "qual.num.6": "Six",

@@ -10,6 +10,7 @@ import { useWorldRankings } from "@/hooks/useWorldRankings";
 import { useCountUp } from "@/hooks/useCountUp";
 import { NatFlag } from "@/components/dl/nat-flag";
 import { AthleteCard } from "@/components/dl/athlete-card";
+import { FavouritesStrip } from "@/components/dl/favourites-strip";
 import { NewsFeed } from "@/components/dl/news-feed";
 import { CoverageMap } from "@/components/dl/coverage-map";
 import { WelcomeLauncher } from "@/components/dl/welcome-modal";
@@ -321,23 +322,19 @@ function Dashboard() {
             </div>
           </Panel>
 
-          {/* The model's favourites across the world */}
-          <Panel
+          {/* The model's favourite in every event, as one sideways row of photo
+              cards with no box around it (the user, 2026-09-22). */}
+          <FavouritesStrip
             title={t("dashboard.favourites.title")}
             subtitle={t("dashboard.favourites.subtitle")}
-            className="mt-6"
+            count={favourites.length}
             action={
               <Link to="/track" className="label-caps text-terracotta-strong hover:underline">
                 {t("dashboard.favourites.cta")}
               </Link>
             }
-          >
-            <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
-              {favourites.slice(0, 9).map((f, i) => (
-                <FavouriteCard key={f.discKey} f={f} index={i} />
-              ))}
-            </div>
-          </Panel>
+            renderCard={(i) => <FavouriteCard f={favourites[i]!} index={Math.min(i, 6)} />}
+          />
 
           {/* How far the site reaches: every country with a ranked athlete. */}
           <Panel
