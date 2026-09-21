@@ -1013,94 +1013,134 @@ export const fr: Record<string, string> = {
   // Landing page
   "landing.tagline": "Des pronostics d’athlétisme fondés sur de vrais résultats",
   "landing.badgeBare": "PodiumCall",
+  "landing.hero.lineA": "Le pronostic",
+  "landing.hero.everyEvent": "de chaque épreuve",
+  "landing.hero.srTitle": "Le pronostic du podium de chaque épreuve, avant le départ.",
+  "landing.hero.lede":
+    "Avant le départ, un modèle entraîné sur de vrais résultats World Athletics désigne les favoris des {{n}} épreuves.",
+  "landing.hero.favourite": "Favori",
+  "landing.hero.pause": "Mettre en pause le titre qui change",
+  "landing.hero.play": "Reprendre le titre qui change",
+  "landing.numbers.title": "Bâti sur de **vrais résultats**",
+  "landing.numbers.lede":
+    "Chaque chiffre du site vient des données World Athletics, et le modèle est testé sur des finales déjà disputées.",
+  "landing.numbers.hitRate": "des médaillés désignés sur des finales de championnat passées",
+  "landing.numbers.finals": "finales de championnat testées, de {{from}} à {{to}}",
+  "landing.numbers.events": "épreuves évaluées",
+  "landing.walkthrough.title": "Vous découvrez **PodiumCall** ?",
+  "landing.walkthrough.lede":
+    "Une vidéo d’une minute montre ce que fait le site et où trouver chaque pronostic.",
+  "landing.features.title": "Toute la saison, **lue par le modèle**",
+  "landing.features.lede":
+    "Choisissez une page pour la voir. Tout est en direct, et tout vient des mêmes données.",
+  "landing.features.dashboard.title": "Le tableau de bord",
+  "landing.features.dashboard.body":
+    "Le favori de chaque épreuve, là où le modèle et les points divergent, et le prochain championnat.",
+  "landing.features.track.title": "Piste et concours",
+  "landing.features.track.body":
+    "Les 20 meilleurs mondiaux de chaque épreuve, par points ou selon l’évaluation du modèle.",
+  "landing.features.championship.title": "{{name}} : le pronostic",
+  "landing.features.championship.body":
+    "La chance de podium de chaque engagé, pronostiquée avant la première session.",
+  "landing.features.athlete.title": "Pages d’athlète",
+  "landing.features.athlete.body":
+    "La forme de la saison, les confrontations directes et les records de chaque athlète classé.",
+  "landing.features.results.title": "Résultats",
+  "landing.features.results.body": "Les pronostics passés, comparés à ce qui s’est vraiment passé.",
+  "landing.faq.title": "Questions **fréquentes**",
+  "landing.faq.rating.q": "Que veut dire l’évaluation du modèle ?",
+  "landing.faq.rating.a":
+    "C’est la lecture que fait le modèle d’un athlète face au reste des 20 meilleurs mondiaux de son épreuve : la probabilité qu’il finisse dans les trois premiers si ces 20 athlètes disputaient une même finale. Les évaluations de chaque épreuve totalisent 300.",
+  "landing.faq.chance.q": "Et la chance de podium ?",
+  "landing.faq.chance.a":
+    "La même idée pour une vraie compétition, où les athlètes sont réellement engagés. Elle figure sur la page du championnat et sur la page de chaque engagé.",
+  "landing.faq.accuracy.q": "Quelle est sa précision ?",
+  "landing.faq.accuracy.a":
+    "Testé saison après saison sur {{finals}} finales de championnat de {{from}} à {{to}}, il a désigné {{model}} % des médaillés, contre {{points}} % pour un classement aux points World Athletics.",
+  "landing.faq.accuracy.aFallback":
+    "Il est testé saison après saison sur des finales de championnat passées, chacune pronostiquée uniquement à partir des saisons précédentes. La page Comment ça marche donne les chiffres.",
+  "landing.faq.data.q": "D’où viennent les données ?",
+  "landing.faq.data.a":
+    "Des résultats et classements publics de World Athletics. Rien n’est saisi ni modifié à la main.",
+  "landing.faq.injuries.q": "Tient-il compte des blessures ?",
+  "landing.faq.injuries.a":
+    "Avant chaque pronostic, il cherche dans l’actualité les blessures et les forfaits et signale les athlètes concernés. Un forfait de dernière minute peut quand même déjouer les chiffres le jour J.",
+  "landing.faq.free.q": "Est-ce gratuit ?",
+  "landing.faq.free.a": "Oui. Tous les pronostics du site sont en accès libre.",
+  "landing.faq.affiliated.q": "PodiumCall fait-il partie de World Athletics ?",
+  "landing.faq.affiliated.a":
+    "Non. C’est un projet indépendant qui lit les données publiques de World Athletics.",
+  "landing.faq.more": "En savoir plus sur le fonctionnement",
+  "landing.closing.title": "Avant le départ, **le pronostic est fait**.",
+  "landing.closing.lede":
+    "{{n}} épreuves, le pronostic du championnat et la saison de chaque athlète, à partir de vrais résultats.",
+  "landing.nav.menu": "Menu",
+  "landing.hero.rating": "évaluation du modèle {{rating}} %",
+  "landing.features.dashboard.open": "Ouvrir le tableau de bord",
+  "landing.features.track.open": "Voir le top 20 de chaque épreuve",
+  "landing.features.championship.open": "Voir tout le pronostic",
+  "landing.features.athlete.open": "Voir la page de l’athlète",
+  "landing.features.results.open": "Voir tous les pronostics notés",
+  "landing.features.card.dashboard": "Meilleures évaluations du modèle",
+  "landing.features.card.track": "{{event}}, selon l’évaluation du modèle",
+  "landing.features.card.ratingNote":
+    "Sa chance de finir dans les trois premiers si le top 20 mondial disputait une même finale.",
+  "landing.features.card.startsIn": "Début dans {{n}} jours",
+  "landing.features.card.startsInOne": "Début demain",
+  "landing.features.card.live": "En cours",
+  "landing.features.card.done": "Terminé",
+  "landing.features.card.athlete": "{{event}} : le favori du modèle",
+  "landing.features.card.results": "Bilan à ce jour",
+  "landing.features.card.resultsLine": "{{pct}} % des places de podium trouvées",
+  "landing.features.card.resultsNext": "Prochain bilan : {{city}}",
+  "landing.call.title": "Le pronostic des **{{name}}**",
+  "landing.call.lede":
+    "Le favori du modèle dans chaque épreuve pronostiquée à {{city}}, avec sa chance de podium : sa chance de finir dans les trois premiers.",
+  "landing.call.chance": "chance de podium",
+  "landing.call.cta": "Voir tout le pronostic",
+  "landing.call.graded": "Chaque finale est notée sur la page Résultats une fois disputée.",
+  "landing.call.error": "Impossible de charger le pronostic.",
+  "landing.footer.explore": "Explorer",
+  "landing.footer.about": "À propos",
+  "landing.hero.event.100m": "du 100 m",
+  "landing.hero.event.200m": "du 200 m",
+  "landing.hero.event.400m": "du 400 m",
+  "landing.hero.event.800m": "du 800 m",
+  "landing.hero.event.1500m": "du 1500 m",
+  "landing.hero.event.5000m": "du 5000 m",
+  "landing.hero.event.10000m": "du 10 000 m",
+  "landing.hero.event.100h": "du 100 m haies",
+  "landing.hero.event.110h": "du 110 m haies",
+  "landing.hero.event.400h": "du 400 m haies",
+  "landing.hero.event.3000sc": "du 3000 m steeple",
+  "landing.hero.event.HJ": "du saut en hauteur",
+  "landing.hero.event.PV": "du saut à la perche",
+  "landing.hero.event.LJ": "du saut en longueur",
+  "landing.hero.event.TJ": "du triple saut",
+  "landing.hero.event.SP": "du lancer du poids",
+  "landing.hero.event.DT": "du lancer du disque",
+  "landing.hero.event.HT": "du lancer du marteau",
+  "landing.hero.event.JT": "du lancer du javelot",
   "landing.badgeCountdown": "PodiumCall · J-{{n}} avant {{city}}",
   "landing.badgeCountdownOne": "PodiumCall · J-1 avant {{city}}",
   "landing.badgeLive": "PodiumCall · En direct de {{city}}",
   "landing.badgeDone": "PodiumCall · {{city}} terminé",
-  "landing.h1a": "Nous faisons le",
-  "landing.h1b": "pronostic avant",
-  "landing.h1c": "le",
-  "landing.h1gun": "départ.",
-  "landing.lede":
-    "Un modèle entraîné sur de vrais résultats, pas sur l’intuition. Nous extrayons chaque performance World Athletics des {{n}} disciplines, classons les meilleurs mondiaux et pronostiquons le podium avant le premier départ.",
   "landing.ctaPrimary": "Voir les prédictions en direct",
   "landing.ctaSecondary": "Parcourir les {{n}} épreuves",
   "landing.video.cta": "Voir comment ça marche",
   "landing.video.length": "1 min",
   "landing.video.title": "Comment fonctionne PodiumCall",
   "landing.video.close": "Fermer la vidéo",
-  "landing.statHitRate": "Taux de réussite du podium",
-  "landing.statDisciplines": "Disciplines suivies",
   "landing.statMarks": "Performances cotées cette saison",
-  "landing.statsLoading": "Chargement des statistiques en direct…",
   "landing.statsError":
     "Les statistiques en direct sont injoignables pour le moment. Les chiffres ci-dessus se rempliront dès que le modèle tournera.",
   "landing.ticker": "En direct du modèle : l’athlète le mieux évalué dans chaque épreuve",
   "landing.tickerWithRange":
     "En direct du modèle : l’athlète le mieux évalué dans chacune des {{n}} épreuves, de {{lo}} à {{hi}} %",
   "landing.tickerAria": "L’athlète le mieux évalué par le modèle dans chaque épreuve",
-  "landing.podiumEyebrow": "Les favoris du modèle",
-  "landing.podiumTitle": "Les trois athlètes que le modèle évalue le mieux en ce moment.",
-  "landing.podiumError": "Le podium se remplira dès que le modèle en direct sera joignable.",
-  "landing.podiumLoading": "Chargement des pronostics les plus sûrs du modèle…",
-  "landing.podiumNoteBefore":
-    "Chacun d’eux est le pronostic le plus sûr du modèle dans une discipline ",
-  "landing.podiumNoteDifferent": "différente",
-  "landing.podiumNoteAfter":
-    " discipline, ils ne sont donc pas en concurrence les uns avec les autres. Leur place ici montre l’évaluation que le modèle leur donne, pas l’ordre dans lequel ils finiraient les uns contre les autres. Chaque pourcentage est l’évaluation du modèle, pas un classement officiel ; les marques sont les meilleures performances de la saison 2026 selon World Athletics.",
-  "landing.demoEyebrow": "De vrais résultats en entrée. Un plateau classé en sortie.",
-  "landing.demoTitleWithCount":
-    "{{n}} meetings réellement disputés, ramenés aux meilleurs athlètes du modèle.",
-  "landing.demoTitle":
-    "Une saison entière de compétition, ramenée aux meilleurs athlètes du modèle.",
-  "landing.demoBodyBefore": "Chaque grand meeting de la saison est extrait de ",
-  "landing.demoBodyAfter":
-    ", puis transformée en évaluation, par le modèle, des meilleurs mondiaux de chaque épreuve.",
-  "landing.rawSignal": "Signal brut",
-  "landing.modelRating": "Éval. modèle",
-  "landing.strongestCall": "Le meilleur athlète du modèle",
-  "landing.rankedLoad":
-    "Les prédictions classées se chargeront dès que le modèle en direct tournera.",
-  "landing.stepsEyebrow": "Aucune donnée inventée, à aucune étape.",
-  "landing.stepsTitle":
-    "De vraies données en entrée, des prédictions honnêtes en sortie, en {{n}} étapes.",
-  "landing.previewEyebrow": "Directement du modèle en fonctionnement",
-  "landing.previewTitle": "Un aperçu en direct des pronostics actuels du modèle.",
-  "landing.previewCrumb": "PodiumCall / Tableau de bord",
-  "landing.previewHeading": "Les meilleurs athlètes du modèle",
-  "landing.previewSub":
-    "L’athlète le mieux évalué par le modèle dans chaque discipline, évaluation la plus haute en premier",
-  "landing.seeAll": "Voir les {{n}} disciplines →",
-  "landing.previewLoading": "Chargement des prédictions en direct…",
-  "landing.footerLink": "Voir les prédictions en direct →",
-  "landing.step1Title": "Extraire de vrais résultats",
-  "landing.step1Body":
-    "Chaque meeting de la Diamond League, plus les Jeux olympiques, les Championnats du monde, les meetings du Continental Tour Gold et les Championnats d’Europe. Le tout tiré directement de l’API de World Athletics, jamais saisi à la main.",
-  "landing.step2Title": "Donner la priorité à la saison",
-  "landing.step2Body":
-    "La saison en cours compte le plus : la moyenne des cinq meilleures marques de chaque athlète, sa forme sur les six dernières semaines, ses podiums dans les grands meetings et son bilan face aux plus forts. Une marque plus ancienne ne compte que si elle dépasse encore la saison en cours, et de moins en moins avec les années.",
-  "landing.step3Title": "Valider honnêtement",
-  "landing.step3Body":
-    "Testé sur chaque saison de 2012 à 2026, chacune pronostiquée uniquement à partir des saisons précédentes, jamais à partir du futur. Sur les mêmes finales passées, il a désigné plus de médaillés que le modèle de la Diamond League qu’il remplace.",
-  "landing.step4Title": "Vérifier qui sera vraiment au départ",
-  "landing.step4Body":
-    "Les actualités et les comptes rendus de meetings sont analysés automatiquement avant tout calcul. Les athlètes signalés portent un badge de vigilance avec un lien vers la source ; les forfaits confirmés sont entièrement retirés du plateau.",
-  "landing.step5Title": "Prédire en direct",
-  "landing.step5Body":
-    "Le modèle réévalue tout le plateau à partir de données World Athletics fraîches à chaque actualisation, jusqu’au prochain championnat.",
-  "landing.spell.3": "trois",
-  "landing.spell.4": "quatre",
-  "landing.spell.5": "cinq",
-  "landing.spell.6": "six",
 
   "landing.confidenceFeedLoads":
     "Les évaluations du modèle se chargeront dès que le modèle en direct tournera.",
-  "landing.podiumRankedBy":
-    "Classés selon l’évaluation du modèle qui pronostique les championnats.",
-  "landing.corpusMore":
-    "+ {{n}} autres compétitions sur {{seasons}} saisons ({{first}}-{{last}}), extraites directement de World Athletics.",
-  "landing.corpusFallback":
-    "…et toutes les autres compétitions des données d’entraînement du modèle, extraites directement de World Athletics.",
 
   "wa.ariaLabel": "World Athletics (ouvre un nouvel onglet)",
   "notFound.title": "Page introuvable",
@@ -1152,10 +1192,6 @@ export const fr: Record<string, string> = {
   "disc.name.women_HT": "Lancer du marteau femmes",
   "disc.name.men_10000m": "10 000 m hommes",
   "disc.name.women_10000m": "10 000 m femmes",
-
-  "podium.strongestCall": "Le mieux évalué",
-  "podium.rating": "Évaluation du modèle",
-  "podium.sb": "MPS {{mark}}",
 
   "ath.photoCredit": "Photo : {{author}} · {{license}}",
   "ath.photoCreditTitle": "Photo de {{author}}, {{license}}, via {{source}}. Ouvre la source.",
