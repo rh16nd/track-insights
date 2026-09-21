@@ -77,7 +77,14 @@ function ChampionshipPage() {
   const ground = championshipTheme(themeId)?.page;
 
   return (
-    <Shell title={t(titleKey)} crumb={t(navKey)} theme={ground ?? "default"}>
+    <Shell
+      title={t(titleKey)}
+      crumb={t(navKey)}
+      theme={ground ?? "default"}
+      // The Asian Games' own stadium in Nagoya; other championships have no
+      // photo of their own yet and open on their ground.
+      photo={themeId === "asianGames" ? "nagoya" : null}
+    >
       {state.status === "loading" && (
         <div className="mt-2 space-y-6">
           <div className="skeleton-pulse h-64 rounded-[28px] bg-white/10" />

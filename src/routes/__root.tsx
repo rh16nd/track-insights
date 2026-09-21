@@ -15,29 +15,49 @@ import { Analytics } from "@vercel/analytics/react";
 import { absoluteUrl, websiteSchema } from "@/lib/seo";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider, useT } from "@/lib/i18n";
+import { pagePhoto } from "@/lib/page-photos";
 
 function NotFoundComponent() {
   const { t } = useT();
+  const photo = pagePhoto("start");
   return (
     /* <main>, not a bare <div>: every other page on the site exposes a main
        landmark through Shell, and this one renders outside it, so a screen
        reader lost the "skip to the content" anchor exactly where a lost
        visitor needs it most. Same gap the landing had before it was given
        one -- both are pages that do not go through Shell. */
-    <main className="flex min-h-screen items-center justify-center bg-background px-4">
+    <main className="relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-background px-4">
+      {/* The landing's start line, under the same wash as every page header
+          (the Terra re-theme, 2026-09-21). */}
+      {photo && (
+        <div className="absolute inset-0 -z-10" aria-hidden="true">
+          <img
+            src={photo.large}
+            srcSet={`${photo.small} 1200w, ${photo.large} 2400w`}
+            sizes="100vw"
+            alt=""
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: photo.focus }}
+          />
+          <div className="absolute inset-0 bg-[oklch(0.52_0.105_40_/_0.3)] mix-blend-multiply" />
+          <div className="absolute inset-0 bg-[oklch(0.14_0.02_40_/_0.7)]" />
+        </div>
+      )}
       <div className="max-w-md text-center">
         {/* The tab still said "PodiumCall - 2026 Diamond League Predictions"
             on a page that is not that. A wrong title is worse than a plain
             one in history, in bookmarks, and read aloud. */}
         <title>Page not found · PodiumCall</title>
         <meta name="robots" content="noindex" />
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">{t("notFound.title")}</h2>
-        <p className="mt-2 text-sm text-muted-foreground">{t("notFound.body")}</p>
-        <div className="mt-6">
+        <h1 className="page-title text-[112px] leading-none text-white">404</h1>
+        <h2 className="page-title mt-4 text-[30px] text-white">{t("notFound.title")}</h2>
+        <p className="mt-3 text-[15px] text-white/88">{t("notFound.body")}</p>
+        <div className="mt-8">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-[15px] font-semibold text-[var(--terracotta-ink)] transition-transform hover:-translate-y-0.5"
+            style={{ fontFamily: "var(--font-display)" }}
           >
             {t("notFound.goHome")}
           </Link>
@@ -62,9 +82,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
+        <h1 className="page-title text-[34px] text-foreground">This page didn't load</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Something went wrong on our end. You can try refreshing or head back home.
         </p>
@@ -87,13 +105,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
                 if (typeof window !== "undefined") window.location.reload();
               }
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[var(--terracotta-ink)]"
           >
             Try again
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="glass inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-white/15"
           >
             Go home
           </a>

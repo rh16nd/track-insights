@@ -147,6 +147,12 @@ export const CHAMPIONSHIP_THEMES: Record<ChampionshipThemeId, ChampionshipTheme>
   },
 };
 
+// A championship's page dresses its panels in its Results box's colours, so
+// the whole page is the competition's (the Terra re-theme, 2026-09-21).
+for (const theme of Object.values(CHAMPIONSHIP_THEMES)) {
+  if (theme.page) theme.page.surface = theme.box;
+}
+
 /** The sun and the emblem's line, for the Asian Games hero. */
 export const ASIAN_GAMES_SUN = "#db2c2b"; // 3.35 against the hero ground (non-text)
 export const ASIAN_GAMES_STRIPE = ["#8e47cd", "#f4c352", "#33ac5a"] as const;
