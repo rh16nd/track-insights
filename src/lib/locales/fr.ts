@@ -1100,6 +1100,21 @@ export const fr: Record<string, string> = {
   "landing.call.cta": "Voir tout le pronostic",
   "landing.call.graded": "Chaque finale est notée sur la page Résultats une fois disputée.",
   "landing.call.error": "Impossible de charger le pronostic.",
+  "podium.strongestCall": "Le mieux évalué",
+  "podium.rating": "Évaluation du modèle",
+  "podium.sb": "MPS {{mark}}",
+  "podium.replay": "Rejouer",
+  "landing.podiumEyebrow": "Les favoris du modèle",
+  "landing.podiumTitle": "Les trois athlètes que le modèle **évalue le mieux** en ce moment.",
+  "landing.podiumRankedBy":
+    "Classés selon l’évaluation du modèle qui pronostique les championnats.",
+  "landing.podiumLoading": "Chargement des pronostics les plus sûrs du modèle…",
+  "landing.podiumError": "Le podium se remplira dès que le modèle en direct sera joignable.",
+  "landing.podiumNoteBefore":
+    "Chacun d’eux est le pronostic le plus sûr du modèle dans une discipline ",
+  "landing.podiumNoteDifferent": "différente",
+  "landing.podiumNoteAfter":
+    ", ils ne sont donc pas en concurrence les uns avec les autres. Leur place ici montre l’évaluation que le modèle leur donne, pas l’ordre dans lequel ils finiraient les uns contre les autres. Chaque pourcentage est l’évaluation du modèle, pas un classement officiel ; les marques sont les meilleures performances de la saison 2026 selon World Athletics.",
   "landing.footer.explore": "Explorer",
   "landing.footer.about": "À propos",
   "landing.hero.event.100m": "du 100 m",

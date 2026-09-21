@@ -18,7 +18,10 @@ export function countryPalette(ioc: string): (FlagPalette & Pick<PageGround, "su
   if (!palette) return null;
   // The panels take the band's colour, the nation's own near-black, so the
   // page reads as the country's all the way down (the Terra re-theme).
-  return { ...palette, surface: { "--card": palette.band, "--card-wash": "none" } as CSSProperties };
+  return {
+    ...palette,
+    surface: { "--card": palette.band, "--card-wash": "none" } as CSSProperties,
+  };
 }
 
 /** The basename of a nation's flag SVG in `public/flags/`, or null when we

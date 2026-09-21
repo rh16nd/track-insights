@@ -14,6 +14,7 @@ import { LandingNav, LANDING_SECTIONS } from "@/components/dl/landing-nav";
 import { LandingFeatures } from "@/components/dl/landing-features";
 import { LandingCall } from "@/components/dl/landing-call";
 import { SiteFooter } from "@/components/dl/site-footer";
+import { Podium, type PodiumPick } from "@/components/dl/podium";
 import { chanceLabel, discName } from "@/lib/dl-data";
 import { localeTag } from "@/lib/dates";
 import { usePageTitle } from "@/lib/use-page-title";
@@ -154,6 +155,30 @@ function Landing() {
       .map((x) => ({ discKey: x.discKey, name: x.top!.name, rating: x.top!.ratingPct! }))
       .sort((a, b) => b.rating - a.rating);
   }, [rankings]);
+  // The podium: the three highest model ratings, each the favourite in a
+  // different event, with the mark and profile link the plaques show.
+  const podium = useMemo<PodiumPick[]>(() => {
+    if (!rankings) return [];
+    const rows: PodiumPick[] = [];
+    for (const [discKey, r] of Object.entries(rankings)) {
+      const top = r.model[0];
+      if (!top || top.ratingPct == null) continue;
+      rows.push({
+        rank: 0,
+        name: top.name,
+        disc: discKey,
+        discKey,
+        mark: top.mark ?? "",
+        prob: top.ratingPct,
+        waUrl: top.profileUrl ?? "",
+        injuryWatch: false,
+        injuryReason: null,
+        injuryUrl: null,
+      });
+    }
+    rows.sort((a, b) => b.prob - a.prob);
+    return rows.slice(0, 3).map((r, i) => ({ ...r, rank: i + 1 }));
+  }, [rankings]);
   const stripRange =
     strip.length > 0
       ? {
@@ -226,6 +251,36 @@ function Landing() {
               {t("landing.confidenceFeedLoads")}
             </p>
           )}
+        </section>
+
+        {/* ── The podium, back from the old landing (user, 2026-09-21) ── */}
+        <section className="px-5 pt-24 sm:px-10 sm:pt-32">
+          <div className="mx-auto max-w-5xl text-center">
+            <p className="label-caps text-[var(--terra-gold)]">{t("landing.podiumEyebrow")}</p>
+            <AccentTitle
+              text={t("landing.podiumTitle")}
+              className="mt-4 text-[clamp(34px,5vw,58px)] leading-[1.08]"
+            />
+            <p className="mx-auto mt-5 max-w-[52ch] text-[16px] leading-relaxed text-[var(--terra-muted)]">
+              {t("landing.podiumRankedBy")}
+            </p>
+            {podium.length >= 3 ? (
+              <Podium winners={podium} />
+            ) : (
+              <p className="mt-10 text-[14px] text-[var(--terra-muted)]">
+                {rankingsState.status === "error"
+                  ? t("landing.podiumError")
+                  : t("landing.podiumLoading")}
+              </p>
+            )}
+            {/* Load-bearing, not a disclaimer: a podium shape implies these
+                three raced each other. They didn't. */}
+            <p className="mx-auto mt-8 max-w-[62ch] text-[12.5px] leading-relaxed text-[var(--terra-muted)]">
+              {t("landing.podiumNoteBefore")}
+              <em>{t("landing.podiumNoteDifferent")}</em>
+              {t("landing.podiumNoteAfter")}
+            </p>
+          </div>
         </section>
 
         {/* ── Big numbers ── */}
