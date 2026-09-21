@@ -11,6 +11,7 @@ import { useCountUp } from "@/hooks/useCountUp";
 import { NatFlag } from "@/components/dl/nat-flag";
 import { AthleteCard } from "@/components/dl/athlete-card";
 import { NewsFeed } from "@/components/dl/news-feed";
+import { CoverageMap } from "@/components/dl/coverage-map";
 import { WelcomeLauncher } from "@/components/dl/welcome-modal";
 import { useT } from "@/lib/i18n";
 import { localeTag } from "@/lib/dates";
@@ -336,6 +337,15 @@ function Dashboard() {
                 <FavouriteCard key={f.discKey} f={f} index={i} />
               ))}
             </div>
+          </Panel>
+
+          {/* How far the site reaches: every country with a ranked athlete. */}
+          <Panel
+            title={t("dashboard.map.title")}
+            subtitle={t("dashboard.map.subtitle")}
+            className="mt-6"
+          >
+            <CoverageMap />
           </Panel>
 
           {/* Where the model's pick isn't the points leader */}
