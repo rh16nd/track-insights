@@ -93,6 +93,8 @@ export function Shell({
   description,
   theme = "default",
   photo = null,
+  cover,
+  layout = "default",
 }: {
   title: string;
   /** The page's NAME, for the breadcrumb — distinct from `title`, which is
@@ -137,6 +139,15 @@ export function Shell({
    * header. Ignored when the page brings its own backdrop (an athlete's photo,
    * a country's flag). */
   photo?: PagePhotoKey | null;
+  /** A page's own first screen, in place of the site's photo header. A
+   * championship page is its own place (the user, 2026-09-21), so everything
+   * between the menu and the footer is its own, the header included. The
+   * breadcrumb stays in the structured data. */
+  cover?: ReactNode;
+  /** "bleed" lets the page's sections run edge to edge: <main> drops the
+   * site's width, gutters and the lift over the header, and each section sets
+   * its own. */
+  layout?: "default" | "bleed";
 }) {
   /* Mirrors the visible breadcrumb below. Read from the router rather than
      passed in, so the two cannot drift: a page that changes its crumb gets
@@ -231,96 +242,112 @@ export function Shell({
             with no photo gets the plain ground and the gold glow. The glass
             menu floats over it, so the content starts below the menu. The
             gold wash stays at exactly this strength on every header: the
-            country pages' band colours were solved with it on. */}
-        <section
-          className={`page-head relative isolate overflow-hidden ${
-            shot || headBackdrop ? "page-head-photo" : ""
-          }`}
-        >
-          {shot && (
-            <div className="absolute inset-0 -z-10" aria-hidden="true">
-              <img
-                src={shot.large}
-                srcSet={`${shot.small} 1200w, ${shot.large} 2400w`}
-                sizes="100vw"
-                alt=""
-                decoding="async"
-                fetchPriority="high"
-                className="page-head-img absolute inset-0 h-full w-full object-cover"
-                style={{ objectPosition: shot.focus }}
-              />
-              <div className="absolute inset-0 bg-[oklch(0.52_0.105_40_/_0.3)] mix-blend-multiply" />
-              <div className="page-head-scrim absolute inset-0" />
+            country pages' band colours were solved with it on. A page with a
+            cover of its own brings its whole first screen instead, dressed in
+            the page's tokens like its <main>. */}
+        {cover ? (
+          <>
+            <JsonLd
+              data={breadcrumbSchema([
+                { name: "PodiumCall", path: "/" },
+                { name: crumb ?? title, path: pathname },
+              ])}
+            />
+            <div className="relative z-[2]" style={custom?.surface}>
+              {cover}
             </div>
-          )}
-          {headBackdrop}
-          <div
-            className="ambient-breath pointer-events-none absolute inset-0 origin-top bg-[radial-gradient(60%_80%_at_50%_-10%,oklch(0.8_0.11_68/0.18),transparent_62%)]"
-            aria-hidden="true"
-          />
-          <div className="page-head-body relative z-[2] mx-auto max-w-[1600px] px-6 sm:px-8 lg:px-12">
-            {hero ?? (
-              <>
-                {/* A real breadcrumb, not a line that looks like one. It used
+          </>
+        ) : (
+          <section
+            className={`page-head relative isolate overflow-hidden ${
+              shot || headBackdrop ? "page-head-photo" : ""
+            }`}
+          >
+            {shot && (
+              <div className="absolute inset-0 -z-10" aria-hidden="true">
+                <img
+                  src={shot.large}
+                  srcSet={`${shot.small} 1200w, ${shot.large} 2400w`}
+                  sizes="100vw"
+                  alt=""
+                  decoding="async"
+                  fetchPriority="high"
+                  className="page-head-img absolute inset-0 h-full w-full object-cover"
+                  style={{ objectPosition: shot.focus }}
+                />
+                <div className="absolute inset-0 bg-[oklch(0.52_0.105_40_/_0.3)] mix-blend-multiply" />
+                <div className="page-head-scrim absolute inset-0" />
+              </div>
+            )}
+            {headBackdrop}
+            <div
+              className="ambient-breath pointer-events-none absolute inset-0 origin-top bg-[radial-gradient(60%_80%_at_50%_-10%,oklch(0.8_0.11_68/0.18),transparent_62%)]"
+              aria-hidden="true"
+            />
+            <div className="page-head-body relative z-[2] mx-auto max-w-[1600px] px-6 sm:px-8 lg:px-12">
+              {hero ?? (
+                <>
+                  {/* A real breadcrumb, not a line that looks like one. It used
                     to be a <div> of plain text, so "PodiumCall" was dead --
                     the one affordance a breadcrumb exists to give -- and
                     assistive tech had no way to know this was navigation.
                     Now nav > ol > li with aria-current on the leaf. The
                     separator is aria-hidden: it is punctuation, and read
                     aloud it is noise between the two names that matter. */}
-                <JsonLd
-                  data={breadcrumbSchema([
-                    { name: "PodiumCall", path: "/" },
-                    { name: crumb ?? title, path: pathname },
-                  ])}
-                />
-                {back && <div className="mb-3">{back}</div>}
-                <nav
-                  aria-label="Breadcrumb"
-                  className="dg text-[12.5px] tracking-[0.04em] text-white/92"
-                >
-                  <ol className="flex items-center">
-                    <li>
-                      <Link to="/" className="transition-colors hover:text-white hover:underline">
-                        PodiumCall
-                      </Link>
-                    </li>
-                    <li aria-hidden="true" className="px-1.5">
-                      /
-                    </li>
-                    <li className="text-gold-on-canvas" aria-current="page">
-                      {crumb ?? title}
-                    </li>
-                  </ol>
-                </nav>
-                {eyebrow && <div className="label-caps mt-3 text-gold-on-canvas">{eyebrow}</div>}
-                <h1 className="page-title mt-3.5 max-w-[22ch] text-[clamp(36px,5vw,64px)] leading-[1.04] text-white">
-                  {title}
-                </h1>
-                {description && (
-                  <p className="mt-3.5 max-w-[64ch] text-[15px] leading-relaxed text-white/92 sm:text-[17px]">
-                    {description}
-                  </p>
-                )}
-                {figures && (
-                  <div className="mt-7 flex flex-wrap gap-x-8 gap-y-5 sm:mt-8 sm:gap-x-11 sm:gap-y-6">
-                    {figures}
-                  </div>
-                )}
-              </>
+                  <JsonLd
+                    data={breadcrumbSchema([
+                      { name: "PodiumCall", path: "/" },
+                      { name: crumb ?? title, path: pathname },
+                    ])}
+                  />
+                  {back && <div className="mb-3">{back}</div>}
+                  <nav
+                    aria-label="Breadcrumb"
+                    className="dg text-[12.5px] tracking-[0.04em] text-white/92"
+                  >
+                    <ol className="flex items-center">
+                      <li>
+                        <Link to="/" className="transition-colors hover:text-white hover:underline">
+                          PodiumCall
+                        </Link>
+                      </li>
+                      <li aria-hidden="true" className="px-1.5">
+                        /
+                      </li>
+                      <li className="text-gold-on-canvas" aria-current="page">
+                        {crumb ?? title}
+                      </li>
+                    </ol>
+                  </nav>
+                  {eyebrow && <div className="label-caps mt-3 text-gold-on-canvas">{eyebrow}</div>}
+                  <h1 className="page-title mt-3.5 max-w-[22ch] text-[clamp(36px,5vw,64px)] leading-[1.04] text-white">
+                    {title}
+                  </h1>
+                  {description && (
+                    <p className="mt-3.5 max-w-[64ch] text-[15px] leading-relaxed text-white/92 sm:text-[17px]">
+                      {description}
+                    </p>
+                  )}
+                  {figures && (
+                    <div className="mt-7 flex flex-wrap gap-x-8 gap-y-5 sm:mt-8 sm:gap-x-11 sm:gap-y-6">
+                      {figures}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+            {shot && (
+              <a
+                href={shot.source}
+                target="_blank"
+                rel="noreferrer"
+                className="absolute right-4 top-[76px] z-[2] rounded-full bg-black/35 px-2.5 py-1 text-[11px] text-white/80 hover:text-white hover:underline sm:right-8 sm:top-[92px] lg:right-12"
+              >
+                {t("ath.photoCredit", { author: shot.author, license: shot.license })}
+              </a>
             )}
-          </div>
-          {shot && (
-            <a
-              href={shot.source}
-              target="_blank"
-              rel="noreferrer"
-              className="absolute right-4 top-[76px] z-[2] rounded-full bg-black/35 px-2.5 py-1 text-[11px] text-white/80 hover:text-white hover:underline sm:right-8 sm:top-[92px] lg:right-12"
-            >
-              {t("ath.photoCredit", { author: shot.author, license: shot.license })}
-            </a>
-          )}
-        </section>
+          </section>
+        )}
 
         {/* Lifted so the first panel overlaps the band's lower padding --
             the seam between the two reads as one page rather than a header
@@ -330,7 +357,11 @@ export function Shell({
           // -1 so the skip link can move focus here without making the
           // region itself a tab stop on the way through.
           tabIndex={-1}
-          className="relative z-[2] mx-auto -mt-[34px] max-w-[1600px] px-6 pb-[90px] sm:px-8 lg:px-12"
+          className={
+            layout === "bleed"
+              ? "relative z-[2] outline-none"
+              : "relative z-[2] mx-auto -mt-[34px] max-w-[1600px] px-6 pb-[90px] sm:px-8 lg:px-12"
+          }
           style={custom?.surface}
         >
           {children}

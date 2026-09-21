@@ -30,7 +30,22 @@ export type ChampionshipTheme = {
    * registers the colours with `@theme inline`, so `text-foreground` compiles
    * to `var(--foreground)` and reads whichever value the nearest box sets. */
   box: CSSProperties;
+  /** The short animation that plays as a reader arrives on the championship's
+   * page (championship-arrival.tsx): its ground, the bands that sweep across,
+   * and the disc that swells between them. Null for a championship whose page
+   * keeps the site's frame. */
+  arrival: ChampionshipArrivalColours | null;
 };
+
+export type ChampionshipArrivalColours = {
+  ground: string;
+  bands: readonly string[];
+  disc: string;
+};
+
+/** The sun and the emblem's line, for the Asian Games page. */
+export const ASIAN_GAMES_SUN = "#db2c2b"; // 3.35 against the hero ground (non-text)
+export const ASIAN_GAMES_STRIPE = ["#8e47cd", "#f4c352", "#33ac5a"] as const;
 
 /** The tokens a dark box needs. Ratios are against `--card` unless noted. */
 function box(tokens: {
@@ -68,6 +83,7 @@ export const CHAMPIONSHIP_THEMES: Record<ChampionshipThemeId, ChampionshipTheme>
   diamondLeague: {
     page: null,
     navAccent: null,
+    arrival: null,
     box: box({
       card: "#11254b", // Diamond League navy
       foreground: "#f0f6fc", // 13.93
@@ -96,6 +112,7 @@ export const CHAMPIONSHIP_THEMES: Record<ChampionshipThemeId, ChampionshipTheme>
     },
     // The Terra bar is dark glass, so the accent is the light violet now.
     navAccent: "var(--violet-strong)",
+    arrival: null,
     box: box({
       card: "#0c0718",
       foreground: "#f6f4fb", // 18.14
@@ -130,6 +147,9 @@ export const CHAMPIONSHIP_THEMES: Record<ChampionshipThemeId, ChampionshipTheme>
     },
     // The emblem's green, lifted to read as text on the dark glass bar.
     navAccent: "oklch(0.82 0.13 155)",
+    // The emblem's three colours sweep across the page's green, and the OCA's
+    // red sun swells between them.
+    arrival: { ground: "#002912", bands: ASIAN_GAMES_STRIPE, disc: ASIAN_GAMES_SUN },
     box: box({
       card: "#002a16",
       foreground: "#f1f7f2", // 14.40
@@ -152,10 +172,6 @@ export const CHAMPIONSHIP_THEMES: Record<ChampionshipThemeId, ChampionshipTheme>
 for (const theme of Object.values(CHAMPIONSHIP_THEMES)) {
   if (theme.page) theme.page.surface = theme.box;
 }
-
-/** The sun and the emblem's line, for the Asian Games hero. */
-export const ASIAN_GAMES_SUN = "#db2c2b"; // 3.35 against the hero ground (non-text)
-export const ASIAN_GAMES_STRIPE = ["#8e47cd", "#f4c352", "#33ac5a"] as const;
 
 export function championshipTheme(id: string | null | undefined): ChampionshipTheme | null {
   return id && id in CHAMPIONSHIP_THEMES ? CHAMPIONSHIP_THEMES[id as ChampionshipThemeId] : null;

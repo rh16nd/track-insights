@@ -9,7 +9,8 @@ A page fails when, once loading has finished, it shows the error panel or the
 not-found page, has no heading, is in the wrong language, or logged a console
 error. Loading has finished when no skeleton is left (aria-busy="true", from
 PanelSkeleton in src/components/dl/shell.tsx) and the text has stopped
-changing. React Query retries a failed request three times first, so a broken
+changing, leaving out any countdown (role="timer"), which changes every
+second by design. React Query retries a failed request three times first, so a broken
 page takes several seconds to show its error, and a check that reads the page
 any sooner passes it.
 
@@ -85,8 +86,9 @@ def wait_until_loaded(browser):
     deadline, last, since = time.monotonic() + TIMEOUT, None, time.monotonic()
     while time.monotonic() < deadline:
         busy, text = browser.execute_script(
-            "return [document.querySelectorAll('[aria-busy=\"true\"]').length,"
-            " document.body ? document.body.innerText : ''];"
+            "let t = document.body ? document.body.innerText : '';"
+            " for (const e of document.querySelectorAll('[role=\"timer\"]')) t = t.replace(e.innerText, '');"
+            " return [document.querySelectorAll('[aria-busy=\"true\"]').length, t];"
         )
         if text != last:
             last, since = text, time.monotonic()

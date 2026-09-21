@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { Panel, ProbabilityBar, RankBadge, WatchBadge } from "./shell";
 import { NatFlag } from "./nat-flag";
@@ -31,9 +31,23 @@ function displayName(name: string): string {
 export function UltimateProjections({
   projections,
   t,
+  bare = false,
+  frameId,
+  active: chosen,
+  onActiveChange,
 }: {
   projections: UltimateProjection[];
   t: (k: string, v?: Record<string, string | number>) => string;
+  /** Without the panel around the table, for a page that is its own place
+   * (the Asian Games' full-width sections). */
+  bare?: boolean;
+  /** An id for the bare table's section, so the page can scroll to it and
+   * hand it focus. */
+  frameId?: string | undefined;
+  /** The event shown, when the page drives the picker (the Asian Games' tiles
+   * open an event here). Without it the picker keeps its own choice. */
+  active?: string | undefined;
+  onActiveChange?: ((discKey: string) => void) | undefined;
 }) {
   const sorted = useMemo(
     () =>
@@ -49,7 +63,13 @@ export function UltimateProjections({
       ),
     [projections, t],
   );
-  const [active, setActive] = useState("");
+  const [own, setOwn] = useState("");
+  const active = chosen ?? own;
+  const setActive = (discKey: string) => {
+    setOwn(discKey);
+    onActiveChange?.(discKey);
+  };
+  const Frame = bare ? BareFrame : Panel;
   const current = sorted.find((p) => p.discKey === active) ?? sorted[0];
   if (!current) return null;
 
@@ -151,248 +171,293 @@ export function UltimateProjections({
         ))}
       </div>
 
-      <Panel
-        title={t(
-          current.method === "points"
-            ? "championship.projection.titlePoints"
-            : "ultimate.projection.title",
-          { disc: discName(t, current.discKey, current.disciplineLabel) },
-        )}
-        subtitle={
-          current.method
-            ? t("championship.projection.subtitle", {
-                n: current.qualified,
-                ranked: current.athletes.length,
-              })
-            : t(
-                current.fieldSource === "entries"
-                  ? "ultimate.projection.subtitleEntered"
-                  : "ultimate.projection.subtitle",
-                { n: current.athletes.length, places: current.places ?? current.qualified },
-              )
-        }
-        className="mt-4"
-      >
-        {/* Why this event was called the way it was, and above the table: the
+      <FrameTarget id={bare ? frameId : undefined}>
+        <Frame
+          title={t(
+            current.method === "points"
+              ? "championship.projection.titlePoints"
+              : "ultimate.projection.title",
+            { disc: discName(t, current.discKey, current.disciplineLabel) },
+          )}
+          subtitle={
+            current.method
+              ? t("championship.projection.subtitle", {
+                  n: current.qualified,
+                  ranked: current.athletes.length,
+                })
+              : t(
+                  current.fieldSource === "entries"
+                    ? "ultimate.projection.subtitleEntered"
+                    : "ultimate.projection.subtitle",
+                  { n: current.athletes.length, places: current.places ?? current.qualified },
+                )
+          }
+          className={bare ? "mt-8" : "mt-4"}
+        >
+          {/* Why this event was called the way it was, and above the table: the
             reader has to know whether the last column is a chance or a score
             before reading down it. */}
-        {current.methodEvidence?.reason === "tooFew" && (
-          <p className="mb-3 max-w-3xl text-[12.5px] leading-snug text-foreground">
-            {t("championship.projection.whyTooFew", {
-              n: current.scored,
-              needed: current.methodEvidence.needed ?? 3,
-            })}
-          </p>
-        )}
-        {/* Above the table, not below it. A reader who meets this after
+          {current.methodEvidence?.reason === "tooFew" && (
+            <p className="mb-3 max-w-3xl text-[12.5px] leading-snug text-foreground">
+              {t("championship.projection.whyTooFew", {
+                n: current.scored,
+                needed: current.methodEvidence.needed ?? 3,
+              })}
+            </p>
+          )}
+          {/* Above the table, not below it. A reader who meets this after
             counting down the podium has already drawn the wrong conclusion. */}
-        {promoted.length > 0 && (
-          <p className="mb-3 max-w-3xl border-l-2 border-gold/50 pl-3 text-[11.5px] leading-snug text-muted-foreground">
-            {t("ultimate.projection.promoted", {
-              names: promoted.map((a) => a.name).join(", "),
-            })}
-          </p>
-        )}
-        {/* relative, so the table's sr-only labels are clipped by this scroller.
+          {promoted.length > 0 && (
+            <p className="mb-3 max-w-3xl border-l-2 border-gold/50 pl-3 text-[11.5px] leading-snug text-muted-foreground">
+              {t("ultimate.projection.promoted", {
+                names: promoted.map((a) => a.name).join(", "),
+              })}
+            </p>
+          )}
+          {/* relative, so the table's sr-only labels are clipped by this scroller.
             Without it their containing block was <main>, and a label in a
             right-hand column made the whole page 410px wide on a 360px phone. */}
-        <div className="relative overflow-x-auto">
-          <table className={`w-full ${showWin ? "min-w-[720px]" : "min-w-[620px]"}`}>
-            <caption className="sr-only">
-              {t(
-                current.method === "model"
-                  ? "championship.projection.captionModel"
-                  : current.method === "points"
-                    ? "championship.projection.captionPoints"
-                    : "ultimate.projection.caption",
-                { disc: discName(t, current.discKey, current.disciplineLabel) },
-              )}
-            </caption>
-            <thead>
-              <tr className="label-caps text-muted-foreground">
-                <th scope="col" className="w-12 pb-3 text-left font-semibold">
-                  #
-                </th>
-                <th scope="col" className="pb-3 pl-3 text-left font-semibold">
-                  {t("table.colAthlete")}
-                </th>
-                <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
-                  {t("table.colNat")}
-                </th>
-                <th scope="col" className="w-44 pb-3 pl-4 text-left font-semibold">
-                  <span className="inline-flex items-center gap-1">
-                    {t(middle.label)}
-                    <InfoTip label={t("figure.about", { label: t(middle.label) })}>
-                      {t(middle.hint)}
-                    </InfoTip>
-                  </span>
-                </th>
-                <th scope="col" className="w-40 pb-3 pl-6 text-right font-semibold">
-                  <span className="inline-flex items-center justify-end gap-1">
-                    {t(last.label)}
-                    <InfoTip label={t("figure.about", { label: t(last.label) })}>
-                      {t(last.hint)}
-                    </InfoTip>
-                  </span>
-                </th>
-                {showWin && (
-                  <th scope="col" className="w-28 pb-3 pl-4 text-right font-semibold">
-                    <span className="inline-flex items-center justify-end gap-1">
-                      {t("championship.projection.colWin")}
-                      <InfoTip
-                        label={t("figure.about", { label: t("championship.projection.colWin") })}
-                      >
-                        {t("championship.projection.winHint")}
-                      </InfoTip>
-                    </span>
-                  </th>
+          <div className="relative overflow-x-auto">
+            <table className={`w-full ${showWin ? "min-w-[720px]" : "min-w-[620px]"}`}>
+              <caption className="sr-only">
+                {t(
+                  current.method === "model"
+                    ? "championship.projection.captionModel"
+                    : current.method === "points"
+                      ? "championship.projection.captionPoints"
+                      : "ultimate.projection.caption",
+                  { disc: discName(t, current.discKey, current.disciplineLabel) },
                 )}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {clear.map((a, i) => (
-                <ProjectionRow
-                  key={a.name}
-                  a={a}
-                  i={i}
-                  place={i + 1}
-                  discKey={current.discKey}
-                  t={t}
-                  method={current.method}
-                  showWin={showWin}
-                />
-              ))}
-            </tbody>
-            {flagged.length > 0 && (
-              <tbody className="divide-y divide-border">
-                <tr>
-                  <th scope="colgroup" colSpan={showWin ? 6 : 5} className="pt-5 pb-2 text-left">
-                    <span className="label-caps inline-flex items-center gap-1 text-muted-foreground">
-                      {t("ultimate.projection.flaggedTitle")}
-                      <InfoTip
-                        label={t("figure.about", {
-                          label: t("ultimate.projection.flaggedTitle"),
-                        })}
-                      >
-                        {t("ultimate.projection.flaggedHint")}
+              </caption>
+              <thead>
+                <tr className="label-caps text-muted-foreground">
+                  <th scope="col" className="w-12 pb-3 text-left font-semibold">
+                    #
+                  </th>
+                  <th scope="col" className="pb-3 pl-3 text-left font-semibold">
+                    {t("table.colAthlete")}
+                  </th>
+                  <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
+                    {t("table.colNat")}
+                  </th>
+                  <th scope="col" className="w-44 pb-3 pl-4 text-left font-semibold">
+                    <span className="inline-flex items-center gap-1">
+                      {t(middle.label)}
+                      <InfoTip label={t("figure.about", { label: t(middle.label) })}>
+                        {t(middle.hint)}
                       </InfoTip>
                     </span>
                   </th>
+                  <th scope="col" className="w-40 pb-3 pl-6 text-right font-semibold">
+                    <span className="inline-flex items-center justify-end gap-1">
+                      {t(last.label)}
+                      <InfoTip label={t("figure.about", { label: t(last.label) })}>
+                        {t(last.hint)}
+                      </InfoTip>
+                    </span>
+                  </th>
+                  {showWin && (
+                    <th scope="col" className="w-28 pb-3 pl-4 text-right font-semibold">
+                      <span className="inline-flex items-center justify-end gap-1">
+                        {t("championship.projection.colWin")}
+                        <InfoTip
+                          label={t("figure.about", { label: t("championship.projection.colWin") })}
+                        >
+                          {t("championship.projection.winHint")}
+                        </InfoTip>
+                      </span>
+                    </th>
+                  )}
                 </tr>
-                {flagged.map((a, i) => (
+              </thead>
+              <tbody className="divide-y divide-border">
+                {clear.map((a, i) => (
                   <ProjectionRow
                     key={a.name}
                     a={a}
                     i={i}
-                    place={a.rank}
+                    place={i + 1}
                     discKey={current.discKey}
                     t={t}
                     method={current.method}
                     showWin={showWin}
-                    dimmed
                   />
                 ))}
               </tbody>
-            )}
-            {/* Entered and not ranked, as rows rather than a sentence of names:
+              {flagged.length > 0 && (
+                <tbody className="divide-y divide-border">
+                  <tr>
+                    <th scope="colgroup" colSpan={showWin ? 6 : 5} className="pt-5 pb-2 text-left">
+                      <span className="label-caps inline-flex items-center gap-1 text-muted-foreground">
+                        {t("ultimate.projection.flaggedTitle")}
+                        <InfoTip
+                          label={t("figure.about", {
+                            label: t("ultimate.projection.flaggedTitle"),
+                          })}
+                        >
+                          {t("ultimate.projection.flaggedHint")}
+                        </InfoTip>
+                      </span>
+                    </th>
+                  </tr>
+                  {flagged.map((a, i) => (
+                    <ProjectionRow
+                      key={a.name}
+                      a={a}
+                      i={i}
+                      place={a.rank}
+                      discKey={current.discKey}
+                      t={t}
+                      method={current.method}
+                      showWin={showWin}
+                      dimmed
+                    />
+                  ))}
+                </tbody>
+              )}
+              {/* Entered and not ranked, as rows rather than a sentence of names:
                 a reader looking for one athlete scans the table, and each row
                 says why that athlete has no place in the order above. */}
-            {unranked.length > 0 && (
-              <tbody className="divide-y divide-border">
-                <tr>
-                  <th scope="colgroup" colSpan={showWin ? 6 : 5} className="pt-5 pb-2 text-left">
-                    <span className="label-caps inline-flex items-center gap-1 text-muted-foreground">
-                      {t("championship.projection.unrankedTitle", { n: unranked.length })}
-                      <InfoTip
-                        label={t("figure.about", {
-                          label: t("championship.projection.unrankedTitle", { n: unranked.length }),
-                        })}
-                      >
-                        {t("championship.projection.unrankedHint")}
-                      </InfoTip>
-                    </span>
-                  </th>
-                </tr>
-                {unranked.map((u, i) => (
-                  <tr
-                    key={`${u.name}-${i}`}
-                    className="stagger-item"
-                    style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
-                  >
-                    <td className="nums py-2.5 pr-2 text-[13px] font-semibold text-muted-foreground">
-                      —
-                    </td>
-                    <td className="py-2.5 pl-3 text-[13px] font-medium text-foreground">
-                      {u.hasPage ? (
-                        <Link
-                          to="/athlete/$discKey/$name"
-                          params={{ discKey: current.discKey, name: u.name }}
-                          className="transition-colors hover:text-terracotta-strong hover:underline"
+              {unranked.length > 0 && (
+                <tbody className="divide-y divide-border">
+                  <tr>
+                    <th scope="colgroup" colSpan={showWin ? 6 : 5} className="pt-5 pb-2 text-left">
+                      <span className="label-caps inline-flex items-center gap-1 text-muted-foreground">
+                        {t("championship.projection.unrankedTitle", { n: unranked.length })}
+                        <InfoTip
+                          label={t("figure.about", {
+                            label: t("championship.projection.unrankedTitle", {
+                              n: unranked.length,
+                            }),
+                          })}
                         >
-                          {displayName(u.name)}
-                        </Link>
-                      ) : u.profileUrl ? (
-                        <a
-                          href={u.profileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="transition-colors hover:text-terracotta-strong hover:underline"
-                        >
-                          {displayName(u.name)}
-                        </a>
-                      ) : (
-                        <span>{displayName(u.name)}</span>
-                      )}
-                    </td>
-                    <td className="py-2.5 pl-4">
-                      <NatFlag nat={u.nat ?? "—"} />
-                    </td>
-                    <td
-                      colSpan={showWin ? 3 : 2}
-                      className="py-2.5 pl-4 text-[12px] text-muted-foreground"
-                    >
-                      {t(`championship.projection.unranked.${u.reason}`)}
-                    </td>
+                          {t("championship.projection.unrankedHint")}
+                        </InfoTip>
+                      </span>
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            )}
-          </table>
-        </div>
-        {/* Named, not counted. A qualified athlete the model could not score is
+                  {unranked.map((u, i) => (
+                    <tr
+                      key={`${u.name}-${i}`}
+                      className="stagger-item"
+                      style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
+                    >
+                      <td className="nums py-2.5 pr-2 text-[13px] font-semibold text-muted-foreground">
+                        —
+                      </td>
+                      <td className="py-2.5 pl-3 text-[13px] font-medium text-foreground">
+                        {u.hasPage ? (
+                          <Link
+                            to="/athlete/$discKey/$name"
+                            params={{ discKey: current.discKey, name: u.name }}
+                            className="transition-colors hover:text-terracotta-strong hover:underline"
+                          >
+                            {displayName(u.name)}
+                          </Link>
+                        ) : u.profileUrl ? (
+                          <a
+                            href={u.profileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="transition-colors hover:text-terracotta-strong hover:underline"
+                          >
+                            {displayName(u.name)}
+                          </a>
+                        ) : (
+                          <span>{displayName(u.name)}</span>
+                        )}
+                      </td>
+                      <td className="py-2.5 pl-4">
+                        <NatFlag nat={u.nat ?? "—"} />
+                      </td>
+                      <td
+                        colSpan={showWin ? 3 : 2}
+                        className="py-2.5 pl-4 text-[12px] text-muted-foreground"
+                      >
+                        {t(`championship.projection.unranked.${u.reason}`)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              )}
+            </table>
+          </div>
+          {/* Named, not counted. A qualified athlete the model could not score is
             a hole in the projection, and the one thing a reader must not have
             to guess at is whether their favourite is missing. */}
-        {/* Qualified and not entered. Below the table, not above: unlike the
+          {/* Qualified and not entered. Below the table, not above: unlike the
             promoted-podium note this does not change how the numbers above
             should be read, it answers "where did they go". */}
-        {(current.notEntered?.length ?? 0) > 0 && (
-          <p className="mt-3 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
-            {t("ultimate.projection.notEntered", {
-              names: (current.notEntered ?? []).join(", "),
-            })}
-          </p>
-        )}
-        {/* The Ultimate's call predates the rows above and still names its
+          {(current.notEntered?.length ?? 0) > 0 && (
+            <p className="mt-3 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
+              {t("ultimate.projection.notEntered", {
+                names: (current.notEntered ?? []).join(", "),
+              })}
+            </p>
+          )}
+          {/* The Ultimate's call predates the rows above and still names its
             unscored athletes in a sentence. */}
-        {current.unscored.length > 0 && !current.unranked && (
-          <p className="mt-3 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
+          {current.unscored.length > 0 && !current.unranked && (
+            <p className="mt-3 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
+              {t(
+                current.method
+                  ? "championship.projection.unscored"
+                  : "ultimate.projection.unscored",
+                { names: current.unscored.map(displayName).join(", ") },
+              )}
+            </p>
+          )}
+          <p className="mt-2 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
             {t(
-              current.method ? "championship.projection.unscored" : "ultimate.projection.unscored",
-              { names: current.unscored.map(displayName).join(", ") },
+              current.method === "model"
+                ? "championship.projection.noteModel"
+                : current.method === "points"
+                  ? "championship.projection.notePoints"
+                  : "ultimate.projection.note",
             )}
           </p>
-        )}
-        <p className="mt-2 max-w-3xl text-[11.5px] leading-snug text-muted-foreground">
-          {t(
-            current.method === "model"
-              ? "championship.projection.noteModel"
-              : current.method === "points"
-                ? "championship.projection.notePoints"
-                : "ultimate.projection.note",
-          )}
-        </p>
-      </Panel>
+        </Frame>
+      </FrameTarget>
     </>
+  );
+}
+
+/** Where a page scrolls to when it opens an event in the table: focusable by
+ * script only (tabIndex -1), and clear of the fixed menu. Nothing without an
+ * id. */
+function FrameTarget({ id, children }: { id: string | undefined; children: ReactNode }) {
+  if (!id) return <>{children}</>;
+  return (
+    <div id={id} tabIndex={-1} className="scroll-mt-28 outline-none">
+      {children}
+    </div>
+  );
+}
+
+/** The table's heading and notes without a panel around them. */
+function BareFrame({
+  title,
+  subtitle,
+  children,
+  className = "",
+}: {
+  title: string;
+  subtitle?: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={className}>
+      <h3 className="hero-serif text-[clamp(26px,3vw,36px)] leading-tight text-foreground">
+        {title}
+      </h3>
+      {subtitle && (
+        <p className="mt-2 max-w-[70ch] text-[13.5px] leading-relaxed text-muted-foreground">
+          {subtitle}
+        </p>
+      )}
+      <div className="mt-6">{children}</div>
+    </section>
   );
 }
 
@@ -538,7 +603,7 @@ function ProjectionRow({
           </span>
         ) : (
           <div className="flex items-center justify-end gap-2.5">
-            <ProbabilityBar value={a.podiumChance / 100} trackHeight="h-1.5" />
+            <ProbabilityBar value={a.podiumChance} trackHeight="h-1.5" />
             <span className="nums w-12 text-right text-[12.5px] font-semibold text-foreground">
               {chanceLabel(lang, a.podiumChance)}%
             </span>

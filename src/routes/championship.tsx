@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentType } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { pageHead } from "@/lib/seo";
 import { Shell, PanelSkeleton, ErrorPanel } from "@/components/dl/shell";
 import { UltimateBody } from "@/components/dl/ultimate-body";
-import { AsianGamesBody } from "@/components/dl/asian-games-body";
+import { ChampionshipArrival } from "@/components/dl/championship-arrival";
+import { NagoyaCover, type CallSplit, type CoverInfo } from "@/components/dl/nagoya/nagoya-cover";
+import { NagoyaPage, NAGOYA_WRAP } from "@/components/dl/nagoya/nagoya-page";
 import { useChampionship, useChampionshipSummary } from "@/hooks/useChampionship";
-import { useT } from "@/lib/i18n";
-import { championshipTheme } from "@/lib/championship-themes";
-import type { UltimateEvent } from "@/lib/dl-data";
+import { useT, type Lang } from "@/lib/i18n";
+import { championshipTheme, type ChampionshipThemeId } from "@/lib/championship-themes";
+import type { ChampionshipEvent, UltimateEvent } from "@/lib/dl-data";
 import { usePageTitle } from "@/lib/use-page-title";
 
 export const Route = createFileRoute("/championship")({
@@ -39,6 +41,27 @@ function rememberedTheme(): string | null {
 const TITLE_KEYS: Record<string, string> = {
   ultimate: "ultimate.title",
   asianGames: "asianGames.title",
+};
+
+type T = (k: string, v?: Record<string, string | number>) => string;
+
+/** The championships that are places of their own (the user, 2026-09-21):
+ * visiting one should feel like going somewhere else. Each brings its own
+ * cover and its own page between the site's menu and footer, and arrives in
+ * its colours (the theme's `arrival`). Keyed by theme id; a championship not
+ * listed keeps the site's frame and panels. */
+const PLACES: Partial<
+  Record<
+    ChampionshipThemeId,
+    {
+      Cover: ComponentType<{ info: CoverInfo | undefined; split: CallSplit | undefined }>;
+      Page: ComponentType<{ ev: ChampionshipEvent; lang: Lang; t: T }>;
+      /** The page's column, for the loading and error states. */
+      wrap: string;
+    }
+  >
+> = {
+  asianGames: { Cover: NagoyaCover, Page: NagoyaPage, wrap: NAGOYA_WRAP },
 };
 
 /** Whichever championship the backend registry names as current
@@ -74,17 +97,58 @@ function ChampionshipPage() {
   const titleKey = (liveTheme && TITLE_KEYS[liveTheme]) || "nav.championship";
   const navKey = ev?.championship.navKey ?? current?.navKey ?? "nav.championship";
   usePageTitle(t(navKey));
-  const ground = championshipTheme(themeId)?.page;
+  const theme = championshipTheme(themeId);
+  const ground = theme?.page;
+  const place = themeId ? PLACES[themeId as ChampionshipThemeId] : undefined;
+
+  if (place) {
+    // The call itself names everything the cover says; until it arrives, the
+    // summary names all but the time zone and the entry counts.
+    const source = ev ?? current;
+    const info: CoverInfo | undefined = source && {
+      name: source.name,
+      shortName: source.shortName,
+      city: source.city,
+      venue: source.venue,
+      startDate: source.startDate,
+      endDate: source.endDate,
+      timezone: ev?.timezone,
+      entrants: ev?.entrants,
+      federations: ev?.federations,
+    };
+    const split: CallSplit | undefined = ev && {
+      model: (ev.projections ?? []).filter((p) => p.method === "model").length,
+      points: (ev.projections ?? []).filter((p) => p.method === "points").length,
+      none: (ev.notCalled ?? []).length,
+    };
+    return (
+      <Shell
+        title={t(titleKey)}
+        crumb={t(navKey)}
+        theme={ground ?? "default"}
+        layout="bleed"
+        cover={<place.Cover info={info} split={split} />}
+      >
+        {theme?.arrival && <ChampionshipArrival colours={theme.arrival} />}
+        {state.status === "loading" && (
+          <div className={`${place.wrap} py-20`}>
+            <PanelSkeleton rows={8} />
+          </div>
+        )}
+        {state.status === "error" && (
+          <div className={`${place.wrap} py-20`}>
+            <ErrorPanel message={state.message} onRetry={state.retry} />
+          </div>
+        )}
+        {/* Only the call this place was built for: a remembered theme can be
+            one championship behind the data for a moment. */}
+        {ev && ev.championship.theme === themeId && <place.Page ev={ev} lang={lang} t={t} />}
+      </Shell>
+    );
+  }
 
   return (
-    <Shell
-      title={t(titleKey)}
-      crumb={t(navKey)}
-      theme={ground ?? "default"}
-      // The Asian Games' own stadium in Nagoya; other championships have no
-      // photo of their own yet and open on their ground.
-      photo={themeId === "asianGames" ? "nagoya" : null}
-    >
+    <Shell title={t(titleKey)} crumb={t(navKey)} theme={ground ?? "default"}>
       {state.status === "loading" && (
         <div className="mt-2 space-y-6">
           <div className="skeleton-pulse h-64 rounded-[28px] bg-white/10" />
@@ -92,8 +156,7 @@ function ChampionshipPage() {
         </div>
       )}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
-      {ev && ev.championship.theme === "asianGames" && <AsianGamesBody ev={ev} lang={lang} t={t} />}
-      {ev && ev.championship.theme !== "asianGames" && (
+      {ev && !(ev.championship.theme in PLACES) && (
         // The Ultimate's payload is a whole UltimateEvent; the championship type
         // only marks its Ultimate-only parts optional.
         <UltimateBody ev={ev as UltimateEvent} lang={lang} t={t} />
