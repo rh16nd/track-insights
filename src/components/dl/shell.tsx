@@ -1,15 +1,14 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { TopNav } from "./topnav";
-import { TrackCurveDecoration } from "./track-curve";
 import type { MeetStatus } from "@/lib/dl-data";
 import { API_IS_LOCAL, warmApi } from "@/lib/api";
-import { WaSourceLink } from "./wa-link";
-import { FeedbackLink } from "./feedback-modal";
+import { SiteFooter } from "./site-footer";
 import { JsonLd } from "./json-ld";
 import { breadcrumbSchema } from "@/lib/seo";
 import { InfoTip } from "./info-tip";
 import { useT } from "@/lib/i18n";
+import { pagePhoto, type PagePhotoKey } from "@/lib/page-photos";
 
 export const dotClass: Record<MeetStatus, string> = {
   done: "bg-muted-foreground/40",
@@ -48,9 +47,13 @@ export type PageGround = {
    * rather than the country pages' fixed 10% and 9%. The championship themes
    * pass one (lib/championship-themes.ts). */
   blooms?: string;
-  /** False leaves out the site's track curve: a warm arc reads as a stray on a
-   * championship's own ground. */
+  /** Kept for the callers that still pass it; the Terra frame has no track
+   * curve on any page. */
   trackCurve?: boolean;
+  /** Tokens set on the page's <main>, so its panels wear the page's colours
+   * rather than the site's: a championship passes its Results box tokens, a
+   * country its band colour. */
+  surface?: CSSProperties;
 };
 
 /** Rulings for a page's ground: 2px lines every 46px, in the direction the
@@ -89,6 +92,7 @@ export function Shell({
   eyebrow,
   description,
   theme = "default",
+  photo = null,
 }: {
   title: string;
   /** The page's NAME, for the breadcrumb — distinct from `title`, which is
@@ -129,6 +133,10 @@ export function Shell({
    * their nation's, measured off its flag. One mechanism, so there is one way
    * to re-dress a page rather than a growing list of named themes. */
   theme?: "default" | PageGround;
+  /** The page's header photo (lib/page-photos.ts), or null for the plain dark
+   * header. Ignored when the page brings its own backdrop (an athlete's photo,
+   * a country's flag). */
+  photo?: PagePhotoKey | null;
 }) {
   /* Mirrors the visible breadcrumb below. Read from the router rather than
      passed in, so the two cannot drift: a page that changes its crumb gets
@@ -140,6 +148,7 @@ export function Shell({
   // The page brings its own ground, so the site's terracotta must not be
   // painted underneath it.
   const ownGround = custom !== null;
+  const shot = headBackdrop ? null : pagePhoto(photo);
 
   /* Every page renders through Shell, so this is the earliest moment we know
      a real person is here. Wake the API now (see warmApi) rather than when
@@ -149,7 +158,10 @@ export function Shell({
   }, []);
 
   return (
-    <div className={`relative min-h-screen ${ownGround ? "" : "bg-background"}`}>
+    <div
+      className={`relative min-h-screen ${ownGround ? "" : "bg-background"}`}
+      style={{ "--page-ground": custom?.ground ?? "var(--background)" } as CSSProperties}
+    >
       {/* A page's own ground is painted as a FIXED layer, not as this div's
           own background: the document body still carries the site's
           terracotta, which showed through at the edges of the scroll when the
@@ -200,12 +212,6 @@ export function Shell({
           aria-hidden="true"
         />
       )}
-      {/* The track curve is white and gold at 8-16% — hue-neutral, so it works
-          on a nation's ground as well as on the site's own. A championship
-          drops it: a warm arc reads as a stray on its own ground. */}
-      {custom?.trackCurve !== false && (
-        <TrackCurveDecoration className="pointer-events-none fixed bottom-0 right-0 z-0 h-[65vh] w-[65vh] opacity-80" />
-      )}
       <div className="relative z-10">
         {/* Every page opens with the same nav, so without this a keyboard or
             screen-reader user tabs the whole thing again on each one before
@@ -219,25 +225,40 @@ export function Shell({
         </a>
         <TopNav lastUpdated={lastUpdated} daysToFinal={daysToFinal} />
 
-        {/* v0's `.page-head`: one full-bleed band that opens every app page.
-            It replaces two different old treatments -- a bordered title card
-            on some pages and the dashboard's textured `track-surface` hero
-            box on another -- which is why the app read as several designs
-            stitched together. The drifting lanes live HERE, inside a band
-            with nothing but a title on it, so the motion never sits behind a
-            number the reader is trying to hold. */}
+        {/* The page header, after the landing's hero (the Terra re-theme,
+            2026-09-21): a chosen photo under the same warm tint and dark wash,
+            fading into the page at its foot, with the title set on it. A page
+            with no photo gets the plain ground and the gold glow. The glass
+            menu floats over it, so the content starts below the menu. The
+            gold wash stays at exactly this strength on every header: the
+            country pages' band colours were solved with it on. */}
         <section
-          className={`relative overflow-hidden pt-9 pb-11 sm:pt-14 sm:pb-[68px] ${
-            headTone === "brick" ? "bg-brick" : ""
+          className={`page-head relative isolate overflow-hidden ${
+            shot || headBackdrop ? "page-head-photo" : ""
           }`}
         >
+          {shot && (
+            <div className="absolute inset-0 -z-10" aria-hidden="true">
+              <img
+                src={shot.large}
+                srcSet={`${shot.small} 1200w, ${shot.large} 2400w`}
+                sizes="100vw"
+                alt=""
+                decoding="async"
+                fetchPriority="high"
+                className="page-head-img absolute inset-0 h-full w-full object-cover"
+                style={{ objectPosition: shot.focus }}
+              />
+              <div className="absolute inset-0 bg-[oklch(0.52_0.105_40_/_0.3)] mix-blend-multiply" />
+              <div className="page-head-scrim absolute inset-0" />
+            </div>
+          )}
           {headBackdrop}
-          <div className="lanes" aria-hidden="true" />
           <div
             className="ambient-breath pointer-events-none absolute inset-0 origin-top bg-[radial-gradient(60%_80%_at_50%_-10%,oklch(0.8_0.11_68/0.18),transparent_62%)]"
             aria-hidden="true"
           />
-          <div className="relative z-[2] mx-auto max-w-[1600px] px-6 sm:px-8 lg:px-12">
+          <div className="page-head-body relative z-[2] mx-auto max-w-[1600px] px-6 sm:px-8 lg:px-12">
             {hero ?? (
               <>
                 {/* A real breadcrumb, not a line that looks like one. It used
@@ -273,10 +294,7 @@ export function Shell({
                   </ol>
                 </nav>
                 {eyebrow && <div className="label-caps mt-3 text-gold-on-canvas">{eyebrow}</div>}
-                <h1
-                  className="mt-3.5 max-w-[22ch] text-balance text-[clamp(30px,4vw,52px)] leading-[1.04] font-bold tracking-tight text-white"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
+                <h1 className="page-title mt-3.5 max-w-[22ch] text-[clamp(36px,5vw,64px)] leading-[1.04] text-white">
                   {title}
                 </h1>
                 {description && (
@@ -292,6 +310,16 @@ export function Shell({
               </>
             )}
           </div>
+          {shot && (
+            <a
+              href={shot.source}
+              target="_blank"
+              rel="noreferrer"
+              className="absolute right-4 top-[76px] z-[2] rounded-full bg-black/35 px-2.5 py-1 text-[11px] text-white/80 hover:text-white hover:underline sm:right-8 sm:top-[92px] lg:right-12"
+            >
+              {t("ath.photoCredit", { author: shot.author, license: shot.license })}
+            </a>
+          )}
         </section>
 
         {/* Lifted so the first panel overlaps the band's lower padding --
@@ -303,40 +331,12 @@ export function Shell({
           // region itself a tab stop on the way through.
           tabIndex={-1}
           className="relative z-[2] mx-auto -mt-[34px] max-w-[1600px] px-6 pb-[90px] sm:px-8 lg:px-12"
+          style={custom?.surface}
         >
           {children}
         </main>
 
-        {/* The app pages had no footer landmark at all -- the landing has one,
-            so the two disagreed. Also the only place the site states what it
-            is not: a source, and not affiliated with anyone. */}
-        <footer className="relative z-[2] border-t border-border/40 px-6 pb-10 sm:px-8 lg:px-12">
-          {/* white/90, not /80: at 12px this is small text and needs 4.5:1.
-              Over the grain-composited canvas /80 measured 3.80 before the
-              2026-09-01 canvas change and 4.03 after -- failing either way, on
-              all nine pages. /90 clears it at 4.65 and is visually the same
-              line. Measured by compositing, not by eye; see styles.css. */}
-          <div className="mx-auto flex max-w-[1600px] flex-col gap-1.5 pt-6 text-[12px] text-white/90 sm:flex-row sm:items-center sm:justify-between">
-            <p>
-              {/* tone="canvas": this footer has no surface of its own, so it
-                  sits on the terracotta like the landing's does. */}
-              {t("footer.scrapedFrom")} <WaSourceLink tone="canvas" />. {t("footer.notAffiliated")}
-            </p>
-            <div className="flex items-center gap-4">
-              <Link
-                to="/how-it-works"
-                className="underline decoration-white/40 underline-offset-2 transition-colors hover:decoration-white"
-              >
-                {t("nav.howItWorks")}
-              </Link>
-              {/* In the footer rather than on the About page: a reader notices
-                  something wrong while looking at the thing that is wrong, and
-                  the footer is the one place on every page. */}
-              <FeedbackLink className="underline decoration-white/40 underline-offset-2 transition-colors hover:decoration-white" />
-              <span className="text-white/70">{t("footer.disclaimer")}</span>
-            </div>
-          </div>
-        </footer>
+        <SiteFooter className="relative z-[2]" />
       </div>
     </div>
   );
@@ -371,7 +371,7 @@ export function HeadFigure({
   return (
     <div>
       <b
-        className={`dg nums block text-[40px] leading-none font-bold tracking-[-0.02em] whitespace-nowrap ${
+        className={`page-title nums block text-[44px] leading-none whitespace-nowrap ${
           gold ? "text-gold-on-canvas" : "text-white"
         }`}
       >
@@ -404,7 +404,7 @@ export function RankBadge({ rank, className = "" }: { rank: number; className?: 
       : rank === 2
         ? "bg-terracotta text-primary-foreground"
         : rank === 3
-          ? "bg-brick text-primary-foreground"
+          ? "bg-brick text-white"
           : // Darkened from oklch(0.55 0 0) (measured ~2.9:1 against white text,
             // failing the 4.5:1 floor for this bold-but-not-"large" 11px badge
             // number, 2026-08-24 critique) -- 0.4 clears it with margin.

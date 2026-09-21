@@ -117,14 +117,8 @@ function NotInField({
               : "center 15%",
           }}
         />
-        <div className="absolute inset-0 bg-brick/45" />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to top, oklch(0.406 0.121 40 / 0.92) 0%, oklch(0.406 0.121 40 / 0.55) 38%, oklch(0.406 0.121 40 / 0.08) 72%, transparent 88%)",
-          }}
-        />
+        <div className="absolute inset-0 bg-[oklch(0.52_0.105_40_/_0.3)] mix-blend-multiply" />
+        <div className="page-head-scrim-strong absolute inset-0" />
       </div>
       <PhotoCredit credit={data.photoCredit} />
     </>
@@ -152,10 +146,7 @@ function NotInField({
         <div className="label-caps mt-3 text-gold-on-canvas">
           {t("ath.dossier", { disc: discName(t, data.discKey, data.disc) })}
         </div>
-        <h1
-          className="mt-3.5 text-[clamp(40px,7vw,92px)] leading-[0.92] font-bold tracking-[-0.03em] text-white"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
+        <h1 className="page-title mt-3.5 text-[clamp(40px,7vw,92px)] leading-[0.95] text-white">
           {forename}
           {surname && (
             <>
@@ -182,7 +173,7 @@ function NotInField({
           rating, not a podium chance: that is named only in a real
           competition's call, above. Absent outside the world's top 20. */}
       {data.prob != null && (
-        <div className="rounded-[20px] border border-white/20 bg-white/10 px-6 py-5">
+        <div className="glass rounded-[20px] px-6 py-5">
           <div className="label-caps text-gold-on-canvas">{t("ath.model")}</div>
           <p className="mt-2 text-[14px] leading-relaxed text-white/92">
             <span className="nums font-semibold text-white">{chanceLabel(lang, data.prob)}</span>
@@ -194,7 +185,7 @@ function NotInField({
   );
 
   return (
-    <Shell title={data.name} crumb={data.name} hero={hero} headTone="brick" headBackdrop={backdrop}>
+    <Shell title={data.name} crumb={data.name} hero={hero} headBackdrop={backdrop}>
       {/* First, for an entrant at the current championship: for the Asian
           Games entrants on no world toplist, the call is why this page exists. */}
       {data.championship && <ChampionshipCallPanel call={data.championship} />}
@@ -618,14 +609,8 @@ function AthleteProfilePage() {
               : "center 15%",
           }}
         />
-        <div className="absolute inset-0 bg-brick/45" />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to top, oklch(0.406 0.121 40 / 0.92) 0%, oklch(0.406 0.121 40 / 0.55) 38%, oklch(0.406 0.121 40 / 0.08) 72%, transparent 88%)",
-          }}
-        />
+        <div className="absolute inset-0 bg-[oklch(0.52_0.105_40_/_0.3)] mix-blend-multiply" />
+        <div className="page-head-scrim-strong absolute inset-0" />
       </div>
       <PhotoCredit credit={a.photoCredit} />
     </>
@@ -651,10 +636,7 @@ function AthleteProfilePage() {
           </Link>
         )}
         <div className="label-caps mt-3 text-gold-on-canvas">Athlete dossier · {a.disc}</div>
-        <h1
-          className="mt-3.5 text-[clamp(40px,7vw,92px)] leading-[0.92] font-bold tracking-[-0.03em] text-white"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
+        <h1 className="page-title mt-3.5 text-[clamp(40px,7vw,92px)] leading-[0.95] text-white">
           {forename}
           {surname && (
             <>
@@ -696,7 +678,7 @@ function AthleteProfilePage() {
       </div>
 
       {a.prob != null && (
-        <div className="rounded-[20px] border border-white/20 bg-white/10 px-6 py-5">
+        <div className="glass rounded-[20px] px-6 py-5">
           <div className="label-caps text-gold-on-canvas">{t("ath.model")}</div>
           <p className="mt-2 text-[14px] leading-relaxed text-white/92">
             <span className="nums font-semibold text-white">{chanceLabel(lang, a.prob)}</span>
@@ -719,7 +701,7 @@ function AthleteProfilePage() {
   );
 
   return (
-    <Shell title={a.name} crumb={a.name} hero={hero} headTone="brick" headBackdrop={backdrop}>
+    <Shell title={a.name} crumb={a.name} hero={hero} headBackdrop={backdrop}>
       {a.championship && <ChampionshipCallPanel call={a.championship} />}
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
         <Panel title={t("ath.seasonStats")}>

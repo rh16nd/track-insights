@@ -73,130 +73,70 @@
   --font-serif-display: "Playfair Display", Georgia, "Times New Roman", serif;
 }
 
-/* 2026-08-23, theme flip: the app (dashboard/track/field/schedule/
-   projections) used to be a separate light "track" theme while only the
-   landing page went dark -- per the user, that split read as two different
-   products stitched together, and they explicitly preferred the landing
-   page's look. So the dark palette (previously scoped to .landing only,
-   see below) is now the base theme everywhere.
+/* 2026-09-21, the Terra re-theme. The user saw the new landing (a warm
+   near-black page, Playfair titles, gold, glass) and asked for every page to
+   wear the same theme, because going from it to the terracotta-and-cream app
+   "looks very different". These are the landing's own values, promoted to the
+   whole site; `.landing-terra` now just points at them.
 
-   2026-08-23, same day, warmed up: the first pass reused near-black,
-   barely-saturated values (L 0.16, C 0.025) -- correct on paper, but it
-   read as generic dark-mode-SaaS-black rather than a track. Raised
-   lightness and roughly 2.5x'd the chroma across every surface token.
+   It follows the convention of box() in lib/championship-themes.ts, the one
+   place that already dressed part of the site dark: the "-strong" tokens are
+   LIGHT accent text, fills are light, and --primary-foreground is DARK, for
+   text on a fill. Every ratio below was measured on composited screenshots,
+   not assumed.
 
-   2026-08-23, third pass, "in-between": the warmed-up dark palette was
-   still "too dark" per the user, who shared reference dashboards (a light
-   pastel SaaS panel, a map-app with glass cards over real terrain, a dark
-   dashboard with one bold accent) and asked for a blend -- vibrant, neither
-   very dark nor very light, with more off-white surfaces. Landed on: a
-   genuinely medium, saturated terracotta CANVAS (not a surface text sits
-   on) with off-white CARDS floating on it, dark text on the cards. This
-   is a structural change, not just new numbers -- a background this light
-   (L 0.44) can't host readable text directly (measured 2.3:1 for dark text,
-   and existing accent hues measured under 2:1 as non-text elements too,
-   since the background is now the *same hue family* as the accents). Every
-   page had to move its text onto an explicit card/popover surface; see
-   shell.tsx's Shell (added a card wrapper around the plain title) and
-   topnav.tsx (nav bar itself is now a light glass surface, not dark). */
+   What did NOT move, on purpose: --gold-on-canvas, --gold-light and the white
+   text the head band uses. scripts/make-flag-palette.py solved every country
+   page's ground against exactly those, so they stay as they were.
+
+   The light theme's history (the terracotta canvas, cream cards, and every
+   ratio measured against them) is in git before this commit. */
 :root {
+  color-scheme: dark;
   --radius: 0.5rem;
-  /* 2026-08-24: lightened from 0.44 -> 0.54 (Figma redesign round). The
-     landing page's --landing-bg is kept byte-identical to this on purpose --
-     the two drifting apart is exactly the "two different products stitched
-     together" complaint that drove the earlier theme unification, so change
-     BOTH or neither. Every landing text token was re-measured against this
-     lighter value afterwards (see the .landing block).
-
-     2026-09-01: 0.54 -> 0.52. Every contrast figure in DESIGN.md was solved
-     against this colour BARE, and the page never paints it bare: ambient-grain
-     is a fixed full-page overlay, so the real backdrop is the composite. That
-     lifts it to (163,94,70) and dropped --landing-muted to 4.33 and
-     --gold-on-canvas to 4.23, both under AA, on 11-17px text across all nine
-     pages. Darkening the canvas fixes both without touching either text
-     token's chroma -- lightening them instead needed gold at 0.99L/0.06C,
-     which is warm white and gives up the gold. Measured, not assumed: at 0.52
-     the canvas-backed failures go 8 -> 0. */
-  --background: oklch(0.52 0.105 40);
-  --foreground: oklch(0.19 0.03 40);
-  --card: oklch(0.97 0.012 75);
-  --card-foreground: oklch(0.19 0.03 40);
-  --popover: oklch(0.985 0.008 75);
-  --popover-foreground: oklch(0.19 0.03 40);
-  --primary: oklch(0.545 0.164 38.5);
-  --primary-foreground: oklch(0.99 0.005 80);
-  --secondary: oklch(0.91 0.02 60);
-  --secondary-foreground: oklch(0.19 0.03 40);
-  --muted: oklch(0.91 0.02 60);
-  /* Needs to read on --card (near-white) now, the opposite direction from
-     the previous two passes' dark-background-safe value. 7.88:1 measured
-     against the new --card. */
-  --muted-foreground: oklch(0.42 0.045 45);
-  --accent: oklch(0.545 0.164 38.5);
-  --accent-foreground: oklch(0.99 0.005 80);
-  /* Back to close to the original pre-any-dark-theme-work value -- a
-     mid-lightness red reads fine as text on the new near-white card again.
-     4.92:1 measured against --card. */
-  --destructive: oklch(0.55 0.2 27);
-  --destructive-foreground: oklch(0.99 0 0);
-  /* Solid now, not translucent -- a translucent-white edge was for a dark
-     card; on a near-white card it needs to be an actual visible line. */
-  --border: oklch(0.85 0.035 55);
-  --input: oklch(0.85 0.035 55);
-  --ring: oklch(0.545 0.164 38.5);
+  --background: oklch(0.17 0.012 45);
+  --foreground: oklch(0.97 0.008 80);
+  --card: oklch(0.215 0.014 45);
+  --card-foreground: oklch(0.97 0.008 80);
+  --popover: oklch(0.24 0.014 45);
+  --popover-foreground: oklch(0.97 0.008 80);
+  /* A fill: buttons, the active pill, bars. Text on it is --primary-foreground. */
+  --primary: oklch(0.68 0.15 40);
+  --primary-foreground: oklch(0.17 0.012 45);
+  --secondary: oklch(0.28 0.016 45);
+  --secondary-foreground: oklch(0.97 0.008 80);
+  --muted: oklch(0.28 0.016 45);
+  --muted-foreground: oklch(0.78 0.014 70);
+  --accent: oklch(0.68 0.15 40);
+  --accent-foreground: oklch(0.17 0.012 45);
+  --destructive: oklch(0.74 0.16 27);
+  --destructive-foreground: oklch(0.17 0.012 45);
+  /* Opaque, so `bg-border` still paints a visible fill (loss bars, dividers). */
+  --border: oklch(0.33 0.014 55);
+  /* A control's edge: 3:1 against the card, which a hairline is not. */
+  --input: oklch(0.52 0.02 60);
+  --ring: oklch(0.85 0.1 76);
   --brick: oklch(0.406 0.121 40);
-  --terracotta: oklch(0.545 0.164 38.5);
+  --terracotta: oklch(0.68 0.15 40);
   --gold: oklch(0.593 0.128 68);
-  /* Gold as text/badge-bg under white text. Darkened slightly further this
-     pass (0.52 -> 0.49): fine at 5.19:1 on plain --card, but the "Final"
-     meet-status badge tints its background with bg-gold/15 first, and
-     against THAT lighter tinted surface the old value measured 4.36:1 --
-     just under the 4.5:1 floor. 0.49 clears both contexts (4.96 tinted,
-     5.85 plain) with real margin. */
-  --gold-strong: oklch(0.49 0.128 68);
-  /* New this pass: terracotta needed the same treatment gold already had.
-     Base --terracotta only measures 4.89:1 on the new --card (passes, but
-     thin margin for small label-caps text) -- darkened slightly for real
-     headroom, 7.34:1. */
-  --terracotta-strong: oklch(0.45 0.164 38.5);
-  /* The Ultimate's violet, in a version that survives the top bar.
-     The page's own bloom is rgb(150,74,224) and is built to sit on near-black:
-     against the header's real composited cream (240,228,218) it measures
-     3.86:1, a failure for an 11px label. This is the same hue darkened until
-     both nav states clear with margin -- 6.2:1 on the bar, 5.18:1 on the
-     active pill, where the 12% wash lifts the background to (226,204,217).
-
-     L=0.50 was tried first and gave 4.53:1 active. That passes, by 0.03,
-     which is exactly the sort of number this project has been burned by; the
-     extra 0.03 of lightness is not worth the margin it costs. All measured
-     by compositing through a canvas rather than eyeballed, because
-     getComputedStyle returns oklch() strings here and parsing them as rgb
-     produces confident nonsense. */
-  --violet-strong: oklch(0.47 0.24 300);
-  /* Gold/terracotta lightened for TEXT sitting on a dark or textured
-     surface -- no longer needed for general card content (card is light
-     now), but still correct for the Dashboard/landing hero banners, whose
-     track-surface-textured background is still dark enough to need them
-     (icons only -- verified >3:1 non-text there; full-strength label text
-     in those heroes uses white/translucent-white instead, see
-     dashboard.tsx). Kept, not deleted, since both heroes still use them. */
+  --gold-strong: oklch(0.85 0.1 76);
+  --terracotta-strong: oklch(0.78 0.12 42);
+  --violet-strong: oklch(0.78 0.14 300);
   --gold-light: oklch(0.8 0.11 68);
-  /* Solved against the real canvas, not picked by eye: 0.94/0.09 measured
-     4.18:1, under the 4.5 floor for the 11-17.6px text that uses it.
-
-     2026-09-01, 0.97 -> 0.98. The canvas drop to 0.52 cleared seven of the
-     eight canvas-backed failures on its own; this token's one remaining use
-     is the hero stat ribbon's "%" at 17.6px/600, which is small text by
-     WCAG and sits where BOTH grain layers stack (ambient-grain sitewide plus
-     the hero's own track-grain at 0.12). It measured 4.44. Lightness alone
-     closes it -- 4.53 in the hero, 4.63 in the body -- and CHROMA IS
-     DELIBERATELY UNCHANGED at 0.08. That is the whole point: solving this by
-     lightening the token against the OLD canvas needed 0.99L/0.06C, which is
-     warm white and gives up the gold. Against the darker canvas the same
-     fix costs 3-4 points of RGB and keeps the colour. */
   --gold-on-canvas: oklch(0.98 0.08 68);
   --terracotta-light: oklch(0.74 0.15 38.5);
   --sand: oklch(0.941 0.014 76);
+  /* The old --terracotta-strong, for terracotta text on a white button. */
+  --terracotta-ink: oklch(0.45 0.164 38.5);
+  /* Behind a modal. --foreground is light now, so `bg-foreground/45` would
+     wash the page white instead of dimming it. */
+  --scrim: oklch(0.08 0.01 40 / 0.72);
+  /* Chart series on a dark card, all near L 0.72 so no series shouts. */
+  --chart-1: oklch(0.72 0.14 40);
+  --chart-2: oklch(0.82 0.11 76);
+  --chart-3: oklch(0.72 0.1 250);
+  --chart-4: oklch(0.74 0.11 155);
+  --chart-neutral: oklch(0.5 0.015 60);
 }
 
 /* Scoped to the "/" landing page -- a deliberately bold front door
@@ -368,37 +308,41 @@ html {
   }
 }
 
-/* Every light card (Panel, Shell's plain title, loading placeholders) needs
-   the same "floating on a colored canvas" drop shadow -- one utility
-   instead of repeating the same arbitrary shadow value everywhere. */
-/* 2026-08-24 (Figma redesign port): the panels used to be bordered boxes
-   with one flat shadow, which read as "information boxes drawn around
-   content". Depth now does the job the 1px outline used to do -- two
-   layered, warm-tinted shadows (a wide soft lift plus a tight contact
-   shadow) so a panel reads as a light sheet resting on the colored canvas.
-   Borders were removed from Panel itself, not just softened. */
+/* Every panel on the site (Panel, PanelSkeleton, ErrorPanel, the How it works
+   article) is a dark glass sheet, as the landing's questions and feature items
+   are. The hairline is drawn INSIDE the shadow rather than as a border, so no
+   panel changes size, and a deep soft shadow lifts it off the page. */
 @utility card-shadow {
   box-shadow:
-    0 18px 50px -20px oklch(0.22 0.09 40 / 0.2),
-    0 3px 10px -4px oklch(0.22 0.09 40 / 0.12);
+    inset 0 0 0 1px oklch(1 0 0 / 0.08),
+    inset 0 1px 0 oklch(1 0 0 / 0.06),
+    0 30px 60px -30px oklch(0.05 0.01 40 / 0.75);
 }
 
-/* Panels get a barely-there warm wash rather than one flat cream fill --
-   the darkest stop is only ~6% toward the brand terracotta, so text
-   contrast is unaffected (verified live), but the surface stops reading
-   as flat white.
-
-   The wash is a background-IMAGE, so it paints over whatever `bg-card` a
-   parent sets. A championship's dark box on the Results page re-dresses its
-   panels with light text, and this cream stayed underneath it: white on cream,
-   near 1.1:1, the "can't see anything" the user reported on 2026-09-14. Every
-   ratio in the theme file was measured against --card and never saw it. A box
-   that sets its own --card sets --card-wash: none alongside it. */
+/* A breath of light from the top-left corner, so a panel reads as a surface
+   rather than a flat fill. It is a background-IMAGE and paints over whatever
+   `bg-card` a parent sets, so a box that dresses itself in its own colours (a
+   championship's box on the Results page) sets --card-wash: none. */
 @utility card-surface {
   background-image: var(
     --card-wash,
-    linear-gradient(148deg, oklch(0.985 0.008 75) 0%, oklch(0.945 0.022 70) 100%)
+    linear-gradient(160deg, oklch(1 0 0 / 0.035) 0%, transparent 55%)
   );
+}
+
+/* A card inside a panel: a step lighter than the panel it sits in. Mixed at
+   the point of use so it follows a themed box's own --card. */
+@utility surface-raised {
+  background-color: color-mix(in oklab, var(--card) 90%, white);
+}
+
+/* A page's title, in the landing's serif. Playfair is loaded at 400 and 500
+   only, so this never asks for bold: the browser would fake it. */
+@utility page-title {
+  font-family: var(--font-serif-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
 /* Raised from 0.625rem (10px) -- the 2026-08-24 critique's live-rendered
@@ -674,8 +618,8 @@ html {
    depth variation, and eased the grain back slightly. */
 @utility ambient-glow {
   background-image:
-    radial-gradient(ellipse 1100px 550px at 20% -10%, oklch(0.97 0.01 80 / 0.07), transparent 60%),
-    radial-gradient(ellipse 900px 500px at 100% 10%, oklch(0.19 0.03 40 / 0.08), transparent 55%);
+    radial-gradient(ellipse 1100px 600px at 18% -12%, oklch(0.8 0.11 68 / 0.07), transparent 62%),
+    radial-gradient(ellipse 900px 520px at 100% 8%, oklch(0.52 0.105 40 / 0.1), transparent 58%);
 }
 
 /* Bumped up again per the user ("the dashboard background feels stale/
@@ -1024,12 +968,12 @@ html {
    stays in the terracotta family rather than going cold; gold is the one
    accent. Muted text measures above 7:1 on the page colour. */
 .landing-terra {
-  --terra-bg: oklch(0.17 0.012 45);
-  --terra-surface: oklch(0.215 0.014 45);
+  --terra-bg: var(--background);
+  --terra-surface: var(--card);
   --terra-border: oklch(1 0 0 / 0.1);
-  --terra-fg: oklch(0.97 0.008 80);
-  --terra-muted: oklch(0.78 0.014 70);
-  --terra-gold: oklch(0.85 0.1 76);
+  --terra-fg: var(--foreground);
+  --terra-muted: var(--muted-foreground);
+  --terra-gold: var(--gold-strong);
 }
 
 /* ── The landing hero ─────────────────────────────────────────────────
@@ -1040,7 +984,8 @@ html {
    Glass is a web approximation (backdrop-filter plus a hairline border and
    an inner highlight), with a solid fill for anyone who asks the system for
    less transparency, so the text never depends on the blur to be readable. */
-.hero-glass {
+.hero-glass,
+.glass {
   background: oklch(0.2 0.025 40 / 0.5);
   border: 1px solid oklch(1 0 0 / 0.16);
   box-shadow: inset 0 1px 0 oklch(1 0 0 / 0.12);
@@ -1137,6 +1082,79 @@ html {
   .hero-word {
     animation: none;
   }
+}
+
+/* ── The page header (every page but the landing) ─────────────────────
+   The landing's hero in miniature: a chosen photo under the same warm tint
+   and a dark wash that is heaviest on the left, where the title sits, and at
+   the foot, where it fades into the page's own ground (--page-ground, set by
+   Shell, so a championship's or a country's page fades into its colour). The
+   glass menu floats over the top, so the content starts below it. */
+.page-head-body {
+  padding-top: 104px;
+  padding-bottom: 56px;
+}
+
+.page-head-photo {
+  display: flex;
+  min-height: clamp(360px, 48vh, 540px);
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.page-head-photo > .page-head-body {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .page-head-body {
+    padding-top: 132px;
+    padding-bottom: 76px;
+  }
+}
+
+.page-head-scrim {
+  background:
+    linear-gradient(
+      to right,
+      oklch(0.14 0.02 40 / 0.66) 0%,
+      oklch(0.14 0.02 40 / 0.3) 50%,
+      transparent 80%
+    ),
+    linear-gradient(
+      to bottom,
+      oklch(0.14 0.02 40 / 0.6) 0%,
+      oklch(0.14 0.02 40 / 0.25) 30%,
+      oklch(0.14 0.02 40 / 0.45) 66%,
+      var(--page-ground, var(--background)) 100%
+    );
+}
+
+/* An athlete's own photo carries the stats ribbon on its lower half, and a
+   portrait's brightest colours (a jersey, a flag) sit right there, so its wash
+   is much heavier at the foot. */
+.page-head-scrim-strong {
+  background:
+    linear-gradient(
+      to right,
+      oklch(0.14 0.02 40 / 0.55) 0%,
+      oklch(0.14 0.02 40 / 0.2) 55%,
+      transparent 80%
+    ),
+    linear-gradient(
+      to top,
+      var(--page-ground, var(--background)) 0%,
+      oklch(0.14 0.02 40 / 0.9) 30%,
+      oklch(0.14 0.02 40 / 0.6) 56%,
+      oklch(0.14 0.02 40 / 0.3) 80%,
+      oklch(0.14 0.02 40 / 0.5) 100%
+    );
+}
+
+/* The page in the menu the reader is on. */
+.hero-nav-link.nav-active {
+  color: white;
+  background: oklch(1 0 0 / 0.14);
 }
 
 /* The phone menu's panel sits over the page, so it is nearly opaque. */
@@ -1300,7 +1318,8 @@ html {
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .hero-glass {
+  .hero-glass,
+  .glass {
     background: oklch(0.24 0.03 40);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;

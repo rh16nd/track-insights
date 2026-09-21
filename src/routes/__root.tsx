@@ -146,7 +146,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "PodiumCall" },
       // Colours the browser chrome (Android address bar, iOS PWA) to the
       // logo's dark ground rather than a default white.
-      { name: "theme-color", content: "#160906" },
+      { name: "theme-color", content: "#140e0b" },
       { name: "application-name", content: "PodiumCall" },
       { name: "apple-mobile-web-app-title", content: "PodiumCall" },
     ],

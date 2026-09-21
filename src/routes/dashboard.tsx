@@ -266,6 +266,7 @@ function Dashboard() {
   return (
     <Shell
       title={t("dashboard.titleBare")}
+      photo="dashboard"
       eyebrow={ev ? t("dashboard.eventEyebrow", { short: ev.shortName, name: ev.name }) : undefined}
       crumb={t("nav.dashboard")}
       description={t("dashboard.description")}

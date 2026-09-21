@@ -22,9 +22,8 @@ export type ChampionshipTheme = {
    * never had a page of its own: the Diamond League Final lived on the
    * site's own pages. */
   page: PageGround | null;
-  /** The nav tab's text colour on the cream top bar, clearing 5:1 both at rest
-   * and on the active pill's 12% wash. Null when the championship never held
-   * the tab. */
+  /** The nav tab's text colour on the dark glass menu, at rest and on the
+   * active pill. Null when the championship never held the tab. */
   navAccent: string | null;
   /** Tokens for the championship's box on the Results page. Set on the box,
    * they re-dress everything inside it, ResultComparison included: styles.css
@@ -95,7 +94,8 @@ export const CHAMPIONSHIP_THEMES: Record<ChampionshipThemeId, ChampionshipTheme>
         "radial-gradient(ellipse 760px 520px at 50% 46%, rgba(72,30,140,0.20), transparent 60%)",
       trackCurve: false,
     },
-    navAccent: "var(--violet-strong)", // 6.2 on the bar, 5.18 active (styles.css)
+    // The Terra bar is dark glass, so the accent is the light violet now.
+    navAccent: "var(--violet-strong)",
     box: box({
       card: "#0c0718",
       foreground: "#f6f4fb", // 18.14
@@ -128,7 +128,8 @@ export const CHAMPIONSHIP_THEMES: Record<ChampionshipThemeId, ChampionshipTheme>
         "radial-gradient(ellipse 1000px 640px at 2% 104%, oklch(0.84 0.13 85 / 0.14), transparent 58%)",
       trackCurve: false,
     },
-    navAccent: "#005f2e", // oklch(0.42 0.12 155): 6.28 on the bar, 5.23 active
+    // The emblem's green, lifted to read as text on the dark glass bar.
+    navAccent: "oklch(0.82 0.13 155)",
     box: box({
       card: "#002a16",
       foreground: "#f1f7f2", // 14.40

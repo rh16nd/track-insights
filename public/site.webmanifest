@@ -4,8 +4,8 @@
   "description": "Podium predictions for the Diamond League and the major athletics championships, event by event, built on World Athletics results.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#160906",
-  "theme_color": "#160906",
+  "background_color": "#140e0b",
+  "theme_color": "#140e0b",
   "icons": [
     { "src": "/favicon-192.png", "type": "image/png", "sizes": "192x192" },
     { "src": "/favicon-512.png", "type": "image/png", "sizes": "512x512" },

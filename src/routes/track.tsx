@@ -31,6 +31,7 @@ function TrackPage() {
   return (
     <Shell
       title={t("track.title")}
+      photo="track"
       eyebrow={count !== undefined ? t("track.eyebrow", { n: count }) : undefined}
       description={t("track.description")}
     >

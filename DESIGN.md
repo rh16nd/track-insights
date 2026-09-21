@@ -94,6 +94,15 @@ components:
     typography: "{typography.label}"
 ---
 
+> **2026-09-21: this document is out of date and is being rewritten.** The user
+> asked for the whole site to wear the Terra landing's theme: a warm near-black
+> page, Playfair titles, gold, dark glass panels, short photo headers. So the
+> dark palette is now the site's palette, and the rules below that ban it
+> ("Don't reintroduce the dark floodlit palette") no longer apply. The live
+> values are the `:root` tokens in `src/styles.css`. Where this file and that
+> file disagree, `styles.css` wins until this is rewritten.
+
+
 # Design System: PodiumCall
 
 ## Overview

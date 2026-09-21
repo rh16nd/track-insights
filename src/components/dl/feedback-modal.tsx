@@ -143,7 +143,7 @@ export function FeedbackModal({ open, onClose }: { open: boolean; onClose: () =>
       className="fixed inset-0 z-[80] flex items-end justify-center p-0 sm:items-center sm:p-6"
       onClick={onClose}
     >
-      <div className="absolute inset-0 bg-foreground/45 backdrop-blur-[2px]" aria-hidden="true" />
+      <div className="absolute inset-0 bg-[var(--scrim)] backdrop-blur-[2px]" aria-hidden="true" />
       <div
         ref={panelRef}
         role="dialog"

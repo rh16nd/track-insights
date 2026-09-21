@@ -1,22 +1,19 @@
 import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
-import type { ReactNode } from "react";
 import { usePredictions } from "@/hooks/usePredictions";
 import { useStats } from "@/hooks/useStats";
 import { useChampionshipSummary } from "@/hooks/useChampionship";
 import { useWorldRankings } from "@/hooks/useWorldRankings";
 import { useInView } from "@/hooks/useInView";
 import { useCountUp } from "@/hooks/useCountUp";
-import { PodiumCallMark } from "@/components/dl/logo";
-import { WaSourceLink } from "@/components/dl/wa-link";
 import { useT } from "@/lib/i18n";
-import { FeedbackLink } from "@/components/dl/feedback-modal";
 import { IntroVideo } from "@/components/dl/intro-video";
 import { LandingHero } from "@/components/dl/landing-hero";
 import { LandingNav, LANDING_SECTIONS } from "@/components/dl/landing-nav";
 import { LandingFeatures } from "@/components/dl/landing-features";
 import { LandingCall } from "@/components/dl/landing-call";
+import { SiteFooter } from "@/components/dl/site-footer";
 import { chanceLabel, discName } from "@/lib/dl-data";
 import { localeTag } from "@/lib/dates";
 import { usePageTitle } from "@/lib/use-page-title";
@@ -145,7 +142,6 @@ function Landing() {
       city: ev.city,
     });
   })();
-  const championshipName = t(ev?.navKey ?? "nav.championship");
   // Every event with a page, counted off the rankings rather than typed.
   const disciplineCount = rankings ? Object.keys(rankings).length : 36;
 
@@ -442,69 +438,8 @@ function Landing() {
           </a>
         </section>
 
-        <LandingFooter championshipName={championshipName} />
+        <SiteFooter />
       </main>
     </div>
-  );
-}
-
-function FooterLink({ to, children }: { to: string; children: ReactNode }) {
-  return (
-    <li>
-      <Link
-        to={to}
-        className="inline-block py-1.5 text-[14px] text-[var(--terra-muted)] transition-colors hover:text-[var(--terra-fg)]"
-      >
-        {children}
-      </Link>
-    </li>
-  );
-}
-
-function LandingFooter({ championshipName }: { championshipName: string }) {
-  const { t } = useT();
-  return (
-    <footer className="border-t border-[var(--terra-border)] px-5 pb-8 pt-14 sm:px-10">
-      <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-[1.4fr_1fr_1fr]">
-        <div>
-          <Link to="/" className="inline-flex items-center gap-2">
-            <PodiumCallMark className="size-5" />
-            <span
-              className="text-[15px] font-bold uppercase tracking-[0.08em] text-[var(--terra-fg)]"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              PodiumCall
-            </span>
-          </Link>
-          <p className="mt-4 max-w-[34ch] text-[14px] leading-relaxed text-[var(--terra-muted)]">
-            {t("landing.tagline")}.
-          </p>
-        </div>
-        <nav aria-label={t("landing.footer.explore")}>
-          <h2 className="label-caps text-[var(--terra-fg)]">{t("landing.footer.explore")}</h2>
-          <ul className="mt-3">
-            <FooterLink to="/dashboard">{t("nav.dashboard")}</FooterLink>
-            <FooterLink to="/track">{t("nav.track")}</FooterLink>
-            <FooterLink to="/field">{t("nav.field")}</FooterLink>
-            <FooterLink to="/championship">{championshipName}</FooterLink>
-            <FooterLink to="/results">{t("nav.results")}</FooterLink>
-            <FooterLink to="/schedule">{t("nav.schedule")}</FooterLink>
-          </ul>
-        </nav>
-        <nav aria-label={t("landing.footer.about")}>
-          <h2 className="label-caps text-[var(--terra-fg)]">{t("landing.footer.about")}</h2>
-          <ul className="mt-3">
-            <FooterLink to="/how-it-works">{t("nav.howItWorks")}</FooterLink>
-            <FooterLink to="/stats">{t("nav.stats")}</FooterLink>
-            <li>
-              <FeedbackLink className="inline-block py-1.5 text-[14px] text-[var(--terra-muted)] transition-colors hover:text-[var(--terra-fg)]" />
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div className="mx-auto mt-12 max-w-6xl border-t border-[var(--terra-border)] pt-6 text-[12.5px] text-[var(--terra-muted)]">
-        {t("footer.scrapedFrom")} <WaSourceLink tone="canvas" />. {t("footer.notAffiliated")}
-      </div>
-    </footer>
   );
 }
