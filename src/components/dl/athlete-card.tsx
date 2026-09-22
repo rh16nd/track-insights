@@ -74,9 +74,7 @@ export function AthleteCard({
             decoding="async"
             className="size-full object-cover"
             style={{
-              objectPosition: photoFocus
-                ? `${photoFocus.x}% ${photoFocus.y}%`
-                : "center 18%",
+              objectPosition: photoFocus ? `${photoFocus.x}% ${photoFocus.y}%` : "center 18%",
             }}
           />
         ) : (

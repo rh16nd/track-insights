@@ -35,7 +35,8 @@ export function HeadToHeadChart({
                 <span className="inline-block size-2 rounded-full bg-terracotta" /> {t("h2h.wins")}
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <span className="inline-block size-2 rounded-full bg-[var(--chart-neutral)]" /> {t("h2h.losses")}
+                <span className="inline-block size-2 rounded-full bg-[var(--chart-neutral)]" />{" "}
+                {t("h2h.losses")}
               </span>
             </div>
           )}
