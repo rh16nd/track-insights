@@ -1,0 +1,203 @@
+{
+ "lang": "en",
+ "script": "script.json",
+ "duration": 56.895,
+ "voice": true,
+ "lines": [
+  {
+   "line": 0,
+   "scene": "title",
+   "text": "This is PodiumCall.",
+   "start": 1.4,
+   "end": 2.72,
+   "segments": [
+    {
+     "text": "This is PodiumCall.",
+     "start": 1.4,
+     "end": 2.72
+    }
+   ]
+  },
+  {
+   "line": 1,
+   "scene": "title",
+   "text": "It shows who is most likely to finish in the top three at the next big athletics championship, using real results from World Athletics.",
+   "start": 3.17,
+   "end": 10.15,
+   "segments": [
+    {
+     "text": "It shows who is most likely to finish in the top three at the next big athletics championship,",
+     "start": 3.17,
+     "end": 7.73
+    },
+    {
+     "text": "using real results from World Athletics.",
+     "start": 8.13,
+     "end": 10.15
+    }
+   ]
+  },
+  {
+   "line": 2,
+   "scene": "dashboard",
+   "text": "Start on the Dashboard. Each card is the athlete the model rates highest in one event.",
+   "start": 11.05,
+   "end": 15.76,
+   "segments": [
+    {
+     "text": "Start on the Dashboard.",
+     "start": 11.05,
+     "end": 12.1
+    },
+    {
+     "text": "Each card is the athlete the model rates highest in one event.",
+     "start": 12.77,
+     "end": 15.76
+    }
+   ]
+  },
+  {
+   "line": 3,
+   "scene": "rankings",
+   "text": "Track and Field show the world's top 20 in any event.",
+   "start": 16.66,
+   "end": 19.58,
+   "segments": [
+    {
+     "text": "Track and Field show the world's top 20 in any event.",
+     "start": 16.66,
+     "end": 19.58
+    }
+   ]
+  },
+  {
+   "line": 4,
+   "scene": "rankings",
+   "text": "Rank them By points, for the best performance this season, or by Model rating, for who the model thinks will reach the podium.",
+   "start": 20.03,
+   "end": 26.34,
+   "segments": [
+    {
+     "text": "Rank them By points,",
+     "start": 20.03,
+     "end": 21.09
+    },
+    {
+     "text": "for the best performance this season,",
+     "start": 21.2,
+     "end": 22.71
+    },
+    {
+     "text": "or by Model rating,",
+     "start": 23.34,
+     "end": 24.28
+    },
+    {
+     "text": "for who the model thinks will reach the podium.",
+     "start": 24.47,
+     "end": 26.34
+    }
+   ]
+  },
+  {
+   "line": 5,
+   "scene": "athlete",
+   "text": "Choose a name to see that athlete's best marks, their races this year and the titles they've won.",
+   "start": 27.24,
+   "end": 33.75,
+   "segments": [
+    {
+     "text": "Choose a name to see that athlete's best marks,",
+     "start": 27.24,
+     "end": 29.54
+    },
+    {
+     "text": "their races this year and the titles they've won.",
+     "start": 30.54,
+     "end": 33.75
+    }
+   ]
+  },
+  {
+   "line": 6,
+   "scene": "info",
+   "text": "Press the little i next to any number to see what it means.",
+   "start": 34.65,
+   "end": 37.5,
+   "segments": [
+    {
+     "text": "Press the little i next to any number to see what it means.",
+     "start": 34.65,
+     "end": 37.5
+    }
+   ]
+  },
+  {
+   "line": 7,
+   "scene": "championship",
+   "text": "Follow the championship that's on now, and the ones still to come. Each gets its own page, with the model's podium chances, event by event.",
+   "start": 38.4,
+   "end": 46.13,
+   "segments": [
+    {
+     "text": "Follow the championship that's on now,",
+     "start": 38.4,
+     "end": 40.12
+    },
+    {
+     "text": "and the ones still to come.",
+     "start": 40.38,
+     "end": 41.6
+    },
+    {
+     "text": "Each gets its own page,",
+     "start": 42.26,
+     "end": 43.49
+    },
+    {
+     "text": "with the model's podium chances,",
+     "start": 43.63,
+     "end": 45.04
+    },
+    {
+     "text": "event by event.",
+     "start": 45.17,
+     "end": 46.13
+    }
+   ]
+  },
+  {
+   "line": 8,
+   "scene": "results",
+   "text": "Results shows what the model called before each championship, and what really happened.",
+   "start": 47.03,
+   "end": 51.35,
+   "segments": [
+    {
+     "text": "Results shows what the model called before each championship,",
+     "start": 47.03,
+     "end": 50.11
+    },
+    {
+     "text": "and what really happened.",
+     "start": 50.34,
+     "end": 51.35
+    }
+   ]
+  },
+  {
+   "line": 9,
+   "scene": "results",
+   "text": "Nothing is changed afterwards.",
+   "start": 51.8,
+   "end": 53.295,
+   "segments": [
+    {
+     "text": "Nothing is changed afterwards.",
+     "start": 51.8,
+     "end": 53.295
+    }
+   ]
+  }
+ ]
+}

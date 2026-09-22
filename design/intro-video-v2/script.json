@@ -1,0 +1,87 @@
+{
+  "note": "The newer script (approved 2026-09-22; the little i line added back and the championship line made generic the same day, at the user's word: no talk of the championship on now, just follow it and the ones to come). For a new recording in Alexey's voice. One entry per spoken line; `scene` says which part of the video it plays over.",
+  "en": [
+    {
+      "scene": "title",
+      "text": "This is PodiumCall."
+    },
+    {
+      "scene": "title",
+      "text": "It shows who is most likely to finish in the top three at the next big athletics championship, using real results from World Athletics."
+    },
+    {
+      "scene": "dashboard",
+      "text": "Start on the Dashboard. Each card is the athlete the model rates highest in one event."
+    },
+    {
+      "scene": "rankings",
+      "text": "Track and Field show the world's top 20 in any event."
+    },
+    {
+      "scene": "rankings",
+      "text": "Rank them By points, for the best performance this season, or by Model rating, for who the model thinks will reach the podium."
+    },
+    {
+      "scene": "athlete",
+      "text": "Choose a name to see that athlete's best marks, their races this year and the titles they've won."
+    },
+    {
+      "scene": "info",
+      "text": "Press the little i next to any number to see what it means."
+    },
+    {
+      "scene": "championship",
+      "text": "Follow the championship that's on now, and the ones still to come. Each gets its own page, with the model's podium chances, event by event."
+    },
+    {
+      "scene": "results",
+      "text": "Results shows what the model called before each championship, and what really happened."
+    },
+    {
+      "scene": "results",
+      "text": "Nothing is changed afterwards."
+    }
+  ],
+  "fr": [
+    {
+      "scene": "title",
+      "text": "Voici PodiumCall."
+    },
+    {
+      "scene": "title",
+      "text": "Le site montre qui a le plus de chances de finir dans le top trois du prochain grand championnat d'athlétisme, à partir des vrais résultats de World Athletics."
+    },
+    {
+      "scene": "dashboard",
+      "text": "Commencez par le Tableau de bord. Chaque carte montre l'athlète que le modèle place en tête dans une épreuve."
+    },
+    {
+      "scene": "rankings",
+      "text": "Piste et Concours montrent le top 20 mondial de chaque épreuve."
+    },
+    {
+      "scene": "rankings",
+      "text": "Classez-les Par points, selon leur meilleure performance de la saison, ou par Évaluation du modèle, pour voir qui le modèle place sur le podium."
+    },
+    {
+      "scene": "athlete",
+      "text": "Choisissez un nom pour voir ses meilleures marques, ses courses de l'année et son palmarès."
+    },
+    {
+      "scene": "info",
+      "text": "Appuyez sur le petit i à côté d'un chiffre pour savoir ce qu'il veut dire."
+    },
+    {
+      "scene": "championship",
+      "text": "Suivez le championnat en cours et ceux à venir. Chacun a sa propre page, avec les chances de podium du modèle, épreuve par épreuve."
+    },
+    {
+      "scene": "results",
+      "text": "Résultats montre ce que le modèle avait annoncé avant chaque championnat, et ce qui s'est vraiment passé."
+    },
+    {
+      "scene": "results",
+      "text": "Rien n'est modifié après coup."
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+{
+ "lang": "fr",
+ "duration": 69.97,
+ "voice": false,
+ "lines": [
+  {
+   "line": 0,
+   "scene": "title",
+   "text": "Voici PodiumCall.",
+   "start": 1.4,
+   "end": 2.99,
+   "segments": [
+    {
+     "text": "Voici PodiumCall.",
+     "start": 1.4,
+     "end": 2.99
+    }
+   ]
+  },
+  {
+   "line": 1,
+   "scene": "title",
+   "text": "Le site montre qui a le plus de chances de finir dans le top trois du prochain grand championnat d'athlétisme, à partir des vrais résultats de World Athletics.",
+   "start": 3.44,
+   "end": 14.173,
+   "segments": [
+    {
+     "text": "Le site montre qui a le plus de chances de finir dans le top trois du prochain grand championnat d'athlétisme,",
+     "start": 3.44,
+     "end": 10.773
+    },
+    {
+     "text": "à partir des vrais résultats de World Athletics.",
+     "start": 10.973,
+     "end": 14.173
+    }
+   ]
+  },
+  {
+   "line": 2,
+   "scene": "dashboard",
+   "text": "Commencez par le Tableau de bord. Chaque carte montre l'athlète que le modèle place en tête dans une épreuve.",
+   "start": 15.073,
+   "end": 22.473,
+   "segments": [
+    {
+     "text": "Commencez par le Tableau de bord.",
+     "start": 15.073,
+     "end": 17.273
+    },
+    {
+     "text": "Chaque carte montre l'athlète que le modèle place en tête dans une épreuve.",
+     "start": 17.473,
+     "end": 22.473
+    }
+   ]
+  },
+  {
+   "line": 3,
+   "scene": "rankings",
+   "text": "Piste et Concours montrent le top 20 mondial de chaque épreuve.",
+   "start": 23.373,
+   "end": 27.573,
+   "segments": [
+    {
+     "text": "Piste et Concours montrent le top 20 mondial de chaque épreuve.",
+     "start": 23.373,
+     "end": 27.573
+    }
+   ]
+  },
+  {
+   "line": 4,
+   "scene": "rankings",
+   "text": "Classez-les Par points, selon leur meilleure performance de la saison, ou par Évaluation du modèle, pour voir qui le modèle place sur le podium.",
+   "start": 28.023,
+   "end": 38.023,
+   "segments": [
+    {
+     "text": "Classez-les Par points,",
+     "start": 28.023,
+     "end": 29.556
+    },
+    {
+     "text": "selon leur meilleure performance de la saison,",
+     "start": 29.756,
+     "end": 32.823
+    },
+    {
+     "text": "ou par Évaluation du modèle,",
+     "start": 33.023,
+     "end": 34.89
+    },
+    {
+     "text": "pour voir qui le modèle place sur le podium.",
+     "start": 35.09,
+     "end": 38.023
+    }
+   ]
+  },
+  {
+   "line": 5,
+   "scene": "athlete",
+   "text": "Choisissez un nom pour voir ses meilleures marques, ses courses de l'année et son palmarès.",
+   "start": 38.923,
+   "end": 45.123,
+   "segments": [
+    {
+     "text": "Choisissez un nom pour voir ses meilleures marques,",
+     "start": 38.923,
+     "end": 42.323
+    },
+    {
+     "text": "ses courses de l'année et son palmarès.",
+     "start": 42.523,
+     "end": 45.123
+    }
+   ]
+  },
+  {
+   "line": 6,
+   "scene": "championship",
+   "text": "Chaque grand championnat a sa propre page, à ses couleurs, avec un compte à rebours et les chances de podium du modèle, épreuve par épreuve.",
+   "start": 46.023,
+   "end": 55.757,
+   "segments": [
+    {
+     "text": "Chaque grand championnat a sa propre page,",
+     "start": 46.023,
+     "end": 48.823
+    },
+    {
+     "text": "à ses couleurs,",
+     "start": 49.023,
+     "end": 50.023
+    },
+    {
+     "text": "avec un compte à rebours et les chances de podium du modèle,",
+     "start": 50.223,
+     "end": 54.223
+    },
+    {
+     "text": "épreuve par épreuve.",
+     "start": 54.423,
+     "end": 55.756
+    }
+   ]
+  },
+  {
+   "line": 7,
+   "scene": "results",
+   "text": "Résultats montre ce que le modèle avait annoncé avant chaque championnat, et ce qui s'est vraiment passé.",
+   "start": 56.657,
+   "end": 63.79,
+   "segments": [
+    {
+     "text": "Résultats montre ce que le modèle avait annoncé avant chaque championnat,",
+     "start": 56.657,
+     "end": 61.524
+    },
+    {
+     "text": "et ce qui s'est vraiment passé.",
+     "start": 61.724,
+     "end": 63.79
+    }
+   ]
+  },
+  {
+   "line": 8,
+   "scene": "results",
+   "text": "Rien n'est modifié après coup.",
+   "start": 64.24,
+   "end": 66.37,
+   "segments": [
+    {
+     "text": "Rien n'est modifié après coup.",
+     "start": 64.24,
+     "end": 66.37
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,262 @@
+{
+ "lang": "en",
+ "script": "script-alexey.json",
+ "duration": 62.03,
+ "voice": true,
+ "lines": [
+  {
+   "line": 0,
+   "scene": "title",
+   "text": "This is PodiumCall.",
+   "start": 1.4,
+   "end": 2.66,
+   "segments": [
+    {
+     "text": "This is PodiumCall.",
+     "start": 1.4,
+     "end": 2.66
+    }
+   ]
+  },
+  {
+   "line": 1,
+   "scene": "title",
+   "text": "It shows who is most likely to finish in the top three at the next big athletics championship, using real results from World Athletics.",
+   "start": 3.11,
+   "end": 9.83,
+   "segments": [
+    {
+     "text": "It shows who is most likely to finish in the top three at the next big athletics championship,",
+     "start": 3.11,
+     "end": 7.7
+    },
+    {
+     "text": "using real results from World Athletics.",
+     "start": 7.81,
+     "end": 9.83
+    }
+   ]
+  },
+  {
+   "line": 2,
+   "scene": "dashboard",
+   "text": "Start on the Dashboard.",
+   "start": 10.73,
+   "end": 11.93,
+   "segments": [
+    {
+     "text": "Start on the Dashboard.",
+     "start": 10.73,
+     "end": 11.93
+    }
+   ]
+  },
+  {
+   "line": 3,
+   "scene": "dashboard",
+   "text": "Each card is the athlete our model rates highest in one event.",
+   "start": 12.38,
+   "end": 15.79,
+   "segments": [
+    {
+     "text": "Each card is the athlete our model rates highest in one event.",
+     "start": 12.38,
+     "end": 15.79
+    }
+   ]
+  },
+  {
+   "line": 4,
+   "scene": "rankings",
+   "text": "Open Track or Field to see the top 20 in any event.",
+   "start": 16.69,
+   "end": 19.94,
+   "segments": [
+    {
+     "text": "Open Track or Field to see the top 20 in any event.",
+     "start": 16.69,
+     "end": 19.94
+    }
+   ]
+  },
+  {
+   "line": 5,
+   "scene": "rankings",
+   "text": "By points ranks them on their best performance this season.",
+   "start": 20.39,
+   "end": 23.33,
+   "segments": [
+    {
+     "text": "By points ranks them on their best performance this season.",
+     "start": 20.39,
+     "end": 23.33
+    }
+   ]
+  },
+  {
+   "line": 6,
+   "scene": "rankings",
+   "text": "Model rating shows who the model thinks will reach the podium.",
+   "start": 23.78,
+   "end": 26.74,
+   "segments": [
+    {
+     "text": "Model rating shows who the model thinks will reach the podium.",
+     "start": 23.78,
+     "end": 26.74
+    }
+   ]
+  },
+  {
+   "line": 7,
+   "scene": "rankings",
+   "text": "When the two lists disagree, take a closer look.",
+   "start": 27.19,
+   "end": 29.79,
+   "segments": [
+    {
+     "text": "When the two lists disagree,",
+     "start": 27.19,
+     "end": 28.67
+    },
+    {
+     "text": "take a closer look.",
+     "start": 28.84,
+     "end": 29.79
+    }
+   ]
+  },
+  {
+   "line": 8,
+   "scene": "athlete",
+   "text": "Choose a name to open that athlete's page.",
+   "start": 30.69,
+   "end": 32.95,
+   "segments": [
+    {
+     "text": "Choose a name to open that athlete's page.",
+     "start": 30.69,
+     "end": 32.95
+    }
+   ]
+  },
+  {
+   "line": 9,
+   "scene": "athlete",
+   "text": "You'll see their best marks, their races this year, and their chance of a top-three finish.",
+   "start": 33.4,
+   "end": 38.01,
+   "segments": [
+    {
+     "text": "You'll see their best marks,",
+     "start": 33.4,
+     "end": 34.66
+    },
+    {
+     "text": "their races this year,",
+     "start": 34.86,
+     "end": 35.99
+    },
+    {
+     "text": "and their chance of a top-three finish.",
+     "start": 36.19,
+     "end": 38.01
+    }
+   ]
+  },
+  {
+   "line": 10,
+   "scene": "athlete",
+   "text": "That's not a chance of winning.",
+   "start": 38.46,
+   "end": 39.95,
+   "segments": [
+    {
+     "text": "That's not a chance of winning.",
+     "start": 38.46,
+     "end": 39.95
+    }
+   ]
+  },
+  {
+   "line": 11,
+   "scene": "info",
+   "text": "Press the little i next to any number to see what it means.",
+   "start": 40.85,
+   "end": 43.84,
+   "segments": [
+    {
+     "text": "Press the little i next to any number to see what it means.",
+     "start": 40.85,
+     "end": 43.84
+    }
+   ]
+  },
+  {
+   "line": 12,
+   "scene": "search",
+   "text": "Use search to find any ranked athlete, even if they're not competing.",
+   "start": 44.74,
+   "end": 48.27,
+   "segments": [
+    {
+     "text": "Use search to find any ranked athlete,",
+     "start": 44.74,
+     "end": 46.9
+    },
+    {
+     "text": "even if they're not competing.",
+     "start": 47.05,
+     "end": 48.27
+    }
+   ]
+  },
+  {
+   "line": 13,
+   "scene": "results",
+   "text": "Results shows what we predicted before each championship, and what really happened.",
+   "start": 49.17,
+   "end": 53.51,
+   "segments": [
+    {
+     "text": "Results shows what we predicted before each championship,",
+     "start": 49.17,
+     "end": 52.19
+    },
+    {
+     "text": "and what really happened.",
+     "start": 52.33,
+     "end": 53.51
+    }
+   ]
+  },
+  {
+   "line": 14,
+   "scene": "feedback",
+   "text": "Spotted a mistake?",
+   "start": 54.41,
+   "end": 55.44,
+   "segments": [
+    {
+     "text": "Spotted a mistake?",
+     "start": 54.41,
+     "end": 55.44
+    }
+   ]
+  },
+  {
+   "line": 15,
+   "scene": "feedback",
+   "text": "Press Send feedback at the bottom of any page.",
+   "start": 55.89,
+   "end": 58.43,
+   "segments": [
+    {
+     "text": "Press Send feedback at the bottom of any page.",
+     "start": 55.89,
+     "end": 58.43
+    }
+   ]
+  }
+ ]
+}

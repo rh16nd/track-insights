@@ -1,0 +1,5 @@
+# Rebuilt by render.cjs and narrate.py; the takes come from the first
+# version's videos (git show b3b2bef:public/video/intro-en.mp4 on main).
+out/
+audio/*.wav
+audio/lines/

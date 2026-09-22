@@ -1,0 +1,131 @@
+{
+  "note": "The 60-second script Alexey recorded on 11 September 2026, one entry per sentence, copied from design/intro-video/render_anim.py (track-insights main). The new video animates over those takes.",
+  "en": [
+    {
+      "scene": "title",
+      "text": "This is PodiumCall."
+    },
+    {
+      "scene": "title",
+      "text": "It shows who is most likely to finish in the top three at the next big athletics championship, using real results from World Athletics."
+    },
+    {
+      "scene": "dashboard",
+      "text": "Start on the Dashboard."
+    },
+    {
+      "scene": "dashboard",
+      "text": "Each card is the athlete our model rates highest in one event."
+    },
+    {
+      "scene": "rankings",
+      "text": "Open Track or Field to see the top 20 in any event."
+    },
+    {
+      "scene": "rankings",
+      "text": "By points ranks them on their best performance this season."
+    },
+    {
+      "scene": "rankings",
+      "text": "Model rating shows who the model thinks will reach the podium."
+    },
+    {
+      "scene": "rankings",
+      "text": "When the two lists disagree, take a closer look."
+    },
+    {
+      "scene": "athlete",
+      "text": "Choose a name to open that athlete's page."
+    },
+    {
+      "scene": "athlete",
+      "text": "You'll see their best marks, their races this year, and their chance of a top-three finish."
+    },
+    {
+      "scene": "athlete",
+      "text": "That's not a chance of winning."
+    },
+    {
+      "scene": "info",
+      "text": "Press the little i next to any number to see what it means."
+    },
+    {
+      "scene": "search",
+      "text": "Use search to find any ranked athlete, even if they're not competing."
+    },
+    {
+      "scene": "results",
+      "text": "Results shows what we predicted before each championship, and what really happened."
+    },
+    {
+      "scene": "feedback",
+      "text": "Spotted a mistake?"
+    },
+    {
+      "scene": "feedback",
+      "text": "Press Send feedback at the bottom of any page."
+    }
+  ],
+  "fr": [
+    {
+      "scene": "title",
+      "text": "Voici PodiumCall."
+    },
+    {
+      "scene": "title",
+      "text": "Le site montre qui a le plus de chances de finir dans le top trois du prochain grand championnat d'athlétisme, à partir des vrais résultats de World Athletics."
+    },
+    {
+      "scene": "dashboard",
+      "text": "Commencez par le Tableau de bord."
+    },
+    {
+      "scene": "dashboard",
+      "text": "Chaque carte montre l'athlète que notre modèle place en tête dans une épreuve."
+    },
+    {
+      "scene": "rankings",
+      "text": "Ouvrez Piste ou Concours pour voir le top 20 de chaque épreuve."
+    },
+    {
+      "scene": "rankings",
+      "text": "Avec Par points, les athlètes sont classés selon leur meilleure performance de la saison."
+    },
+    {
+      "scene": "rankings",
+      "text": "Avec Évaluation du modèle, vous voyez qui, selon le modèle, montera sur le podium."
+    },
+    {
+      "scene": "rankings",
+      "text": "Quand les deux classements ne sont pas d'accord, regardez de plus près."
+    },
+    {
+      "scene": "athlete",
+      "text": "Choisissez un nom pour ouvrir la fiche de l'athlète : ses meilleures marques, ses courses de l'année et sa chance de finir dans le top trois."
+    },
+    {
+      "scene": "athlete",
+      "text": "Pas sa chance de gagner."
+    },
+    {
+      "scene": "info",
+      "text": "Appuyez sur le petit i à côté d'un chiffre pour savoir ce qu'il veut dire."
+    },
+    {
+      "scene": "search",
+      "text": "La recherche trouve n'importe quel athlète classé, même ceux qui ne sont pas engagés."
+    },
+    {
+      "scene": "results",
+      "text": "Résultats montre ce que nous avions prévu avant chaque championnat, et ce qui s'est vraiment passé."
+    },
+    {
+      "scene": "feedback",
+      "text": "Une erreur ?"
+    },
+    {
+      "scene": "feedback",
+      "text": "Appuyez sur Envoyer un retour, en bas de chaque page."
+    }
+  ]
+}

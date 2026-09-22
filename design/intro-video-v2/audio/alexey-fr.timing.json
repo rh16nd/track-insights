@@ -1,0 +1,273 @@
+{
+ "lang": "fr",
+ "script": "script-alexey.json",
+ "duration": 69.33,
+ "voice": true,
+ "lines": [
+  {
+   "line": 0,
+   "scene": "title",
+   "text": "Voici PodiumCall.",
+   "start": 1.4,
+   "end": 2.89,
+   "segments": [
+    {
+     "text": "Voici PodiumCall.",
+     "start": 1.4,
+     "end": 2.89
+    }
+   ]
+  },
+  {
+   "line": 1,
+   "scene": "title",
+   "text": "Le site montre qui a le plus de chances de finir dans le top trois du prochain grand championnat d'athlétisme, à partir des vrais résultats de World Athletics.",
+   "start": 3.34,
+   "end": 12.01,
+   "segments": [
+    {
+     "text": "Le site montre qui a le plus de chances de finir dans le top trois du prochain grand championnat d'athlétisme,",
+     "start": 3.34,
+     "end": 9.27
+    },
+    {
+     "text": "à partir des vrais résultats de World Athletics.",
+     "start": 9.48,
+     "end": 12.01
+    }
+   ]
+  },
+  {
+   "line": 2,
+   "scene": "dashboard",
+   "text": "Commencez par le Tableau de bord.",
+   "start": 12.91,
+   "end": 14.57,
+   "segments": [
+    {
+     "text": "Commencez par le Tableau de bord.",
+     "start": 12.91,
+     "end": 14.57
+    }
+   ]
+  },
+  {
+   "line": 3,
+   "scene": "dashboard",
+   "text": "Chaque carte montre l'athlète que notre modèle place en tête dans une épreuve.",
+   "start": 15.02,
+   "end": 18.66,
+   "segments": [
+    {
+     "text": "Chaque carte montre l'athlète que notre modèle place en tête dans une épreuve.",
+     "start": 15.02,
+     "end": 18.66
+    }
+   ]
+  },
+  {
+   "line": 4,
+   "scene": "rankings",
+   "text": "Ouvrez Piste ou Concours pour voir le top 20 de chaque épreuve.",
+   "start": 19.56,
+   "end": 22.96,
+   "segments": [
+    {
+     "text": "Ouvrez Piste ou Concours pour voir le top 20 de chaque épreuve.",
+     "start": 19.56,
+     "end": 22.96
+    }
+   ]
+  },
+  {
+   "line": 5,
+   "scene": "rankings",
+   "text": "Avec Par points, les athlètes sont classés selon leur meilleure performance de la saison.",
+   "start": 23.41,
+   "end": 27.62,
+   "segments": [
+    {
+     "text": "Avec Par points,",
+     "start": 23.41,
+     "end": 24.25
+    },
+    {
+     "text": "les athlètes sont classés selon leur meilleure performance de la saison.",
+     "start": 24.41,
+     "end": 27.62
+    }
+   ]
+  },
+  {
+   "line": 6,
+   "scene": "rankings",
+   "text": "Avec Évaluation du modèle, vous voyez qui, selon le modèle, montera sur le podium.",
+   "start": 28.07,
+   "end": 32.58,
+   "segments": [
+    {
+     "text": "Avec Évaluation du modèle,",
+     "start": 28.07,
+     "end": 29.62
+    },
+    {
+     "text": "vous voyez qui,",
+     "start": 29.77,
+     "end": 30.38
+    },
+    {
+     "text": "selon le modèle,",
+     "start": 30.38,
+     "end": 31.315
+    },
+    {
+     "text": "montera sur le podium.",
+     "start": 31.315,
+     "end": 32.58
+    }
+   ]
+  },
+  {
+   "line": 7,
+   "scene": "rankings",
+   "text": "Quand les deux classements ne sont pas d'accord, regardez de plus près.",
+   "start": 33.03,
+   "end": 36.12,
+   "segments": [
+    {
+     "text": "Quand les deux classements ne sont pas d'accord,",
+     "start": 33.03,
+     "end": 34.85
+    },
+    {
+     "text": "regardez de plus près.",
+     "start": 34.97,
+     "end": 36.12
+    }
+   ]
+  },
+  {
+   "line": 8,
+   "scene": "athlete",
+   "text": "Choisissez un nom pour ouvrir la fiche de l'athlète : ses meilleures marques, ses courses de l'année et sa chance de finir dans le top trois.",
+   "start": 37.02,
+   "end": 43.7,
+   "segments": [
+    {
+     "text": "Choisissez un nom pour ouvrir la fiche de l'athlète :",
+     "start": 37.02,
+     "end": 39.4
+    },
+    {
+     "text": "ses meilleures marques,",
+     "start": 39.73,
+     "end": 40.61
+    },
+    {
+     "text": "ses courses de l'année et sa chance de finir dans le top trois.",
+     "start": 40.77,
+     "end": 43.7
+    }
+   ]
+  },
+  {
+   "line": 9,
+   "scene": "athlete",
+   "text": "Pas sa chance de gagner.",
+   "start": 44.15,
+   "end": 45.32,
+   "segments": [
+    {
+     "text": "Pas sa chance de gagner.",
+     "start": 44.15,
+     "end": 45.32
+    }
+   ]
+  },
+  {
+   "line": 10,
+   "scene": "info",
+   "text": "Appuyez sur le petit i à côté d'un chiffre pour savoir ce qu'il veut dire.",
+   "start": 46.22,
+   "end": 50.06,
+   "segments": [
+    {
+     "text": "Appuyez sur le petit i à côté d'un chiffre pour savoir ce qu'il veut dire.",
+     "start": 46.22,
+     "end": 50.06
+    }
+   ]
+  },
+  {
+   "line": 11,
+   "scene": "search",
+   "text": "La recherche trouve n'importe quel athlète classé, même ceux qui ne sont pas engagés.",
+   "start": 50.96,
+   "end": 55.02,
+   "segments": [
+    {
+     "text": "La recherche trouve n'importe quel athlète classé,",
+     "start": 50.96,
+     "end": 53.34
+    },
+    {
+     "text": "même ceux qui ne sont pas engagés.",
+     "start": 53.49,
+     "end": 55.02
+    }
+   ]
+  },
+  {
+   "line": 12,
+   "scene": "results",
+   "text": "Résultats montre ce que nous avions prévu avant chaque championnat, et ce qui s'est vraiment passé.",
+   "start": 55.92,
+   "end": 60.65,
+   "segments": [
+    {
+     "text": "Résultats montre ce que nous avions prévu avant chaque championnat,",
+     "start": 55.92,
+     "end": 59.12
+    },
+    {
+     "text": "et ce qui s'est vraiment passé.",
+     "start": 59.27,
+     "end": 60.65
+    }
+   ]
+  },
+  {
+   "line": 13,
+   "scene": "feedback",
+   "text": "Une erreur ?",
+   "start": 61.55,
+   "end": 62.23,
+   "segments": [
+    {
+     "text": "Une erreur ?",
+     "start": 61.55,
+     "end": 62.23
+    }
+   ]
+  },
+  {
+   "line": 14,
+   "scene": "feedback",
+   "text": "Appuyez sur Envoyer un retour, en bas de chaque page.",
+   "start": 62.68,
+   "end": 65.73,
+   "segments": [
+    {
+     "text": "Appuyez sur Envoyer un retour,",
+     "start": 62.68,
+     "end": 64.406
+    },
+    {
+     "text": "en bas de chaque page.",
+     "start": 64.406,
+     "end": 65.73
+    }
+   ]
+  }
+ ]
+}
