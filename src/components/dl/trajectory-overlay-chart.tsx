@@ -62,9 +62,7 @@ export function TrajectoryOverlayChart({
   const [focus, setFocus] = useState<number | null>(null);
   const [tableView, setTableView] = useState(false);
 
-  // The snapshot now carries eight athletes (the redesign has eight series
-  // colours); this chart has four, and cycling them would draw two lines in
-  // the same colour and dash. The first four are the same four as before.
+  // One line per series colour: past eight, a colour would repeat.
   const shown = trajectories.slice(0, SERIES_COLORS.length);
   if (shown.length === 0) return null;
 
