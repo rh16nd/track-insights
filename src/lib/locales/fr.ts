@@ -596,7 +596,7 @@ export const fr: Record<string, string> = {
     " points d’avance sur l’athlète du milieu de classement. La plus déséquilibrée est le ",
   "depth.noteAt": " avec ",
   "depth.noteEnd":
-    " points. Cet écart couvre tous les athlètes classés par World Athletics dans l’épreuve, ce qui est une autre question que de savoir à quel point les huit finalistes sont proches, et la page de chaque épreuve y répond.",
+    " points. Cet écart couvre tous les athlètes classés par World Athletics dans l’épreuve, ce qui est une autre question que de savoir à quel point les tout meilleurs sont proches, et la page de chaque épreuve y répond.",
 
   // How it works (inline emphasis uses **bold** / *italic*, see lib/rich-text)
   "howItWorks.eyebrow": "À propos du modèle",
@@ -859,7 +859,7 @@ export const fr: Record<string, string> = {
   "traj.colVenue": "Lieu",
 
   "fa.blankCellNote":
-    "Une case vide signifie qu’il n’y a réellement jamais eu de confrontation {{verb}} entre ces deux athlètes : elle reste vide plutôt que d’afficher un 0–0 trompeur. La colonne « face à ce plateau » totalise le bilan de chaque athlète face à ce plateau uniquement, ce qui n’est pas son taux de victoire global : un athlète peut battre tous les autres et rester derrière les huit qui s’alignent à Bruxelles.",
+    "Une case vide signifie qu’il n’y a réellement jamais eu de confrontation {{verb}} entre ces deux athlètes : elle reste vide plutôt que d’afficher un 0–0 trompeur. La colonne « face à ce plateau » totalise le bilan de chaque athlète face à ce plateau uniquement, ce qui n’est pas son taux de victoire global : un athlète peut battre tous les autres et rester derrière les athlètes de cette grille.",
   "fa.neverMet": "{{a}} et {{b}} : aucune confrontation {{verb}}",
 
   "fa.noResults": "aucun résultat",

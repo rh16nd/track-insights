@@ -592,7 +592,7 @@ export const en: Record<string, string> = {
   "depth.notePointsClear": " points ahead of its middle-ranked athlete. The most one-sided is the ",
   "depth.noteAt": " at ",
   "depth.noteEnd":
-    " points. This gap covers everyone World Athletics ranks in the event, which is a different question from how close the eight finalists are, and each event's own page answers that.",
+    " points. This gap covers everyone World Athletics ranks in the event, which is a different question from how close the very best are, and each event's own page answers that.",
 
   // How it works (inline emphasis uses **bold** / *italic*, see lib/rich-text)
   "howItWorks.eyebrow": "About the model",
@@ -852,7 +852,7 @@ export const en: Record<string, string> = {
   "traj.colVenue": "Venue",
 
   "fa.blankCellNote":
-    "A blank cell means those two have genuinely never {{verb}} each other, shown as empty rather than as a 0–0 draw. The “vs. this field” column totals each athlete's record against this field only, which is not their overall win rate: an athlete can beat everyone else and still trail the eight who line up in Brussels.",
+    "A blank cell means those two have genuinely never {{verb}} each other, shown as empty rather than as a 0–0 draw. The “vs. this field” column totals each athlete's record against this field only, which is not their overall win rate: an athlete can beat everyone else and still trail the athletes in this grid.",
   "fa.neverMet": "{{a}} and {{b}} have never {{verb}} each other",
 
   "fa.noResults": "no results",

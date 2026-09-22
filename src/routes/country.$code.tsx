@@ -408,7 +408,7 @@ function AthleteRow({
         // said in words rather than two dashes.
         <td
           colSpan={2}
-          className="py-2.5 pl-2 text-right text-[12px] text-muted-foreground sm:pl-3"
+          className="py-2.5 pl-2 text-right text-[12px] text-muted-foreground sm:pl-3 sm:whitespace-nowrap"
         >
           {t("country.noResultThisSeason")}
         </td>
