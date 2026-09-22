@@ -59,11 +59,15 @@ export function TrajectoryOverlayChart({
   const [hover, setHover] = useState<{ series: number; point: number } | null>(null);
   const [tableView, setTableView] = useState(false);
 
-  if (trajectories.length === 0) return null;
+  // The snapshot now carries eight athletes (the redesign has eight series
+  // colours); this chart has four, and cycling them would draw two lines in
+  // the same colour and dash. The first four are the same four as before.
+  const shown = trajectories.slice(0, SERIES_COLORS.length);
+  if (shown.length === 0) return null;
 
-  const currentYear = Math.max(...trajectories.map((tr) => tr.historyYear ?? 0));
-  const comparable = trajectories.filter((tr) => tr.historyYear === currentYear);
-  const excluded = trajectories.filter((tr) => tr.historyYear !== currentYear);
+  const currentYear = Math.max(...shown.map((tr) => tr.historyYear ?? 0));
+  const comparable = shown.filter((tr) => tr.historyYear === currentYear);
+  const excluded = shown.filter((tr) => tr.historyYear !== currentYear);
   if (comparable.length === 0) return null;
 
   const first = comparable[0]?.history[0];
