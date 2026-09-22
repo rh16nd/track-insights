@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 import { NatFlag } from "@/components/dl/nat-flag";
+import { StripArrow } from "@/components/dl/side-strip";
+import { STRIP_ITEM, STRIP_ROW, useSideStrip } from "@/hooks/useSideStrip";
 import { useInView } from "@/hooks/useInView";
 import { ASIAN_GAMES_SUN } from "@/lib/championship-themes";
 import { chanceLabel, discName, eventOrder } from "@/lib/dl-data";
@@ -58,6 +60,8 @@ export function NagoyaTiles({
   );
 }
 
+/** One group's tiles as a sideways row, like the dashboard's favourites (the
+ * user, 2026-09-22): swipe or scroll it, or page with the arrows. */
 function TileGroup({
   label,
   events,
@@ -71,25 +75,41 @@ function TileGroup({
   t: T;
   lang: Lang;
 }) {
-  // A small threshold: on a phone twenty tiles stack into one list far taller
-  // than the screen, and a share of it like 10% would never be visible at once.
-  const { ref, inView } = useInView<HTMLUListElement>(0.02);
+  const { ref, inView } = useInView<HTMLElement>(0.2);
+  const { row, edge, page } = useSideStrip<HTMLUListElement>(events.length);
   return (
-    <section>
-      <h3 className="label-caps flex items-center gap-3 text-muted-foreground">
-        {label}
-        <span className="nums font-normal tracking-normal normal-case">({events.length})</span>
-      </h3>
+    <section ref={ref}>
+      <div className="flex items-center justify-between gap-4">
+        <h3 className="label-caps flex items-center gap-3 text-muted-foreground">
+          {label}
+          <span className="nums font-normal tracking-normal normal-case">({events.length})</span>
+        </h3>
+        <div className="flex items-center gap-2">
+          <StripArrow
+            dir={-1}
+            disabled={edge.start}
+            onPage={page}
+            label={t("nagoya.glance.pagePrev")}
+          />
+          <StripArrow
+            dir={1}
+            disabled={edge.end}
+            onPage={page}
+            label={t("nagoya.glance.pageNext")}
+          />
+        </div>
+      </div>
       <ul
-        ref={ref}
+        ref={row}
         data-in={inView}
-        className="nagoya-tiles mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        aria-label={t("nagoya.glance.stripLabel", { group: label })}
+        className={`nagoya-tiles mt-4 ${STRIP_ROW}`}
       >
         {events.map((p, i) => (
           <li
             key={p.discKey}
-            className="nagoya-tile"
-            style={{ "--tile-i": Math.min(i, 12) } as CSSProperties}
+            className={`nagoya-tile ${STRIP_ITEM}`}
+            style={{ "--tile-i": Math.min(i, 6) } as CSSProperties}
           >
             <Tile p={p} onOpen={onOpen} t={t} lang={lang} />
           </li>

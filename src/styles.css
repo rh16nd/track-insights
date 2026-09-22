@@ -1767,9 +1767,9 @@ main > :first-child {
   }
 }
 
-/* The dashboard's favourites strip: a thin bar under it says the row scrolls,
-   without the heavy default track under a row of photos. */
-.favourites-strip {
+/* The sideways rows (the dashboard's favourites, the Asian Games call): a thin
+   bar under each says the row scrolls, without the heavy default track. */
+.side-strip {
   scrollbar-width: thin;
   scrollbar-color: oklch(1 0 0 / 0.25) transparent;
 }

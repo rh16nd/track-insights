@@ -161,6 +161,9 @@ export const en: Record<string, string> = {
   "nagoya.glance.onPoints": "World Athletics points, not a forecast",
   "nagoya.glance.next": "Then {{names}}",
   "nagoya.glance.openTable": "See the full field",
+  "nagoya.glance.pagePrev": "Previous events",
+  "nagoya.glance.pageNext": "Next events",
+  "nagoya.glance.stripLabel": "{{group}}: each event's favourite",
   "nagoya.field.title": "Everyone entered, event by event",
   "nagoya.field.lede":
     "Choose an event. The table lists everyone on the organisers' entry list, in the order of the call.",

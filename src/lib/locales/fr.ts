@@ -163,6 +163,9 @@ export const fr: Record<string, string> = {
   "nagoya.glance.onPoints": "points World Athletics, pas un pronostic",
   "nagoya.glance.next": "Puis {{names}}",
   "nagoya.glance.openTable": "Voir tout le plateau",
+  "nagoya.glance.pagePrev": "Épreuves précédentes",
+  "nagoya.glance.pageNext": "Épreuves suivantes",
+  "nagoya.glance.stripLabel": "{{group}} : le favori de chaque épreuve",
   "nagoya.field.title": "Tous les engagés, épreuve par épreuve",
   "nagoya.field.lede":
     "Choisissez une épreuve. Le tableau reprend tous les inscrits de la liste officielle des organisateurs, dans l’ordre du pronostic.",
