@@ -444,6 +444,8 @@ export const en: Record<string, string> = {
   "rankings.colPoints": "Points",
   "rankings.colRating": "Model rating",
   "rankings.colMeets": "Meets",
+  "rankings.meetsOne": "1 meet",
+  "rankings.meetsMany": "{{n}} meets",
   "rankings.pointsHint": "World Athletics' performance score for the athlete's season best.",
   "rankings.ratingHint":
     "The model's read of this athlete against the rest of these 20: how likely they'd be to finish in the top three if the 20 met in one final. An event's 20 ratings add up to 300, so a rating in one event compares with a rating in any other. It's called a rating, not a podium chance, because these athletes aren't all entered in one competition.",

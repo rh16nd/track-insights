@@ -72,8 +72,10 @@ export function AthleteAnalyticsBlock({
             />
           </div>
 
+          {/* On a phone: category, races, wins and podiums, with the average
+              finish under the category. */}
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full min-w-[460px] border-collapse text-left">
+            <table className="w-full border-collapse text-left sm:min-w-[460px]">
               <caption className="label-caps pb-2 text-left text-muted-foreground">
                 {t("aa.byCategory")}
               </caption>
@@ -82,16 +84,19 @@ export function AthleteAnalyticsBlock({
                   <th scope="col" className="pb-2 pr-2 font-semibold">
                     {t("aa.colCategory")}
                   </th>
-                  <th scope="col" className="w-20 pb-2 pl-3 text-right font-semibold">
+                  <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-20 sm:pl-3">
                     {t(isField ? "fa.colComps" : "fa.colRaces")}
                   </th>
-                  <th scope="col" className="w-14 pb-2 pl-3 text-right font-semibold">
+                  <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-14 sm:pl-3">
                     {t("aa.colWon")}
                   </th>
-                  <th scope="col" className="w-20 pb-2 pl-3 text-right font-semibold">
+                  <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-20 sm:pl-3">
                     {t("fa.colPodium")}
                   </th>
-                  <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
+                  <th
+                    scope="col"
+                    className="hidden w-24 pb-2 pl-3 text-right font-semibold sm:table-cell"
+                  >
                     {t("aa.colAvgFinish")}
                   </th>
                 </tr>
@@ -99,17 +104,23 @@ export function AthleteAnalyticsBlock({
               <tbody className="divide-y divide-border">
                 {record.byTier.map((tier) => (
                   <tr key={tier.label} className="transition-colors hover:bg-secondary/40">
-                    <td className="py-2.5 pr-2 text-[13px] text-foreground">{tier.label}</td>
-                    <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+                    <td className="py-2.5 pr-2 text-[13px] text-foreground">
+                      {tier.label}
+                      <span className="mt-0.5 block text-[11.5px] text-muted-foreground sm:hidden">
+                        {t("aa.colAvgFinish")}{" "}
+                        <span className="nums">{tier.avgFinish.toFixed(2)}</span>
+                      </span>
+                    </td>
+                    <td className="nums py-2.5 pl-2 text-right text-[13px] text-muted-foreground sm:pl-3">
                       {tier.races}
                     </td>
-                    <td className="nums py-2.5 pl-3 text-right text-[13px] font-semibold text-foreground">
+                    <td className="nums py-2.5 pl-2 text-right text-[13px] font-semibold text-foreground sm:pl-3">
                       {tier.wins}
                     </td>
-                    <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+                    <td className="nums py-2.5 pl-2 text-right text-[13px] text-muted-foreground sm:pl-3">
                       {tier.podiums}
                     </td>
-                    <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+                    <td className="nums hidden py-2.5 pl-3 text-right text-[13px] text-muted-foreground sm:table-cell">
                       {tier.avgFinish.toFixed(2)}
                     </td>
                   </tr>
@@ -244,24 +255,32 @@ function FormTable({
   const worst = measured.length ? Math.max(...measured.map((f) => f.consistency as number)) : 0;
 
   return (
+    // On a phone: the season, best mark and top-3 average, with the number
+    // of races and the consistency under the season.
     <div className="relative overflow-x-auto">
-      <table className="w-full min-w-[460px] border-collapse text-left">
+      <table className="w-full border-collapse text-left sm:min-w-[460px]">
         <caption className="sr-only">{t("aa.seasonTableCaption")}</caption>
         <thead>
           <tr className="label-caps border-b border-border text-muted-foreground">
             <th scope="col" className="pb-2 pr-2 font-semibold">
               {t("aa.colSeason")}
             </th>
-            <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
+            <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-24 sm:pl-3">
               {t("aa.colBest")}
             </th>
-            <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
+            <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-24 sm:pl-3">
               {t("fa.colTop3")}
             </th>
-            <th scope="col" className="w-20 pb-2 pl-3 text-right font-semibold">
+            <th
+              scope="col"
+              className="hidden w-20 pb-2 pl-3 text-right font-semibold sm:table-cell"
+            >
               {t(isField ? "fa.colComps" : "fa.colRaces")}
             </th>
-            <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+            <th
+              scope="col"
+              className="hidden w-28 pb-2 pl-3 text-right font-semibold sm:table-cell"
+            >
               {t("aa.colConsistency")}
             </th>
           </tr>
@@ -269,11 +288,22 @@ function FormTable({
         <tbody className="divide-y divide-border">
           {[...form].reverse().map((f) => (
             <tr key={f.year} className="transition-colors hover:bg-secondary/40">
-              <td className="nums py-2.5 pr-2 text-[13px] text-foreground">{f.year}</td>
-              <td className="nums py-2.5 pl-3 text-right text-[13px] font-semibold text-foreground">
+              <td className="nums py-2.5 pr-2 text-[13px] text-foreground">
+                {f.year}
+                <span className="mt-0.5 block text-[11.5px] font-normal text-muted-foreground sm:hidden">
+                  {f.marks} {t(isField ? "fa.colComps" : "fa.colRaces").toLowerCase()}
+                  {f.consistency !== null && (
+                    <>
+                      {" · "}
+                      {t("aa.colConsistency")} {f.consistency.toFixed(2)}%
+                    </>
+                  )}
+                </span>
+              </td>
+              <td className="nums py-2.5 pl-2 text-right text-[13px] font-semibold text-foreground sm:pl-3">
                 {bestByYear.get(f.year)?.bestMark ?? "—"}
               </td>
-              <td className="nums py-2.5 pl-3 text-right text-[13px] text-foreground">
+              <td className="nums py-2.5 pl-2 text-right text-[13px] text-foreground sm:pl-3">
                 {formatValue(f.top3Average, isField)}
                 {f.top3Count < 3 && (
                   <span className="ml-1 font-normal text-muted-foreground">
@@ -281,10 +311,10 @@ function FormTable({
                   </span>
                 )}
               </td>
-              <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+              <td className="nums hidden py-2.5 pl-3 text-right text-[13px] text-muted-foreground sm:table-cell">
                 {f.marks}
               </td>
-              <td className="py-2.5 pl-3 text-right">
+              <td className="hidden py-2.5 pl-3 text-right sm:table-cell">
                 {f.consistency === null ? (
                   <span className="text-[11.5px] text-muted-foreground">
                     {t("aa.tooFew", { noun: t(startNounKey(isField)) })}

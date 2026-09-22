@@ -147,9 +147,7 @@ function QualificationPage() {
     <Shell
       photo="qualification"
       title={
-        current
-          ? placesHeadline(current.qualLimit, current.isField, t)
-          : t("qual.headlineFallback")
+        current ? placesHeadline(current.qualLimit, current.isField, t) : t("qual.headlineFallback")
       }
       crumb={t("nav.qualifying")}
       eyebrow={
@@ -174,7 +172,9 @@ function QualificationPage() {
         ) : undefined
       }
     >
-      {state.status === "loading" && <PanelSkeleton title={t("qual.standingsSkeleton")} rows={10} />}
+      {state.status === "loading" && (
+        <PanelSkeleton title={t("qual.standingsSkeleton")} rows={10} />
+      )}
       {state.status === "error" && <ErrorPanel message={state.message} onRetry={state.retry} />}
 
       {data && current && (
@@ -188,9 +188,7 @@ function QualificationPage() {
                     ? t("qual.tightTitleNext", { city: nextMeet.city })
                     : t("qual.tightTitle")
               }
-              subtitle={
-                decided ? t("qual.tightSubtitleDecided") : t("qual.tightSubtitle")
-              }
+              subtitle={decided ? t("qual.tightSubtitleDecided") : t("qual.tightSubtitle")}
             >
               <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {tight.map(({ disc: d, chaser }, i) => (
@@ -295,32 +293,46 @@ function QualificationPage() {
             }
             className="mt-6"
           >
+            {/* On a phone: the place, the athlete and the points, with the
+                nation, meets, gap and status under the name. */}
             <div className="relative overflow-x-auto">
-              <table className="w-full min-w-[680px]">
+              <table className="w-full sm:min-w-[680px]">
                 <caption className="sr-only">
                   {t("qual.caption", { disc: discName(t, current.discKey, current.disc) })}
                 </caption>
                 <thead>
                   <tr className="label-caps text-muted-foreground">
-                    <th scope="col" className="w-10 pb-3 text-left font-semibold">
+                    <th scope="col" className="w-8 pb-3 text-left font-semibold sm:w-10">
                       #
                     </th>
                     <th scope="col" className="pb-3 pl-3 text-left font-semibold">
                       {t("table.colAthlete")}
                     </th>
-                    <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
+                    <th
+                      scope="col"
+                      className="hidden w-16 pb-3 pl-4 text-left font-semibold sm:table-cell"
+                    >
                       {t("table.colNat")}
                     </th>
-                    <th scope="col" className="w-20 pb-3 pl-4 text-right font-semibold">
+                    <th
+                      scope="col"
+                      className="hidden w-20 pb-3 pl-4 text-right font-semibold sm:table-cell"
+                    >
                       {t("qual.colMeets")}
                     </th>
-                    <th scope="col" className="w-20 pb-3 pl-4 text-right font-semibold">
+                    <th scope="col" className="pb-3 pl-3 text-right font-semibold sm:w-20 sm:pl-4">
                       {t("qual.colPoints")}
                     </th>
-                    <th scope="col" className="w-32 pb-3 pl-4 text-right font-semibold">
+                    <th
+                      scope="col"
+                      className="hidden w-32 pb-3 pl-4 text-right font-semibold sm:table-cell"
+                    >
                       {t("qual.colGap")}
                     </th>
-                    <th scope="col" className="w-28 pb-3 pl-4 text-right font-semibold">
+                    <th
+                      scope="col"
+                      className="hidden w-28 pb-3 pl-4 text-right font-semibold sm:table-cell"
+                    >
                       {t("qual.colStatus")}
                     </th>
                   </tr>
@@ -401,20 +413,39 @@ function QualRow({
           >
             {row.name}
           </Link>
+          <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-normal text-muted-foreground sm:hidden">
+            <span className="nums">{row.country ?? "—"}</span>
+            {row.events != null && (
+              <span>
+                {row.events === 1
+                  ? t("rankings.meetsOne")
+                  : t("rankings.meetsMany", { n: row.events })}
+              </span>
+            )}
+            <span className="nums">{gapLabel(row, qualLimit, t)}</span>
+            <span
+              title={t((decided ? STATUS_TITLE_DECIDED_KEY : STATUS_TITLE_KEY)[row.status]!)}
+              className={`label-caps inline-flex items-center rounded-full px-2 py-1 ${(decided ? STATUS_CLASS_DECIDED : STATUS_CLASS)[row.status]}`}
+            >
+              {t((decided ? STATUS_LABEL_DECIDED_KEY : STATUS_LABEL_KEY)[row.status]!)}
+            </span>
+          </span>
         </td>
-        <td className="nums py-3 pl-4 text-[12px] text-muted-foreground">{row.country ?? "—"}</td>
-        <td className="nums py-3 pl-4 text-right text-[12.5px] text-muted-foreground">
+        <td className="nums hidden py-3 pl-4 text-[12px] text-muted-foreground sm:table-cell">
+          {row.country ?? "—"}
+        </td>
+        <td className="nums hidden py-3 pl-4 text-right text-[12.5px] text-muted-foreground sm:table-cell">
           {row.events ?? "—"}
         </td>
         <td
-          className={`nums py-3 pl-4 text-right text-[13.5px] font-semibold ${dim ? "text-muted-foreground" : "text-foreground"}`}
+          className={`nums py-3 pl-3 text-right text-[13.5px] font-semibold sm:pl-4 ${dim ? "text-muted-foreground" : "text-foreground"}`}
         >
           {row.points ?? "—"}
         </td>
-        <td className="nums py-3 pl-4 text-right text-[12.5px] text-muted-foreground">
+        <td className="nums hidden py-3 pl-4 text-right text-[12.5px] text-muted-foreground sm:table-cell">
           {gapLabel(row, qualLimit, t)}
         </td>
-        <td className="py-3 pl-4 text-right">
+        <td className="hidden py-3 pl-4 text-right sm:table-cell">
           <span
             title={t((decided ? STATUS_TITLE_DECIDED_KEY : STATUS_TITLE_KEY)[row.status]!)}
             className={`label-caps inline-flex items-center rounded-full px-2 py-1 ${(decided ? STATUS_CLASS_DECIDED : STATUS_CLASS)[row.status]}`}
@@ -503,9 +534,7 @@ function HowToRead({
             {t("qual.howToRead.firstOutBefore")}
             <span className="nums">{Math.abs(firstOut.gap ?? 0)}</span>{" "}
             {t(
-              Math.abs(firstOut.gap ?? 0) === 1
-                ? "qual.howToRead.point"
-                : "qual.howToRead.points",
+              Math.abs(firstOut.gap ?? 0) === 1 ? "qual.howToRead.point" : "qual.howToRead.points",
             )}
             {t("qual.howToRead.short")}
             {t(decided ? "qual.howToRead.decidedTail" : "qual.howToRead.openTail")}.

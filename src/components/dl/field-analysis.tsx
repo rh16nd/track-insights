@@ -76,7 +76,7 @@ export function FieldAnalysisBlock({
                 <tr>
                   <th
                     scope="col"
-                    className="label-caps sticky left-0 z-10 bg-card pb-2.5 pr-6 text-muted-foreground"
+                    className="label-caps sticky left-0 z-10 bg-card pb-2.5 pr-3 text-muted-foreground sm:pr-6"
                   >
                     {t("table.colAthlete")}
                   </th>
@@ -107,14 +107,18 @@ export function FieldAnalysisBlock({
                   >
                     <th
                       scope="row"
-                      className="sticky left-0 z-10 whitespace-nowrap bg-card py-2.5 pr-6 text-left text-[13px] font-medium text-foreground"
+                      className="sticky left-0 z-10 whitespace-nowrap bg-card py-2.5 pr-3 text-left text-[13px] font-medium text-foreground sm:pr-6"
                     >
+                      {/* The column stays pinned while the grid scrolls; on a
+                          phone it holds surnames, as the column heads do, so
+                          the grid keeps most of the screen. */}
                       <Link
                         to="/athlete/$discKey/$name"
                         params={{ discKey, name: row.name }}
                         className="transition-colors hover:text-terracotta-strong hover:underline"
                       >
-                        {row.name}
+                        <span className="sm:hidden">{surname(row.name)}</span>
+                        <span className="hidden sm:inline">{row.name}</span>
                       </Link>
                     </th>
                     {row.cells.map((cell, j) => (
@@ -162,23 +166,28 @@ export function FieldAnalysisBlock({
           subtitle={t("fa.separatesSubtitle")}
           className="mt-14 border-t border-border pt-12"
         >
+          {/* On a phone: the athlete, the top-3 average and the podium rate, with
+              the steadiness, races and best month under the name. */}
           <div className="relative overflow-x-auto">
-            <table className="w-full min-w-[620px] border-collapse text-left">
+            <table className="w-full border-collapse text-left sm:min-w-[620px]">
               <caption className="sr-only">{t("fa.separatesCaption", { disc: discLabel })}</caption>
               <thead>
                 <tr className="label-caps border-b border-border text-muted-foreground">
                   <th scope="col" className="pb-2 pr-2 font-semibold">
                     {t("table.colAthlete")}
                   </th>
-                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
-                    <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                  <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-28 sm:pl-3">
+                    <span className="inline-flex flex-wrap items-center justify-end gap-1 sm:flex-nowrap sm:whitespace-nowrap">
                       {t("fa.colTop3")}
                       <InfoTip label={t("figure.about", { label: t("fa.colTop3") })}>
                         {t("fa.colTop3Hint")}
                       </InfoTip>
                     </span>
                   </th>
-                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                  <th
+                    scope="col"
+                    className="hidden w-28 pb-2 pl-3 text-right font-semibold sm:table-cell"
+                  >
                     <span className="inline-flex items-center gap-1 whitespace-nowrap">
                       {t("fa.colSteadiness")}
                       <InfoTip label={t("figure.about", { label: t("fa.colSteadiness") })}>
@@ -186,7 +195,10 @@ export function FieldAnalysisBlock({
                       </InfoTip>
                     </span>
                   </th>
-                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                  <th
+                    scope="col"
+                    className="hidden w-28 pb-2 pl-3 text-right font-semibold sm:table-cell"
+                  >
                     <span className="inline-flex items-center gap-1 whitespace-nowrap">
                       {t(isField ? "fa.colComps" : "fa.colRaces")}
                       <InfoTip
@@ -198,15 +210,21 @@ export function FieldAnalysisBlock({
                       </InfoTip>
                     </span>
                   </th>
-                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
-                    <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                  <th
+                    scope="col"
+                    className="pr-1.5 pb-2 pl-2 text-right font-semibold sm:w-28 sm:pr-0 sm:pl-3"
+                  >
+                    <span className="inline-flex flex-wrap items-center justify-end gap-1 sm:flex-nowrap sm:whitespace-nowrap">
                       {t("fa.colPodium")}
                       <InfoTip label={t("figure.about", { label: t("fa.colPodium") })}>
                         {t("fa.colPodiumHint")}
                       </InfoTip>
                     </span>
                   </th>
-                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                  <th
+                    scope="col"
+                    className="hidden w-28 pr-1.5 pb-2 pl-3 text-right font-semibold sm:table-cell"
+                  >
                     <span className="inline-flex items-center gap-1 whitespace-nowrap">
                       {t("fa.colPeaked")}
                       <InfoTip label={t("figure.about", { label: t("fa.colPeaked") })}>
@@ -233,21 +251,40 @@ export function FieldAnalysisBlock({
                         >
                           {name}
                         </Link>
+                        <span className="mt-0.5 flex flex-wrap gap-x-2 text-[11.5px] font-normal text-muted-foreground sm:hidden">
+                          {c?.consistency != null && (
+                            <span>
+                              {t("fa.colSteadiness")}{" "}
+                              <span className="nums">{c.consistency.toFixed(2)}%</span>
+                            </span>
+                          )}
+                          <span>
+                            {t(isField ? "fa.colComps" : "fa.colRaces")}{" "}
+                            <span className="nums">
+                              {c?.seasonRaces ?? 0} / {c?.races ?? 0}
+                            </span>
+                          </span>
+                          {c?.bestMonth && (
+                            <span>
+                              {t("fa.colPeaked")} {localizeMonth(lang, c.bestMonth)}
+                            </span>
+                          )}
+                        </span>
                       </td>
-                      <td className="nums py-2.5 pl-3 text-right text-[13px] font-semibold text-foreground">
+                      <td className="nums py-2.5 pl-2 text-right text-[13px] font-semibold text-foreground sm:pl-3">
                         {c?.top3Average != null ? formatMarkish(c.top3Average, isField) : "—"}
                       </td>
-                      <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+                      <td className="nums hidden py-2.5 pl-3 text-right text-[13px] text-muted-foreground sm:table-cell">
                         {c?.consistency != null ? `${c.consistency.toFixed(2)}%` : "—"}
                       </td>
-                      <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+                      <td className="nums hidden py-2.5 pl-3 text-right text-[13px] text-muted-foreground sm:table-cell">
                         {c?.seasonRaces ?? 0}
                         <span className="text-muted-foreground"> / {c?.races ?? 0}</span>
                       </td>
-                      <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+                      <td className="nums py-2.5 pl-2 text-right text-[13px] text-muted-foreground sm:pl-3">
                         {c?.podiumRate != null ? `${c.podiumRate}%` : "—"}
                       </td>
-                      <td className="py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
+                      <td className="hidden py-2.5 pl-3 text-right text-[13px] text-muted-foreground sm:table-cell">
                         {c?.bestMonth ? localizeMonth(lang, c.bestMonth) : "—"}
                       </td>
                     </tr>

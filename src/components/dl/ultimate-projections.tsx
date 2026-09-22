@@ -217,9 +217,11 @@ export function UltimateProjections({
           )}
           {/* relative, so the table's sr-only labels are clipped by this scroller.
             Without it their containing block was <main>, and a label in a
-            right-hand column made the whole page 410px wide on a 360px phone. */}
+            right-hand column made the whole page 410px wide on a 360px phone.
+            On a phone the table fits the screen: the place, the athlete and the
+            podium chance, with the nation and the mark under the name. */}
           <div className="relative overflow-x-auto">
-            <table className={`w-full ${showWin ? "min-w-[720px]" : "min-w-[620px]"}`}>
+            <table className={`w-full ${showWin ? "sm:min-w-[720px]" : "sm:min-w-[620px]"}`}>
               <caption className="sr-only">
                 {t(
                   current.method === "model"
@@ -232,16 +234,22 @@ export function UltimateProjections({
               </caption>
               <thead>
                 <tr className="label-caps text-muted-foreground">
-                  <th scope="col" className="w-12 pb-3 text-left font-semibold">
+                  <th scope="col" className="w-9 pb-3 text-left font-semibold sm:w-12">
                     #
                   </th>
                   <th scope="col" className="pb-3 pl-3 text-left font-semibold">
                     {t("table.colAthlete")}
                   </th>
-                  <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
+                  <th
+                    scope="col"
+                    className="hidden w-16 pb-3 pl-4 text-left font-semibold sm:table-cell"
+                  >
                     {t("table.colNat")}
                   </th>
-                  <th scope="col" className="w-44 pb-3 pl-4 text-left font-semibold">
+                  <th
+                    scope="col"
+                    className="hidden w-44 pb-3 pl-4 text-left font-semibold sm:table-cell"
+                  >
                     <span className="inline-flex items-center gap-1">
                       {t(middle.label)}
                       <InfoTip label={t("figure.about", { label: t(middle.label) })}>
@@ -249,8 +257,12 @@ export function UltimateProjections({
                       </InfoTip>
                     </span>
                   </th>
-                  <th scope="col" className="w-40 pb-3 pl-6 text-right font-semibold">
-                    <span className="inline-flex items-center justify-end gap-1">
+                  <th
+                    scope="col"
+                    className="pr-1.5 pb-3 pl-3 text-right font-semibold sm:w-40 sm:pr-0 sm:pl-6"
+                  >
+                    {/* Wraps on a phone, where the column is narrower than the label. */}
+                    <span className="inline-flex flex-wrap items-center justify-end gap-1">
                       {t(last.label)}
                       <InfoTip label={t("figure.about", { label: t(last.label) })}>
                         {t(last.hint)}
@@ -258,7 +270,10 @@ export function UltimateProjections({
                     </span>
                   </th>
                   {showWin && (
-                    <th scope="col" className="w-28 pb-3 pl-4 text-right font-semibold">
+                    <th
+                      scope="col"
+                      className="hidden w-28 pr-1.5 pb-3 pl-4 text-right font-semibold sm:table-cell"
+                    >
                       <span className="inline-flex items-center justify-end gap-1">
                         {t("championship.projection.colWin")}
                         <InfoTip
@@ -367,13 +382,17 @@ export function UltimateProjections({
                         ) : (
                           <span>{displayName(u.name)}</span>
                         )}
+                        <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-normal text-muted-foreground sm:hidden">
+                          <NatFlag nat={u.nat ?? "—"} />
+                          {t(`championship.projection.unranked.${u.reason}`)}
+                        </span>
                       </td>
-                      <td className="py-2.5 pl-4">
+                      <td className="hidden py-2.5 pl-4 sm:table-cell">
                         <NatFlag nat={u.nat ?? "—"} />
                       </td>
                       <td
                         colSpan={showWin ? 3 : 2}
-                        className="py-2.5 pl-4 text-[12px] text-muted-foreground"
+                        className="hidden py-2.5 pl-4 text-[12px] text-muted-foreground sm:table-cell"
                       >
                         {t(`championship.projection.unranked.${u.reason}`)}
                       </td>
@@ -524,7 +543,7 @@ function ProjectionRow({
             know which one they will pick. */}
         {a.alsoQualifiedIn?.length ? (
           <span
-            className={`ml-2 whitespace-nowrap rounded px-1.5 py-0.5 text-[10.5px] font-medium ${
+            className={`mt-1 inline-block rounded px-1.5 py-0.5 text-[10.5px] font-medium sm:mt-0 sm:ml-2 sm:whitespace-nowrap ${
               a.alsoQualifiedIn.some((o) => o.clashes)
                 ? "bg-gold/20 text-[var(--gold-on-canvas)]"
                 : "bg-secondary text-muted-foreground"
@@ -549,11 +568,22 @@ function ProjectionRow({
             })}
           </span>
         ) : null}
+        <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-normal text-muted-foreground sm:hidden">
+          <NatFlag nat={a.nat ?? "—"} />
+          <span className={method ? "nums" : ""}>{method ? (a.mark ?? "—") : a.qualifiedBy}</span>
+          {method && a.markSeason ? (
+            <span className="rounded bg-secondary px-1 py-0.5 text-[10.5px] font-medium">
+              {a.markSeason}
+            </span>
+          ) : null}
+        </span>
       </td>
-      <td className="py-3 pl-4">
+      <td className="hidden py-3 pl-4 sm:table-cell">
         <NatFlag nat={a.nat ?? "—"} />
       </td>
-      <td className={`py-3 pl-4 text-[12px] text-muted-foreground ${method ? "nums" : ""}`}>
+      <td
+        className={`hidden py-3 pl-4 text-[12px] text-muted-foreground sm:table-cell ${method ? "nums" : ""}`}
+      >
         {method ? (a.mark ?? "—") : a.qualifiedBy}
         {/* A mark from last season: what an entrant with no mark this season is
             read on. Tagged on the row, so the order never passes a 2025 mark
@@ -570,14 +600,18 @@ function ProjectionRow({
           </span>
         ) : null}
       </td>
-      <td className="py-3 pl-6">
+      <td className="py-3 pl-3 sm:pl-6">
         {a.podiumChance === null ? (
           <span className="nums block text-right text-[12.5px] font-semibold text-foreground">
             {a.rankingScore ?? "—"}
           </span>
         ) : (
           <div className="flex items-center justify-end gap-2.5">
-            <ProbabilityBar value={a.podiumChance} trackHeight="h-1.5" />
+            <ProbabilityBar
+              value={a.podiumChance}
+              trackHeight="h-1.5"
+              className="hidden sm:block"
+            />
             <span className="nums w-12 text-right text-[12.5px] font-semibold text-foreground">
               {chanceLabel(lang, a.podiumChance)}%
             </span>
@@ -585,7 +619,7 @@ function ProjectionRow({
         )}
       </td>
       {showWin && (
-        <td className="nums py-3 pl-4 text-right text-[12.5px] font-semibold text-foreground">
+        <td className="nums hidden py-3 pl-4 text-right text-[12.5px] font-semibold text-foreground sm:table-cell">
           {a.winChance == null ? "—" : `${chanceLabel(lang, a.winChance)}%`}
         </td>
       )}

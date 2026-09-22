@@ -18,11 +18,7 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
   const decorated = honours.filter((h) => h.podiums > 0);
 
   return (
-    <Panel
-      title={t("car.title")}
-      subtitle={t("car.subtitle")}
-      className="mt-4"
-    >
+    <Panel title={t("car.title")} subtitle={t("car.subtitle")} className="mt-4">
       {/* The one line worth reading if you read nothing else here. Built
           only from global titles, falling back to continental ones named in
           full — an age-group, national or NCAA title never reaches it, so
@@ -39,7 +35,9 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
               <div className="nums mt-1 text-[26px] font-semibold leading-none text-foreground">
                 #{r.place}
               </div>
-              <div className="mt-1 text-[11.5px] text-muted-foreground">{t("car.worldRanking")}</div>
+              <div className="mt-1 text-[11.5px] text-muted-foreground">
+                {t("car.worldRanking")}
+              </div>
             </div>
           ))}
           {worldRanking.overall !== null && (
@@ -48,15 +46,19 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
               <div className="nums mt-1 text-[26px] font-semibold leading-none text-muted-foreground">
                 #{worldRanking.overall}
               </div>
-              <div className="mt-1 text-[11.5px] text-muted-foreground">{t("car.acrossAllEvents")}</div>
+              <div className="mt-1 text-[11.5px] text-muted-foreground">
+                {t("car.acrossAllEvents")}
+              </div>
             </div>
           )}
         </div>
       )}
 
       {decorated.length > 0 && (
+        // On a phone: the championship and its three medal columns, closer
+        // together; the entries total from sm up.
         <div className="mt-6 overflow-x-auto">
-          <table className="w-full min-w-[440px] border-collapse text-left">
+          <table className="w-full border-collapse text-left sm:min-w-[440px]">
             <caption className="label-caps pb-2 text-left text-muted-foreground">
               {t("car.honours")}
             </caption>
@@ -65,16 +67,19 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
                 <th scope="col" className="pb-2 pr-2 font-semibold">
                   {t("car.colChampionship")}
                 </th>
-                <th scope="col" className="w-14 pb-2 pl-3 text-right font-semibold">
+                <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-14 sm:pl-3">
                   {t("car.colGold")}
                 </th>
-                <th scope="col" className="w-14 pb-2 pl-3 text-right font-semibold">
+                <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-14 sm:pl-3">
                   {t("car.colSilver")}
                 </th>
-                <th scope="col" className="w-14 pb-2 pl-3 text-right font-semibold">
+                <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-14 sm:pl-3">
                   {t("car.colBronze")}
                 </th>
-                <th scope="col" className="w-20 pb-2 pl-3 text-right font-semibold">
+                <th
+                  scope="col"
+                  className="hidden w-20 pb-2 pl-3 text-right font-semibold sm:table-cell"
+                >
                   {t("car.colEntries")}
                 </th>
               </tr>
@@ -115,10 +120,10 @@ function HonourRow({ honour }: { honour: HonourGroup }) {
   return (
     <tr className="transition-colors hover:bg-secondary/40">
       <td className="py-2.5 pr-2 text-[13px] text-foreground">{honour.category ?? "Other"}</td>
-      <td className="nums py-2.5 pl-3 text-right text-[13px]">{cell(honour.gold, true)}</td>
-      <td className="nums py-2.5 pl-3 text-right text-[13px]">{cell(honour.silver)}</td>
-      <td className="nums py-2.5 pl-3 text-right text-[13px]">{cell(honour.bronze)}</td>
-      <td className="nums py-2.5 pl-3 text-right text-[12.5px] text-muted-foreground">
+      <td className="nums py-2.5 pl-2 text-right text-[13px] sm:pl-3">{cell(honour.gold, true)}</td>
+      <td className="nums py-2.5 pl-2 text-right text-[13px] sm:pl-3">{cell(honour.silver)}</td>
+      <td className="nums py-2.5 pl-2 text-right text-[13px] sm:pl-3">{cell(honour.bronze)}</td>
+      <td className="nums hidden py-2.5 pl-3 text-right text-[12.5px] text-muted-foreground sm:table-cell">
         {honour.results.length}
       </td>
     </tr>

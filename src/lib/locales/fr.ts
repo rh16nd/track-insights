@@ -446,6 +446,8 @@ export const fr: Record<string, string> = {
   "rankings.colPoints": "Points",
   "rankings.colRating": "Évaluation du modèle",
   "rankings.colMeets": "Meetings",
+  "rankings.meetsOne": "1 meeting",
+  "rankings.meetsMany": "{{n}} meetings",
   "rankings.pointsHint":
     "Le score de performance World Athletics pour la meilleure marque de la saison.",
   "rankings.ratingHint":

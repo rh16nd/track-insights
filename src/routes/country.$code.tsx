@@ -290,20 +290,22 @@ function CountryBody({
               className="h-9 w-full max-w-xs rounded-full border border-border bg-card px-3.5 text-[13px] text-foreground placeholder:text-muted-foreground"
             />
           </div>
+          {/* On a phone: the athlete with their event under the name, then the
+              mark and the score. */}
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[520px] border-collapse text-left">
+            <table className="w-full border-collapse text-left sm:min-w-[520px]">
               <thead>
                 <tr className="label-caps border-b border-border text-muted-foreground">
                   <th scope="col" className="pb-2 pr-2 font-semibold">
                     {t("country.colAthlete")}
                   </th>
-                  <th scope="col" className="pb-2 pl-3 font-semibold">
+                  <th scope="col" className="hidden pb-2 pl-3 font-semibold sm:table-cell">
                     {t("country.colEvent")}
                   </th>
-                  <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
+                  <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-24 sm:pl-3">
                     {t("country.colMark")}
                   </th>
-                  <th scope="col" className="w-20 pb-2 pl-3 text-right font-semibold">
+                  <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-20 sm:pl-3">
                     {t("country.colScore")}
                   </th>
                 </tr>
@@ -370,8 +372,15 @@ function AthleteRow({
         >
           {a.name}
         </Link>
+        <Link
+          to="/discipline/$discKey"
+          params={{ discKey: a.discKey }}
+          className="mt-0.5 block text-[12px] text-muted-foreground transition-colors hover:text-terracotta-strong hover:underline sm:hidden"
+        >
+          {discName(t, a.discKey, a.disc)}
+        </Link>
       </td>
-      <td className="py-2.5 pl-3 text-[13px] text-muted-foreground">
+      <td className="hidden py-2.5 pl-3 text-[13px] text-muted-foreground sm:table-cell">
         {/* Every event has a discipline page, the hammer and the 10,000m
             included since 2026-09-15. */}
         <Link
@@ -382,8 +391,10 @@ function AthleteRow({
           {discName(t, a.discKey, a.disc)}
         </Link>
       </td>
-      <td className="nums py-2.5 pl-3 text-right text-[13px] text-foreground">{a.mark ?? "—"}</td>
-      <td className="nums py-2.5 pl-3 text-right text-[13px] font-semibold text-foreground">
+      <td className="nums py-2.5 pl-2 text-right text-[13px] text-foreground sm:pl-3">
+        {a.mark ?? "—"}
+      </td>
+      <td className="nums py-2.5 pl-2 text-right text-[13px] font-semibold text-foreground sm:pl-3">
         {a.score ?? "—"}
       </td>
     </tr>

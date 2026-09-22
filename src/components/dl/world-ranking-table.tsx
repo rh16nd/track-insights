@@ -160,35 +160,46 @@ export function WorldRankingTable({
           ) : undefined
         }
       >
+        {/* On a phone the table fits the screen: the place, the athlete, the
+            points and the rating, with the nation, mark and meets under the name. */}
         <div className="relative overflow-x-auto">
-          <table className="w-full min-w-[720px]">
+          <table className="w-full sm:min-w-[720px]">
             <caption className="sr-only">{t("rankings.caption", { label })}</caption>
             <thead>
               <tr className="label-caps text-muted-foreground">
-                <th scope="col" className="w-10 pb-3 text-left font-semibold">
+                <th scope="col" className="w-8 pb-3 text-left font-semibold sm:w-10">
                   #
                 </th>
                 <th scope="col" className="pb-3 pl-3 text-left font-semibold">
                   {t("table.colAthlete")}
                 </th>
-                <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
+                <th
+                  scope="col"
+                  className="hidden w-16 pb-3 pl-4 text-left font-semibold sm:table-cell"
+                >
                   {t("table.colNat")}
                 </th>
-                <th scope="col" className="w-24 pb-3 pl-4 text-right font-semibold">
+                <th
+                  scope="col"
+                  className="hidden w-24 pb-3 pl-4 text-right font-semibold sm:table-cell"
+                >
                   {t("rankings.colMark")}
                 </th>
                 <th
                   scope="col"
-                  className={`w-24 pb-3 pl-6 text-right font-semibold ${shown === "points" ? "text-foreground" : ""}`}
+                  className={`pb-3 pl-3 text-right font-semibold sm:w-24 sm:pl-6 ${shown === "points" ? "text-foreground" : ""}`}
                 >
-                  <span className="inline-flex items-center gap-1 justify-end">
+                  <span className="inline-flex flex-wrap items-center justify-end gap-1">
                     {t("rankings.colPoints")}
                     <InfoTip label={t("figure.about", { label: t("rankings.colPoints") })}>
                       {t("rankings.pointsHint")}
                     </InfoTip>
                   </span>
                 </th>
-                <th scope="col" className="w-24 pb-3 pl-6 text-right font-semibold">
+                <th
+                  scope="col"
+                  className="hidden w-24 pb-3 pl-6 text-right font-semibold sm:table-cell"
+                >
                   <span className="inline-flex items-center justify-end gap-1">
                     {t("rankings.colMeets")}
                     <InfoTip label={t("figure.about", { label: t("rankings.colMeets") })}>
@@ -199,9 +210,9 @@ export function WorldRankingTable({
                 {modelAvailable && (
                   <th
                     scope="col"
-                    className={`w-40 pb-3 pl-6 text-right font-semibold ${shown === "model" ? "text-foreground" : ""}`}
+                    className={`pr-1.5 pb-3 pl-3 text-right font-semibold sm:w-40 sm:pl-6 ${shown === "model" ? "text-foreground" : ""}`}
                   >
-                    <span className="inline-flex items-center gap-1 justify-end">
+                    <span className="inline-flex flex-wrap items-center justify-end gap-1">
                       {ratingLabel}
                       <InfoTip label={t("figure.about", { label: ratingLabel })}>
                         {t("rankings.ratingHint")}
@@ -218,7 +229,7 @@ export function WorldRankingTable({
                   className="stagger-item transition-colors hover:bg-secondary/40"
                   style={{ "--stagger-i": i } as CSSProperties}
                 >
-                  <td className="nums py-3 pr-2 text-[13px] font-semibold text-muted-foreground">
+                  <td className="nums py-3 pr-1 text-[13px] font-semibold text-muted-foreground sm:pr-2">
                     {r.rank}
                   </td>
                   <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
@@ -233,15 +244,28 @@ export function WorldRankingTable({
                     ) : (
                       r.name
                     )}
+                    <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-normal text-muted-foreground sm:hidden">
+                      <NatFlag nat={r.nat ?? "—"} />
+                      <span className="nums text-foreground">{r.mark ?? "—"}</span>
+                      {r.racesOnRecord != null && (
+                        <span
+                          className={r.racesOnRecord <= 2 ? "font-semibold text-foreground" : ""}
+                        >
+                          {r.racesOnRecord === 1
+                            ? t("rankings.meetsOne")
+                            : t("rankings.meetsMany", { n: r.racesOnRecord })}
+                        </span>
+                      )}
+                    </span>
                   </td>
-                  <td className="py-3 pl-4">
+                  <td className="hidden py-3 pl-4 sm:table-cell">
                     <NatFlag nat={r.nat ?? "—"} />
                   </td>
-                  <td className="nums py-3 pl-4 text-right text-[13.5px] font-medium text-foreground">
+                  <td className="nums hidden py-3 pl-4 text-right text-[13.5px] font-medium text-foreground sm:table-cell">
                     {r.mark ?? "—"}
                   </td>
                   <td
-                    className={`nums py-3 pl-6 text-right text-[13px] ${shown === "points" ? "font-semibold text-foreground" : "text-muted-foreground"}`}
+                    className={`nums py-3 pl-3 text-right text-[13px] sm:pl-6 ${shown === "points" ? "font-semibold text-foreground" : "text-muted-foreground"}`}
                   >
                     {r.score ?? "—"}
                   </td>
@@ -251,7 +275,7 @@ export function WorldRankingTable({
                       purpose: no new token to contrast-check, and it reads
                       the same to anyone who cannot separate the two hues. */}
                   <td
-                    className={`nums py-3 pl-6 text-right text-[13px] ${
+                    className={`nums hidden py-3 pl-6 text-right text-[13px] sm:table-cell ${
                       (r.racesOnRecord ?? 9) <= 2
                         ? "font-semibold text-foreground"
                         : "text-muted-foreground"
@@ -260,9 +284,9 @@ export function WorldRankingTable({
                     {r.racesOnRecord ?? "—"}
                   </td>
                   {modelAvailable && (
-                    <td className="py-3 pl-6">
+                    <td className="py-3 pl-3 sm:pl-6">
                       <div className="flex items-center justify-end gap-2.5">
-                        <span className="h-1.5 w-20 overflow-hidden rounded-full bg-secondary">
+                        <span className="hidden h-1.5 w-20 overflow-hidden rounded-full bg-secondary sm:block">
                           <span
                             className="block h-full rounded-full"
                             style={{

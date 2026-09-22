@@ -405,8 +405,10 @@ export function HeadFigure({
   const { t } = useT();
   return (
     <div>
+      {/* A long figure (the schedule's "23–29 September 2026") is wider than
+          a phone, so there it wraps into balanced lines; one line from sm up. */}
       <b
-        className={`page-title nums block text-[44px] leading-none whitespace-nowrap ${
+        className={`page-title nums block text-[44px] leading-none text-balance sm:whitespace-nowrap ${
           gold ? "text-gold-on-canvas" : "text-white"
         }`}
       >

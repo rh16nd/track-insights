@@ -135,27 +135,39 @@ export function ResultComparison({ current }: { current: Discipline }) {
       <p className="mb-3 max-w-2xl text-[12px] leading-snug text-muted-foreground">
         {t("table.resultNote")}
       </p>
+      {/* On a phone the table fits the card: the finish, the athlete (with
+          nation and result under the name) and the model's call, with how far
+          off it was under the call. */}
       <div className="relative overflow-x-auto">
-        <table className="w-full min-w-[680px]">
+        <table className="w-full sm:min-w-[680px]">
           <caption className="sr-only">{t("table.resultCaption", { label })}</caption>
           <thead>
             <tr className="label-caps text-muted-foreground">
-              <th scope="col" className="w-12 pb-3 text-left font-semibold">
+              <th scope="col" className="w-9 pb-3 text-left font-semibold sm:w-12">
                 {t("table.colFinish")}
               </th>
               <th scope="col" className="pb-3 pl-3 text-left font-semibold">
                 {t("table.colAthlete")}
               </th>
-              <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
+              <th
+                scope="col"
+                className="hidden w-16 pb-3 pl-4 text-left font-semibold sm:table-cell"
+              >
                 {t("table.colNat")}
               </th>
-              <th scope="col" className="w-24 pb-3 pl-4 text-right font-semibold">
+              <th
+                scope="col"
+                className="hidden w-24 pb-3 pl-4 text-right font-semibold sm:table-cell"
+              >
                 {t("table.colResult")}
               </th>
-              <th scope="col" className="w-44 pb-3 pl-6 text-left font-semibold">
+              <th scope="col" className="pb-3 pl-3 text-left font-semibold sm:w-44 sm:pl-6">
                 {t("table.colModelCall")}
               </th>
-              <th scope="col" className="w-28 pb-3 pl-6 text-left font-semibold">
+              <th
+                scope="col"
+                className="hidden w-28 pb-3 pl-6 text-left font-semibold sm:table-cell"
+              >
                 {t("table.colVsProjected")}
               </th>
             </tr>
@@ -189,21 +201,32 @@ export function ResultComparison({ current }: { current: Discipline }) {
                       {r.name}
                     </a>
                   )}
+                  <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-normal text-muted-foreground sm:hidden">
+                    <NatFlag nat={r.nat} />
+                    {r.status === "finished" ? (
+                      <span className="nums text-foreground">{r.mark}</span>
+                    ) : (
+                      <span className="label-caps">{r.placeLabel}</span>
+                    )}
+                  </span>
                 </td>
-                <td className="py-3 pl-4">
+                <td className="hidden py-3 pl-4 sm:table-cell">
                   <NatFlag nat={r.nat} />
                 </td>
-                <td className="nums py-3 pl-4 text-right text-[13.5px] font-medium text-foreground">
+                <td className="nums hidden py-3 pl-4 text-right text-[13.5px] font-medium text-foreground sm:table-cell">
                   {r.status === "finished" ? (
                     r.mark
                   ) : (
                     <span className="label-caps text-muted-foreground">{r.placeLabel}</span>
                   )}
                 </td>
-                <td className="py-3 pl-6 text-[12.5px]">
+                <td className="py-3 pl-3 text-[12.5px] sm:pl-6">
                   <ModelCall row={r} />
+                  <span className="mt-1 block sm:hidden">
+                    <VerdictCell row={r} />
+                  </span>
                 </td>
-                <td className="py-3 pl-6 text-[12.5px]">
+                <td className="hidden py-3 pl-6 text-[12.5px] sm:table-cell">
                   <VerdictCell row={r} />
                 </td>
               </tr>
