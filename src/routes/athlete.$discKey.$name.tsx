@@ -39,6 +39,28 @@ function PhotoCredit({ credit }: { credit: PhotoCreditT }) {
   );
 }
 
+/** The season chart's note. It said "this season" above an earlier season's
+ * chart for 105 athletes whose latest races on record are from 2025 or before
+ * (2026-09-22), so an earlier season is named by its year. */
+function seasonFormNote(
+  t: TFunc,
+  plotted: number,
+  races: number | null | undefined,
+  year: number | null | undefined,
+  condensed: boolean | undefined,
+): string {
+  const earlier = year != null && year !== 2026;
+  if (condensed) {
+    const n = races ?? 0;
+    return earlier
+      ? t("ath.seasonFormCondensedIn", { n, year })
+      : t("ath.seasonFormCondensed", { n });
+  }
+  return earlier
+    ? t("ath.seasonFormAllIn", { n: plotted, year })
+    : t("ath.seasonFormAll", { n: plotted });
+}
+
 const FIELD_EVENT_KEYS = new Set([
   "men_HJ",
   "women_HJ",
@@ -184,6 +206,21 @@ function NotInField({
     </div>
   );
 
+  // Whether any tile below has a figure. An entrant with no mark, rank, age
+  // or race this season had a "Season stats" heading over nothing (13 pages,
+  // 2026-09-22), so the panel goes with its tiles.
+  const hasSeasonStats =
+    !!data.seasonBest ||
+    data.worldRank != null ||
+    !!data.careerBest ||
+    data.pbGap != null ||
+    data.age != null ||
+    (data.meetsCount ?? 0) > 0 ||
+    data.racesThisSeason > 0 ||
+    data.daysSinceLast != null ||
+    !!data.scoreContext;
+  const hasSeasonChart = data.history.length > 0;
+
   return (
     <Shell title={data.name} crumb={data.name} hero={hero} headBackdrop={backdrop}>
       {/* First, for an entrant at the current championship: for the Asian
@@ -192,131 +229,137 @@ function NotInField({
       {/* Same two-panel row, same StatBlock grid and same chart the in-field
           profile uses. None of these numbers stop being true because the
           athlete missed the cut, and the page read as a stub without them. */}
-      <div
-        className={`mt-6 grid grid-cols-1 gap-6 ${data.history.length > 0 ? "lg:grid-cols-[1fr_1fr]" : ""}`}
-      >
-        <Panel title={t("ath.seasonStats")}>
-          {/* Only the figures this athlete has. A grid of dashes read as a
+      {(hasSeasonStats || hasSeasonChart) && (
+        <div
+          className={`mt-6 grid grid-cols-1 gap-6 ${hasSeasonStats && hasSeasonChart ? "lg:grid-cols-[1fr_1fr]" : ""}`}
+        >
+          {hasSeasonStats && (
+            <Panel title={t("ath.seasonStats")}>
+              {/* Only the figures this athlete has. A grid of dashes read as a
               broken page, and the user's rule (2026-09-21) is that a figure
               appears when we know it and is left out when we don't. */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {/* A championship entrant the call ranked on last season's mark:
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {/* A championship entrant the call ranked on last season's mark:
                 the label says which season, so it never reads as this one. */}
-            {data.seasonBest && (
-              <StatBlock
-                label={
-                  data.seasonBestYear != null && data.seasonBestYear !== 2026
-                    ? t("ath.seasonBestIn", { year: data.seasonBestYear })
-                    : t("ath.seasonBest2026")
-                }
-                value={data.seasonBest}
-                icon="target"
-              />
-            )}
-            {data.worldRank != null && (
-              <StatBlock
-                label={t("ath.worldRank")}
-                value={`#${data.worldRank}`}
-                sub={t("ath.thisSeasonToplist")}
-                icon="trophy"
-              />
-            )}
-            {data.careerBest && (
-              <StatBlock label={t("ath.careerBest")} value={data.careerBest} icon="trophy" />
-            )}
-            {data.pbGap != null && (
-              <StatBlock
-                label={t("ath.pbGap")}
-                value={`${data.pbGap.toFixed(2)}${FIELD_EVENT_KEYS.has(data.discKey) ? "m" : "s"}`}
-                sub={t("ath.offCareerBest")}
-                icon="ruler"
-                hint={t(
-                  FIELD_EVENT_KEYS.has(data.discKey)
-                    ? "ath.pbGapHintMetres"
-                    : "ath.pbGapHintSeconds",
+                {data.seasonBest && (
+                  <StatBlock
+                    label={
+                      data.seasonBestYear != null && data.seasonBestYear !== 2026
+                        ? t("ath.seasonBestIn", { year: data.seasonBestYear })
+                        : t("ath.seasonBest2026")
+                    }
+                    value={data.seasonBest}
+                    icon="target"
+                  />
                 )}
-              />
-            )}
-            {data.age != null && (
-              <StatBlock
-                label={t("ath.ageLabel")}
-                value={String(Math.round(data.age))}
-                icon="calendar"
-              />
-            )}
-            {/* Diamond League meetings only when there were some: a 0 for an
+                {data.worldRank != null && (
+                  <StatBlock
+                    label={t("ath.worldRank")}
+                    value={`#${data.worldRank}`}
+                    sub={t("ath.thisSeasonToplist")}
+                    icon="trophy"
+                  />
+                )}
+                {data.careerBest && (
+                  <StatBlock label={t("ath.careerBest")} value={data.careerBest} icon="trophy" />
+                )}
+                {data.pbGap != null && (
+                  <StatBlock
+                    label={t("ath.pbGap")}
+                    value={`${data.pbGap.toFixed(2)}${FIELD_EVENT_KEYS.has(data.discKey) ? "m" : "s"}`}
+                    sub={t("ath.offCareerBest")}
+                    icon="ruler"
+                    hint={t(
+                      FIELD_EVENT_KEYS.has(data.discKey)
+                        ? "ath.pbGapHintMetres"
+                        : "ath.pbGapHintSeconds",
+                    )}
+                  />
+                )}
+                {data.age != null && (
+                  <StatBlock
+                    label={t("ath.ageLabel")}
+                    value={String(Math.round(data.age))}
+                    icon="calendar"
+                  />
+                )}
+                {/* Diamond League meetings only when there were some: a 0 for an
                 athlete who never raced the circuit says nothing about them. */}
-            {(data.meetsCount ?? 0) > 0 && (
-              <StatBlock
-                label={t("ath.meetsThisSeason")}
-                value={String(data.meetsCount)}
-                sub={t("ath.dlMeetings")}
-                icon="grid"
-              />
-            )}
-            {data.racesThisSeason > 0 && (
-              <StatBlock
-                label={
-                  FIELD_EVENT_KEYS.has(data.discKey)
-                    ? t("ath.competitionsThisSeason")
-                    : t("ath.racesThisSeason")
-                }
-                value={String(data.racesThisSeason)}
-                sub={t("ath.allCompetitions")}
-                icon="grid"
-              />
-            )}
-            {data.daysSinceLast != null && (
-              <StatBlock
-                label={t("ath.lastCompeted")}
-                value={t("ath.daysAgo", { n: data.daysSinceLast })}
-                {...(data.lastRaceDate ? { sub: localizeDate(lang, data.lastRaceDate) } : {})}
-                icon="clock"
-              />
-            )}
-            {/* The same World Athletics score the in-field profile carries,
+                {(data.meetsCount ?? 0) > 0 && (
+                  <StatBlock
+                    label={t("ath.meetsThisSeason")}
+                    value={String(data.meetsCount)}
+                    sub={t("ath.dlMeetings")}
+                    icon="grid"
+                  />
+                )}
+                {data.racesThisSeason > 0 && (
+                  <StatBlock
+                    label={
+                      FIELD_EVENT_KEYS.has(data.discKey)
+                        ? t("ath.competitionsThisSeason")
+                        : t("ath.racesThisSeason")
+                    }
+                    value={String(data.racesThisSeason)}
+                    sub={t("ath.allCompetitions")}
+                    icon="grid"
+                  />
+                )}
+                {data.daysSinceLast != null && (
+                  <StatBlock
+                    label={t("ath.lastCompeted")}
+                    value={t("ath.daysAgo", { n: data.daysSinceLast })}
+                    {...(data.lastRaceDate ? { sub: localizeDate(lang, data.lastRaceDate) } : {})}
+                    icon="clock"
+                  />
+                )}
+                {/* The same World Athletics score the in-field profile carries,
                 and it lands harder here: it is the number that says how good
                 this athlete is in absolute terms, next to a page explaining
                 why they are not in the field. */}
-            {data.scoreContext && (
-              <StatBlock
-                label={t("ath.waScore")}
-                value={String(data.scoreContext.score)}
-                sub={t("ath.waScoreSub", {
-                  pct: Math.max(0.1, 100 - data.scoreContext.percentile).toFixed(1),
-                })}
-                icon="ruler"
-                hint={t("ath.waScoreHint")}
-              />
-            )}
-          </div>
-          {data.scoreContext && (
-            <p className="mt-4 max-w-md text-[11.5px] leading-snug text-muted-foreground">
-              {t("ath.percentileBefore", {
-                ord: ordinalIn(lang, Math.round(data.scoreContext.discPercentile)),
-                disc: discName(t, data.discKey, data.disc).toLowerCase(),
-              })}
-              <span className="nums">{data.scoreContext.discMedian}</span>
-              {t("ath.percentileAfter")}
-              {data.scoreContext.indoor && t("ath.setIndoors")}
-            </p>
+                {data.scoreContext && (
+                  <StatBlock
+                    label={t("ath.waScore")}
+                    value={String(data.scoreContext.score)}
+                    sub={t("ath.waScoreSub", {
+                      pct: Math.max(0.1, 100 - data.scoreContext.percentile).toFixed(1),
+                    })}
+                    icon="ruler"
+                    hint={t("ath.waScoreHint")}
+                  />
+                )}
+              </div>
+              {data.scoreContext && (
+                <p className="mt-4 max-w-md text-[11.5px] leading-snug text-muted-foreground">
+                  {t("ath.percentileBefore", {
+                    ord: ordinalIn(lang, Math.round(data.scoreContext.discPercentile)),
+                    disc: discName(t, data.discKey, data.disc).toLowerCase(),
+                  })}
+                  <span className="nums">{data.scoreContext.discMedian}</span>
+                  {t("ath.percentileAfter")}
+                  {data.scoreContext.indoor && t("ath.setIndoors")}
+                </p>
+              )}
+            </Panel>
           )}
-        </Panel>
 
-        {/* The season chart only when there are races to plot. */}
-        {data.history.length > 0 && (
-          <Panel
-            title={t("ath.realSeasonForm")}
-            subtitle={
-              data.historyCondensed
-                ? t("ath.seasonFormCondensed", { n: data.historyRaces ?? 0 })
-                : t("ath.seasonFormAll", { n: data.history.length })
-            }
-          >
-            <SeasonTrendChart history={data.history} year={data.historyYear} />
-          </Panel>
-        )}
-      </div>
+          {/* The season chart only when there are races to plot. */}
+          {hasSeasonChart && (
+            <Panel
+              title={t("ath.realSeasonForm")}
+              subtitle={seasonFormNote(
+                t,
+                data.history.length,
+                data.historyRaces,
+                data.historyYear,
+                data.historyCondensed,
+              )}
+            >
+              <SeasonTrendChart history={data.history} year={data.historyYear} />
+            </Panel>
+          )}
+        </div>
+      )}
 
       {/* The near-miss page gets the same analyst block as an in-field one.
           Withholding it made this look like a stub of the real profile,
@@ -796,11 +839,13 @@ function AthleteProfilePage() {
         {a.history.length > 0 && (
           <Panel
             title={t("ath.realSeasonForm")}
-            subtitle={
-              a.historyCondensed
-                ? t("ath.seasonFormCondensed", { n: a.historyRaces ?? 0 })
-                : t("ath.seasonFormAll", { n: a.history.length })
-            }
+            subtitle={seasonFormNote(
+              t,
+              a.history.length,
+              a.historyRaces,
+              a.historyYear,
+              a.historyCondensed,
+            )}
           >
             <SeasonTrendChart history={a.history} year={a.historyYear} />
           </Panel>

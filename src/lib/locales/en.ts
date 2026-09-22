@@ -234,6 +234,10 @@ export const en: Record<string, string> = {
   "country.relayNote":
     "Relay places were decided at the World Athletics Relays. The squad is who each nation actually ran there and at the 2025 World Championships, most-used first. The model does not rate relay teams: it is built on individual events, and the Diamond League has no relays.",
   "country.athletesNote": "{{n}} ranked this season, best first.",
+  "country.athletesNoteEntered":
+    "{{n}} ranked this season, best first, then the athletes entered at the championship who have no result this season.",
+  "country.athletesNoteEnteredOnly": "Entered at the championship, with no result this season.",
+  "country.noResultThisSeason": "No result in this event this season",
   "country.colAthlete": "Athlete",
   "country.colEvent": "Event",
   "country.colMark": "Best mark",
@@ -972,6 +976,10 @@ export const en: Record<string, string> = {
   "ath.realSeasonForm": "Real season form",
   "ath.seasonFormAll":
     "Every meeting this athlete has contested this season — {{n}} of them — indoors and out, not just the Diamond League. The competition record below counts finals only, so its totals differ.",
+  "ath.seasonFormAllIn":
+    "Every meeting this athlete contested in {{year}}, their latest season on record: {{n}} of them, indoors and out, not just the Diamond League. The competition record below counts finals only, so its totals differ.",
+  "ath.seasonFormCondensedIn":
+    "Their best mark in each month of {{year}}, their latest season on record. {{n}} races is too many to plot one by one, so every month they competed in is here, represented by its best result.",
   "ath.seasonFormCondensed":
     "Their best mark in each month. {{n}} races this season is too many to plot one by one, so every month they competed in is here, represented by its best result.",
   "ath.h2hTitle": "Head-to-head record",

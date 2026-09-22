@@ -108,7 +108,11 @@ function CountryBody({
   const shown = showAll ? matches : matches.slice(0, SHOWN);
   const hidden = matches.length - shown.length;
   // The three best of the season, by the same score the table is ordered on.
-  const best = c.athletes.slice(0, 3);
+  // Only ranked athletes: an entrant with no mark this season has no score to
+  // be among the best on.
+  const rankedAthletes = c.athletes.filter((a) => a.mark != null || a.score != null);
+  const ranked = rankedAthletes.length;
+  const best = rankedAthletes.slice(0, 3);
 
   // The whole page wears the nation's colours, not just a stripe of them: the
   // ground behind everything, the ambient blooms, the head band, the footer.
@@ -272,7 +276,15 @@ function CountryBody({
 
         <Panel
           title={t("country.athletes")}
-          subtitle={t("country.athletesNote", { n: c.athleteCount })}
+          subtitle={
+            // The list ends with the current championship's entrants who have
+            // no mark this season: counted with the athletes, never as ranked.
+            ranked === c.athletes.length
+              ? t("country.athletesNote", { n: ranked })
+              : ranked === 0
+                ? t("country.athletesNoteEnteredOnly")
+                : t("country.athletesNoteEntered", { n: ranked })
+          }
         >
           <div className="mb-3.5">
             <label className="sr-only" htmlFor="country-filter">
@@ -391,12 +403,25 @@ function AthleteRow({
           {discName(t, a.discKey, a.disc)}
         </Link>
       </td>
-      <td className="nums py-2.5 pl-2 text-right text-[13px] text-foreground sm:pl-3">
-        {a.mark ?? "—"}
-      </td>
-      <td className="nums py-2.5 pl-2 text-right text-[13px] font-semibold text-foreground sm:pl-3">
-        {a.score ?? "—"}
-      </td>
+      {a.mark == null && a.score == null ? (
+        // An entrant at the current championship with no mark this season:
+        // said in words rather than two dashes.
+        <td
+          colSpan={2}
+          className="py-2.5 pl-2 text-right text-[12px] text-muted-foreground sm:pl-3"
+        >
+          {t("country.noResultThisSeason")}
+        </td>
+      ) : (
+        <>
+          <td className="nums py-2.5 pl-2 text-right text-[13px] text-foreground sm:pl-3">
+            {a.mark ?? "—"}
+          </td>
+          <td className="nums py-2.5 pl-2 text-right text-[13px] font-semibold text-foreground sm:pl-3">
+            {a.score ?? "—"}
+          </td>
+        </>
+      )}
     </tr>
   );
 }

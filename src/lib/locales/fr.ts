@@ -236,6 +236,10 @@ export const fr: Record<string, string> = {
   "country.relayNote":
     "Les places en relais se sont jouées aux World Athletics Relays. L’équipe listée est celle que chaque nation a réellement alignée là-bas et aux Championnats du monde 2025, les plus utilisés d’abord. Le modèle n’évalue pas les équipes de relais : il repose sur les épreuves individuelles, et la Diamond League n’a pas de relais.",
   "country.athletesNote": "{{n}} classés cette saison, les meilleurs en premier.",
+  "country.athletesNoteEntered":
+    "{{n}} classés cette saison, les meilleurs en premier, puis les athlètes engagés au championnat qui n’ont aucun résultat cette saison.",
+  "country.athletesNoteEnteredOnly": "Engagés au championnat, sans résultat cette saison.",
+  "country.noResultThisSeason": "Aucun résultat dans cette épreuve cette saison",
   "country.colAthlete": "Athlète",
   "country.colEvent": "Épreuve",
   "country.colMark": "Meilleure performance",
@@ -980,6 +984,10 @@ export const fr: Record<string, string> = {
   "ath.realSeasonForm": "Forme réelle de la saison",
   "ath.seasonFormAll":
     "Toutes les compétitions disputées cette saison — {{n}} au total — en salle comme en plein air, pas seulement la Diamond League. Le palmarès ci-dessous ne compte que les finales, d’où des totaux différents.",
+  "ath.seasonFormAllIn":
+    "Toutes les compétitions disputées en {{year}}, sa dernière saison connue : {{n}} au total, en salle comme en plein air, pas seulement la Diamond League. Le palmarès ci-dessous ne compte que les finales, d’où des totaux différents.",
+  "ath.seasonFormCondensedIn":
+    "Sa meilleure performance de chaque mois en {{year}}, sa dernière saison connue. {{n}} courses, trop pour les afficher une à une : chaque mois disputé est représenté par son meilleur résultat.",
   "ath.seasonFormCondensed":
     "Sa meilleure performance de chaque mois. {{n}} courses cette saison, trop pour les afficher une à une : chaque mois disputé est représenté par son meilleur résultat.",
   "ath.h2hTitle": "Bilan des confrontations directes",
