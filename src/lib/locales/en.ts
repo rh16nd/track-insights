@@ -465,6 +465,7 @@ export const en: Record<string, string> = {
   "table.howLevel": "How level is this field?",
   "table.caption":
     "Projected field for the {{label}}: rank by season best, athlete, nationality, mark and chance of a podium",
+  "table.slideHint": "Slide the table sideways to see every column.",
   "table.colRankSr": " — rank by season best",
   "table.colAthlete": "Athlete",
   "table.colNat": "Nat",

@@ -634,6 +634,19 @@ html {
     radial-gradient(ellipse 900px 520px at 100% 8%, oklch(0.52 0.105 40 / 0.1), transparent 58%);
 }
 
+/* The page's ground as a reader actually sees it: --background plus what the
+   fixed glow-and-grain layer above adds on top of it. Measured on a phone
+   (2026-09-22): the token alone paints rgb(21,15,12) where the page reads
+   rgb(32,27,24), which is white at about 5%.
+
+   For the pinned columns of a sliding table (components/dl/table-scroll.tsx).
+   They have to paint an opaque ground, since the rest of the row passes
+   underneath them, and --background on its own made a visibly darker block
+   down the side of the table. */
+@utility bg-page-ground {
+  background-color: color-mix(in srgb, var(--background) 95%, white);
+}
+
 /* Bumped up again per the user ("the dashboard background feels stale/
    bland... a little grain, like the track's breaky rainy feel"): 0.06 was
    too subtle to actually read as texture once it wasn't backed by the

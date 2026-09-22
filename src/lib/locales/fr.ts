@@ -468,6 +468,7 @@ export const fr: Record<string, string> = {
   "table.howLevel": "Ce plateau est-il serré ?",
   "table.caption":
     "Plateau projeté du {{label}} : rang à la meilleure performance de la saison, athlète, nationalité, performance et chance de podium",
+  "table.slideHint": "Faites glisser le tableau pour voir toutes les colonnes.",
   "table.colRankSr": " — rang par meilleure performance de la saison",
   "table.colAthlete": "Athlète",
   "table.colNat": "Nat",

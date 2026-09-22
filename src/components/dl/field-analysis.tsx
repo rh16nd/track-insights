@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ProbabilityBar } from "@/components/dl/shell";
 import { BareFrame } from "@/components/dl/bare-frame";
 import { InfoTip } from "@/components/dl/info-tip";
+import { TableScroll, pinned } from "@/components/dl/table-scroll";
 import { ordinalIn, startNounKey, startVerbKey } from "@/lib/dl-data";
 import { localizeDate, localizeMonth } from "@/lib/dates";
 import { useT } from "@/lib/i18n";
@@ -64,7 +65,10 @@ export function FieldAnalysisBlock({
             </InfoTip>
           }
         >
-          <div className="relative overflow-x-auto">
+          <TableScroll
+            label={t("fa.gridCaption", { disc: discLabel, noun: t(startNounKey(isField)) })}
+            ground="page"
+          >
             <table className="border-collapse text-left">
               {/* A grid this shape is unreadable without a caption: every cell
                 is a win-loss record whose meaning depends on which athlete
@@ -76,7 +80,7 @@ export function FieldAnalysisBlock({
                 <tr>
                   <th
                     scope="col"
-                    className="label-caps sticky left-0 z-10 bg-card pb-2.5 pr-3 text-muted-foreground sm:pr-6"
+                    className="label-caps sticky left-0 z-10 pb-2.5 pr-6 text-muted-foreground group-data-[slid=true]:bg-page-ground group-data-[slid=true]:shadow-[1px_0_0_0_var(--border)]"
                   >
                     {t("table.colAthlete")}
                   </th>
@@ -107,18 +111,14 @@ export function FieldAnalysisBlock({
                   >
                     <th
                       scope="row"
-                      className="sticky left-0 z-10 whitespace-nowrap bg-card py-2.5 pr-3 text-left text-[13px] font-medium text-foreground sm:pr-6"
+                      className="sticky left-0 z-10 whitespace-nowrap py-2.5 pr-6 text-left text-[13px] font-medium text-foreground group-data-[slid=true]:bg-page-ground group-data-[slid=true]:shadow-[1px_0_0_0_var(--border)]"
                     >
-                      {/* The column stays pinned while the grid scrolls; on a
-                          phone it holds surnames, as the column heads do, so
-                          the grid keeps most of the screen. */}
                       <Link
                         to="/athlete/$discKey/$name"
                         params={{ discKey, name: row.name }}
                         className="transition-colors hover:text-terracotta-strong hover:underline"
                       >
-                        <span className="sm:hidden">{surname(row.name)}</span>
-                        <span className="hidden sm:inline">{row.name}</span>
+                        {row.name}
                       </Link>
                     </th>
                     {row.cells.map((cell, j) => (
@@ -152,7 +152,7 @@ export function FieldAnalysisBlock({
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
           <p className="mt-3 max-w-3xl text-[11.5px] leading-relaxed text-muted-foreground">
             {t("fa.blankCellNote", { verb: t(startVerbKey(isField)) })}
           </p>
@@ -166,28 +166,27 @@ export function FieldAnalysisBlock({
           subtitle={t("fa.separatesSubtitle")}
           className="mt-14 border-t border-border pt-12"
         >
-          {/* On a phone: the athlete, the top-3 average and the podium rate, with
-              the steadiness, races and best month under the name. */}
-          <div className="relative overflow-x-auto">
-            <table className="w-full border-collapse text-left sm:min-w-[620px]">
+          <TableScroll label={t("fa.separatesCaption", { disc: discLabel })} ground="page">
+            <table className="w-full min-w-[620px] border-collapse text-left">
               <caption className="sr-only">{t("fa.separatesCaption", { disc: discLabel })}</caption>
               <thead>
                 <tr className="label-caps border-b border-border text-muted-foreground">
-                  <th scope="col" className="pb-2 pr-2 font-semibold">
+                  {/* The name stays put while the measures slide past it. */}
+                  <th
+                    scope="col"
+                    className={`w-32 pb-2 pr-2 font-semibold sm:w-auto ${pinned("group-data-[slid=true]:bg-page-ground", "left-0", true)}`}
+                  >
                     {t("table.colAthlete")}
                   </th>
-                  <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-28 sm:pl-3">
-                    <span className="inline-flex flex-wrap items-center justify-end gap-1 sm:flex-nowrap sm:whitespace-nowrap">
+                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                    <span className="inline-flex items-center gap-1 whitespace-nowrap">
                       {t("fa.colTop3")}
                       <InfoTip label={t("figure.about", { label: t("fa.colTop3") })}>
                         {t("fa.colTop3Hint")}
                       </InfoTip>
                     </span>
                   </th>
-                  <th
-                    scope="col"
-                    className="hidden w-28 pb-2 pl-3 text-right font-semibold sm:table-cell"
-                  >
+                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
                     <span className="inline-flex items-center gap-1 whitespace-nowrap">
                       {t("fa.colSteadiness")}
                       <InfoTip label={t("figure.about", { label: t("fa.colSteadiness") })}>
@@ -195,10 +194,7 @@ export function FieldAnalysisBlock({
                       </InfoTip>
                     </span>
                   </th>
-                  <th
-                    scope="col"
-                    className="hidden w-28 pb-2 pl-3 text-right font-semibold sm:table-cell"
-                  >
+                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
                     <span className="inline-flex items-center gap-1 whitespace-nowrap">
                       {t(isField ? "fa.colComps" : "fa.colRaces")}
                       <InfoTip
@@ -210,21 +206,18 @@ export function FieldAnalysisBlock({
                       </InfoTip>
                     </span>
                   </th>
-                  <th
-                    scope="col"
-                    className="pr-1.5 pb-2 pl-2 text-right font-semibold sm:w-28 sm:pr-0 sm:pl-3"
-                  >
-                    <span className="inline-flex flex-wrap items-center justify-end gap-1 sm:flex-nowrap sm:whitespace-nowrap">
+                  <th scope="col" className="w-28 pb-2 pl-3 text-right font-semibold">
+                    <span className="inline-flex items-center gap-1 whitespace-nowrap">
                       {t("fa.colPodium")}
                       <InfoTip label={t("figure.about", { label: t("fa.colPodium") })}>
                         {t("fa.colPodiumHint")}
                       </InfoTip>
                     </span>
                   </th>
-                  <th
-                    scope="col"
-                    className="hidden w-28 pr-1.5 pb-2 pl-3 text-right font-semibold sm:table-cell"
-                  >
+                  {/* pr-1.5 for the info button, whose -m-1.5 otherwise pokes
+                      6px past the table and leaves it scrollable by that much
+                      on a screen it already fits. */}
+                  <th scope="col" className="w-28 pr-1.5 pb-2 pl-3 text-right font-semibold">
                     <span className="inline-flex items-center gap-1 whitespace-nowrap">
                       {t("fa.colPeaked")}
                       <InfoTip label={t("figure.about", { label: t("fa.colPeaked") })}>
@@ -243,7 +236,9 @@ export function FieldAnalysisBlock({
                       className="stagger-item transition-colors hover:bg-secondary/40"
                       style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
                     >
-                      <td className="py-2.5 pr-2 text-[13px] font-medium text-foreground">
+                      <td
+                        className={`py-2.5 pr-2 text-[13px] font-medium text-foreground ${pinned("group-data-[slid=true]:bg-page-ground", "left-0", true)}`}
+                      >
                         <Link
                           to="/athlete/$discKey/$name"
                           params={{ discKey, name }}
@@ -251,40 +246,21 @@ export function FieldAnalysisBlock({
                         >
                           {name}
                         </Link>
-                        <span className="mt-0.5 flex flex-wrap gap-x-2 text-[11.5px] font-normal text-muted-foreground sm:hidden">
-                          {c?.consistency != null && (
-                            <span>
-                              {t("fa.colSteadiness")}{" "}
-                              <span className="nums">{c.consistency.toFixed(2)}%</span>
-                            </span>
-                          )}
-                          <span>
-                            {t(isField ? "fa.colComps" : "fa.colRaces")}{" "}
-                            <span className="nums">
-                              {c?.seasonRaces ?? 0} / {c?.races ?? 0}
-                            </span>
-                          </span>
-                          {c?.bestMonth && (
-                            <span>
-                              {t("fa.colPeaked")} {localizeMonth(lang, c.bestMonth)}
-                            </span>
-                          )}
-                        </span>
                       </td>
-                      <td className="nums py-2.5 pl-2 text-right text-[13px] font-semibold text-foreground sm:pl-3">
+                      <td className="nums py-2.5 pl-3 text-right text-[13px] font-semibold text-foreground">
                         {c?.top3Average != null ? formatMarkish(c.top3Average, isField) : "—"}
                       </td>
-                      <td className="nums hidden py-2.5 pl-3 text-right text-[13px] text-muted-foreground sm:table-cell">
+                      <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
                         {c?.consistency != null ? `${c.consistency.toFixed(2)}%` : "—"}
                       </td>
-                      <td className="nums hidden py-2.5 pl-3 text-right text-[13px] text-muted-foreground sm:table-cell">
+                      <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
                         {c?.seasonRaces ?? 0}
                         <span className="text-muted-foreground"> / {c?.races ?? 0}</span>
                       </td>
-                      <td className="nums py-2.5 pl-2 text-right text-[13px] text-muted-foreground sm:pl-3">
+                      <td className="nums py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
                         {c?.podiumRate != null ? `${c.podiumRate}%` : "—"}
                       </td>
-                      <td className="hidden py-2.5 pl-3 text-right text-[13px] text-muted-foreground sm:table-cell">
+                      <td className="py-2.5 pl-3 text-right text-[13px] text-muted-foreground">
                         {c?.bestMonth ? localizeMonth(lang, c.bestMonth) : "—"}
                       </td>
                     </tr>
@@ -292,7 +268,7 @@ export function FieldAnalysisBlock({
                 })}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
         </BareFrame>
       )}
     </>

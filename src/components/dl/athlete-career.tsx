@@ -1,4 +1,5 @@
 import { useT } from "@/lib/i18n";
+import { TableScroll } from "./table-scroll";
 import { Panel } from "@/components/dl/shell";
 import type { AthleteCareer, HonourGroup } from "@/lib/dl-data";
 
@@ -55,10 +56,8 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
       )}
 
       {decorated.length > 0 && (
-        // On a phone: the championship and its three medal columns, closer
-        // together; the entries total from sm up.
-        <div className="mt-6 overflow-x-auto">
-          <table className="w-full border-collapse text-left sm:min-w-[440px]">
+        <TableScroll label={t("car.honours")} className="mt-6">
+          <table className="w-full min-w-[440px] border-collapse text-left">
             <caption className="label-caps pb-2 text-left text-muted-foreground">
               {t("car.honours")}
             </caption>
@@ -67,19 +66,16 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
                 <th scope="col" className="pb-2 pr-2 font-semibold">
                   {t("car.colChampionship")}
                 </th>
-                <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-14 sm:pl-3">
+                <th scope="col" className="w-14 pb-2 pl-3 text-right font-semibold">
                   {t("car.colGold")}
                 </th>
-                <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-14 sm:pl-3">
+                <th scope="col" className="w-14 pb-2 pl-3 text-right font-semibold">
                   {t("car.colSilver")}
                 </th>
-                <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-14 sm:pl-3">
+                <th scope="col" className="w-14 pb-2 pl-3 text-right font-semibold">
                   {t("car.colBronze")}
                 </th>
-                <th
-                  scope="col"
-                  className="hidden w-20 pb-2 pl-3 text-right font-semibold sm:table-cell"
-                >
+                <th scope="col" className="w-20 pb-2 pl-3 text-right font-semibold">
                   {t("car.colEntries")}
                 </th>
               </tr>
@@ -90,7 +86,7 @@ export function AthleteCareerBlock({ career }: { career: AthleteCareer }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </TableScroll>
       )}
 
       {personalBests.length > 0 && (
@@ -120,10 +116,10 @@ function HonourRow({ honour }: { honour: HonourGroup }) {
   return (
     <tr className="transition-colors hover:bg-secondary/40">
       <td className="py-2.5 pr-2 text-[13px] text-foreground">{honour.category ?? "Other"}</td>
-      <td className="nums py-2.5 pl-2 text-right text-[13px] sm:pl-3">{cell(honour.gold, true)}</td>
-      <td className="nums py-2.5 pl-2 text-right text-[13px] sm:pl-3">{cell(honour.silver)}</td>
-      <td className="nums py-2.5 pl-2 text-right text-[13px] sm:pl-3">{cell(honour.bronze)}</td>
-      <td className="nums hidden py-2.5 pl-3 text-right text-[12.5px] text-muted-foreground sm:table-cell">
+      <td className="nums py-2.5 pl-3 text-right text-[13px]">{cell(honour.gold, true)}</td>
+      <td className="nums py-2.5 pl-3 text-right text-[13px]">{cell(honour.silver)}</td>
+      <td className="nums py-2.5 pl-3 text-right text-[13px]">{cell(honour.bronze)}</td>
+      <td className="nums py-2.5 pl-3 text-right text-[12.5px] text-muted-foreground">
         {honour.results.length}
       </td>
     </tr>

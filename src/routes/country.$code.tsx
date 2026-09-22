@@ -5,6 +5,7 @@ import { pageHead } from "@/lib/seo";
 import { Shell, Panel, PanelSkeleton, ErrorPanel } from "@/components/dl/shell";
 import { NatFlag } from "@/components/dl/nat-flag";
 import { AthleteCard } from "@/components/dl/athlete-card";
+import { TableScroll, pinned } from "@/components/dl/table-scroll";
 import { BackButton } from "@/components/dl/back-button";
 import { useCountry } from "@/hooks/useCountry";
 import { countryPalette, flagFile } from "@/lib/country-theme";
@@ -302,22 +303,25 @@ function CountryBody({
               className="h-9 w-full max-w-xs rounded-full border border-border bg-card px-3.5 text-[13px] text-foreground placeholder:text-muted-foreground"
             />
           </div>
-          {/* On a phone: the athlete with their event under the name, then the
-              mark and the score. */}
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left sm:min-w-[520px]">
+          {/* Every column on a phone too, with the name pinned while the rest
+              slides. */}
+          <TableScroll label={t("country.athletes")}>
+            <table className="w-full min-w-[520px] border-collapse text-left">
               <thead>
                 <tr className="label-caps border-b border-border text-muted-foreground">
-                  <th scope="col" className="pb-2 pr-2 font-semibold">
+                  <th
+                    scope="col"
+                    className={`w-32 pb-2 pr-2 font-semibold sm:w-auto ${pinned("group-data-[slid=true]:bg-card", "left-0", true)}`}
+                  >
                     {t("country.colAthlete")}
                   </th>
-                  <th scope="col" className="hidden pb-2 pl-3 font-semibold sm:table-cell">
+                  <th scope="col" className="pb-2 pl-3 font-semibold">
                     {t("country.colEvent")}
                   </th>
-                  <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-24 sm:pl-3">
+                  <th scope="col" className="w-24 pb-2 pl-3 text-right font-semibold">
                     {t("country.colMark")}
                   </th>
-                  <th scope="col" className="pb-2 pl-2 text-right font-semibold sm:w-20 sm:pl-3">
+                  <th scope="col" className="w-20 pb-2 pl-3 text-right font-semibold">
                     {t("country.colScore")}
                   </th>
                 </tr>
@@ -328,7 +332,7 @@ function CountryBody({
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
           {matches.length === 0 && (
             <p className="mt-3 text-[12.5px] text-muted-foreground">
               {t("country.noMatch", { query: filter.trim() })}
@@ -376,7 +380,9 @@ function AthleteRow({
       className="stagger-item transition-colors hover:bg-secondary/40"
       style={{ "--stagger-i": Math.min(i, 12) } as CSSProperties}
     >
-      <td className="py-2.5 pr-2 text-[13px]">
+      <td
+        className={`py-2.5 pr-2 text-[13px] ${pinned("group-data-[slid=true]:bg-card", "left-0", true)}`}
+      >
         <Link
           to="/athlete/$discKey/$name"
           params={{ discKey: a.discKey, name: a.name }}
@@ -384,15 +390,8 @@ function AthleteRow({
         >
           {a.name}
         </Link>
-        <Link
-          to="/discipline/$discKey"
-          params={{ discKey: a.discKey }}
-          className="mt-0.5 block text-[12px] text-muted-foreground transition-colors hover:text-terracotta-strong hover:underline sm:hidden"
-        >
-          {discName(t, a.discKey, a.disc)}
-        </Link>
       </td>
-      <td className="hidden py-2.5 pl-3 text-[13px] text-muted-foreground sm:table-cell">
+      <td className="py-2.5 pl-3 text-[13px] text-muted-foreground">
         {/* Every event has a discipline page, the hammer and the 10,000m
             included since 2026-09-15. */}
         <Link
@@ -408,16 +407,16 @@ function AthleteRow({
         // said in words rather than two dashes.
         <td
           colSpan={2}
-          className="py-2.5 pl-2 text-right text-[12px] text-muted-foreground sm:pl-3 sm:whitespace-nowrap"
+          className="py-2.5 pl-3 text-right text-[12px] whitespace-nowrap text-muted-foreground"
         >
           {t("country.noResultThisSeason")}
         </td>
       ) : (
         <>
-          <td className="nums py-2.5 pl-2 text-right text-[13px] text-foreground sm:pl-3">
+          <td className="nums py-2.5 pl-3 text-right text-[13px] text-foreground">
             {a.mark ?? "—"}
           </td>
-          <td className="nums py-2.5 pl-2 text-right text-[13px] font-semibold text-foreground sm:pl-3">
+          <td className="nums py-2.5 pl-3 text-right text-[13px] font-semibold text-foreground">
             {a.score ?? "—"}
           </td>
         </>

@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import type { WorldRankings } from "@/lib/dl-data";
 import { chanceLabel, compareEvents, discName } from "@/lib/dl-data";
 import { BareFrame } from "./bare-frame";
+import { TableScroll, pinned } from "./table-scroll";
 import { NatFlag } from "./nat-flag";
 import { InfoTip } from "./info-tip";
 import { useT } from "@/lib/i18n";
@@ -40,6 +41,10 @@ export function WorldRankingTable({
   onlyId?: string | undefined;
 }) {
   const { t, lang } = useT();
+  // This table sits bare on the page, so its pinned columns carry the page's
+  // own ground. `left-10` is the rank column's width.
+  const pin = pinned("group-data-[slid=true]:bg-page-ground");
+  const pinName = pinned("group-data-[slid=true]:bg-page-ground", "left-10", true);
   // Points first, not the model. The page promises "the world's best", and
   // points is the ordering that actually answers that — it ranks the marks.
   // The model rating weighs the whole season and is one tap away, labelled
@@ -160,46 +165,41 @@ export function WorldRankingTable({
           ) : undefined
         }
       >
-        {/* On a phone the table fits the screen: the place, the athlete, the
-            points and the rating, with the nation, mark and meets under the name. */}
-        <div className="relative overflow-x-auto">
-          <table className="w-full sm:min-w-[720px]">
+        {/* Every column on a phone too, reached by sliding the table. */}
+        <TableScroll label={t("rankings.caption", { label })} ground="page">
+          <table className="w-full min-w-[720px]">
             <caption className="sr-only">{t("rankings.caption", { label })}</caption>
             <thead>
               <tr className="label-caps text-muted-foreground">
-                <th scope="col" className="w-8 pb-3 text-left font-semibold sm:w-10">
+                {/* The place and the name stay put while the rest slides, so
+                    a rating at the far end still belongs to somebody. */}
+                <th scope="col" className={`w-10 pb-3 text-left font-semibold ${pin}`}>
                   #
                 </th>
-                <th scope="col" className="pb-3 pl-3 text-left font-semibold">
+                <th
+                  scope="col"
+                  className={`w-32 pb-3 pl-3 text-left font-semibold ${pinName} sm:w-auto`}
+                >
                   {t("table.colAthlete")}
                 </th>
-                <th
-                  scope="col"
-                  className="hidden w-16 pb-3 pl-4 text-left font-semibold sm:table-cell"
-                >
+                <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
                   {t("table.colNat")}
                 </th>
-                <th
-                  scope="col"
-                  className="hidden w-24 pb-3 pl-4 text-right font-semibold sm:table-cell"
-                >
+                <th scope="col" className="w-24 pb-3 pl-4 text-right font-semibold">
                   {t("rankings.colMark")}
                 </th>
                 <th
                   scope="col"
-                  className={`pb-3 pl-3 text-right font-semibold sm:w-24 sm:pl-6 ${shown === "points" ? "text-foreground" : ""}`}
+                  className={`w-24 pb-3 pl-6 text-right font-semibold ${shown === "points" ? "text-foreground" : ""}`}
                 >
-                  <span className="inline-flex flex-wrap items-center justify-end gap-1">
+                  <span className="inline-flex items-center justify-end gap-1">
                     {t("rankings.colPoints")}
                     <InfoTip label={t("figure.about", { label: t("rankings.colPoints") })}>
                       {t("rankings.pointsHint")}
                     </InfoTip>
                   </span>
                 </th>
-                <th
-                  scope="col"
-                  className="hidden w-24 pb-3 pl-6 text-right font-semibold sm:table-cell"
-                >
+                <th scope="col" className="w-24 pb-3 pl-6 text-right font-semibold">
                   <span className="inline-flex items-center justify-end gap-1">
                     {t("rankings.colMeets")}
                     <InfoTip label={t("figure.about", { label: t("rankings.colMeets") })}>
@@ -210,9 +210,9 @@ export function WorldRankingTable({
                 {modelAvailable && (
                   <th
                     scope="col"
-                    className={`pr-1.5 pb-3 pl-3 text-right font-semibold sm:w-40 sm:pl-6 ${shown === "model" ? "text-foreground" : ""}`}
+                    className={`w-40 pr-1.5 pb-3 pl-6 text-right font-semibold ${shown === "model" ? "text-foreground" : ""}`}
                   >
-                    <span className="inline-flex flex-wrap items-center justify-end gap-1">
+                    <span className="inline-flex items-center justify-end gap-1">
                       {ratingLabel}
                       <InfoTip label={t("figure.about", { label: ratingLabel })}>
                         {t("rankings.ratingHint")}
@@ -229,10 +229,12 @@ export function WorldRankingTable({
                   className="stagger-item transition-colors hover:bg-secondary/40"
                   style={{ "--stagger-i": i } as CSSProperties}
                 >
-                  <td className="nums py-3 pr-1 text-[13px] font-semibold text-muted-foreground sm:pr-2">
+                  <td
+                    className={`nums py-3 pr-2 text-[13px] font-semibold text-muted-foreground ${pin}`}
+                  >
                     {r.rank}
                   </td>
-                  <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
+                  <td className={`py-3 pl-3 text-[13.5px] font-medium text-foreground ${pinName}`}>
                     {r.profileUrl ? (
                       <Link
                         to="/athlete/$discKey/$name"
@@ -244,28 +246,15 @@ export function WorldRankingTable({
                     ) : (
                       r.name
                     )}
-                    <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-normal text-muted-foreground sm:hidden">
-                      <NatFlag nat={r.nat ?? "—"} />
-                      <span className="nums text-foreground">{r.mark ?? "—"}</span>
-                      {r.racesOnRecord != null && (
-                        <span
-                          className={r.racesOnRecord <= 2 ? "font-semibold text-foreground" : ""}
-                        >
-                          {r.racesOnRecord === 1
-                            ? t("rankings.meetsOne")
-                            : t("rankings.meetsMany", { n: r.racesOnRecord })}
-                        </span>
-                      )}
-                    </span>
                   </td>
-                  <td className="hidden py-3 pl-4 sm:table-cell">
+                  <td className="py-3 pl-4">
                     <NatFlag nat={r.nat ?? "—"} />
                   </td>
-                  <td className="nums hidden py-3 pl-4 text-right text-[13.5px] font-medium text-foreground sm:table-cell">
+                  <td className="nums py-3 pl-4 text-right text-[13.5px] font-medium text-foreground">
                     {r.mark ?? "—"}
                   </td>
                   <td
-                    className={`nums py-3 pl-3 text-right text-[13px] sm:pl-6 ${shown === "points" ? "font-semibold text-foreground" : "text-muted-foreground"}`}
+                    className={`nums py-3 pl-6 text-right text-[13px] ${shown === "points" ? "font-semibold text-foreground" : "text-muted-foreground"}`}
                   >
                     {r.score ?? "—"}
                   </td>
@@ -275,7 +264,7 @@ export function WorldRankingTable({
                       purpose: no new token to contrast-check, and it reads
                       the same to anyone who cannot separate the two hues. */}
                   <td
-                    className={`nums hidden py-3 pl-6 text-right text-[13px] sm:table-cell ${
+                    className={`nums py-3 pl-6 text-right text-[13px] ${
                       (r.racesOnRecord ?? 9) <= 2
                         ? "font-semibold text-foreground"
                         : "text-muted-foreground"
@@ -284,9 +273,9 @@ export function WorldRankingTable({
                     {r.racesOnRecord ?? "—"}
                   </td>
                   {modelAvailable && (
-                    <td className="py-3 pl-3 sm:pl-6">
+                    <td className="py-3 pl-6">
                       <div className="flex items-center justify-end gap-2.5">
-                        <span className="hidden h-1.5 w-20 overflow-hidden rounded-full bg-secondary sm:block">
+                        <span className="block h-1.5 w-20 overflow-hidden rounded-full bg-secondary">
                           <span
                             className="block h-full rounded-full"
                             style={{
@@ -310,7 +299,7 @@ export function WorldRankingTable({
               ))}
             </tbody>
           </table>
-        </div>
+        </TableScroll>
       </BareFrame>
     </>
   );

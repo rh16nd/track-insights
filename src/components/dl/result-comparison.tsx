@@ -5,6 +5,7 @@ import { Panel } from "./shell";
 import { useT } from "@/lib/i18n";
 import { chanceLabel, discName, ordinalIn } from "@/lib/dl-data";
 import { NatFlag } from "./nat-flag";
+import { TableScroll, pinned } from "./table-scroll";
 
 /* The result of a Final read against the model's FROZEN pre-final call.
  *
@@ -135,39 +136,34 @@ export function ResultComparison({ current }: { current: Discipline }) {
       <p className="mb-3 max-w-2xl text-[12px] leading-snug text-muted-foreground">
         {t("table.resultNote")}
       </p>
-      {/* On a phone the table fits the card: the finish, the athlete (with
-          nation and result under the name) and the model's call, with how far
-          off it was under the call. */}
-      <div className="relative overflow-x-auto">
-        <table className="w-full sm:min-w-[680px]">
+      <TableScroll label={t("table.resultCaption", { label })}>
+        <table className="w-full min-w-[680px]">
           <caption className="sr-only">{t("table.resultCaption", { label })}</caption>
           <thead>
             <tr className="label-caps text-muted-foreground">
-              <th scope="col" className="w-9 pb-3 text-left font-semibold sm:w-12">
+              {/* The finish and the name stay put while the rest slides. */}
+              <th
+                scope="col"
+                className={`w-12 pb-3 text-left font-semibold ${pinned("group-data-[slid=true]:bg-card")}`}
+              >
                 {t("table.colFinish")}
               </th>
-              <th scope="col" className="pb-3 pl-3 text-left font-semibold">
+              <th
+                scope="col"
+                className={`w-32 pb-3 pl-3 text-left font-semibold sm:w-auto ${pinned("group-data-[slid=true]:bg-card", "left-12", true)}`}
+              >
                 {t("table.colAthlete")}
               </th>
-              <th
-                scope="col"
-                className="hidden w-16 pb-3 pl-4 text-left font-semibold sm:table-cell"
-              >
+              <th scope="col" className="w-16 pb-3 pl-4 text-left font-semibold">
                 {t("table.colNat")}
               </th>
-              <th
-                scope="col"
-                className="hidden w-24 pb-3 pl-4 text-right font-semibold sm:table-cell"
-              >
+              <th scope="col" className="w-24 pb-3 pl-4 text-right font-semibold">
                 {t("table.colResult")}
               </th>
-              <th scope="col" className="pb-3 pl-3 text-left font-semibold sm:w-44 sm:pl-6">
+              <th scope="col" className="w-44 pb-3 pl-6 text-left font-semibold">
                 {t("table.colModelCall")}
               </th>
-              <th
-                scope="col"
-                className="hidden w-28 pb-3 pl-6 text-left font-semibold sm:table-cell"
-              >
+              <th scope="col" className="w-28 pb-3 pl-6 text-left font-semibold">
                 {t("table.colVsProjected")}
               </th>
             </tr>
@@ -179,10 +175,12 @@ export function ResultComparison({ current }: { current: Discipline }) {
                 className="stagger-item transition-colors hover:bg-secondary/40"
                 style={{ "--stagger-i": i } as CSSProperties}
               >
-                <td className="py-3 pr-2">
+                <td className={`py-3 pr-2 ${pinned("group-data-[slid=true]:bg-card")}`}>
                   <FinishBadge row={r} />
                 </td>
-                <td className="py-3 pl-3 text-[13.5px] font-medium text-foreground">
+                <td
+                  className={`py-3 pl-3 text-[13.5px] font-medium text-foreground ${pinned("group-data-[slid=true]:bg-card", "left-12", true)}`}
+                >
                   {r.hasPage ? (
                     <Link
                       to="/athlete/$discKey/$name"
@@ -201,39 +199,28 @@ export function ResultComparison({ current }: { current: Discipline }) {
                       {r.name}
                     </a>
                   )}
-                  <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] font-normal text-muted-foreground sm:hidden">
-                    <NatFlag nat={r.nat} />
-                    {r.status === "finished" ? (
-                      <span className="nums text-foreground">{r.mark}</span>
-                    ) : (
-                      <span className="label-caps">{r.placeLabel}</span>
-                    )}
-                  </span>
                 </td>
-                <td className="hidden py-3 pl-4 sm:table-cell">
+                <td className="py-3 pl-4">
                   <NatFlag nat={r.nat} />
                 </td>
-                <td className="nums hidden py-3 pl-4 text-right text-[13.5px] font-medium text-foreground sm:table-cell">
+                <td className="nums py-3 pl-4 text-right text-[13.5px] font-medium text-foreground">
                   {r.status === "finished" ? (
                     r.mark
                   ) : (
                     <span className="label-caps text-muted-foreground">{r.placeLabel}</span>
                   )}
                 </td>
-                <td className="py-3 pl-3 text-[12.5px] sm:pl-6">
+                <td className="py-3 pl-6 text-[12.5px]">
                   <ModelCall row={r} />
-                  <span className="mt-1 block sm:hidden">
-                    <VerdictCell row={r} />
-                  </span>
                 </td>
-                <td className="hidden py-3 pl-6 text-[12.5px] sm:table-cell">
+                <td className="py-3 pl-6 text-[12.5px]">
                   <VerdictCell row={r} />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
     </Panel>
   );
 }
