@@ -26,10 +26,11 @@ function goTo(id: string) {
 /** The landing's menu: a floating glass pill, fixed at the top as Terra's is.
  *
  * Its three links keep the reader on the landing and scroll to the section
- * about each page (the user, 2026-09-21): Dashboard to what the site shows,
- * the championship to its call, How it works to the numbers behind the model.
- * The pages themselves are reached from those sections, the closing band and
- * the footer.
+ * about each page (the user, 2026-09-21): How it works to the numbers behind
+ * the model, the championship to its call, Dashboard to what the site shows.
+ * They are listed in page order, so reordering the landing means reordering
+ * them too. The pages themselves are reached from those sections, the closing
+ * band and the footer.
  *
  * On a phone the links don't fit beside the logo, so they sit behind a menu
  * button. */
@@ -43,10 +44,12 @@ export function LandingNav({
   const panelId = useId();
   const wrapRef = useRef<HTMLDivElement>(null);
 
+  // In page order, so the menu reads as a table of contents rather than the
+  // reverse of what is below it. Reordered with the page on 2026-09-26.
   const links = [
-    { id: LANDING_SECTIONS.features, label: t("nav.dashboard") },
-    { id: LANDING_SECTIONS.championship, label: t(championshipNavKey ?? "nav.championship") },
     { id: LANDING_SECTIONS.numbers, label: t("nav.howItWorks") },
+    { id: LANDING_SECTIONS.championship, label: t(championshipNavKey ?? "nav.championship") },
+    { id: LANDING_SECTIONS.features, label: t("nav.dashboard") },
   ];
 
   const pick = (id: string) => (e: MouseEvent<HTMLAnchorElement>) => {
