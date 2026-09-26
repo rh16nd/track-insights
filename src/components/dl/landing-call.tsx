@@ -38,6 +38,12 @@ export function LandingCall({
   countdownLabel: string;
 }) {
   const { t, lang } = useT();
+  // Only the favourite cards read /api/championship (~366 KB), so they wait until
+  // the section is nearly on screen. Everything above them -- eyebrow, heading,
+  // lede and the CTA -- runs off the 405-byte summary and paints immediately.
+  // That is why the CTA sits ABOVE the cards: on a phone the skeleton is one
+  // column and reserves 636px, which used to push the only link to /championship
+  // that far below the copy that earns it.
   const { ref, inView } = useInView<HTMLElement>(0.05);
   const theme = championshipTheme(summary?.theme);
   // A championship with no page of its own (the Diamond League) has no page
@@ -123,9 +129,7 @@ export function LandingCall({
           {t("landing.call.lede", { city: summary?.city ?? "" })}
         </p>
 
-        <div className="mt-12">{inView ? <Favourites /> : <FavouritesSkeleton />}</div>
-
-        <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">
           <Link
             to="/championship"
             className="inline-flex items-center gap-2 rounded-full bg-[var(--terracotta)] px-6 py-3.5 text-[15px] font-semibold text-[var(--primary-foreground)] transition-transform hover:-translate-y-0.5 active:scale-[0.98]"
@@ -147,6 +151,8 @@ export function LandingCall({
             {t("landing.call.graded")}
           </span>
         </div>
+
+        <div className="mt-10">{inView ? <Favourites /> : <FavouritesSkeleton />}</div>
       </div>
     </section>
   );
