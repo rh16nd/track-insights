@@ -1149,6 +1149,27 @@ export const fr: Record<string, string> = {
   "landing.call.cta": "Voir tout le pronostic",
   "landing.call.graded": "Chaque finale est notée sur la page Résultats une fois disputée.",
   "landing.call.error": "Impossible de charger le pronostic.",
+  // La liste de diffusion, ajoutée le 26/09/2026. Voir en.ts pour la règle :
+  // aucune fréquence chiffrée, et la coupure d’octobre à avril est annoncée d’avance.
+  "signup.eyebrow": "Avant le prochain championnat",
+  "signup.title": "Recevez le pronostic **avant le départ**",
+  "signup.lede":
+    "Un e-mail quand le pronostic du modèle sur le prochain championnat est publié, avec ce qu’il a vu juste et ce qu’il a manqué au précédent.",
+  "signup.offSeason":
+    "L’athlétisme se met en sommeil d’octobre à avril : comptez quelques e-mails par an, et aucun entre-temps.",
+  "signup.emailLabel": "Votre e-mail",
+  "signup.emailPlaceholder": "vous@exemple.com",
+  "signup.submit": "Recevoir le pronostic",
+  "signup.sending": "Inscription…",
+  "signup.confirmTitle": "Presque — regardez votre boîte de réception.",
+  "signup.confirmBody":
+    "Un e-mail pour confirmer. Vous ne serez inscrit qu’une fois le lien cliqué.",
+  "signup.alreadyTitle": "Vous êtes déjà inscrit.",
+  "signup.alreadyBody": "Rien n’a changé, et aucun nouvel e-mail ne part.",
+  "signup.invalid": "Cette adresse ne semble pas valide.",
+  "signup.error": "L’inscription n’a pas abouti. Réessayez dans un instant.",
+  "signup.unsubscribe": "Un clic pour se désinscrire, à tout moment.",
+  "signup.privacy": "Votre adresse va à Buttondown, l’outil de liste, et nulle part ailleurs.",
   "podium.strongestCall": "Le mieux évalué",
   "podium.rating": "Évaluation du modèle",
   "podium.sb": "MPS {{mark}}",

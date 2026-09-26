@@ -1138,6 +1138,28 @@ export const en: Record<string, string> = {
   "landing.call.cta": "See the full call",
   "landing.call.graded": "Each final is graded on the Results page once it's run.",
   "landing.call.error": "The call could not be loaded.",
+  // The mailing list, added 2026-09-26. The promise has to survive the off-season:
+  // athletics is quiet October to April, and a reader who is told about the gap
+  // does not read the silence as abandonment. No frequency is claimed beyond
+  // "a handful", because nobody has counted.
+  "signup.eyebrow": "Before the next championship",
+  "signup.title": "Get the call **before the gun**",
+  "signup.lede":
+    "One email when the model's call on the next championship goes up, with what it got right and what it missed at the last one.",
+  "signup.offSeason":
+    "Athletics goes quiet from October to April, so expect a handful of emails a year and none at all in between.",
+  "signup.emailLabel": "Your email",
+  "signup.emailPlaceholder": "you@example.com",
+  "signup.submit": "Send me the call",
+  "signup.sending": "Signing up…",
+  "signup.confirmTitle": "Almost — check your inbox.",
+  "signup.confirmBody": "One email to confirm. You're not on the list until you click it.",
+  "signup.alreadyTitle": "You're already on the list.",
+  "signup.alreadyBody": "Nothing has changed, and no new email is on its way.",
+  "signup.invalid": "That address doesn't look right.",
+  "signup.error": "Couldn't sign you up just now. Try again in a moment.",
+  "signup.unsubscribe": "One click to leave, any time.",
+  "signup.privacy": "Your address goes to Buttondown, the list tool, and nowhere else.",
   "podium.strongestCall": "Highest rated",
   "podium.rating": "Model rating",
   "podium.sb": "SB {{mark}}",
