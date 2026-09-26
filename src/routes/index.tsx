@@ -13,7 +13,6 @@ import { LandingHero } from "@/components/dl/landing-hero";
 import { LandingNav, LANDING_SECTIONS } from "@/components/dl/landing-nav";
 import { LandingFeatures } from "@/components/dl/landing-features";
 import { LandingCall } from "@/components/dl/landing-call";
-import { LandingSignup } from "@/components/dl/landing-signup";
 import { SiteFooter } from "@/components/dl/site-footer";
 import { Podium, type PodiumPick } from "@/components/dl/podium";
 import { chanceLabel, discName } from "@/lib/dl-data";
@@ -33,21 +32,10 @@ export const Route = createFileRoute("/")({
 
 /* The landing, rebuilt after the Terra template the user picked on
    2026-09-21, top to bottom: a dark page, serif headings with one word in the
-   brand's gold, big numbers, the current championship's call in that
-   championship's colours, a strip of favourites, the podium, what is on the
-   site beside a photo and a card of each page's live numbers, questions, and a
-   closing band with the two ways in. The menu floats above it all and scrolls
-   within the page.
-
-   The numbers and the call were moved above the strip and the podium on
-   2026-09-26. Analytics for the Games week: 33 of 49 visitors landed here and
-   only 7 ever reached /championship, with the proof block 2,442px down, about
-   three phone screens. Proof first, then the call, then the showcase. Numbers
-   before the call and not the other way round for a reason worth keeping: both
-   headline figures come from the 405-byte summary already in flight, so that
-   screen is free, and it buys ~1,070px of scroll before LandingCall's ~366 KB
-   fetch starts. Put the call second and that fetch fires within one flick,
-   against the rankings, predictions, results and hero photo already loading.
+   brand's gold, a strip of favourites, big numbers, the current championship's
+   call in that championship's colours, what is on the site beside a photo and
+   a card of each page's live numbers, questions, and a closing band with the
+   two ways in. The menu floats above it all and scrolls within the page.
 
    What it replaced, so it can be asked for back: the terracotta and cream
    bands, the three podium cards, the "raw signal to ranked field" demo, the
@@ -95,12 +83,8 @@ function BigNumber({
 }) {
   const { lang } = useT();
   const counted = useCountUp(run ? (value ?? 0) : 0, 1100, { from: 0, delayMs });
-  // Gate the DISPLAY, not just the animation. counted is 0 until run flips, so
-  // checking value alone rendered a confident "0.0%" for anyone who had the data
-  // but had not yet scrolled the section into view -- permanently, if you reloaded
-  // below it, since the one-shot observer then never intersects.
   const shown =
-    value === null || !run
+    value === null
       ? "—"
       : counted.toLocaleString(localeTag(lang), {
           minimumFractionDigits: decimals,
@@ -110,7 +94,7 @@ function BigNumber({
     <div className="border-t border-[var(--terra-border)] pt-6 text-center">
       <div className="hero-serif nums text-[clamp(52px,8vw,96px)] leading-none text-[var(--terra-fg)]">
         {shown}
-        {value !== null && run && unit ? (
+        {value !== null && unit ? (
           <span className="text-[0.5em] text-[var(--terra-gold)]">{unit}</span>
         ) : null}
       </div>
@@ -229,62 +213,6 @@ function Landing() {
           disciplineCount={disciplineCount}
         />
 
-        {/* ── Big numbers ── */}
-        <section
-          ref={numbersInView.ref}
-          id={LANDING_SECTIONS.numbers}
-          tabIndex={-1}
-          className="scroll-mt-16 px-5 py-24 outline-none sm:px-10 sm:py-32"
-        >
-          <div className="mx-auto max-w-5xl text-center">
-            <AccentTitle
-              text={t("landing.numbers.title")}
-              className="text-[clamp(34px,5vw,58px)] leading-[1.08]"
-            />
-            <p className="mx-auto mt-5 max-w-[52ch] text-[16px] leading-relaxed text-[var(--terra-muted)]">
-              {t("landing.numbers.lede")}
-            </p>
-            <div className="mt-16 grid gap-x-16 gap-y-12 sm:grid-cols-2">
-              <BigNumber
-                value={accuracy}
-                unit="%"
-                decimals={1}
-                run={numbersInView.inView}
-                label={t("landing.numbers.hitRate")}
-              />
-              <BigNumber
-                value={test?.finals ?? null}
-                run={numbersInView.inView}
-                delayMs={120}
-                label={t("landing.numbers.finals", {
-                  from: test?.from ?? "",
-                  to: test?.to ?? "",
-                })}
-              />
-              <BigNumber
-                value={rankings ? disciplineCount : null}
-                run={numbersInView.inView}
-                delayMs={220}
-                label={t("landing.numbers.events")}
-              />
-              <BigNumber
-                value={marksScored}
-                run={numbersInView.inView}
-                delayMs={300}
-                label={t("landing.statMarks")}
-              />
-            </div>
-            {state.status === "error" && (
-              <p className="mt-8 text-[13px] text-[var(--terra-muted)]">
-                {t("landing.statsError")}
-              </p>
-            )}
-          </div>
-        </section>
-
-        {/* ── The current championship's call, in its colours ── */}
-        <LandingCall summary={ev} countdownLabel={countdownLabel} />
-
         {/* ── The favourites strip, in the place Terra keeps its logos ── */}
         <section className="border-b border-[var(--terra-border)] py-6">
           <p className="mx-auto mb-4 max-w-6xl px-5 text-[13px] text-[var(--terra-muted)] sm:px-10">
@@ -343,6 +271,62 @@ function Landing() {
             </p>
           </div>
         </section>
+
+        {/* ── Big numbers ── */}
+        <section
+          ref={numbersInView.ref}
+          id={LANDING_SECTIONS.numbers}
+          tabIndex={-1}
+          className="scroll-mt-16 px-5 py-24 outline-none sm:px-10 sm:py-32"
+        >
+          <div className="mx-auto max-w-5xl text-center">
+            <AccentTitle
+              text={t("landing.numbers.title")}
+              className="text-[clamp(34px,5vw,58px)] leading-[1.08]"
+            />
+            <p className="mx-auto mt-5 max-w-[52ch] text-[16px] leading-relaxed text-[var(--terra-muted)]">
+              {t("landing.numbers.lede")}
+            </p>
+            <div className="mt-16 grid gap-x-16 gap-y-12 sm:grid-cols-2">
+              <BigNumber
+                value={accuracy}
+                unit="%"
+                decimals={1}
+                run={numbersInView.inView}
+                label={t("landing.numbers.hitRate")}
+              />
+              <BigNumber
+                value={test?.finals ?? null}
+                run={numbersInView.inView}
+                delayMs={120}
+                label={t("landing.numbers.finals", {
+                  from: test?.from ?? "",
+                  to: test?.to ?? "",
+                })}
+              />
+              <BigNumber
+                value={rankings ? disciplineCount : null}
+                run={numbersInView.inView}
+                delayMs={220}
+                label={t("landing.numbers.events")}
+              />
+              <BigNumber
+                value={marksScored}
+                run={numbersInView.inView}
+                delayMs={300}
+                label={t("landing.statMarks")}
+              />
+            </div>
+            {state.status === "error" && (
+              <p className="mt-8 text-[13px] text-[var(--terra-muted)]">
+                {t("landing.statsError")}
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* ── The current championship's call, in its colours ── */}
+        <LandingCall summary={ev} countdownLabel={countdownLabel} />
 
         {/* ── The one-minute walkthrough, for anyone new ── */}
         <section className="px-5 pb-24 pt-4 sm:px-10 sm:pb-32">
@@ -434,9 +418,6 @@ function Landing() {
             </p>
           </div>
         </section>
-
-        {/* ── The mailing list, the one thing that survives the off-season ── */}
-        <LandingSignup />
 
         {/* ── The closing band ── */}
         <section className="relative isolate overflow-hidden">
