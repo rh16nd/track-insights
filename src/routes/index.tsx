@@ -13,7 +13,6 @@ import { LandingHero } from "@/components/dl/landing-hero";
 import { LandingNav, LANDING_SECTIONS } from "@/components/dl/landing-nav";
 import { LandingFeatures } from "@/components/dl/landing-features";
 import { LandingCall } from "@/components/dl/landing-call";
-import { LandingSignup } from "@/components/dl/landing-signup";
 import { SiteFooter } from "@/components/dl/site-footer";
 import { Podium, type PodiumPick } from "@/components/dl/podium";
 import { chanceLabel, discName } from "@/lib/dl-data";
@@ -434,9 +433,6 @@ function Landing() {
             </p>
           </div>
         </section>
-
-        {/* ── The mailing list, the one thing that survives the off-season ── */}
-        <LandingSignup />
 
         {/* ── The closing band ── */}
         <section className="relative isolate overflow-hidden">
